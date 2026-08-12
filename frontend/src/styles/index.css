@@ -1,0 +1,84 @@
+/* index.css - Tailwind entry.
+ *
+ * tokens.css remains the single source of every colour and size, exactly as
+ * it was under the server-rendered stack. This file only maps those tokens
+ * into the Tailwind theme and into the variable names shadcn/ui expects.
+ *
+ * No raw hex in a component. If you need a new colour, it goes in
+ * tokens.css first.
+ */
+
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* `inline` lets the theme reference other custom properties rather than
+ * copying literal values - so tokens.css stays authoritative. */
+@theme inline {
+  --color-ground: var(--c-ground);
+  --color-ground-sunk: var(--c-ground-sunk);
+  --color-ink: var(--c-ink);
+  --color-ink-muted: var(--c-ink-muted);
+  --color-ink-faint: var(--c-ink-faint);
+  --color-rule: var(--c-rule);
+  --color-rule-strong: var(--c-rule-strong);
+
+  /* The single accent. Unverified assumptions ONLY - see STACK.md section 7. */
+  --color-warn: var(--c-warn);
+  --color-warn-ground: var(--c-warn-ground);
+
+  --color-verdict-build: var(--c-verdict-build);
+  --color-verdict-condition: var(--c-verdict-condition);
+  --color-verdict-dont: var(--c-verdict-dont);
+
+  --color-band: var(--c-band);
+  --color-threshold: var(--c-threshold);
+
+  --font-text: var(--font-text);
+  --font-data: var(--font-data);
+  --font-ui: var(--font-ui);
+}
+
+/* shadcn/ui reads these names. Pointing them at our tokens means a copied-in
+ * component inherits the instrument-panel palette instead of shipping the
+ * generic SaaS look we are deliberately avoiding. */
+:root {
+  --background: var(--c-ground);
+  --foreground: var(--c-ink);
+  --card: var(--c-ground);
+  --card-foreground: var(--c-ink);
+  --popover: var(--c-ground);
+  --popover-foreground: var(--c-ink);
+  --primary: var(--c-ink);
+  --primary-foreground: var(--c-ground);
+  --secondary: var(--c-ground-sunk);
+  --secondary-foreground: var(--c-ink);
+  --muted: var(--c-ground-sunk);
+  --muted-foreground: var(--c-ink-muted);
+  --accent: var(--c-ground-sunk);
+  --accent-foreground: var(--c-ink);
+  --destructive: var(--c-verdict-dont);
+  --destructive-foreground: var(--c-ground);
+  --border: var(--c-rule);
+  --input: var(--c-rule);
+  --ring: var(--c-ink-faint);
+  --radius: 2px; /* hairlines and right angles, not rounded cards */
+}
+
+@layer base {
+  body {
+    background-color: var(--c-ground);
+    color: var(--c-ink);
+    font-family: var(--font-text);
+    line-height: var(--lh-body);
+  }
+
+  /* Every number on this product is meant to be compared against the number
+   * above it. Tabular figures are not decoration here. */
+  .num,
+  table,
+  code,
+  time {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+  }
+}

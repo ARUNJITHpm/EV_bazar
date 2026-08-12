@@ -1,0 +1,6 @@
+# PLAN C.0: the console is internal. This is politeness for well-behaved
+# crawlers, not access control - every /api/internal endpoint refuses on its
+# own via require_operator.
+User-agent: *
+Disallow: /console
+Disallow: /api/internal

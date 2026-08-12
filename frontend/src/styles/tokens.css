@@ -1,0 +1,79 @@
+/* tokens.css
+ *
+ * The ONLY file in this codebase permitted to contain a raw hex value.
+ * Every colour, size, weight and rule width is declared here as a custom
+ * property. If you are about to type a '#' anywhere else, stop.
+ *
+ * Design direction (STACK.md section 6): instrument panel, not dashboard.
+ * A survey report or a technical certificate - dense, tabular, precise,
+ * unglamorous. The competitive claim is that these numbers are auditable,
+ * so the page must not look like it was invented in a design tool.
+ */
+
+:root {
+  /* --- Ink and ground ------------------------------------------------ */
+  --c-ground: #ffffff;
+  --c-ground-sunk: #f4f4f1;
+  --c-ink: #16181a;
+  --c-ink-muted: #5c6166;
+  --c-ink-faint: #8b9196;
+
+  /* --- Hairlines. We separate with rules, not cards and shadows. ------ */
+  --c-rule: #d6d6d1;
+  --c-rule-strong: #16181a;
+  --rule-hair: 1px;
+  --rule-heavy: 2px;
+
+  /* --- The single accent ---------------------------------------------
+   * Reserved EXCLUSIVELY for the unverified-assumption state. Nothing
+   * else on the page may use it. That is what makes an unresolved
+   * assumption the loudest thing after the verdict.
+   */
+  --c-warn: #b8410e;
+  --c-warn-ground: #fdf2ec;
+
+  /* --- Verdict states -------------------------------------------------
+   * Deliberately not a green/amber/red chip set. These are ink weights
+   * applied to a rule, not status pills.
+   */
+  --c-verdict-build: #1f5c3d;
+  --c-verdict-condition: #6b5a1f;
+  --c-verdict-dont: #7a1f1f;
+
+  /* --- Data band (hero number) --------------------------------------- */
+  --c-band: #b9c6cc;
+  --c-threshold: #16181a;
+
+  /* --- Type ----------------------------------------------------------- */
+  --font-text: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --font-data: "SF Mono", "Cascadia Mono", "DejaVu Sans Mono", Menlo, monospace;
+  --font-ui: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --fs-micro: 0.6875rem;
+  --fs-small: 0.8125rem;
+  --fs-body: 0.9375rem;
+  --fs-lead: 1.125rem;
+  --fs-hero: 2.75rem;
+
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+
+  --lh-tight: 1.2;
+  --lh-body: 1.55;
+
+  --tracking-caps: 0.08em;
+
+  /* --- Space (4px base) ------------------------------------------------ */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-6: 1.5rem;
+  --s-8: 2rem;
+  --s-12: 3rem;
+  --s-16: 4rem;
+
+  --measure: 34rem;
+  --page-max: 52rem;
+}

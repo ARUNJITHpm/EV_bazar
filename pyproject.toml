@@ -1,0 +1,133 @@
+[project]
+name = "evsite"
+version = "0.1.0"
+description = "EV Site Intelligence Platform - breakeven utilisation for EV charging sites in India"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "sqlalchemy>=2.0",
+  "geoalchemy2",          # PostGIS types
+  "alembic",
+  "psycopg[binary]",
+  "pydantic-settings",
+  "httpx",                # geocoder + poller clients
+  "shapely",
+  "python-multipart",     # tariff PDF upload
+  "playwright",           # HTML -> PDF (replaces weasyprint)
+  "itsdangerous",         # signed session cookies, console auth
+  "numpy",
+  "pandas",
+  "scikit-learn",         # clustering, Part 2
+  "lightgbm",             # Part 8 only
+  "apscheduler",          # poller scheduling
+  "pyarrow>=25.0.1",
+]
+
+[dependency-groups]
+dev = [
+  "pytest",
+  "pytest-cov",
+  "ruff",
+  "mypy",
+  "import-linter",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app", "workers"]
+
+# ---------------------------------------------------------------------------
+# Lint / format
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "N", "ANN"]
+ignore = ["ANN401"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ANN"]
+"alembic/*" = ["ANN", "E501"]
+
+# B008 flags function calls in argument defaults. FastAPI's dependency
+# injection is built on exactly that idiom and it is not the mutable-default
+# hazard the rule targets.
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Path", "fastapi.Header"]
+
+# ---------------------------------------------------------------------------
+# Types - strict only where AGENTS.md demands it
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "app.domain.roi.*"
+strict = true
+disallow_any_explicit = true
+
+# ---------------------------------------------------------------------------
+# Layer discipline - AGENTS.md: "do not weaken the contract to make a change compile"
+# ---------------------------------------------------------------------------
+[tool.importlinter]
+root_packages = ["app", "workers"]
+# Required so the purity contract can forbid third-party modules (httpx,
+# sqlalchemy) and not just our own.
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "ROI engine is pure"
+type = "forbidden"
+source_modules = ["app.domain.roi"]
+forbidden_modules = [
+  "app.db",
+  "app.models",
+  "app.api",
+  "app.metering",
+  "app.config",
+  "httpx",
+  "sqlalchemy",
+  "geoalchemy2",
+]
+
+[[tool.importlinter.contracts]]
+name = "Layers: api -> domain -> models"
+type = "layers"
+layers = [
+  "app.api",
+  "app.domain",
+  "app.models",
+]
+
+[[tool.importlinter.contracts]]
+name = "Demand layer may only reach into context"
+type = "forbidden"
+source_modules = ["app.domain.demand"]
+forbidden_modules = [
+  "app.domain.report",
+  "app.domain.cpo",
+  "app.domain.attribution",
+  "app.api",
+]
+
+# api/v1 is a contract with CPO partners; api/internal serves our own SPA.
+# They must not import each other, or a console tweak starts reshaping a
+# partner's payload (STACK.md section 2).
+[[tool.importlinter.contracts]]
+name = "Partner API and internal API stay independent"
+type = "independence"
+modules = ["app.api.v1", "app.api.internal"]
+
+# ---------------------------------------------------------------------------
+# Tests
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

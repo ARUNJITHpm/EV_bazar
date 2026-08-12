@@ -1,0 +1,66 @@
+/* print.css - a first-class deliverable, not an afterthought (AGENTS.md).
+ *
+ * This is what Playwright renders to PDF, and that PDF is archived as the
+ * immutable artifact behind Rule 1. It is exercised on every build, so it
+ * cannot rot unnoticed.
+ */
+
+@page {
+  size: A4;
+  margin: 18mm 16mm 22mm 16mm;
+
+  @bottom-left {
+    content: "EV Site Intelligence — generated report";
+  }
+  @bottom-right {
+    content: counter(page) " / " counter(pages);
+  }
+}
+
+@media print {
+  /* Nothing interactive survives onto paper. */
+  nav,
+  button,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  /* One report section per page break boundary. The 7 sections of the
+   * OVERVIEW.md anatomy map 1:1 onto these. */
+  [data-report-section] {
+    break-inside: avoid;
+    break-before: page;
+  }
+
+  [data-report-section="verdict"],
+  [data-report-section="hero"] {
+    break-before: auto; /* verdict + hero number share page one */
+  }
+
+  /* A table split across a page boundary loses its header, and a financial
+   * table without a header is unreadable. */
+  table {
+    break-inside: auto;
+  }
+  thead {
+    display: table-header-group;
+  }
+  tr {
+    break-inside: avoid;
+  }
+
+  /* Provenance must be legible on every page of a printed copy. */
+  [data-provenance] {
+    font-size: 8pt;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+  }
+}

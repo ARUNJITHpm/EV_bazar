@@ -1,0 +1,37 @@
+# Secrets
+.env
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Data - large downloads, never in git
+data/
+*.pbf
+*.shp
+*.shx
+*.dbf
+*.prj
+*.osm
+
+# Tariff PDFs are archived deliberately (PLAN 0.2) but not in git.
+# Keep the index/metadata in the DB, the blobs in object storage.
+tariffs/pdf/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build artifacts
+openapi.json
+frontend/dist/
+frontend/node_modules/

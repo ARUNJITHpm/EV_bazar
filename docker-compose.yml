@@ -1,0 +1,97 @@
+# OPTIONAL — Docker is not required for local development. To run without
+# containers (native Postgres, or just the no-DB dry-run), see LOCAL_DEV.md.
+# This file is kept as a production/reference topology.
+#
+# Four services, two reliability tiers.
+#
+#   web    - may go down for an hour without lasting harm
+#   poller - may NOT. Separate process, restart: always, own dead-man's switch.
+#
+# STACK.md section 7: "Treat them as different reliability tiers from day one."
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: evsite
+      POSTGRES_PASSWORD: evsite
+      POSTGRES_DB: evsite
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U evsite -d evsite"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      DATABASE_URL: postgresql+psycopg://evsite:evsite@db:5432/evsite
+      NOMINATIM_URL: http://nominatim:8080
+      ENV: dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/srv
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Dev only. In production `npm run build` emits dist/ and Caddy serves it
+  # while proxying /api to the api service — no Node process in production.
+  frontend:
+    image: node:24-slim
+    working_dir: /srv/frontend
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_API_PROXY: http://api:8000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/srv/frontend
+      - frontend-node-modules:/srv/frontend/node_modules
+    depends_on:
+      - api
+
+  poller:
+    build: .
+    command: python -m workers.poller
+    environment:
+      DATABASE_URL: postgresql+psycopg://evsite:evsite@db:5432/evsite
+      ENV: dev
+      # Scraped-source endpoints (CHARGEZONE__BASE_URL, etc.) are read from the
+      # mounted .env by pydantic-settings; no per-source passthrough needed here.
+    volumes:
+      - .:/srv
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always          # the web app's outage is recoverable; this one's is not
+    stop_grace_period: 60s   # let an in-flight cycle finish before SIGKILL
+
+  # Self-hosting Nominatim removes the main variable cost permanently
+  # (PLAN 1.3, L2). The India extract import takes HOURS, so this sits
+  # behind a profile: `docker compose --profile geocoding up nominatim`.
+  # Do not let a casual `docker compose up` start it by accident.
+  nominatim:
+    image: mediagis/nominatim:4.4
+    environment:
+      PBF_URL: https://download.geofabrik.de/asia/india-latest.osm.pbf
+      REPLICATION_URL: https://download.geofabrik.de/asia/india-updates/
+      IMPORT_WIKIPEDIA: "false"
+      NOMINATIM_PASSWORD: nominatim
+    ports:
+      - "8080:8080"
+    volumes:
+      - nominatim-data:/var/lib/postgresql/14/main
+    shm_size: 1gb
+    profiles: ["geocoding"]
+
+volumes:
+  pgdata:
+  nominatim-data:
+  frontend-node-modules:

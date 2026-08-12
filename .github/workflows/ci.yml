@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - run: uv python install 3.11
+      - run: uv sync --all-groups
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Format check
+        run: uv run ruff format --check .
+
+      # AGENTS.md: "That contract is worth more than a hundred code reviews."
+      # Wired in on day one, per PLAN 1.1 - not added once it is already broken.
+      - name: Layer contracts (import-linter)
+        run: uv run lint-imports
+
+      - name: Types (strict on the ROI engine)
+        run: uv run mypy app
+
+      - name: Tests
+        run: uv run pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv python install 3.11
+      - run: uv sync --all-groups
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+        working-directory: frontend
+
+      # A renamed backend field must surface as a TypeScript error, not as an
+      # undefined where a rupee figure should be (AGENTS.md).
+      - name: OpenAPI client is not stale
+        run: |
+          uv run python -m app.export_openapi > openapi.json
+          npm run api:generate --prefix frontend
+          git diff --exit-code -- frontend/src/api/schema.d.ts \
+            || { echo "::error::schema.d.ts is stale. Run: uv run python -m app.export_openapi > openapi.json && npm run api:generate --prefix frontend"; exit 1; }
+
+      - name: Typecheck
+        run: npm run typecheck --prefix frontend
+
+      - name: Format check
+        run: npm run format:check --prefix frontend
+
+      - name: Tests
+        run: npm run test --prefix frontend
+
+      - name: Build
+        run: npm run build --prefix frontend
