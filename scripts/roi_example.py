@@ -26,7 +26,6 @@ from app.domain.roi import (
     SiteOpex,
     Solar,
     TariffTerms,
-    TodBand,
     compute_roi,
 )
 
@@ -43,14 +42,17 @@ def rupees(paise: int | float) -> str:
 def build_inputs(*, anchor: bool, solar: bool, debt: bool) -> RoiInputs:
     return RoiInputs(
         chargers=(ChargerSpec(kw=60, count=2),),
+        # Kerala LT-X, gazette-exact (KSERC 05.12.2024): flat "ruling" 7.15, or
+        # ToD solar 5.00 (9AM-4PM) / non-solar 9.30 - the operator elects
+        # whichever is cheaper. An evening/peak-heavy public site pays less on
+        # the FLAT rate, so that is the headline here; a daytime workplace site
+        # would elect ToD instead. EV charging is exempt from fixed and demand
+        # charges. Duty left at 0 pending a real bill - the seed row flags it as
+        # the riskiest single number.
         tariff=TariffTerms(
-            energy_paise_per_kwh=750,  # Rs 7.50/kWh - placeholder until KSERC is typed in
-            demand_paise_per_kva_month=40_000,  # Rs 400/kVA/month
-            duty_pct=0.10,
-            tod_bands=(
-                TodBand(share=0.25, delta_paise_per_kwh=150, name="peak 18-22h"),
-                TodBand(share=0.30, delta_paise_per_kwh=-125, name="solar hours"),
-            ),
+            energy_paise_per_kwh=715,
+            demand_paise_per_kva_month=0,
+            duty_pct=0.0,
         ),
         capex=Capex(
             hardware_paise=20 * LAKH,

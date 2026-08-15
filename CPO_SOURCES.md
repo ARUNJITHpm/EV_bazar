@@ -106,7 +106,9 @@ takes over from that date. Nothing is lost in the switch.
 
 ## Public / commercial APIs (documented, no scraping)
 
-- **Open Charge Map** — free, documented REST: `GET /api/v3/poi?output=json&latitude=..&longitude=..&distance=..&maxresults=..` with a free key (openchargemap.org → My Apps → Register an Application). Crowd-sourced; strong on **locations**, weak on live status. Good for backfilling the station master list and cross-checking dedupe.
+- **Open Charge Map** — free, documented REST: `GET /api/v3/poi?output=json&countrycode=IN&latitude=..&longitude=..&distance=..&distanceunit=km&maxresults=..&compact=true` with a free key (openchargemap.org → My Apps → Register an Application). Crowd-sourced; strong on **locations**, weak on live status. Good for backfilling the station master list and cross-checking dedupe.
+  - ✅ **Verified live 2026-08-15** against Kochi coords: the API answered, but now **returns HTTP 403 without an API key** (it was keyless historically — no longer). So this is a one-account, one-key step, then it works. Each POI carries `AddressInfo` (title, lat/lng, town, state), `OperatorInfo.Title` (the network), `Connections[]` (`ConnectionType`, `PowerKW`, `Level`), a `StatusType.IsOperational` flag and `NumberOfPoints` — enough for the **competitor inventory** (PLAN 2.3), NOT for real-time occupancy (the moat still needs per-app polling).
+  - 🎯 **This is the "better source" for the starting stage of the competitor map**: one keyed API covering all of India instead of seven fragile app captures. Recommended as the *first* thing wired for KL+TN — it needs only a free key, no mitmproxy evening. Keep chargeMOD app-scrape as the parallel **occupancy** pilot.
 - **TomTom EV Charging Stations Availability API** — commercial, aggregated **real-time** availability. A paid but clean real-time source if the metering budget allows (goes through the paid-provider cap machinery in `config.py`).
 - **Delhi OpenEV API** (`ev.delhi.gov.in/openev/documentation`) — government open data for Delhi EV stations. Worth checking for other states' open-data portals too.
 
@@ -136,14 +138,22 @@ switch to path 1/2/3 rather than fight the client.
 
 ## Recommended order of attack
 
-**Starting stage — scrape, in this order (all path 4):**
-1. **chargeMOD** (ours) — scrape it first; no ToS question, fastest to first data.
+**Focus states for the starting stage: Kerala + Tamil Nadu (the two Tier-1 markets).**
+Every capture below is scoped to KL+TN coordinates first; national coverage follows.
+
+**Starting stage — in this order:**
+0. **Open Charge Map** (free key, ~15 min) — the fastest first win, verified working today.
+   Wire it for KL+TN to stand up the **competitor inventory** with no reverse-engineering.
+   One key, one documented API, all of India. Does NOT give occupancy — that is why the
+   app-scrape below still matters.
+1. **chargeMOD** (ours) — scrape it first for **occupancy**; no ToS question, fastest to
+   first real-time data, and it is the accuracy check for scraping the rest.
 2. **An aggregator** (1C / "Massive Charging") — one capture yields ChargeZone, Statiq,
    Tata, Jio-bp together. Biggest coverage per evening (check its ToS; it may not label
    which CPO each charger belongs to — reconcile downstream).
-3. **The remaining apps individually** — Kazam, and any network the aggregator misses —
-   each under a recorded decision (read ToS → record → authorise).
-4. **Open Charge Map** (free API) for the station master list + dedupe cross-check.
+3. **The remaining apps individually** — Kazam (has a public Postman API doc:
+   `documenter.getpostman.com/view/15805402/TzY3DGwy`, polling-friendly but likely needs
+   partner creds), and any network the aggregator misses — each under a recorded decision.
 
 **Phase 2 — the OCPI/UEI upgrade (later, does not gate the above):**
 5. Ask Kazam / ChargeZone for OCPI tokens; register as a UEI / Beckn BAP. Swap each

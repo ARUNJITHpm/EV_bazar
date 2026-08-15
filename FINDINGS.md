@@ -285,6 +285,35 @@ only thing between here and a computable breakeven.
 - The coverage panel now reads tariff presence per state live: the first
   Kerala row typed in turns Kerala Tier 2 with no code change.
 
+### PART 0.2 / 3.1 — First tariffs seeded (KL + TN) 2026-08-15
+`scripts/seed_tariffs.py` loaded four EV-charging tariff rows; Kerala and Tamil
+Nadu are now **Tier 2** on the coverage panel, computed live from the rows.
+
+- **Kerala LT-X + HT-VI — gazette-exact**, transcribed from the KSERC schedule
+  PDF itself (order 05.12.2024). LT-X public charging: flat "ruling" ₹7.15, or
+  ToD ₹5.00 solar (9AM–4PM) / ₹9.30 non-solar; **nil fixed and demand charge**.
+  That demand-charge exemption is a genuine finding: it drops a 2×60 kW site's
+  annual fixed cost from ~₹8.4L (my earlier placeholder, which assumed a demand
+  charge) to ~₹1.2L, and the worked example's IRR jumps to ~35%. Worth its own
+  line in the eventual State-of-Utilisation note.
+- **Tamil Nadu LT-VII EV — news-sourced, LOWER confidence.** TNERC SMT.No.6/2025
+  (eff. 01.07.2025): ₹6.50 solar / ₹9.75 peak / ₹8.10 off-peak, fixed ~₹304/kW.
+  Rates agree across sources but the **time-band edges and kW-vs-kVA on the fixed
+  charge still need the order PDF**; the row's note says so. A prior 2023 order
+  (~₹8/10/12) should be added as a superseded row when the PDFs are collected.
+- ⚠️ **Every row is UNVERIFIED against a real bill (3.3).** The riskiest single
+  number is **Kerala's electricity duty**, seeded at 0: if duty is actually
+  payable, every Kerala margin here is overstated (the unsafe direction). This
+  is the first thing to check against a real KSEB bill — chargeMOD has one.
+
+### CPO source research 2026-08-15
+- **Open Charge Map is the "better source" for competitor *inventory***: one
+  free-key REST API covering all of India (operator, connectors, kW, an
+  operational flag) instead of seven fragile app captures. Live-tested — it now
+  returns **403 without an API key** (historically keyless). It does NOT carry
+  real-time occupancy, so the app-scrape moat (starting with chargeMOD) stands.
+  `CPO_SOURCES.md` updated with the verified shape and a KL+TN-first order.
+
 ### PART 1.6 — Tier gate — **next**
 Not started. What it needs and what it unblocks:
 
