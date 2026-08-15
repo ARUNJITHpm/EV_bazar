@@ -26,6 +26,12 @@
   --color-warn: var(--c-warn);
   --color-warn-ground: var(--c-warn-ground);
 
+  /* Console-only status colours - see tokens.css for the scoping rule. */
+  --color-ok: var(--c-ok);
+  --color-ok-ground: var(--c-ok-ground);
+  --color-info: var(--c-info);
+  --color-info-ground: var(--c-info-ground);
+
   --color-verdict-build: var(--c-verdict-build);
   --color-verdict-condition: var(--c-verdict-condition);
   --color-verdict-dont: var(--c-verdict-dont);

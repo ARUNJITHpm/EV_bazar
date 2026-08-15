@@ -67,16 +67,17 @@ export const TERMS: Record<string, string> = {
 };
 
 /**
- * The terms used on this panel. Open by default: the point is to be read.
+ * The terms used on this panel. Closed by default so the panel's own content
+ * leads; one click opens every definition.
  */
 export function Glossary({ terms }: { terms: string[] }) {
   const known = terms.filter((t) => t in TERMS);
   if (known.length === 0) return null;
 
   return (
-    <details open className="mb-6 max-w-3xl border border-rule">
+    <details className="mb-6 max-w-3xl border border-rule">
       <summary className="cursor-pointer bg-ground-sunk px-3 py-1.5 font-ui text-[11px] font-bold tracking-[0.08em] text-ink-muted uppercase">
-        Words on this page
+        Words on this page — {known.join(" · ")} <span className="text-ink-faint">▾ click</span>
       </summary>
       <dl className="px-3 py-2">
         {known.map((t) => (

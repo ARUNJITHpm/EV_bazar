@@ -76,7 +76,8 @@ export function Overview() {
                       ? "alive"
                       : `silent > ${poller.data.threshold_minutes} min`
                 }
-                warn={!poller.data.alive}
+                warn={!poller.data.never_run && !poller.data.alive}
+                ok={poller.data.alive && !poller.data.never_run}
               />
               <Row label="Dead-man threshold" value={`${poller.data.threshold_minutes} min`} />
             </dl>
@@ -209,7 +210,17 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Row({ label, value, warn = false }: { label: string; value: string; warn?: boolean }) {
+function Row({
+  label,
+  value,
+  warn = false,
+  ok = false,
+}: {
+  label: string;
+  value: string;
+  warn?: boolean;
+  ok?: boolean;
+}) {
   return (
     <div className="flex justify-between gap-4 border-b border-rule py-1.5">
       <dt className="font-ui text-[13px] text-ink-muted">{label}</dt>
@@ -217,7 +228,9 @@ function Row({ label, value, warn = false }: { label: string; value: string; war
         className={
           warn
             ? "bg-warn-ground px-1 font-data text-[13px] text-warn"
-            : "font-data text-[13px] tabular-nums"
+            : ok
+              ? "bg-ok-ground px-1 font-data text-[13px] text-ok"
+              : "font-data text-[13px] tabular-nums"
         }
       >
         {value}

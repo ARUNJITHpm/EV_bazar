@@ -245,7 +245,12 @@ function Result({ data }: { data: PointOut }) {
 
           <dl className="mt-4 grid grid-cols-2 gap-x-8 sm:grid-cols-4">
             <Stat label="Method" value={data.method} />
-            <Stat label="Confidence" value={data.confidence} warn={data.confidence !== "high"} />
+            <Stat
+              label="Confidence"
+              value={data.confidence}
+              warn={data.confidence === "low"}
+              ok={data.confidence === "high"}
+            />
             <Stat
               label="Inside the polygon"
               value={data.distance_m === 0 ? "yes" : `no — ${data.distance_m.toFixed(0)} m outside`}
@@ -438,12 +443,25 @@ function Field({
   );
 }
 
-function Stat({ label, value, warn = false }: { label: string; value: string; warn?: boolean }) {
+function Stat({
+  label,
+  value,
+  warn = false,
+  ok = false,
+}: {
+  label: string;
+  value: string;
+  warn?: boolean;
+  ok?: boolean;
+}) {
   return (
     <div>
       <dt className="font-ui text-[10px] tracking-[0.08em] text-ink-faint uppercase">{label}</dt>
       <dd
-        className={cn("font-data text-[13px]", warn ? "bg-warn-ground px-1 text-warn" : "text-ink")}
+        className={cn(
+          "font-data text-[13px]",
+          warn ? "bg-warn-ground px-1 text-warn" : ok ? "bg-ok-ground px-1 text-ok" : "text-ink",
+        )}
       >
         {value}
       </dd>

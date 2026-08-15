@@ -42,22 +42,22 @@ type ProgressOut = {
 };
 
 const INPUT_STATUS: Record<Input["status"], { label: string; cls: string }> = {
-  configured: { label: "configured", cls: "bg-ground-sunk text-ink-muted" },
+  configured: { label: "configured", cls: "bg-ok-ground text-ok" },
   missing: { label: "needed", cls: "bg-warn-ground text-warn" },
   attention: { label: "needs attention", cls: "bg-warn-ground text-warn" },
-  later: { label: "later — don't chase yet", cls: "text-ink-faint" },
+  later: { label: "later — don't chase yet", cls: "bg-ground-sunk text-ink-faint" },
 };
 
 /** Order inside the inputs section: actionable first, done last. */
 const INPUT_ORDER: Input["status"][] = ["attention", "missing", "later", "configured"];
 
-const STATUS_LABEL: Record<Milestone["status"], string> = {
-  done: "done",
-  code_done: "code done, unproven",
-  partial: "partly live",
-  next: "do next",
-  parked: "parked on purpose",
-  not_started: "not started",
+const MILESTONE_STATUS: Record<Milestone["status"], { label: string; cls: string }> = {
+  done: { label: "done", cls: "bg-ok-ground text-ok" },
+  code_done: { label: "code done, unproven", cls: "bg-info-ground text-info" },
+  partial: { label: "partly live", cls: "bg-info-ground text-info" },
+  next: { label: "do next", cls: "bg-warn-ground text-warn" },
+  parked: { label: "parked on purpose", cls: "bg-ground-sunk text-ink-faint" },
+  not_started: { label: "not started", cls: "bg-ground-sunk text-ink-faint" },
 };
 
 /** Which statuses land in which section of the page. */
@@ -134,14 +134,10 @@ export function Progress() {
                         <span
                           className={cn(
                             "px-1.5 font-ui text-[10px] tracking-[0.08em] uppercase",
-                            m.status === "next"
-                              ? "bg-warn-ground text-warn"
-                              : m.status === "done" || m.status === "partial"
-                                ? "bg-ground-sunk text-ink-muted"
-                                : "text-ink-faint",
+                            MILESTONE_STATUS[m.status].cls,
                           )}
                         >
-                          {STATUS_LABEL[m.status]}
+                          {MILESTONE_STATUS[m.status].label}
                         </span>
                       </div>
 

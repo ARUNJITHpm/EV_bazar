@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { cn } from "@/lib/utils";
+
 import { PanelHeader } from "./ConsoleLayout";
 import { Glossary } from "./Glossary";
 
@@ -33,19 +35,21 @@ type CpoSource = {
   events_last_run: number;
 };
 
-function stateLabel(s: CpoSource): { label: string; warn: boolean } {
-  if (s.pollable) return { label: "polling", warn: false };
-  if (!s.authorised) return { label: "not authorised", warn: false };
-  if (!s.configured) return { label: "authorised · no endpoint", warn: true };
-  return { label: "blocked", warn: true };
+function stateLabel(s: CpoSource): { label: string; cls: string } {
+  if (s.pollable) return { label: "polling", cls: "bg-ok-ground text-ok" };
+  if (!s.authorised) return { label: "not authorised", cls: "bg-ground-sunk text-ink-faint" };
+  if (!s.configured) return { label: "authorised · no endpoint", cls: "bg-info-ground text-info" };
+  return { label: "blocked", cls: "bg-warn-ground text-warn" };
 }
 
 /** One row of the state legend — what a word in the State column means. */
-function Legend({ term, children }: { term: string; children: React.ReactNode }) {
+function Legend({ term, cls, children }: { term: string; cls: string; children: React.ReactNode }) {
   return (
     <div className="border-b border-rule py-1.5">
-      <dt className="font-data text-[12px]">{term}</dt>
-      <dd className="text-[12px] text-ink-muted">{children}</dd>
+      <dt>
+        <span className={cn("px-1 font-data text-[12px]", cls)}>{term}</span>
+      </dt>
+      <dd className="mt-0.5 text-[12px] text-ink-muted">{children}</dd>
     </div>
   );
 }
@@ -106,11 +110,7 @@ export function Cpo() {
                     <td className="py-1.5 font-data text-[12px] text-ink-muted">{s.kind}</td>
                     <td className="py-1.5 text-[13px]">
                       <span
-                        className={
-                          st.warn
-                            ? "bg-warn-ground px-1 font-data text-warn"
-                            : "font-data text-ink-muted"
-                        }
+                        className={cn("px-1 font-data", st.cls)}
                         title={s.blocking_reason ?? undefined}
                       >
                         {st.label}
@@ -142,18 +142,21 @@ export function Cpo() {
           </table>
 
           <dl className="mt-4 max-w-prose border-t border-rule">
-            <Legend term="not authorised">
-              Nobody has read this network's terms and approved it yet, so we do not send it a
-              single request. This is where every network starts.
+            <Legend term="not authorised" cls="bg-ground-sunk text-ink-faint">
+              Nobody has read this network's app terms and switched it on in the code yet, so we
+              send it ZERO requests. Not an error — this is where every network starts, and only a
+              deliberate human decision moves it forward. Grey because it is waiting on us, not
+              broken.
             </Legend>
-            <Legend term="authorised · no endpoint">
-              Approved, but we have not yet found the web address its app calls. That discovery is
-              hand work — a few hours per app with a traffic inspector.
+            <Legend term="authorised · no endpoint" cls="bg-info-ground text-info">
+              A human approved it, but we have not yet found the web address its app calls. That
+              discovery is hand work — a few hours per app with a traffic inspector — then one line
+              in .env.
             </Legend>
-            <Legend term="polling">
+            <Legend term="polling" cls="bg-ok-ground text-ok">
               Both locks open. We are recording this network right now.
             </Legend>
-            <Legend term="blocked">
+            <Legend term="blocked" cls="bg-warn-ground text-warn">
               Authorised and configured, but something is stopping it. Hover the label for the
               reason.
             </Legend>

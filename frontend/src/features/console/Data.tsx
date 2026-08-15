@@ -30,6 +30,7 @@ type TableRow = {
 type StateRow = {
   lgd_state_code: number;
   state: string;
+  focus: boolean;
   districts: number;
   has_tariff_data: boolean;
   has_competitor_poll: boolean;
@@ -194,9 +195,17 @@ export function Data() {
               </thead>
               <tbody>
                 {coverage.data.states.map((s) => (
-                  <tr key={s.lgd_state_code} className="border-t border-rule">
+                  <tr
+                    key={s.lgd_state_code}
+                    className={cn("border-t border-rule", s.focus && "bg-info-ground")}
+                  >
                     <td className="py-1.5 text-[13px]" title={s.why}>
                       {s.state}
+                      {s.focus && (
+                        <span className="ml-2 bg-info-ground px-1 font-ui text-[9px] tracking-[0.08em] text-info uppercase">
+                          focus market
+                        </span>
+                      )}
                     </td>
                     <td className="py-1.5 text-right font-data text-[12px] tabular-nums">
                       {s.districts}
@@ -209,7 +218,11 @@ export function Data() {
                       <span
                         className={cn(
                           "px-1.5 font-data text-[12px]",
-                          s.tier === 1 ? "text-ink" : "bg-warn-ground text-warn",
+                          s.tier === 1
+                            ? "bg-ok-ground text-ok"
+                            : s.tier === 2
+                              ? "bg-info-ground text-info"
+                              : "bg-ground-sunk text-ink-faint",
                         )}
                       >
                         {s.tier}
@@ -220,6 +233,13 @@ export function Data() {
               </tbody>
             </table>
 
+            <p className="mt-2 max-w-prose font-data text-[11px] text-ink-faint">
+              <span className="bg-ok-ground px-1 text-ok">1</span> full report ·{" "}
+              <span className="bg-info-ground px-1 text-info">2</span> breakeven number and tariff
+              audit only · <span className="bg-ground-sunk px-1">3</span> waitlist. A tier is OUR
+              data coverage, not a city-size ranking — a state moves up when we load data for it,
+              and all loading effort goes to the focus markets (Kerala, Tamil Nadu) first.
+            </p>
             <p className="mt-2 max-w-prose font-data text-[11px] text-ink-faint">
               Tier 3 everywhere is the correct answer today, not a bug: three of the four evidence
               sources have no table yet. A Tier 2/3 customer is still logged as a site, and the
@@ -235,7 +255,7 @@ export function Data() {
 function Flag({ on }: { on: boolean }) {
   return (
     <td className="py-1.5 text-center font-data text-[12px]">
-      {on ? <span>yes</span> : <span className="text-ink-faint">—</span>}
+      {on ? <span className="text-ok">yes</span> : <span className="text-ink-faint">—</span>}
     </td>
   );
 }

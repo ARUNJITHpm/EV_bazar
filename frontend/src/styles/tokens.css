@@ -40,6 +40,17 @@
   --c-verdict-condition: #6b5a1f;
   --c-verdict-dont: #7a1f1f;
 
+  /* --- Console status colours -----------------------------------------
+   * CONSOLE ONLY. The public report keeps the single-accent rule above -
+   * these exist because the console is an admin tool (PLAN C) where
+   * green/amber/grey state reads faster than prose. ok reuses the
+   * verdict-build green; info is a desaturated slate blue.
+   */
+  --c-ok: #1f5c3d;
+  --c-ok-ground: #edf4ef;
+  --c-info: #1f4d6b;
+  --c-info-ground: #eef3f7;
+
   /* --- Data band (hero number) --------------------------------------- */
   --c-band: #b9c6cc;
   --c-threshold: #16181a;

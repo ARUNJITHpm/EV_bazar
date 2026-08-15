@@ -747,6 +747,8 @@ export interface components {
     StateCoverageOut: {
       /** Districts */
       districts: number;
+      /** Focus */
+      focus: boolean;
       /** Has Competitor Poll */
       has_competitor_poll: boolean;
       /** Has Osm Road Quality */

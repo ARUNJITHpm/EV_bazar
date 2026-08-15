@@ -343,9 +343,12 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "2 / 4 / 8",
         "Context, demand, and the model",
         Status.PARKED,
-        "Part 2 describes each site's surroundings (roads, dwell anchors, competitors, "
-        "grid). Part 4 turns that into a demand estimate with honest P10/P50/P90 bands. "
-        "Part 8 is the trained model.",
+        "Part 2 describes each site's surroundings: distance to the nearest highway/"
+        "main road, WHICH SIDE of a divided road (wrong side loses ~half the "
+        "traffic), junction count, urban vs rural at the exact point, what holds a "
+        "driver for 30-45 minutes nearby, competitors and their measured busyness, "
+        "grid distance. Part 4 turns that into a demand estimate with honest "
+        "P10/P50/P90 bands. Part 8 is the trained model.",
         "Correctly waiting: 2 pays off once there are sites to describe, 4 needs 2, "
         "and 8 cannot start until 90 days after the poller's first row - which is why "
         "milestone #1 is the whole schedule.",

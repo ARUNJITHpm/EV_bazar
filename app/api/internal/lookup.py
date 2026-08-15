@@ -588,6 +588,10 @@ def lookup_tables(session: Session = Depends(get_session)) -> TablesOut:
 class StateCoverageOut(BaseModel):
     lgd_state_code: int
     state: str
+    #: PLAN Part 1's first markets - Kerala and Tamil Nadu. All human effort
+    #: (tariffs, addresses, polling) goes here first, so these two are the
+    #: states expected to reach Tier 1 first. Sorted to the top of the table.
+    focus: bool
     districts: int
     has_tariff_data: bool
     has_competitor_poll: bool
@@ -605,11 +609,17 @@ class CoverageOut(BaseModel):
 
 
 _TIER_RULE = (
-    "Tier 1 needs tariffs AND competitor occupancy AND vehicle counts. "
-    "Tier 2 needs tariffs alone - enough for a breakeven number and a tariff audit, "
-    "which is the first sellable product. Everything else is Tier 3: log the pin, "
-    "waitlist the customer, and count the district as demand."
+    "A tier measures how much WE know about a state - it is our data coverage, not "
+    "the size or importance of its cities. Tier 1 = we hold tariffs AND competitor "
+    "occupancy AND vehicle counts, so a full report is honest. Tier 2 = tariffs "
+    "alone - enough for a breakeven number and a tariff audit, the first sellable "
+    "product. Tier 3 = we know too little; log the pin, waitlist the customer, and "
+    "count the district as demand. A state moves UP by us loading data for it, "
+    "starting with the focus states."
 )
+
+#: LGD state codes of PLAN Part 1's first markets: Kerala (32), Tamil Nadu (33).
+FOCUS_STATES = frozenset({32, 33})
 
 
 def tier_for(*, tariff: bool, poll: bool, vahan: bool, osm: bool) -> tuple[int, str]:
@@ -665,6 +675,7 @@ def lookup_coverage(session: Session = Depends(get_session)) -> CoverageOut:
             StateCoverageOut(
                 lgd_state_code=int(code),
                 state=str(name),
+                focus=int(code) in FOCUS_STATES,
                 districts=int(district_count),
                 has_tariff_data=has_tariff,
                 has_competitor_poll=has_poll,
@@ -685,5 +696,7 @@ def lookup_coverage(session: Session = Depends(get_session)) -> CoverageOut:
             "attributed to a district (needs FINDINGS B3). This view is computed live; "
             "PLAN 1.6 will persist the same judgement per district."
         ),
-        states=states,
+        # Focus states first, then alphabetical - the two rows a reader acts on
+        # should not be buried under A-for-Andaman.
+        states=sorted(states, key=lambda s: (not s.focus, s.state)),
     )
