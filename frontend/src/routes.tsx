@@ -11,6 +11,7 @@ import { Progress } from "./features/console/Progress";
 import { Reports } from "./features/console/Reports";
 import { SpendLlm } from "./features/console/SpendLlm";
 import { SpendMaps } from "./features/console/SpendMaps";
+import { Vahan } from "./features/console/Vahan";
 import { Landing } from "./features/landing/Landing";
 
 /**
@@ -52,6 +53,7 @@ export const router = createBrowserRouter([
       { path: "lookup", element: <Lookup /> },
       { path: "cpo", element: <Cpo /> },
       { path: "competitors", element: <Competitors /> },
+      { path: "vahan", element: <Vahan /> },
       { path: "data", element: <Data /> },
       {
         path: "geocoding",

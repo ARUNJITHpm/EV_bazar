@@ -57,6 +57,8 @@ class Signals:
     tariff_rows: int
     tariff_states: int
     competitor_stations: int
+    vahan_rows: int
+    vahan_states: int
     sources_authorised: int
     sources_total: int
 
@@ -77,7 +79,10 @@ def read_signals(session: Session) -> Signals:
               (SELECT count(*) FROM electricity_tariffs),
               (SELECT count(DISTINCT lgd_state_code) FROM electricity_tariffs
                WHERE effective_to IS NULL OR effective_to > CURRENT_DATE),
-              (SELECT count(*) FROM competitor_stations)
+              (SELECT count(*) FROM competitor_stations),
+              (SELECT count(*) FROM vahan_ev_registrations),
+              (SELECT count(DISTINCT lgd_state_code) FROM vahan_ev_registrations
+               WHERE lgd_state_code IS NOT NULL)
         """)
     ).one()
     return Signals(
@@ -93,6 +98,8 @@ def read_signals(session: Session) -> Signals:
         tariff_rows=int(row[9]),
         tariff_states=int(row[10]),
         competitor_stations=int(row[11]),
+        vahan_rows=int(row[12]),
+        vahan_states=int(row[13]),
         sources_authorised=sum(1 for s in SOURCES if s.authorised),
         sources_total=len(SOURCES),
     )
@@ -342,6 +349,32 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         else "Get a free Open Charge Map key (openchargemap.org), put it in .env, then "
         "`python -m scripts.fetch_competitors --state kerala --write`.",
     )
+    vahan_live = s.vahan_rows > 0
+    add(
+        "4.1",
+        "VAHAN vehicle counts - the demand raw material",
+        Status.PARTIAL if vahan_live else Status.CODE_DONE,
+        "How many EVs are registered in each district, by vehicle class, from the "
+        "government's VAHAN dashboard. Our own fetcher scrapes it - every vehicle class "
+        "(buses and commercial included, not a hand-picked few) and one pass per "
+        "calendar year, because PLAN 4.1 weights the GROWTH rate above the absolute "
+        "count and a growth rate needs more than one year. Stored as a time series, "
+        "never overwritten, each RTO resolved to its district. This is the third of the "
+        "four Tier-1 layers for a state; occupancy is the last.",
+        (
+            f"{s.vahan_rows:,} rows across {s.vahan_states} state(s) (see the VAHAN panel)."
+            if vahan_live
+            else "Scraper, schema and ingest are BUILT and tested - zero rows yet, which "
+            "is why every state's vehicle-count flag is false on the Data panel. Scrape "
+            "Kerala and its flag turns true on its own."
+        ),
+        None
+        if vahan_live
+        else "Human: `uv sync --extra scrape` (installs the browser), then "
+        "`python -m scripts.scrape_vahan --state kerala` (a long run against the "
+        "portal), then `python -m scripts.ingest_vahan --csv <the CSV> --write`. "
+        "Validate first with `--dry-run --limit 2`.",
+    )
     add(
         "3.1 + 3.2",
         "The tariff schema and the ROI calculator",
@@ -399,9 +432,10 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "main road, WHICH SIDE of a divided road (wrong side loses ~half the "
         "traffic), junction count, urban vs rural at the exact point, what holds a "
         "driver for 30-45 minutes nearby, competitors and their measured busyness, "
-        "grid distance. Part 4 turns that into a demand estimate with honest "
-        "P10/P50/P90 bands. Part 8 is the trained model.",
-        "Correctly waiting: 2 pays off once there are sites to describe, 4 needs 2, "
+        "grid distance. Part 4's later steps (the 4.2 heuristic onward) turn that into "
+        "a demand estimate with honest P10/P50/P90 bands - 4.1's vehicle counts are "
+        "carved out above, already built. Part 8 is the trained model.",
+        "Correctly waiting: 2 pays off once there are sites to describe, 4.2 needs 2, "
         "and 8 cannot start until 90 days after the poller's first row - which is why "
         "milestone #1 is the whole schedule.",
         "Unblocked by, in order: sites flowing, Part 2 imports, the poller's 90 days.",
@@ -451,7 +485,9 @@ _PAID_GEOCODERS: tuple[tuple[str, str, str, str], ...] = (
 )
 
 
-def build_inputs(settings: Settings, *, urban_layer_loaded: bool) -> list[InputOut]:
+def build_inputs(
+    settings: Settings, *, urban_layer_loaded: bool, vahan_loaded: bool = False
+) -> list[InputOut]:
     """Everything only a human can supply, with live status. Pure given inputs.
 
     The flow this list is built for: make the account, set the provider-side
@@ -626,14 +662,24 @@ def build_inputs(settings: Settings, *, urban_layer_loaded: bool) -> list[InputO
         InputOut(
             name="VAHAN registration data",
             kind="data",
-            status=InputStatus.LATER,
-            needed_for="PART 4.1 - EV counts and growth per district.",
+            status=InputStatus.CONFIGURED if vahan_loaded else InputStatus.MISSING,
+            needed_for=(
+                "PART 4.1 - EV counts and growth per district, the third of the four "
+                "Tier-1 layers. No key or account; the work is a browser scrape."
+            ),
             env_vars=[],
             how_to_get=(
-                "Public dashboard, no key: vahan.parivahan.gov.in/vahan4dashboard. "
-                "Monthly batch download once Part 4 starts."
+                "Our own fetcher, no vendor: `uv sync --extra scrape` then "
+                "`python -m scripts.scrape_vahan --state kerala` (long run against the "
+                "government dashboard), then `python -m scripts.ingest_vahan --csv "
+                "<the CSV> --write`. RTO list + coordinates are already seeded."
             ),
-            detail="Not needed until Part 4.",
+            detail=(
+                "Loaded - at least one state scraped and ingested."
+                if vahan_loaded
+                else "Not scraped yet. The scraper, schema and ingest are built and "
+                "tested; running the scrape is a human step (it drives a browser)."
+            ),
         )
     )
 
@@ -717,9 +763,12 @@ def progress(
             )
         ).scalar_one()
     )
+    signals = read_signals(session)
     return ProgressOut(
         checked_at=dt.datetime.now(dt.UTC),
         summary=_SUMMARY,
-        milestones=build_milestones(read_signals(session)),
-        inputs=build_inputs(settings, urban_layer_loaded=urban_loaded),
+        milestones=build_milestones(signals),
+        inputs=build_inputs(
+            settings, urban_layer_loaded=urban_loaded, vahan_loaded=signals.vahan_rows > 0
+        ),
     )

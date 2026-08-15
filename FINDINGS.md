@@ -330,6 +330,45 @@ Zeon, Tata Power, Statiq, ChargeZone, Jio-bp.
   a lot of Karnataka coverage came for free. Not wrong — the resolver is
   authoritative — just why the state split is not 50/50.
 
+### PART 4.1 — VAHAN vehicle counts — code done 2026-08-15
+`vahan_ev_registrations` (migration `0011`) and a **fresh in-project scraper**
+are built and tested; **zero rows ingested** (a real scrape is a human step — it
+drives a browser). Once a state is scraped, its `has_vahan_data` flag turns true
+on the Data panel on its own, and the VAHAN console panel lights up.
+
+- **Why a fresh fetcher, not the SalesAI CSV** (user decision): the SalesAI RTO
+  scraper keeps only 5 vehicle classes and a single *cumulative* "Till Today"
+  total — so buses/commercial were dropped and there was **no growth signal at
+  all**. PLAN 4.1 weights the 12-month growth rate above the absolute count, so
+  `scripts/scrape_vahan.py` keeps **every** class (buses + goods included) and
+  scrapes **per calendar year** (last ~3 + optional cumulative). The PrimeFaces
+  dropdown navigation is adapted from the proven SalesAI scraper; what is new is
+  what it keeps and when.
+- **Tall, time-series schema.** One row per (district, snapshot, period, fuel,
+  class); `period` is a calendar year or `till_today`, `snapshot_date` is the
+  capture vintage. Never overwritten — a re-scrape is a new snapshot, because a
+  growth rate needs more than one reading. VAHAN's category axis is open-ended, so
+  a wide table would need a migration per new class; tall needs none.
+- **RTO → district by point-in-polygon on the RTO office coordinate**, reusing
+  the 2.3 bulk `ST_Contains`-over-`unnest` helper. Seeded `data/vahan/
+  rto_reference.csv` (KL 87 + TN 132 RTOs, coordinates from SalesAI's geocode)
+  drives both the scrape loop and the resolution. End-to-end verified against the
+  live DB: **all 219 RTOs place**, and spot checks are right — ADOOR→Pathanamthitta,
+  Aluva→Ernakulam, Alangudi→Pudukkottai (TN). An unplaced RTO keeps its **state**
+  (from its own code), so a state total never goes missing.
+- **Growth off a zero base is refused** (returns "new", not +∞), and non-year
+  periods are ignored so a snapshot may mix per-year and cumulative rows.
+- Scrape and ingest are **two steps on purpose**: the long CSV is the vintaged
+  artifact and its sha256 is each row's provenance; the DB write is fast and
+  idempotent per snapshot. Scheduled monthly (not nightly — a snapshot a day late
+  is harmless) via `scripts/vahan_refresh.bat` + `vahan_etl_task.xml`. Browser is
+  an opt-in extra: `uv sync --extra scrape`.
+- ⚠️ **Not yet run against reality.** The scraper's table-extraction was written
+  against the known VAHAN layout but has not been driven end-to-end through a live
+  browser here — expect the first real run to need a debugging pass on the
+  header/column mapping, the same "shape written from observation, not docs"
+  caution as the geocoders (G1) and OCM.
+
 ### CPO source research 2026-08-15
 - **Open Charge Map is the "better source" for competitor *inventory***: one
   free-key REST API covering all of India (operator, connectors, kW, an

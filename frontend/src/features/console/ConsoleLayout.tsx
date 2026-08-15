@@ -44,6 +44,10 @@ const NAV: Group[] = [
     ],
   },
   {
+    heading: "Demand",
+    items: [{ to: "/console/vahan", label: "VAHAN", hint: "EV counts · growth · by class" }],
+  },
+  {
     heading: "Spend",
     items: [
       { to: "/console/spend/maps", label: "Maps & APIs", hint: "calls · quota · ₹" },

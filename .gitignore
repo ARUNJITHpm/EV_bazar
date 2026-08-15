@@ -14,7 +14,14 @@ __pycache__/
 htmlcov/
 
 # Data - large downloads, never in git
-data/
+data/*
+# ...except the small, essential VAHAN RTO seed (KL+TN office names + coords).
+# It cannot be regenerated without an external project's data, and both the
+# scraper and the ingest depend on it. Scrape outputs (data/vahan/scrape_*.csv)
+# stay ignored.
+!data/vahan/
+data/vahan/*
+!data/vahan/rto_reference.csv
 *.pbf
 *.shp
 *.shx

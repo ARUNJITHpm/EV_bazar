@@ -30,6 +30,8 @@ EMPTY_WORLD = Signals(
     tariff_rows=0,
     tariff_states=0,
     competitor_stations=0,
+    vahan_rows=0,
+    vahan_states=0,
     sources_authorised=0,
     sources_total=8,
 )

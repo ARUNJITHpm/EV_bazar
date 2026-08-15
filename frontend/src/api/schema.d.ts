@@ -361,6 +361,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/internal/vahan": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Vahan */
+    get: operations["vahan_api_internal_vahan_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/ping": {
     parameters: {
       query?: never;
@@ -388,6 +405,13 @@ export interface components {
       alive: boolean;
       /** Never Run */
       never_run: boolean;
+    };
+    /** ClassRow */
+    ClassRow: {
+      /** Ev Total */
+      ev_total: number;
+      /** Group */
+      group: string;
     };
     /** CompetitorsOut */
     CompetitorsOut: {
@@ -464,6 +488,19 @@ export interface components {
       checked_at: string;
       /** Sources */
       sources: components["schemas"]["CpoSourceOut"][];
+    };
+    /** DistrictVahanRow */
+    DistrictVahanRow: {
+      /** District */
+      district: string;
+      /** Ev Total */
+      ev_total: number;
+      /** Growth Pct */
+      growth_pct: number | null;
+      /** Lgd District Code */
+      lgd_district_code: number | null;
+      /** State */
+      state: string;
     };
     /**
      * FieldSource
@@ -822,6 +859,19 @@ export interface components {
       /** Stations */
       stations: number;
     };
+    /** StateVahanRow */
+    StateVahanRow: {
+      /** Districts */
+      districts: number;
+      /** Ev Total */
+      ev_total: number;
+      /** Growth Pct */
+      growth_pct: number | null;
+      /** Lgd State Code */
+      lgd_state_code: number;
+      /** State */
+      state: string;
+    };
     /**
      * Status
      * @enum {string}
@@ -876,6 +926,28 @@ export interface components {
       tables: components["schemas"]["TableOut"][];
       /** Undocumented */
       undocumented: string[];
+    };
+    /** VahanOut */
+    VahanOut: {
+      /** By Class */
+      by_class: components["schemas"]["ClassRow"][];
+      /** By State */
+      by_state: components["schemas"]["StateVahanRow"][];
+      /**
+       * Checked At
+       * Format: date-time
+       */
+      checked_at: string;
+      /** Display Period */
+      display_period: string | null;
+      /** Periods */
+      periods: string[];
+      /** Snapshot Date */
+      snapshot_date: string | null;
+      /** Top Districts */
+      top_districts: components["schemas"]["DistrictVahanRow"][];
+      /** Total Rows */
+      total_rows: number;
     };
     /** ValidationError */
     ValidationError: {
@@ -1390,6 +1462,39 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["CpoSourcesOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  vahan_api_internal_vahan_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["VahanOut"];
         };
       };
       /** @description Validation Error */

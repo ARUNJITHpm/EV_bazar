@@ -28,6 +28,7 @@ from app.api.internal import (
     lookup,
     poller,
     progress,
+    vahan,
 )
 from app.api.internal.console_auth import require_operator
 
@@ -45,5 +46,6 @@ guarded.include_router(geocoding.router, tags=["internal-geocoding"])
 guarded.include_router(lookup.router, tags=["internal-lookup"])
 guarded.include_router(progress.router, tags=["internal-progress"])
 guarded.include_router(competitors.router, tags=["internal-competitors"])
+guarded.include_router(vahan.router, tags=["internal-vahan"])
 
 router.include_router(guarded)

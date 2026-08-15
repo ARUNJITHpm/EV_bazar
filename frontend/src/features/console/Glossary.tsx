@@ -64,6 +64,15 @@ export const TERMS: Record<string, string> = {
     "A table where rows can be added but never edited or deleted. Used for anything that is a record of what happened.",
   "Breakeven utilisation":
     "How busy the chargers must be for a site to stop losing money. The one number the whole report is built around.",
+
+  // --- demand (VAHAN) ------------------------------------------------------
+  VAHAN:
+    "The government's national vehicle-registration dashboard (vahan.parivahan.gov.in). The count of every vehicle ever registered, by state, RTO, class and fuel — the source of how many EVs a district actually has.",
+  RTO: "Regional Transport Office — the office that registers vehicles for an area. VAHAN reports per RTO, so each RTO's office location is placed in its district to get a district total.",
+  "Registration growth":
+    "How fast a district's EV count is rising year over year. Weighted above the absolute count, because the absolute tells you where EVs ARE while growth tells you where they are GOING — and a site is a bet on the future.",
+  Snapshot:
+    "One dated reading of VAHAN, kept forever. VAHAN only ever shows a running total, so a single reading has no sense of momentum; keeping every reading is what makes a growth rate computable.",
 };
 
 /**

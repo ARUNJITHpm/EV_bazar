@@ -24,6 +24,15 @@ dependencies = [
   "pyarrow>=25.0.1",
 ]
 
+# Browser scraper for the VAHAN dashboard (PLAN 4.1). Heavy and only needed to
+# run scripts/scrape_vahan.py, so it is an opt-in extra, not a core dependency:
+#   uv sync --extra scrape
+[project.optional-dependencies]
+scrape = [
+  "selenium",
+  "undetected-chromedriver",
+]
+
 [dependency-groups]
 dev = [
   "pytest",
