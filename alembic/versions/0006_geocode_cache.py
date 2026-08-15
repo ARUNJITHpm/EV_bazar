@@ -35,7 +35,10 @@ def upgrade() -> None:
         sa.Column("display_name", sa.Text()),
         sa.Column("raw_response", postgresql.JSONB()),
         sa.Column(
-            "fetched_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.text("now()")
+            "fetched_at",
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=sa.text("now()"),
         ),
     )
     op.execute(

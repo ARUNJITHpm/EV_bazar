@@ -12,16 +12,21 @@ from __future__ import annotations
 
 import datetime as dt
 
-from sqlalchemy import BigInteger, CheckConstraint, Date, Index, String, Text
+from sqlalchemy import BigInteger, CheckConstraint, Date, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base
+
+#: SQLite autoincrements only a plain INTEGER primary key, never BIGINT - the
+#: same shim ``api_usage.py`` carries, so the card lookup and seeding can be
+#: tested without standing up Postgres. Production DDL is unchanged.
+BigIntPk = BigInteger().with_variant(Integer(), "sqlite")
 
 
 class ProviderPriceCard(Base):
     __tablename__ = "provider_price_cards"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(BigIntPk, primary_key=True, autoincrement=True)
 
     #: Stable identifier quoted on every usage event it prices.
     version: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)

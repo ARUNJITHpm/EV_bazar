@@ -21,9 +21,9 @@ import httpx
 
 from app.config import get_settings
 from app.db import SessionLocal
+from app.domain.resolution.cascade import build_cascade
 from app.domain.resolution.geocode import GeocodeOutcome, geocode
 from app.domain.resolution.normalise import normalise_address
-from app.domain.resolution.providers.nominatim import NominatimGeocoder
 
 #: Real addresses a human can check. Deliberately messy: abbreviations, a
 #: proximity word, an old city name, a bare PIN.
@@ -58,9 +58,10 @@ def _show(raw: str, outcome: GeocodeOutcome) -> None:
 
 def selftest() -> int:
     settings = get_settings()
-    geocoders = [NominatimGeocoder(settings.nominatim_url)]
     misses = 0
     with SessionLocal() as session, httpx.Client() as client:
+        geocoders = build_cascade(session, settings)
+        print(f"cascade: {' -> '.join(g.source for g in geocoders)}\n")
         for raw, _expected in SELFTEST:
             outcome = geocode(session, raw, geocoders=geocoders, client=client, use_cache=False)
             flag = "OK " if outcome.resolved else "XX "
@@ -91,10 +92,13 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     settings = get_settings()
-    geocoders = [NominatimGeocoder(settings.nominatim_url)]
     with SessionLocal() as session, httpx.Client() as client:
         outcome = geocode(
-            session, args.address, geocoders=geocoders, client=client, use_cache=not args.no_cache
+            session,
+            args.address,
+            geocoders=build_cascade(session, settings),
+            client=client,
+            use_cache=not args.no_cache,
         )
         session.commit()
         _show(args.address, outcome)

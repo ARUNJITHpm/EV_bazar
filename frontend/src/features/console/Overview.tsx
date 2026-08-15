@@ -4,6 +4,7 @@ import { api } from "@/api/client";
 import { cn } from "@/lib/utils";
 
 import { PanelHeader } from "./ConsoleLayout";
+import { Glossary } from "./Glossary";
 
 /** PART C.0 — health, spend, and the poller heartbeat. */
 export function Overview() {
@@ -49,7 +50,10 @@ export function Overview() {
     <>
       <PanelHeader
         title="Overview"
-        note="System health, spend to date, and the poller heartbeat. Silence is the failure mode, so the heartbeat is shown even when nothing is wrong."
+        note="Is the system alive, is it recording, and what has it spent. The poller heartbeat is shown even when nothing is wrong, because for a recorder the failure mode is silence rather than errors — a poller that died quietly loses history that cannot be re-acquired."
+      />
+      <Glossary
+        terms={["Poller", "CPO", "Connector", "Archive", "Change log", "Dead-man's switch"]}
       />
 
       <section className="max-w-3xl">

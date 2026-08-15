@@ -3,6 +3,11 @@
 > Read `OVERVIEW.md` first.
 > Work **one Part at a time**. A Part is not done until its **Exit Criteria** pass.
 > Do not start a Part whose dependencies are unmet. Do not skip Part 7.
+>
+> **Then read `FINDINGS.md`** — the blockers, the decisions already settled, the
+> gaps between what a tick here claims and what is actually verified, and the
+> things only a human can close. A `[x]` below means the code exists; `FINDINGS.md`
+> says what it does not cover.
 
 **Legend:** `[ ]` todo · `[~]` in progress · `[x]` done · `⚡` time-critical · `⚠️` common failure point
 
@@ -134,18 +139,24 @@ The one asset that cannot be retroactively acquired. Every day not polling is pe
 0 normalise → 1 cache → 2 Nominatim → 3 Ola Maps → 4 Mappls → 5 Google → 6 manual queue
 ```
 
-> **Free levels (L0–L2) built; paid levels (L3–L5) and the manual queue (L6) deliberately deferred.** Same pure-decision / thin-shell split as 1.4: `app/domain/resolution/geocode.py` holds `classify_geocode` (pure) and `geocode` (the I/O shell), with `normalise.py` (L0) and `providers/nominatim.py` (L2) beside it. `meter()` still has no caller — it enters at L3, which is the next session's job.
+> **All seven levels built (L0–L6).** Same pure-decision / thin-shell split as 1.4: `app/domain/resolution/geocode.py` holds `classify_geocode` + `doubt_about` (pure) and `geocode` (the I/O shell), with `normalise.py` (L0), `providers/` (L2–L5), `cascade.py` (assembly) and `manual.py` (L6) beside it. **`meter()` now has its first caller** — every paid level is wrapped in `providers/metered.py`, so the Part C exit criterion is claimable.
 >
-> Spot-check with: `uv run python -m scripts.geocode_address "opp Lulu Mall, MG Rd, Trivandrum 695001" --normalise-only` (no network/DB) · `--selftest` (live Nominatim). 28 tests, all free-level.
+> Spot-check with: `uv run python -m scripts.geocode_address "opp Lulu Mall, MG Rd, Trivandrum 695001" --normalise-only` (no network/DB) · `--selftest` (live Nominatim) · `uv run python -m scripts.cascade_batch addresses.txt` (the Part 1 exit criteria) · `uv run python -m scripts.seed_price_cards`. 69 tests across `test_geocode.py`, `test_geocode_paid.py`, `test_manual_queue.py`.
+>
+> 🚫 **BLOCKED, not deferred: self-hosted Nominatim is not running, and cannot be stood up on the current machine.** No Docker Desktop and no WSL distribution are installed, and free disk is 3.8 GB on C: / 17 GB on D: against an India import that needs ~80 GB. Every level above L2 is therefore untested against a live gazetteer, and **the Part 1 exit criteria below cannot be run at all** — the harness for them exists and is one command. This needs either disk + Docker here, or the import done on the VPS with `NOMINATIM_URL` pointed at it.
 
 - [x] **L0 Normalise** — `normalise.py`, pure. Extracts the 6-digit PIN **first** (anchored so it is not plucked from a 10-digit phone number), then lowercases, strips diacritics/punctuation, drops proximity words (`near|nr|opp|opposite|beside|behind`), expands `rd→road`/`jn→junction`, and canonicalises spelling (Trivandrum→Thiruvananthapuram, Bangalore→Bengaluru, Calicut→Kozhikode). ⚠️ It **does not** collapse a city onto its district (Kochi↛Ernakulam) — that would send a district name where a city was meant; district aliasing stays the crosswalk's job. `cache_key` includes the PIN so two places sharing a name but differing by PIN never collide.
 - [x] **L1 Cache** — `geocode_cache` table (migration `0006`) with every column the plan lists; the **full raw provider JSON** is stored so confidence can be re-derived without re-paying. **Misses are cached too** (lat NULL) so an unfindable address is not re-asked every retry; a manual resolution later upserts the same key. Round-trip tested on SQLite.
 - [x] **L2 Nominatim** — `providers/nominatim.py`, fetch/parse split like the poller adapters. `countrycodes=in` (stops "Salem" resolving to Oregon), a supplied PIN passed as the structured `postalcode` filter, and a missing lat/lon parses to `None` rather than a guessed point. ⚠️ **The self-hosted India import is not done** — it takes hours and is the next session's first background task; until it is up, the cascade resolves nothing live (the code and tests are complete via mock transport).
-- [x] **Escalation rule** — in `classify_geocode` already: two geocoders > 2 km apart return a MISS for the manual queue rather than picking one. It is dormant with only Nominatim (nothing to disagree with) and switches on the moment L3 lands. Tested with two synthetic geocoders.
-- [ ] **L3 Ola Maps:** https://maps.olakrutrim.com — 500k free/month, India-only. **First `meter()` caller.** Add as a geocoder in the cascade list, wrapped in `meter()`.
-- [ ] **L4 Mappls:** https://about.mappls.com/api/ — store their `eLoc` code too
-- [ ] **L5 Google:** `components=country:IN`. ⚠️ **Bill through an Indian entity** — India-billed accounts get 70k free Essentials calls/month vs 10k global. Beyond that, $5/1,000. Cap-before-boot guard already enforces the key needs a positive cap + `console_cap_confirmed`.
-- [ ] **L6 Manual queue:** table + tiny Leaflet page, human clicks the point (~20s). Expect 3–8% in Tier 1. A cascade MISS is what feeds it; the outcome type is already there.
+- [x] **Escalation rule** — two geocoders > 2 km apart return a MISS for the manual queue rather than picking one. ⚠️ **This rule needed a design fix to be real at all.** The cascade must *stop at the first confident hit* (or it costs four calls per address and Part 1's "≥90% without Google" is unmeasurable) — but then two geocoders never both answer and the rule can never fire. So escalation now triggers on **doubt**: the matched PIN contradicts the supplied one, or the provider flags a partial match. `doubt_about()` is pure and tested; "no PIN to check against" is deliberately *not* doubt, since escalating on that would send nearly every address to a paid level.
+- [x] **Stop-at-first-confident** — `geocode()` walks levels cheapest-first and breaks on the first undoubted answer; a miss falls through quietly, a failure is recorded as a reason and *then* falls through. At most `MAX_OPINIONS = 2` answers are ever held: a third would cost money to break a tie we have already decided goes to a human, not a vote.
+- [x] **L3 Ola Maps** — `providers/ola.py`, 500k free/month, India-only. **`meter()`'s first caller.** PIN is folded into the query text (Ola has no structured postcode filter).
+- [x] **L4 Mappls** — `providers/mappls.py`. The **eLoc is stored**, in a generic `geocode_cache.provider_place_id` that also holds Google's `place_id`, Ola's, and Nominatim's `osm_id` — two sites with the same handle are provably the same place. `copResults` is an object for one match and a list for several; both shapes are handled, because treating the object as a list silently loses every single-match geocode.
+- [x] **L5 Google** — `providers/google.py`, `components=country:IN` (plus `postal_code:` when a PIN is supplied, as a hard filter rather than another token). ⚠️ **Status is not emptiness**: Google returns HTTP 200 for `REQUEST_DENIED` and `OVER_QUERY_LIMIT`, and reading `results` as empty would cache "this address does not exist" for every address asked during a key outage — and the cache does not expire. Only `ZERO_RESULTS` becomes a miss; four other statuses raise, each with a test. `partial_match` is carried through and costs a confidence step.
+- [x] **Every paid call is metered** — `providers/metered.py` wraps each paid level, and `build_cascade` is the only place a paid level is constructed, so a provider cannot join the cascade and skip its usage row. Tested for a hit, a miss (a geocoder bills for looking), an error, and a refusal at cap — the last writes a `capped` row so a cap never looks like an outage.
+- [x] **A paid level with no price card refuses to build** — `card_for()` raises at *assembly*, before a rupee. Nothing read `provider_price_cards` until now, so this was the third missing lock: a call that cannot be priced is a spend report reading ₹0 while the bill arrives. Seed with `scripts/seed_price_cards.py`; ⚠️ **the Ola and Mappls overage rates are conservative placeholders** and the seed script says so on every run.
+- [x] **L6 Manual queue** — `geocode_manual_queue` (migration `0007`) + `app/api/internal/geocoding.py` + a Leaflet panel. One row per normalised address with a `hits` counter, so fifty asks are one job and the queue sorts by what the twenty seconds buy most. Resolving **writes the point back into `geocode_cache`** with `source='manual'` — without that the next lookup misses again and the queue refills with work already done. "Cannot place" is a first-class button: a human who could not find it must not be nudged into guessing a point.
+- [x] **Leaflet is lazy-loaded** — it added 160 kB to the main bundle, and the public report must not carry a mapping library so one operator can place pins. Main chunk is unchanged at 366 kB; the map is a separate 162 kB chunk.
 
 ### 1.4 Point-in-polygon
 
@@ -166,17 +177,40 @@ The one asset that cannot be retroactively acquired. Every day not polling is pe
 ### 1.5 `sites` table
 `site_id, raw_input, lat, lng, geom, lgd_state_code, lgd_district_code, pincode, urban_rural, geocode_source, geocode_confidence, data_tier, boundary_ambiguous, resolved_at`
 
+> `app/models/site.py` + `app/domain/resolution/sites.py` (migration `0008`). Same split again: `combine()` is pure and decides what the row *claims*; `resolve_site()` runs 1.3 then 1.4 then upserts. 20 tests.
+>
+> Spot-check with: `uv run python -m scripts.resolve_site "MG Road, Kochi 682035"` (dry-run by default) · `--selftest` · `--write`
+
+- [x] **Every column in the spec exists**, plus three the spec implies but does not name: `normalised_input` (the identity, and the join to `geocode_cache` / the manual queue), `district_method`, and `reasons`.
+- [x] **`geom` is a generated column** — `GENERATED ALWAYS AS (ST_SetSRID(ST_MakePoint(lng, lat), 4326)) STORED`. Nothing writes it, so it cannot drift from the coordinates beside it; a separately-written geometry is one UPDATE from disagreeing, and a spatial join against a stale point returns the wrong neighbourhood rather than an error. Verified live: the database **refuses** a direct write to it.
+- [x] **One confidence, and it is the weaker of the two** — 1.3 says how sure it is of the *point*, 1.4 how sure it is of the *district*, and those are different claims. A Google hit whose PIN matches (high) that lands 3 km outside every polygon and resolves by nearest-fallback (low) is a **low**-confidence site. Reporting the geocoder's number is the tempting shortcut and it is the one that is usually higher. Both reason trails concatenate, cascade-first.
+- [x] **`district_method` is kept next to it** — ⚠️ `pin_override` means the coordinates and the district disagree *on purpose*: Part 2 will compute road and POI features at a point that is **not inside** the district Part 3 charges it against. Right call, and it has to stay visible rather than being flattened into a confidence label.
+- [x] **An address nobody could place is still a site** — PLAN 1.6's "log the site anyway", applied one step earlier. `lat`/`lng`/district are all nullable; `resolved` (has a district) and `located` (has a point) are derived, not asserted. It is also the row the manual queue's answer lands in.
+- [x] **One row per distinct place, with a `requests` counter** — two customers pasting the same address are one site asked about twice, not two sites; Part 2's context features are expensive and there is nothing to recompute. The counter is what makes demand in a district we do not serve yet visible, which is the expansion roadmap.
+- [x] **Which PIN the site records is a decision, not a coalesce** — the customer's PIN first (a human who knows the place), then the polygon at the point *only if there is exactly one* (several is India Post's delivery rounds showing through, and picking one invents a fact), then the geocoder's own postcode last (that is the geocoder agreeing with itself). ⚠️ `GeocodeOutcome` gained a `postcode` field for this, so nothing reaches into a provider-specific raw blob.
+- [x] **Verified live** against loaded reference geography: Kochi `9.9312, 76.2673` + PIN `682035` → **Ernakulam (555)**, `contained`, confidence **low** — the point actually sits in PIN 682005, so 1.4 records the conflict, declines to override (same district), and downgrades; the site inherits the weaker label. Repeat request → 1 row, `requests=2`.
+- [ ] ⚠️ **`urban_rural` is NULL** — the built-up/town layer from 1.2 is still unloaded. Guessing it from district type would be wrong for exactly the peri-urban sites where the distinction changes the answer.
+- [ ] ⚠️ **`data_tier` is NULL** — it is 1.6's `data_coverage` to fill. A tier is a claim about what data we hold for a district, and which districts we sell into; that is a business decision and not this table's to invent.
+- [ ] ⚠️ **The upsert is verified against live Postgres, not in CI** — `sites` carries a PostGIS geometry so the table cannot be created on SQLite. All the judgement is in `combine`/`choose_pincode`, both pure and unit-tested; the round-trip, the generated column and the read-only-geom guarantee are covered by `resolve_site --selftest`, which needs a database. Run it after every reference reload.
+
 ### 1.6 Tier gate
 - [ ] `data_coverage(lgd_district_code, tier, has_tariff_data, has_competitor_poll, has_vahan_data, osm_road_quality)`
 - [ ] `tier > 1` → waitlist response, **but log the site anyway** (lead capture + expansion roadmap)
 
 ### Exit Criteria — Part 1
+
+> 🚫 **All six are blocked on the same thing: Nominatim is not running** (see 1.3). Nothing here can be measured against a cascade whose free workhorse is absent — running it now would report a 0% resolve rate and a Google bill, which is a measurement of the outage, not of the cascade.
+>
+> The harness is built and is one command: `uv run python -m scripts.cascade_batch addresses.csv --out verify.csv --write`. It runs each address through the cascade *and* through 1.4's `resolve()`, prints four of the six criteria with PASS/FAIL, enqueues every miss into L6, measures cost per address from `api_usage_events` (rather than assuming it), and writes a CSV with an empty `correct_y_n` column for the hand check.
+>
+> ⚠️ **The 200 addresses do not exist yet either.** No authorised CPO source is enabled, so there is no list to draw from — it has to be assembled by hand or from a public directory before this can run.
+
 - [ ] 200 real charging-station addresses (KL + TN) run through the cascade
 - [ ] **≥95%** resolve to a district code
 - [ ] **≥90%** resolve without touching Google
-- [ ] **100%** of resolved districts correct — verify all 200 by hand (only cheap ground truth you'll ever get)
+- [ ] **100%** of resolved districts correct — verify all 200 by hand (only cheap ground truth you'll ever get). ⚠️ Deliberately **not** automated: the script writes the column and refuses to fill it. A script that grades its own homework throws the ground truth away.
 - [ ] Median cascade cost per address = **₹0**
-- [ ] Every Google-escalated case reviewed → normalisation backlog written
+- [ ] Every Google-escalated case reviewed → normalisation backlog written — the harness lists them by name at the end of the run
 
 ---
 
@@ -469,14 +503,17 @@ Every metered external call writes one append-only row **before** the response i
 - [x] **Enforcing counter:** before a paid call, sum this month's units for that provider. At cap → refuse the call and fall through to the next cascade level. Do not warn-and-proceed.
 - [x] ⚠️ **Log `cache_hit` rows with the cost you avoided.** Part 1's exit criterion is *median cascade cost per address = ₹0* — this is how you evidence it rather than assert it.
 - [x] Alert at 80% of cap; hard stop at 100% — `QuotaState.should_alert` / `QuotaExceededError`; the refusal itself writes a `capped` row, so a blocked call is still accounted for.
-- [ ] ⚠️ **`meter()` has no callers yet.** The machinery is built and tested but nothing spends money through it. Its first customer is the 1.3 geocoding cascade; the Part C exit criterion ("no paid call can execute without writing a usage event") cannot be claimed until then.
+- [x] **`meter()` has its first callers** — the three paid geocoders (1.3 L3–L5), each wrapped in `providers/metered.py`. "No paid call can execute without writing a usage event" is now structural rather than a convention: `build_cascade` is the only constructor of a paid level and it constructs them wrapped, so an unmetered provider is one the cascade cannot reach.
+- [x] **Effective-dated cards are actually read** — `app/metering/cards.py`. The table existed since `0002` but nothing looked anything up in it; `card_for()` closes that, model-specific card beating the all-models card, and **raising rather than defaulting to free**. ⚠️ Two of the three shipped rates are unverified placeholders (Ola and Mappls overage) — `scripts/seed_price_cards` warns on every run, and the spend report will not reconcile against those two bills until someone confirms them.
 
 ### C.2 Spend ▸ Maps & geocoding APIs
 
-- [ ] Per provider per month: calls, ₹, % of cap, burn-rate projection to month end
-- [ ] Cost per **resolved address**, and the cascade funnel — how many resolved at L1 cache / L2 Nominatim / L3 Ola / L4 Mappls / L5 Google
-- [ ] Every Google escalation listed with its input, so the normalisation backlog (Part 1 exit criteria) writes itself
-- [ ] Which provider is winning ties, and where two geocoders disagreed > 2 km
+> Partly shipped alongside 1.3 L6, since the funnel and the manual queue are the same screen: `/api/internal/geocoding/funnel` + the console **Geocoding** panel.
+
+- [ ] Per provider per month: calls, ₹, % of cap, burn-rate projection to month end — *calls and ₹ per provider are live; % of cap and burn-rate are not*
+- [x] Cost per **resolved address**, and the cascade funnel — resolved/unresolved per level, month-to-date spend per provider, and the **share resolved without a paid call**, flagged when it falls under the 90% Part 1 wants
+- [ ] Every Google escalation listed with its input, so the normalisation backlog (Part 1 exit criteria) writes itself — *`scripts/cascade_batch` prints them for a batch run; the console does not list them yet*
+- [ ] Which provider is winning ties, and where two geocoders disagreed > 2 km — *the disagreement reason is stored on the queue row; nothing aggregates it*
 
 ### C.3 Spend ▸ LLM
 

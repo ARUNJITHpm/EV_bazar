@@ -60,6 +60,12 @@ class GeocodeCache(Base):
     #: The geocoder's own matched-address string, for eyeballing in the console.
     display_name: Mapped[str | None] = mapped_column(Text)
 
+    #: The provider's stable handle for the match: Mappls ``eLoc`` (PLAN 1.3 L4
+    #: asks for it by name), Google ``place_id``, Ola ``place_id``, Nominatim
+    #: ``osm_id``. Two sites carrying the same one are provably the same place,
+    #: and re-fetching the match by handle costs nothing.
+    provider_place_id: Mapped[str | None] = mapped_column(String(128))
+
     #: The complete provider response. ALWAYS kept (see module docstring).
     raw_response: Mapped[dict[str, Any] | None] = mapped_column(JsonColumn)
 

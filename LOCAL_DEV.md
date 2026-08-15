@@ -70,14 +70,48 @@ To store observations you need PostgreSQL. Native install, no Docker:
 6. **See it in the console** — start the API and the SPA in two terminals:
 
    ```powershell
-   uv run uvicorn app.main:app --reload --port 8000
+   uv run python -m uvicorn app.main:app --reload --port 8000
    ```
    ```powershell
    cd frontend; npm install; npm run dev
    ```
 
-   Then open `http://localhost:5173/console/cpo` — the CPO panel shows every
-   network, whether it's authorised and configured, and what the poller last saw.
+   Then open `http://localhost:5173/console` and sign in.
+
+> **`uv run <name>` failing with "trampoline failed to canonicalize script
+> path"?** The console-script shims in `.venv/Scripts` record the absolute path
+> they were installed at, so they break if the project folder is moved. Either
+> run the module form — `uv run python -m uvicorn`, `python -m mypy`,
+> `python -m pytest` — or rebuild them once with `uv sync --reinstall`.
+
+---
+
+## The console login
+
+Every console endpoint refuses until a password exists — an unconfigured console
+returns **503**, never 200, because "we have not chosen a password" must not mean
+"anyone may read CPO commercial terms".
+
+```powershell
+uv run python -m scripts.console_password
+```
+
+Paste the two printed lines (`CONSOLE_SECRET_KEY`, `CONSOLE_PASSWORD_HASH`) into
+`.env` and restart the API. The script never writes to `.env` itself — a script
+that edits your `.env` is a script that can clobber it.
+
+### Where to start reading
+
+| Panel | What it answers |
+|---|---|
+| **Lookup** | Put in a coordinate → district, state, LGD code, **and every step that got there**, with the table behind each answer. The example buttons walk through the interesting cases, including two deliberate refusals. |
+| **Data** | Every table, how full it is, and what it is *for*. Then the tier per state, derived live from the evidence rather than declared. |
+| **CPO** | Every charging network, and whether both locks are open yet. |
+| **Geocoding** | The cascade funnel, spend per level, and the manual queue. |
+| **Overview** | Health and the poller heartbeat. |
+
+Each panel carries a **"Words on this page"** box defining its own jargon, so the
+terms are explained where they are used rather than in a document nobody opens.
 
 > A cheap always-on VPS is where the poller belongs in the end (PLAN 0.1) — never
 > your laptop, because a laptop that sleeps is a hole in the record. For local

@@ -1,10 +1,19 @@
 """Alembic environment.
 
-Reads the database URL from app.config so there is one source of truth,
-and excludes PostGIS's own managed tables from autogenerate - otherwise
-every migration tries to drop ``spatial_ref_sys``.
+Reads the database URL from app.config so there is one source of truth, and
+hides two classes of table from autogenerate that are real but are not ours to
+migrate:
+
+* **PostGIS's own** - otherwise every migration tries to drop ``spatial_ref_sys``.
+* **Partition children** - ``scripts/ensure_partitions.py`` creates one
+  ``charger_status_events_YYYY_MM`` per month, and autogenerate sees a table
+  with no model and proposes dropping it. Left unfiltered, ``alembic check``
+  goes red the first time partitions are created and redder every month, which
+  trains everyone to stop reading it - and the one month it reports a *real*
+  drift, nobody looks.
 """
 
+import re
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
@@ -31,8 +40,20 @@ POSTGIS_MANAGED = {
 }
 
 
+#: A child of a declaratively partitioned table: ``<parent>_2026_08``, or the
+#: ``<parent>_default`` backstop. Anchored to the parents we actually partition
+#: so an unrelated table that happens to end in a year-month is still compared.
+PARTITIONED = ("charger_status_events", "poll_raw_payloads")
+_PARTITION_CHILD = re.compile(r"^(?:" + "|".join(PARTITIONED) + r")_(?:\d{4}_\d{2}|default)$")
+
+
 def include_object(obj, name, type_, reflected, compare_to):
-    return not (type_ == "table" and name in POSTGIS_MANAGED)
+    if type_ == "table":
+        return not (name in POSTGIS_MANAGED or _PARTITION_CHILD.match(name))
+    # An index belonging to a partition child is skipped with its table.
+    if type_ == "index" and obj.table is not None:
+        return not _PARTITION_CHILD.match(obj.table.name)
+    return True
 
 
 def run_migrations_offline() -> None:

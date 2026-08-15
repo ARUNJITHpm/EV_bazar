@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { PanelHeader } from "./ConsoleLayout";
+import { Glossary } from "./Glossary";
 
 /**
  * PART C.4 — CPO / scraped-source panel.
@@ -39,6 +40,16 @@ function stateLabel(s: CpoSource): { label: string; warn: boolean } {
   return { label: "blocked", warn: true };
 }
 
+/** One row of the state legend — what a word in the State column means. */
+function Legend({ term, children }: { term: string; children: React.ReactNode }) {
+  return (
+    <div className="border-b border-rule py-1.5">
+      <dt className="font-data text-[12px]">{term}</dt>
+      <dd className="text-[12px] text-ink-muted">{children}</dd>
+    </div>
+  );
+}
+
 export function Cpo() {
   const q = useQuery({
     queryKey: ["cpo-sources"],
@@ -54,7 +65,10 @@ export function Cpo() {
     <>
       <PanelHeader
         title="CPO"
-        note="Every network we scrape or roam, with governance and measured status side by side. A source polls only when it is BOTH authorised in sources.py AND given an endpoint in settings — config alone is not consent."
+        note="Every charging network we watch, and whether we are allowed to watch it yet. A network is polled only when BOTH locks are open: a human read its terms and marked it authorised in the code, and an endpoint is configured. Everything on the right is measured by our own poller, never the operator's claim."
+      />
+      <Glossary
+        terms={["CPO", "Scrape", "OCPI", "Two locks", "Connector", "Change log", "Occupancy"]}
       />
 
       {q.isPending ? (
@@ -126,6 +140,24 @@ export function Cpo() {
               })}
             </tbody>
           </table>
+
+          <dl className="mt-4 max-w-prose border-t border-rule">
+            <Legend term="not authorised">
+              Nobody has read this network's terms and approved it yet, so we do not send it a
+              single request. This is where every network starts.
+            </Legend>
+            <Legend term="authorised · no endpoint">
+              Approved, but we have not yet found the web address its app calls. That discovery is
+              hand work — a few hours per app with a traffic inspector.
+            </Legend>
+            <Legend term="polling">
+              Both locks open. We are recording this network right now.
+            </Legend>
+            <Legend term="blocked">
+              Authorised and configured, but something is stopping it. Hover the label for the
+              reason.
+            </Legend>
+          </dl>
 
           <p className="mt-3 max-w-prose font-data text-[11px] text-ink-faint">
             Many chargers recur across these networks because they roam over OCPI — the same

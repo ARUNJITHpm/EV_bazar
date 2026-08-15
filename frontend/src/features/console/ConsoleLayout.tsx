@@ -28,10 +28,16 @@ const NAV: Group[] = [
     ],
   },
   {
+    heading: "Explain",
+    items: [
+      { to: "/console/lookup", label: "Lookup", hint: "a point → district, with the working" },
+      { to: "/console/data", label: "Data", hint: "tables · what each holds · tiers" },
+    ],
+  },
+  {
     heading: "Sources",
     items: [
       { to: "/console/cpo", label: "CPO", hint: "partners · terms · uptime" },
-      { to: "/console/data", label: "Data", hint: "coverage · freshness · dedupe" },
       { to: "/console/geocoding", label: "Geocoding", hint: "cascade · manual queue" },
     ],
   },

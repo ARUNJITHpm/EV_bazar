@@ -65,6 +65,83 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/internal/geocoding/funnel": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Geocoding Funnel */
+    get: operations["geocoding_funnel_api_internal_geocoding_funnel_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/geocoding/queue": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Geocoding Queue
+     * @description Open jobs, busiest first.
+     */
+    get: operations["geocoding_queue_api_internal_geocoding_queue_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/geocoding/queue/{queue_id}/reject": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Reject Job
+     * @description A human looked and could not place it. Nothing is written to the cache.
+     */
+    post: operations["reject_job_api_internal_geocoding_queue__queue_id__reject_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/geocoding/queue/{queue_id}/resolve": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Resolve Job
+     * @description Place the point, and write it back into the cache so it stays placed.
+     */
+    post: operations["resolve_job_api_internal_geocoding_queue__queue_id__resolve_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/healthz": {
     parameters: {
       query?: never;
@@ -77,6 +154,79 @@ export interface paths {
      * @description Liveness only. Does not touch the database.
      */
     get: operations["healthz_api_internal_healthz_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/lookup/coverage": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Lookup Coverage
+     * @description Per state: what evidence exists, and the tier that follows from it.
+     *
+     *     ⚠️ Every evidence flag below is currently derived from a table that either
+     *     does not exist yet or is empty, so the honest answer is Tier 3 everywhere.
+     *     That is the correct answer and it is stated rather than worked around - the
+     *     alternative, hardcoding "Kerala and Tamil Nadu are Tier 1", would make the
+     *     console agree with the plan instead of with the database.
+     */
+    get: operations["lookup_coverage_api_internal_lookup_coverage_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/lookup/point": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Lookup Point
+     * @description Resolve one coordinate and show the working.
+     *
+     *     The bounds are not decoration: a transposed lat/lng is the commonest way a
+     *     hand-entered point goes wrong, and (76.2, 9.9) is a coordinate in Kazakhstan
+     *     that would otherwise be rejected 5 km later with no explanation of why.
+     */
+    get: operations["lookup_point_api_internal_lookup_point_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/lookup/tables": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Lookup Tables
+     * @description Row counts for every table that carries meaning, with what it is for.
+     *
+     *     One round trip rather than fifteen: the counts are unioned into a single
+     *     statement, which matters when the database is a hop away.
+     */
+    get: operations["lookup_tables_api_internal_lookup_tables_get"];
     put?: never;
     post?: never;
     delete?: never;
@@ -205,6 +355,20 @@ export interface components {
       /** Never Run */
       never_run: boolean;
     };
+    /** CoverageOut */
+    CoverageOut: {
+      /**
+       * Checked At
+       * Format: date-time
+       */
+      checked_at: string;
+      /** Note */
+      note: string;
+      /** Rule */
+      rule: string;
+      /** States */
+      states: components["schemas"]["StateCoverageOut"][];
+    };
     /**
      * CpoSourceOut
      * @description One scraped/roamed CPO source, for the console CPO panel (PLAN C.4).
@@ -249,6 +413,49 @@ export interface components {
       /** Sources */
       sources: components["schemas"]["CpoSourceOut"][];
     };
+    /**
+     * FieldSource
+     * @description Where one field on the answer physically came from.
+     */
+    FieldSource: {
+      /** Field */
+      field: string;
+      /** Note */
+      note: string;
+      /** Source */
+      source: string;
+      /** Value */
+      value: string;
+    };
+    /** FunnelOut */
+    FunnelOut: {
+      /**
+       * Billing Month
+       * Format: date
+       */
+      billing_month: string;
+      /** Cached Addresses */
+      cached_addresses: number;
+      /**
+       * Checked At
+       * Format: date-time
+       */
+      checked_at: string;
+      /** Free Share */
+      free_share: number | null;
+      /** Levels */
+      levels: components["schemas"]["LevelOut"][];
+      /** Queue Open */
+      queue_open: number;
+      /** Queue Rejected */
+      queue_rejected: number;
+      /** Queue Resolved */
+      queue_resolved: number;
+      /** Resolved */
+      resolved: number;
+      /** Spend */
+      spend: components["schemas"]["SpendOut"][];
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
@@ -259,15 +466,99 @@ export interface components {
       /** Status */
       status: string;
     };
+    /**
+     * LayerOut
+     * @description Provenance of the map data itself - PLAN C.5's data-vintage row.
+     */
+    LayerOut: {
+      /**
+       * Downloaded At
+       * Format: date-time
+       */
+      downloaded_at: string;
+      /** Feature Count */
+      feature_count: number;
+      /** Licence */
+      licence: string;
+      /** Name */
+      name: string;
+      /** Source Url */
+      source_url: string;
+    };
+    /**
+     * LevelOut
+     * @description One cascade level's share of the cache.
+     */
+    LevelOut: {
+      /** Resolved */
+      resolved: number;
+      /** Source */
+      source: string;
+      /** Unresolved */
+      unresolved: number;
+    };
     /** LoginIn */
     LoginIn: {
       /** Password */
       password: string;
     };
+    /** NeighbourOut */
+    NeighbourOut: {
+      /** Distance M */
+      distance_m: number;
+      /** Lgd District Code */
+      lgd_district_code: number;
+      /** Name */
+      name: string;
+      /** State Name */
+      state_name: string;
+    };
     /** Operator */
     Operator: {
       /** Operator */
       operator: string;
+    };
+    /** PointOut */
+    PointOut: {
+      /** Boundary Ambiguous */
+      boundary_ambiguous: boolean;
+      /** Confidence */
+      confidence: string;
+      /** Distance M */
+      distance_m: number;
+      /** District */
+      district: string | null;
+      /** Fields */
+      fields: components["schemas"]["FieldSource"][];
+      /** Lat */
+      lat: number;
+      /** Layers */
+      layers: components["schemas"]["LayerOut"][];
+      /** Lgd District Code */
+      lgd_district_code: number | null;
+      /** Lgd State Code */
+      lgd_state_code: number | null;
+      /** Lng */
+      lng: number;
+      /** Method */
+      method: string;
+      neighbour: components["schemas"]["NeighbourOut"] | null;
+      /** Overridden District */
+      overridden_district: string | null;
+      /** Pin Conflict */
+      pin_conflict: boolean;
+      /** Pincode At Point */
+      pincode_at_point: string[];
+      /** Reasons */
+      reasons: string[];
+      /** Resolved */
+      resolved: boolean;
+      /** State Name */
+      state_name: string | null;
+      /** Steps */
+      steps: components["schemas"]["Step"][];
+      /** Supplied Pincode */
+      supplied_pincode: string | null;
     };
     /** PollerHealthOut */
     PollerHealthOut: {
@@ -287,6 +578,39 @@ export interface components {
       /** Threshold Minutes */
       threshold_minutes: number;
     };
+    /** QueueItemOut */
+    QueueItemOut: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Hits */
+      hits: number;
+      /** Id */
+      id: number;
+      /** Lat */
+      lat: number | null;
+      /** Lng */
+      lng: number | null;
+      /** Normalised Input */
+      normalised_input: string;
+      /** Pincode */
+      pincode: string | null;
+      /** Raw Input */
+      raw_input: string;
+      /** Reason */
+      reason: string | null;
+      /** Status */
+      status: string;
+    };
+    /** QueueOut */
+    QueueOut: {
+      /** Items */
+      items: components["schemas"]["QueueItemOut"][];
+      /** Open Count */
+      open_count: number;
+    };
     /** Readiness */
     Readiness: {
       /** Database */
@@ -297,6 +621,20 @@ export interface components {
       paid_providers_enabled: string[];
       /** Postgis */
       postgis: string;
+    };
+    /** RejectIn */
+    RejectIn: {
+      /** Note */
+      note?: string | null;
+    };
+    /** ResolveIn */
+    ResolveIn: {
+      /** Lat */
+      lat: number;
+      /** Lng */
+      lng: number;
+      /** Note */
+      note?: string | null;
     };
     /** SourceHealthOut */
     SourceHealthOut: {
@@ -320,6 +658,89 @@ export interface components {
       source: string;
       /** Stale */
       stale: boolean;
+    };
+    /** SpendOut */
+    SpendOut: {
+      /** Calls */
+      calls: number;
+      /** Cost Paise */
+      cost_paise: number;
+      /** Provider */
+      provider: string;
+    };
+    /** StateCoverageOut */
+    StateCoverageOut: {
+      /** Districts */
+      districts: number;
+      /** Has Competitor Poll */
+      has_competitor_poll: boolean;
+      /** Has Osm Road Quality */
+      has_osm_road_quality: boolean;
+      /** Has Tariff Data */
+      has_tariff_data: boolean;
+      /** Has Vahan Data */
+      has_vahan_data: boolean;
+      /** Lgd State Code */
+      lgd_state_code: number;
+      /** State */
+      state: string;
+      /**
+       * Tier
+       * @description 1 = full report · 2 = tariff audit only · 3 = waitlist
+       */
+      tier: number;
+      /** Why */
+      why: string;
+    };
+    /**
+     * Step
+     * @description One question the resolver asked, and where it went for the answer.
+     */
+    Step: {
+      /** Answer */
+      answer: string;
+      /**
+       * Decisive
+       * @default false
+       */
+      decisive: boolean;
+      /** Looked In */
+      looked_in: string;
+      /** N */
+      n: number;
+      /** Question */
+      question: string;
+      /** Using */
+      using: string;
+    };
+    /** TableOut */
+    TableOut: {
+      /** Empty Means */
+      empty_means?: string | null;
+      /** Filled By */
+      filled_by: string;
+      /** Group */
+      group: string;
+      /** Rows */
+      rows: number;
+      /** Table */
+      table: string;
+      /** What */
+      what: string;
+    };
+    /** TablesOut */
+    TablesOut: {
+      /**
+       * Checked At
+       * Format: date-time
+       */
+      checked_at: string;
+      /** Extension Tables */
+      extension_tables: string[];
+      /** Tables */
+      tables: components["schemas"]["TableOut"][];
+      /** Undocumented */
+      undocumented: string[];
     };
     /** ValidationError */
     ValidationError: {
@@ -425,6 +846,144 @@ export interface operations {
       };
     };
   };
+  geocoding_funnel_api_internal_geocoding_funnel_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FunnelOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  geocoding_queue_api_internal_geocoding_queue_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["QueueOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reject_job_api_internal_geocoding_queue__queue_id__reject_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        queue_id: number;
+      };
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RejectIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["QueueItemOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  resolve_job_api_internal_geocoding_queue__queue_id__resolve_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        queue_id: number;
+      };
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ResolveIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["QueueItemOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   healthz_api_internal_healthz_get: {
     parameters: {
       query?: never;
@@ -441,6 +1000,104 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["Health"];
+        };
+      };
+    };
+  };
+  lookup_coverage_api_internal_lookup_coverage_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CoverageOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  lookup_point_api_internal_lookup_point_get: {
+    parameters: {
+      query: {
+        /** @description India's bounding box, roughly */
+        lat: number;
+        lng: number;
+        pincode?: string | null;
+      };
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PointOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  lookup_tables_api_internal_lookup_tables_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TablesOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
         };
       };
     };

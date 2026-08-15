@@ -1,6 +1,6 @@
 # AGENTS.md — rules for AI agents working in this repo
 
-Read `OVERVIEW.md` for architecture, `STACK.md` for structure, and `PLAN.md` for sequencing. This file is the short list of things that will break the project if you get them wrong.
+Read `OVERVIEW.md` for architecture, `STACK.md` for structure, `PLAN.md` for sequencing, and `FINDINGS.md` for what is blocked, what was already decided and why, and where a ticked box is less verified than it looks. This file is the short list of things that will break the project if you get them wrong.
 
 ## Stack — settled, do not propose alternatives
 

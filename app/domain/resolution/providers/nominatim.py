@@ -16,35 +16,16 @@ cascade at L3, its first paying caller.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import Any
 
 import httpx
 
+from app.domain.resolution.providers.base import GeocodeResult, to_float
 
-@dataclass(frozen=True)
-class GeocodeResult:
-    """One geocoder's answer for one query. Source-agnostic on purpose, so the
-    cascade can compare a Nominatim hit against an Ola or Google one later."""
-
-    lat: float
-    lng: float
-    source: str
-    display_name: str | None = None
-    #: The matched address's own PIN, when the provider returns one - used to
-    #: corroborate the PIN the customer supplied.
-    postcode: str | None = None
-    #: Nominatim's 0-1 importance. A weak signal, kept for the console and for
-    #: tie-breaking, never trusted as a calibrated probability.
-    importance: float | None = None
-    raw: dict[str, Any] | None = None
-
-
-def _to_float(value: Any) -> float | None:
-    try:
-        return float(value)
-    except (TypeError, ValueError):
-        return None
+#: Re-exported: ``GeocodeResult`` moved to ``base.py`` when Ola/Mappls/Google
+#: joined the cascade and needed to return the same type. Imports of it from
+#: here still work, and should - it is the shape a *geocoder* returns.
+__all__ = ["GeocodeResult", "NominatimGeocoder", "parse_search"]
 
 
 def parse_search(payload: Any, *, source: str = "nominatim") -> GeocodeResult | None:
@@ -60,8 +41,8 @@ def parse_search(payload: Any, *, source: str = "nominatim") -> GeocodeResult | 
     if not isinstance(top, dict):
         return None
 
-    lat = _to_float(top.get("lat"))
-    lng = _to_float(top.get("lon"))
+    lat = to_float(top.get("lat"))
+    lng = to_float(top.get("lon"))
     if lat is None or lng is None:
         return None
 
@@ -74,8 +55,9 @@ def parse_search(payload: Any, *, source: str = "nominatim") -> GeocodeResult | 
         source=source,
         display_name=top.get("display_name"),
         postcode=str(postcode) if postcode else None,
-        importance=_to_float(top.get("importance")),
+        importance=to_float(top.get("importance")),
         raw=top,
+        place_id=str(top["osm_id"]) if top.get("osm_id") else None,
     )
 
 

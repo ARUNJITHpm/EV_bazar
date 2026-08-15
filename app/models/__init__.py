@@ -19,6 +19,7 @@ from app.models.charger_status import (
     Transition,
 )
 from app.models.geocode import GeocodeCache
+from app.models.manual_queue import GeocodeManualQueue, QueueStatus
 from app.models.price_cards import ProviderPriceCard
 from app.models.reference import (
     District,
@@ -28,6 +29,7 @@ from app.models.reference import (
     State,
 )
 from app.models.schema_version import SchemaVersion
+from app.models.site import Site
 
 __all__ = [
     "BILLABLE_STATUSES",
@@ -39,13 +41,16 @@ __all__ = [
     "District",
     "DistrictNameCrosswalk",
     "GeocodeCache",
+    "GeocodeManualQueue",
     "Pincode",
     "PollOutcome",
     "PollRawPayload",
     "PollRun",
     "ProviderPriceCard",
+    "QueueStatus",
     "ReferenceLayer",
     "SchemaVersion",
+    "Site",
     "State",
     "Transition",
     "UsageStatus",

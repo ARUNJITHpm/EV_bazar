@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from app.api.internal import console_auth, health, poller
+from app.api.internal import console_auth, geocoding, health, lookup, poller
 from app.api.internal.console_auth import require_operator
 
 router = APIRouter()
@@ -33,5 +33,7 @@ router.include_router(console_auth.router, tags=["console-auth"])
 # --- guarded ---------------------------------------------------------------
 guarded = APIRouter(dependencies=[Depends(require_operator)])
 guarded.include_router(poller.router, tags=["internal-poller"])
+guarded.include_router(geocoding.router, tags=["internal-geocoding"])
+guarded.include_router(lookup.router, tags=["internal-lookup"])
 
 router.include_router(guarded)

@@ -77,6 +77,10 @@ services:
   # (PLAN 1.3, L2). The India extract import takes HOURS, so this sits
   # behind a profile: `docker compose --profile geocoding up nominatim`.
   # Do not let a casual `docker compose up` start it by accident.
+  #
+  # DISK: the India PBF is ~1.5 GB and the imported database is 40-80 GB.
+  # Check free space BEFORE starting - the import fails hours in otherwise,
+  # and the partial database is not resumable.
   nominatim:
     image: mediagis/nominatim:4.4
     environment:

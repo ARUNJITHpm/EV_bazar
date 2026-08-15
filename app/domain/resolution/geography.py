@@ -89,6 +89,11 @@ class Resolution:
     expected_pincode: str | None = None
     pin_conflict: bool = False
 
+    #: On a ``pin_override``, the district the coordinates themselves landed in.
+    #: Without it a caller can see which district won but not which one lost,
+    #: and any explanation of the decision has to guess at half of it.
+    overridden_district: DistrictHit | None = None
+
     #: Human-readable, in the order they were decided. These go straight into
     #: the report's assumption ledger (PLAN 5) - an unexplained downgrade is
     #: as useless as no downgrade.
@@ -208,6 +213,7 @@ def classify(
                 pincode_at_point=pins,
                 expected_pincode=expected_pincode,
                 pin_conflict=True,
+                overridden_district=district,
                 reasons=tuple(reasons),
             )
         # The PIN is unknown to us, or agrees on the district by another

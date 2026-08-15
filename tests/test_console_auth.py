@@ -239,7 +239,11 @@ def test_an_unconfigured_console_refuses_rather_than_opens() -> None:
     terms". It means 503.
     """
     app = create_app()
-    app.dependency_overrides[get_settings] = lambda: Settings(env="dev")
+    # _env_file=None or this asserts against whatever the developer happens to
+    # have in .env - which passed only for as long as nobody had configured a
+    # console locally, and then failed for a reason that looks nothing like
+    # its cause.
+    app.dependency_overrides[get_settings] = lambda: Settings(env="dev", _env_file=None)
     with TestClient(app) as c:
         assert c.get("/api/internal/sources").status_code == 503
         assert c.post("/api/internal/console/login", json={"password": PASSWORD}).status_code == 503
@@ -248,7 +252,7 @@ def test_an_unconfigured_console_refuses_rather_than_opens() -> None:
 def test_production_will_not_boot_without_a_console_password() -> None:
     """Same shape as the quota-cap rule: loud, at startup."""
     with pytest.raises(ValueError, match="PLAN C.0"):
-        Settings(env="prod")
+        Settings(env="prod", _env_file=None)
 
 
 def test_production_boots_once_it_is_configured() -> None:
