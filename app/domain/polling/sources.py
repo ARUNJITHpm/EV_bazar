@@ -229,10 +229,13 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
-        public_route="PUBLIC WEB (2026-08-15): the ezcharge.tatapower.com map POSTs to "
-        "HobsIntegration/syncRequestHandler?service=GET_CHARGING_STATIONS_ALL and gets JSON "
-        "with stationStatus:'AVAILABLE'. Best public occupancy target - confirm anon path + "
-        "ToS.",
+        public_route="CONFIRMED IN BROWSER (2026-08-15): ezcharge.tatapower.com/evselfcare "
+        "map loads with NO user login and POSTs to HobsIntegration/syncRequestHandler?service="
+        "GET_CHARGING_STATIONS_ALL. Carries LIVE occupancy (app has 'only available/free' "
+        "filters; reads stationStatus/availability). BUT the call needs an app-level credential "
+        "embedded in the page - a clean replay returns app-level 401 - so treat it like an app "
+        "capture (token upkeep + a human authorise), not an open feed. ToS = a customer service "
+        "agreement, no explicit anti-scraping clause.",
     ),
     SourceSpec(
         name="ather_grid",

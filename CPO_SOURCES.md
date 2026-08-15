@@ -63,10 +63,32 @@ CPO's public web map makes** (anonymous browser, no logins, nothing bypassed).
 
 | Rank | Source | How the data arrives | Occupancy? | KL/TN | Caveat |
 |---|---|---|---|---|---|
-| **1** | **Tata Power EZ Charge** (public web map) | `POST ezcharge.tatapower.com/…/HobsIntegration/syncRequestHandler?service=GET_CHARGING_STATIONS_ALL` → JSON with `stationStatus:"AVAILABLE"`; UI has "only available/free" toggles | **Yes** | Both | ⚠️ confirm the anonymous `#/home` path serves it without login (one session saw 200 anon; a deeper route redirected to Sign In), and read the evselfcare ToS |
+| **1** | **Tata Power EZ Charge** (public web map) | `POST ezcharge.tatapower.com/HobsIntegration/syncRequestHandler?service=GET_CHARGING_STATIONS_ALL` → JSON; UI has "only available/free" toggles | **Yes** | Both | **CONFIRMED IN BROWSER 2026-08-15** — see note below |
 | **2** | **Statiq** (public web map) | Per-connector status baked into SSR HTML / `__NEXT_DATA__` on each station page — **no clean JSON** | **Yes** (per connector) | Both | HTML-parse per station; robots explicitly permits crawl + AI |
 | **3** | **Pulse Energy** (aggregator web map) | same-origin `GET pulseenergy.io/api/charging-stations/nearby` (geolocation-driven) | Unknown — needs a geo-enabled browser to confirm the shape | Both (multi-CPO) | Highest upside — one capture could span Tata, Zeon, Statiq, Charge+Zone |
 | — | **Google Places API** (New) | `evChargeOptions.connectorAggregation[].availableCount / outOfServiceCount / availabilityLastUpdateTime` | **Yes**, official REST, non-OCPI | only networks that feed Google — **Statiq + Ather confirmed** | ⛔ **ToS forbids storing/caching** the content → fine for ephemeral live display, **illegal to accumulate a time series**. Paid (~$25/1k, Enterprise+Atmosphere SKU) |
+
+**Tata Power — browser confirmation (2026-08-15).** Verified in an anonymous
+session, no login, nothing bypassed:
+
+- The `ezcharge.tatapower.com/evselfcare/#/home` map **loads and populates station
+  clusters with NO user sign-in.** The data call is
+  `POST /HobsIntegration/syncRequestHandler?service=GET_CHARGING_STATIONS_ALL` →
+  HTTP 200.
+- It **carries live occupancy, not just inventory** — the app bundle has "only
+  available" / "only free chargers" filters and reads `stationStatus` /
+  `availability`, with the OCCUPIED/CHARGING/BUSY family referenced ~75 times.
+- **BUT it is not an open feed.** A clean replay of the call *without* the app's
+  embedded credential returns an **application-level 401 Unauthorized** (inside a
+  200 envelope). So the map is anonymous to a *user*, but the API call carries a
+  credential baked into the page. Polling it therefore means replaying Tata's own
+  app credential → **treat it like an app capture** (token can rotate; needs a
+  human `authorised` decision), NOT the clean public JSON the first pass assumed.
+- **ToS:** the Terms of Use is a **customer/service agreement** (charging sessions,
+  EZ Charge cards, payments) with **no explicit anti-scraping or automated-access
+  clause** — but no grant of permission either, and it disclaims the accuracy and
+  availability of the displayed status. The durable path for Tata occupancy remains
+  an **OCPI/partner ask**; the web endpoint is a viable interim with upkeep risk.
 
 ### Inventory only (locations/connectors, NO occupancy) — clean, free, permissive JSON
 
