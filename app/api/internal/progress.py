@@ -56,6 +56,7 @@ class Signals:
     usage_events: int
     tariff_rows: int
     tariff_states: int
+    competitor_stations: int
     sources_authorised: int
     sources_total: int
 
@@ -75,7 +76,8 @@ def read_signals(session: Session) -> Signals:
               (SELECT count(*) FROM api_usage_events),
               (SELECT count(*) FROM electricity_tariffs),
               (SELECT count(DISTINCT lgd_state_code) FROM electricity_tariffs
-               WHERE effective_to IS NULL OR effective_to > CURRENT_DATE)
+               WHERE effective_to IS NULL OR effective_to > CURRENT_DATE),
+              (SELECT count(*) FROM competitor_stations)
         """)
     ).one()
     return Signals(
@@ -90,6 +92,7 @@ def read_signals(session: Session) -> Signals:
         usage_events=int(row[8]),
         tariff_rows=int(row[9]),
         tariff_states=int(row[10]),
+        competitor_stations=int(row[11]),
         sources_authorised=sum(1 for s in SOURCES if s.authorised),
         sources_total=len(SOURCES),
     )
@@ -318,6 +321,26 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "call has happened yet). Two of three rates are placeholder guesses until a "
         "real bill confirms them.",
         None,
+    )
+    competitors_live = s.competitor_stations > 0
+    add(
+        "2.3",
+        "Competitor inventory",
+        Status.PARTIAL if competitors_live else Status.NEXT,
+        "Who else has a charger where, and how powerful - the denominator for "
+        "'how much competition is near this site'. Pulled from Open Charge Map (one "
+        "free-key API over all of India), each station resolved to its district on "
+        "ingest. This is existence + specs; how BUSY each one is comes only from the "
+        "poller, and attaches to these rows later.",
+        (
+            f"{s.competitor_stations:,} stations stored (see the Competitors panel)."
+            if competitors_live
+            else "None fetched yet."
+        ),
+        None
+        if competitors_live
+        else "Get a free Open Charge Map key (openchargemap.org), put it in .env, then "
+        "`python -m scripts.fetch_competitors --state kerala --write`.",
     )
     add(
         "3.1 + 3.2",

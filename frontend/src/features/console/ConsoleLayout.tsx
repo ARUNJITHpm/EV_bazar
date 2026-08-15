@@ -39,6 +39,7 @@ const NAV: Group[] = [
     heading: "Sources",
     items: [
       { to: "/console/cpo", label: "CPO", hint: "partners · terms · uptime" },
+      { to: "/console/competitors", label: "Competitors", hint: "inventory · networks · DC-fast" },
       { to: "/console/geocoding", label: "Geocoding", hint: "cascade · manual queue" },
     ],
   },

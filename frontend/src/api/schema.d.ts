@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+  "/api/internal/competitors": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Competitors */
+    get: operations["competitors_api_internal_competitors_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/console/login": {
     parameters: {
       query?: never;
@@ -372,6 +389,24 @@ export interface components {
       /** Never Run */
       never_run: boolean;
     };
+    /** CompetitorsOut */
+    CompetitorsOut: {
+      /** By State */
+      by_state: components["schemas"]["StateRow"][];
+      /**
+       * Checked At
+       * Format: date-time
+       */
+      checked_at: string;
+      /** Fetched From */
+      fetched_from: string[];
+      /** Top Operators */
+      top_operators: components["schemas"]["OperatorRow"][];
+      /** Total */
+      total: number;
+      /** Unplaced */
+      unplaced: number;
+    };
     /** CoverageOut */
     CoverageOut: {
       /**
@@ -579,6 +614,15 @@ export interface components {
       /** Operator */
       operator: string;
     };
+    /** OperatorRow */
+    OperatorRow: {
+      /** Dc Fast */
+      dc_fast: number;
+      /** Operator */
+      operator: string;
+      /** Stations */
+      stations: number;
+    };
     /** PointOut */
     PointOut: {
       /** Boundary Ambiguous */
@@ -769,6 +813,15 @@ export interface components {
       /** Why */
       why: string;
     };
+    /** StateRow */
+    StateRow: {
+      /** Lgd State Code */
+      lgd_state_code: number;
+      /** State */
+      state: string;
+      /** Stations */
+      stations: number;
+    };
     /**
      * Status
      * @enum {string}
@@ -846,6 +899,39 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  competitors_api_internal_competitors_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompetitorsOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   login_api_internal_console_login_post: {
     parameters: {
       query?: never;

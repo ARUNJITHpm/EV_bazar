@@ -20,7 +20,15 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from app.api.internal import console_auth, geocoding, health, lookup, poller, progress
+from app.api.internal import (
+    competitors,
+    console_auth,
+    geocoding,
+    health,
+    lookup,
+    poller,
+    progress,
+)
 from app.api.internal.console_auth import require_operator
 
 router = APIRouter()
@@ -36,5 +44,6 @@ guarded.include_router(poller.router, tags=["internal-poller"])
 guarded.include_router(geocoding.router, tags=["internal-geocoding"])
 guarded.include_router(lookup.router, tags=["internal-lookup"])
 guarded.include_router(progress.router, tags=["internal-progress"])
+guarded.include_router(competitors.router, tags=["internal-competitors"])
 
 router.include_router(guarded)

@@ -306,6 +306,30 @@ Nadu are now **Tier 2** on the coverage panel, computed live from the rows.
   payable, every Kerala margin here is overstated (the unsafe direction). This
   is the first thing to check against a real KSEB bill — chargeMOD has one.
 
+### PART 2.3 — Competitor inventory live (OCM) 2026-08-15
+`competitor_stations` (migration `0010`) is populated: **1,079 stations across
+Kerala, Tamil Nadu and Karnataka** (the generous state bboxes caught border
+areas; point-in-polygon placed each — only 1 unplaced). Source: Open Charge
+Map, one free key. chargeMOD leads with 291 stations / 100 DC-fast, then GO EC,
+Zeon, Tata Power, Statiq, ChargeZone, Jio-bp.
+
+- **District resolution is bulk, not per-row** (D16): the first version resolved
+  each station with the full 1.4 cascade — hundreds of remote round-trips,
+  killed after 5 min with nothing written. Now one `ST_Contains`-over-`unnest`
+  query places the whole batch; a state imports in seconds. Containment-only, so
+  a coastal-sliver station lands NULL (unplaced) rather than snapping to nearest
+  — the right trade for an inventory import.
+- **verbose=false, NOT compact=true**: compact drops `OperatorInfo`, and the
+  operator is the field a competitor comparison turns on. Found on the first
+  real fetch (500 stations all "unattributed") — the same G1-shaped "shape
+  written from docs" lesson.
+- ⚠️ This is inventory + specs + an operational flag, **NOT occupancy**. OCM is
+  crowd-sourced, so counts are a floor and freshness varies. Occupancy — the
+  moat — still comes only from the poller (B3), and will attach to these rows.
+- The "tamilnadu" bbox overlaps Karnataka heavily (Bengaluru sits inside it), so
+  a lot of Karnataka coverage came for free. Not wrong — the resolver is
+  authoritative — just why the state split is not 50/50.
+
 ### CPO source research 2026-08-15
 - **Open Charge Map is the "better source" for competitor *inventory***: one
   free-key REST API covering all of India (operator, connectors, kW, an

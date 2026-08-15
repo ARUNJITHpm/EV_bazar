@@ -2,6 +2,7 @@ import { lazy, Suspense, type ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import { ConsoleLayout } from "./features/console/ConsoleLayout";
+import { Competitors } from "./features/console/Competitors";
 import { Cpo } from "./features/console/Cpo";
 import { Data } from "./features/console/Data";
 import { Lookup } from "./features/console/Lookup";
@@ -50,6 +51,7 @@ export const router = createBrowserRouter([
       { path: "progress", element: <Progress /> },
       { path: "lookup", element: <Lookup /> },
       { path: "cpo", element: <Cpo /> },
+      { path: "competitors", element: <Competitors /> },
       { path: "data", element: <Data /> },
       {
         path: "geocoding",

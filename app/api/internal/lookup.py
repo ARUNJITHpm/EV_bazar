@@ -460,6 +460,16 @@ _TABLES: tuple[tuple[str, str, str, str, str], ...] = (
         "No customer request has been recorded yet.",
     ),
     (
+        "competitor_stations",
+        "Competitors",
+        "Every charging station we know about that is not a customer's site: who "
+        "runs it, where, how powerful, how public. The denominator for 'how much "
+        "competition is near this site'. A cache, upserted by source - NOT the "
+        "poller's occupancy log.",
+        "PLAN 2.3 - scripts/fetch_competitors.py (Open Charge Map)",
+        "No competitor fetch has run yet.",
+    ),
+    (
         "poll_runs",
         "Poller",
         "One row per sweep per source: when it ran, whether it worked, what it saw. "

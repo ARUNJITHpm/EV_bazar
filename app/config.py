@@ -52,6 +52,17 @@ class PaidProvider(BaseModel):
         return self
 
 
+class OpenChargeMapSource(BaseModel):
+    """Open Charge Map API config (PLAN 2.3). Free key, no spending cap needed."""
+
+    api_key: str | None = None
+    base_url: str = "https://api.openchargemap.io/v3"
+
+    @property
+    def enabled(self) -> bool:
+        return bool(self.api_key)
+
+
 class ScrapeSource(BaseModel):
     """Operational config for one scraped CPO app (PLAN 0.1).
 
@@ -112,6 +123,13 @@ class Settings(BaseSettings):
     # --- Geocoding cascade (PLAN 1.3) -------------------------------------
     # L2 Nominatim is self-hosted, so it is free and has no cap.
     nominatim_url: str = "http://localhost:8080"
+
+    # --- Competitor inventory (PLAN 2.3) ----------------------------------
+    # Open Charge Map: a free-key public API for station existence + specs (not
+    # occupancy). No cap machinery - it is free and read-only. A blank key just
+    # means the competitor fetch is unavailable, the same shape as an
+    # unconfigured scrape source.
+    open_charge_map: OpenChargeMapSource = Field(default_factory=lambda: OpenChargeMapSource())
 
     # L3/L4/L5 are metered. Each is gated by the validator above.
     ola_maps: PaidProvider = Field(default_factory=PaidProvider)

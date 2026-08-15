@@ -18,6 +18,7 @@ from app.models.charger_status import (
     PollRun,
     Transition,
 )
+from app.models.competitors import CompetitorStation
 from app.models.geocode import GeocodeCache
 from app.models.manual_queue import GeocodeManualQueue, QueueStatus
 from app.models.price_cards import ProviderPriceCard
@@ -37,6 +38,7 @@ __all__ = [
     "ApiUsageEvent",
     "Base",
     "ChargerStatusEvent",
+    "CompetitorStation",
     "ConnectorState",
     "ConnectorStatus",
     "District",
