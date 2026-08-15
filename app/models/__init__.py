@@ -30,6 +30,7 @@ from app.models.reference import (
 )
 from app.models.schema_version import SchemaVersion
 from app.models.site import Site
+from app.models.tariffs import ElectricityTariff, SubsidyRule
 
 __all__ = [
     "BILLABLE_STATUSES",
@@ -40,6 +41,7 @@ __all__ = [
     "ConnectorStatus",
     "District",
     "DistrictNameCrosswalk",
+    "ElectricityTariff",
     "GeocodeCache",
     "GeocodeManualQueue",
     "Pincode",
@@ -52,6 +54,7 @@ __all__ = [
     "SchemaVersion",
     "Site",
     "State",
+    "SubsidyRule",
     "Transition",
     "UsageStatus",
 ]

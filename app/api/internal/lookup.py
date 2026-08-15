@@ -509,6 +509,24 @@ _TABLES: tuple[tuple[str, str, str, str, str], ...] = (
         "",
     ),
     (
+        "electricity_tariffs",
+        "Tariffs & subsidies",
+        "What each DISCOM charges, per state and consumer category, with dates. "
+        "Never overwritten - a new SERC order is a new row, so an old report still "
+        "recomputes under the old tariff. Typed by hand from the order PDF.",
+        "PLAN 3.1 - human data entry (0.2), one state per evening",
+        "No tariff typed in yet - this is what keeps every state at Tier 3.",
+    ),
+    (
+        "subsidy_rules",
+        "Tariffs & subsidies",
+        "Capital subsidies and incentives (PM E-DRIVE, state EV policies), same "
+        "effective-dating. Subsidies change amortised capex enough to flip a "
+        "Build/Don't verdict, which is why they are a table and not a footnote.",
+        "PLAN 3.1 - human data entry",
+        "No schemes recorded yet.",
+    ),
+    (
         "schema_version",
         "Housekeeping",
         "Which schema revision the data was written under, so an old report can say "
@@ -659,10 +677,19 @@ def lookup_coverage(session: Session = Depends(get_session)) -> CoverageOut:
         .order_by(State.name)
     ).all()
 
-    # PLAN 0.2 (tariffs), 4.1 (VAHAN) and 2.1 (OSM roads) have no tables yet, so
-    # these are structurally false rather than queried. When each Part lands,
-    # replace the constant with its query - and the tier moves on its own.
-    has_tariff = False
+    # Tariffs are per state, read from the 3.1 table: a state has tariff data
+    # when a currently-effective row exists for it. VAHAN (4.1) and OSM roads
+    # (2.1) still have no tables, so those stay structurally false until their
+    # Parts land - and then the tier moves on its own.
+    tariff_states = {
+        int(row[0])
+        for row in session.execute(
+            text(
+                "SELECT DISTINCT lgd_state_code FROM electricity_tariffs "
+                "WHERE effective_to IS NULL OR effective_to > CURRENT_DATE"
+            )
+        ).all()
+    }
     has_vahan = False
     has_osm = False
     polled = session.execute(text("SELECT count(*) FROM poll_runs")).scalar_one()
@@ -670,6 +697,7 @@ def lookup_coverage(session: Session = Depends(get_session)) -> CoverageOut:
 
     states: list[StateCoverageOut] = []
     for code, name, district_count in rows:
+        has_tariff = int(code) in tariff_states
         tier, why = tier_for(tariff=has_tariff, poll=has_poll, vahan=has_vahan, osm=has_osm)
         states.append(
             StateCoverageOut(
@@ -690,11 +718,13 @@ def lookup_coverage(session: Session = Depends(get_session)) -> CoverageOut:
         checked_at=dt.datetime.now(dt.UTC),
         rule=_TIER_RULE,
         note=(
-            "Tariffs (PLAN 0.2), VAHAN (4.1) and OSM roads (2.1) have no table yet, so "
-            "their flags are false everywhere by construction. Competitor occupancy is "
-            "read from poll_runs and is national, not per state, until a poll can be "
-            "attributed to a district (needs FINDINGS B3). This view is computed live; "
-            "PLAN 1.6 will persist the same judgement per district."
+            "Tariff flags are live per state from the electricity_tariffs table - type "
+            "in a state's SERC order and it turns Tier 2 here on its own. VAHAN (4.1) "
+            "and OSM roads (2.1) have no table yet, so those flags are false everywhere "
+            "by construction. Competitor occupancy is read from poll_runs and is "
+            "national, not per state, until a poll can be attributed to a district "
+            "(needs FINDINGS B3). This view is computed live; PLAN 1.6 will persist the "
+            "same judgement per district."
         ),
         # Focus states first, then alphabetical - the two rows a reader acts on
         # should not be buried under A-for-Andaman.

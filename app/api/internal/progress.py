@@ -54,6 +54,8 @@ class Signals:
     poll_runs: int
     price_cards: int
     usage_events: int
+    tariff_rows: int
+    tariff_states: int
     sources_authorised: int
     sources_total: int
 
@@ -70,7 +72,10 @@ def read_signals(session: Session) -> Signals:
               (SELECT count(*) FROM sites),
               (SELECT count(*) FROM poll_runs),
               (SELECT count(*) FROM provider_price_cards),
-              (SELECT count(*) FROM api_usage_events)
+              (SELECT count(*) FROM api_usage_events),
+              (SELECT count(*) FROM electricity_tariffs),
+              (SELECT count(DISTINCT lgd_state_code) FROM electricity_tariffs
+               WHERE effective_to IS NULL OR effective_to > CURRENT_DATE)
         """)
     ).one()
     return Signals(
@@ -83,6 +88,8 @@ def read_signals(session: Session) -> Signals:
         poll_runs=int(row[6]),
         price_cards=int(row[7]),
         usage_events=int(row[8]),
+        tariff_rows=int(row[9]),
+        tariff_states=int(row[10]),
         sources_authorised=sum(1 for s in SOURCES if s.authorised),
         sources_total=len(SOURCES),
     )
@@ -227,21 +234,27 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "`python -m scripts.cascade_batch addresses.csv --out verify.csv --write` "
         "and hand-check the correct_y_n column.",
     )
+    tariffs_live = s.tariff_states > 0
     add(
-        "0.2 → 3",
-        "Tariffs: the first thing anyone pays for",
-        Status.NEXT,
+        "0.2 → 3.1",
+        "Type in the tariffs: the first thing anyone pays for",
+        Status.PARTIAL if tariffs_live else Status.NEXT,
         "Collect each state's electricity tariff orders (EV order AND the general "
         "schedule, including superseded ones - an old report must regenerate with the "
-        "old price), type them into effective-dated rows, then the pure ROI engine on "
-        "top. A Tariff Audit - 'here is where you are overpaying' - is verifiable by "
-        "the customer against their own bill, which is why it sells before any "
-        "prediction can. Exit test: sell three.",
-        "No tariff table exists yet, which is also why every state shows Tier 3 on the "
-        "Data panel. Load Kerala's and Kerala becomes Tier 2 on its own.",
-        "Human: KSERC first, then TNERC - one state per evening, six states. "
-        "Code (can start same day): the tariff schema + subsidy ledger (3.1), then "
-        "the ROI engine as a pure function with 30+ tests (3.2).",
+        "old price) and type them into the effective-dated tables. A Tariff Audit - "
+        "'here is where you are overpaying' - is verifiable by the customer against "
+        "their own bill, which is why it sells before any prediction can. Exit test: "
+        "sell three.",
+        (
+            f"{s.tariff_rows} tariff row(s) covering {s.tariff_states} state(s)."
+            if tariffs_live
+            else "The schema and the calculator are BUILT and tested - the tables hold "
+            "zero rows, which is exactly why every state shows Tier 3 on the Data "
+            "panel. Type in Kerala's order and Kerala turns Tier 2 on its own."
+        ),
+        "Human: KSERC first, then TNERC - one state per evening. Each row needs the "
+        "order number and PDF as provenance; a tariff that cannot be defended to a "
+        "customer whose bill disagrees is not data.",
     )
     add(
         "0.3",
@@ -304,6 +317,22 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         f"{s.price_cards} price cards seeded ({s.usage_events} usage events - no paid "
         "call has happened yet). Two of three rates are placeholder guesses until a "
         "real bill confirms them.",
+        None,
+    )
+    add(
+        "3.1 + 3.2",
+        "The tariff schema and the ROI calculator",
+        Status.CODE_DONE,
+        "The money machinery: effective-dated tariff and subsidy tables (never "
+        "overwritten, so an old report recomputes under the old price), and the pure "
+        "ROI engine - breakeven utilisation, NPV, IRR, payback, 10-year cashflow, "
+        "fleet-anchor / solar / financing scenarios, price sensitivity at +/- Rs 2, "
+        "and a recommended sanctioned load. No database, no network - the honesty "
+        "firewall (PART 7) depends on nothing being able to reach in and bend a "
+        "number. Try it: `uv run python -m scripts.roi_example`.",
+        "43 engine tests green, every PLAN 3.2 named case covered. UNPROVEN against "
+        "reality: 3.3 requires reconciling one operator's real monthly P&L to within "
+        "5%, and no tariff row or real P&L exists yet.",
         None,
     )
     add(

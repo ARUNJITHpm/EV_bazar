@@ -258,31 +258,34 @@ The one asset that cannot be retroactively acquired. Every day not polling is pe
 **Deps:** 0.2 · **Delivers: the first sellable product**
 
 ### 3.1 Tariff database
-- [ ] Structured schema: state, consumer category, EV-specific slab, ₹/kWh energy charge, ₹/kVA/month demand charge, ToD slabs, fixed charges, duty/cess, `effective_from`, `effective_to`, `source_pdf`, `order_number`
-- [ ] ⚠️ **Time-bounded rows.** Never overwrite a tariff — insert a new row with new dates.
+- [x] Structured schema: state, consumer category, EV-specific slab, ₹/kWh energy charge, ₹/kVA/month demand charge, ToD slabs, fixed charges, duty/cess, `effective_from`, `effective_to`, `source_pdf`, `order_number` — `app/models/tariffs.py`, migration `0009`. Money in integer paise, duty in basis points; `order_number`/`source_pdf` NOT NULL — a tariff without provenance cannot be defended to a customer whose bill disagrees. **Zero rows until 0.2 delivers the PDFs.**
+- [x] ⚠️ **Time-bounded rows.** Never overwrite a tariff — insert a new row with new dates. — `effective_to` exclusive, CHECK-constrained; selection in `app/domain/tariffs/select.py` (pure, tested), newest `effective_from` wins on overlap, exactly as SERC orders supersede.
 - [ ] Cross-check every state against one real electricity bill
-- [ ] **Subsidy ledger** — sibling table, same effective-dating discipline: PM E-DRIVE capital subsidy per charger class, state EV-policy subsidies, accelerated depreciation, GST treatment. `state, scheme, charger_class, amount_or_rate, conditions, effective_from, effective_to, source_url`. These change amortised capex enough to flip verdicts.
+- [x] **Subsidy ledger** — sibling table, same effective-dating discipline: PM E-DRIVE capital subsidy per charger class, state EV-policy subsidies, accelerated depreciation, GST treatment. `state, scheme, charger_class, amount_or_rate, conditions, effective_from, effective_to, source_url`. These change amortised capex enough to flip verdicts. — `subsidy_rules`, amount XOR rate enforced by CHECK; `subsidy_paise()` resolves a rule to money; a test proves a ₹15L subsidy flips NPV's sign.
 
 ### 3.2 ROI engine — **pure function, zero dependencies**
-- [ ] No DB access, no network, no globals. Inputs in, dict out.
-- [ ] **30+ unit tests.** Include: zero utilisation, 100% utilisation, negative margin, ToD split, missing transformer, revenue-share vs ₹/kWh CPO models
-- [ ] Capex: hardware, civil, transformer/load augmentation, DISCOM connection, signage/canopy — **net of the subsidy ledger (3.1)**
-- [ ] Opex: **demand charges (`sanctioned_kVA × ₹/kVA/mo × 12`)**, energy, O&M/AMC 5–8% of hardware capex, rent/revenue share, network fee, gateway ~1.5–2%, GST treatment
-- [ ] **Fleet anchor scenarios** — *with/without* a minimum-guarantee offtake, as first-class scenarios. The single biggest de-risker in Indian charging economics; an anchor alone can flip Don't → Build.
-- [ ] **Utilisation as a ramp curve**, never a flat rate — the engine consumes `kwh_by_year[]`, not one number. Payback at "P50 in year 1" vs "P50 in year 3" is a different verdict.
-- [ ] **Sanctioned load as an output** — recommend the kVA (battery-buffered / managed-peak options), don't just accept it. Cutting ₹2–4 lakh/yr of demand charges is advice worth paying for.
-- [ ] **Solar co-location scenario** — canopy/rooftop solar shifts `margin_per_kWh` enough to flip verdicts
-- [ ] **Selling-price sensitivity** — price is a decision constrained by nearby competitor pricing (the poller observes it); output breakeven at ±₹2/kWh around the assumed price
-- [ ] **Optional financing block** — debt/equity split, interest rate → levered IRR. Lenders are the deepest-pocketed buyer and unlevered IRR is incomplete for a credit committee.
-- [ ] Outputs: `margin_per_kWh`, `annual_fixed`, **`breakeven_kWh_year`**, **`breakeven_utilisation`**, NPV, IRR, payback, 10-yr cashflow
-- [ ] `economics_version` stamped on every result
+
+> Built: `app/domain/roi/engine.py`. Try it: `uv run python -m scripts.roi_example [--anchor --solar --debt]`.
+
+- [x] No DB access, no network, no globals. Inputs in, dict out. — purity is *structural*: the import-linter contract "ROI engine is pure" forbids db/models/api/config/httpx/sqlalchemy at CI. `RoiResult.as_dict()` is the dict.
+- [x] **30+ unit tests.** Include: zero utilisation, 100% utilisation, negative margin, ToD split, missing transformer, revenue-share vs ₹/kWh CPO models — 43 in `tests/test_roi_engine.py`; every named case has its own test. Negative margin returns `breakeven=None` **with the reason stated**, never a pretend number.
+- [x] Capex: hardware, civil, transformer/load augmentation, DISCOM connection, signage/canopy — **net of the subsidy ledger (3.1)** — a subsidy larger than gross capex is refused, not absorbed.
+- [x] Opex: **demand charges (`sanctioned_kVA × ₹/kVA/mo × 12`)**, energy, O&M/AMC 5–8% of hardware capex, rent/revenue share, network fee, gateway ~1.5–2%, GST treatment — gateway applies to retail revenue only (a fleet contract is invoiced, not swiped); O&M on hardware only, never civil — both tested. GST fields deferred to first real bill (FINDINGS).
+- [x] **Fleet anchor scenarios** — take-or-pay `FleetAnchor(min_kwh, price)`; a test proves a 200k kWh anchor flips Don't → Build. Breakeven deliberately *ignores* the anchor: it answers "how busy must retail be", the anchor de-risks NPV/IRR instead.
+- [x] **Utilisation as a ramp curve**, never a flat rate — `kwh_by_year: tuple`; an empty ramp is a ValueError, later years continue at the final value; a test proves a ramp pays back later than its own steady state.
+- [x] **Sanctioned load as an output** — three options (full / managed-peak ×0.7 / battery-buffered ×0.5) each with the annual saving vs the customer's number. The worked example finds ₹2.7L/yr on managed peak alone.
+- [x] **Solar co-location scenario** — blends grid rate with solar LCOE (duty-free), costs its capex in year 0.
+- [x] **Selling-price sensitivity** — five points at ₹−2…+2, monotonicity tested.
+- [x] **Optional financing block** — level-annuity debt service → levered IRR; a test pins that leverage amplifies only when project IRR clears the interest rate.
+- [x] Outputs: `margin_per_kWh`, `annual_fixed`, **`breakeven_kWh_year`**, **`breakeven_utilisation`**, NPV, IRR, payback, 10-yr cashflow — plus the assumption ledger (every default that shaped the answer, verbatim strings for PLAN 5).
+- [x] `economics_version` stamped on every result — `0.1.0`; bumps whenever a formula changes.
 
 ### 3.3 Validation
 - [ ] Reconcile against **one operator's one month of real P&L**. Must match within 5%. If it doesn't, the tariff parse is wrong — fix it before proceeding.
 
 ### 🎯 Exit Criteria — Part 3 — **SHIP THIS**
-- [ ] **Tariff Audit + breakeven number is sellable with no demand model at all.**
-- [ ] 30+ tests green
+- [ ] **Tariff Audit + breakeven number is sellable with no demand model at all.** — *the calculator is ready; sellability waits on real tariff rows (0.2) and the P&L reconciliation (3.3)*
+- [x] 30+ tests green — *43*
 - [ ] Real-P&L reconciliation within 5%
 - [ ] **Sell the Tariff Audit to three operators. Do this before Part 4.** The audit is the door-opener (OVERVIEW §6.1): the customer feels the pain today, can verify the number against their own bill, and every audit customer is a warm prospect for an expansion assessment. If three operators won't pay for found money, that is market feedback the demand model cannot fix.
 

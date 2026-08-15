@@ -27,9 +27,20 @@ EMPTY_WORLD = Signals(
     poll_runs=0,
     price_cards=3,
     usage_events=0,
+    tariff_rows=0,
+    tariff_states=0,
     sources_authorised=0,
     sources_total=8,
 )
+
+
+def test_typed_tariffs_move_the_milestone_off_the_queue() -> None:
+    import dataclasses
+
+    live = dataclasses.replace(EMPTY_WORLD, tariff_rows=4, tariff_states=1)
+    tariffs = next(m for m in build_milestones(live) if m.part == "0.2 → 3.1")
+    assert tariffs.status is Status.PARTIAL
+    assert "1 state(s)" in tariffs.evidence
 
 
 def test_a_silent_poller_is_the_first_item_in_the_queue() -> None:

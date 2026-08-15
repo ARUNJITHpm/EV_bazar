@@ -259,6 +259,32 @@ and G5. Verified live: Kochi `9.9312, 76.2673` + PIN `682035` → **Ernakulam
 so 1.4 records the conflict, declines to override (same district either way), and
 downgrades; the site inherits the weaker label.
 
+### PART 3.1–3.2 — Tariff schema and ROI engine — code done 2026-08-15
+Both built ahead of 0.2's data, so typing in the first SERC order is now the
+only thing between here and a computable breakeven.
+
+- `electricity_tariffs` + `subsidy_rules` (migration `0009`, applied): integer
+  paise, duty/rates in basis points, `effective_to` **exclusive**, provenance
+  (`order_number`, `source_pdf`) NOT NULL. Selection is a pure function
+  (`domain/tariffs/select.py`); on overlapping rows the newest
+  `effective_from` wins, mirroring how SERC orders supersede.
+- The engine (`domain/roi/engine.py`): purity is structural (import-linter
+  contract), 43 tests, every PLAN 3.2 named case covered. Decisions worth
+  remembering: **breakeven excludes the fleet anchor** (it answers "how busy
+  must retail be"; the anchor de-risks NPV instead); **gateway cut applies to
+  retail revenue only**; **O&M is a share of hardware only, never civil**;
+  negative margin → `breakeven=None` plus the reason, never a sentinel.
+- ⚠️ GST treatment is deliberately NOT modelled yet — input tax credit on EV
+  charging is genuinely unsettled and a wrong guess would bias every margin;
+  it enters with the first real bill at 3.3.
+- ⚠️ Unproven against reality, by definition: 3.3 needs one operator's real
+  monthly P&L to reconcile within 5%. The worked example
+  (`scripts/roi_example.py`) uses stated placeholder numbers - ₹7.50/kWh
+  energy, ₹400/kVA/mo - that LOOK plausible and are exactly the kind of
+  plausible that 3.3 exists to catch.
+- The coverage panel now reads tariff presence per state live: the first
+  Kerala row typed in turns Kerala Tier 2 with no code change.
+
 ### PART 1.6 — Tier gate — **next**
 Not started. What it needs and what it unblocks:
 
