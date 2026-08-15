@@ -153,6 +153,10 @@ class CpoSourceOut(BaseModel):
     terms_url: str | None
     terms_note: str | None
     rate_limit_per_minute: int | None
+    #: Researched route to this network's availability without OCPI/app-capture
+    #: (CPO_SOURCES.md, 2026-08-15). Which networks are public-web occupancy
+    #: targets vs app-only - the answer to "can we just scrape all of them".
+    public_route: str | None
     #: Observed from our own poll runs, not claimed by the operator.
     last_success_at: dt.datetime | None
     last_error: str | None
@@ -193,6 +197,7 @@ def cpo_sources_endpoint(session: Session = Depends(get_session)) -> CpoSourcesO
                 terms_url=spec.terms_url,
                 terms_note=spec.terms_note,
                 rate_limit_per_minute=spec.rate_limit_per_minute,
+                public_route=spec.public_route,
                 last_success_at=health.last_success_at,
                 last_error=health.last_error,
                 stations_last_run=health.stations_last_run,

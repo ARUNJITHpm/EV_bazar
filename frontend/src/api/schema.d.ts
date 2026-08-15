@@ -468,6 +468,8 @@ export interface components {
       last_success_at: string | null;
       /** Pollable */
       pollable: boolean;
+      /** Public Route */
+      public_route: string | null;
       /** Rate Limit Per Minute */
       rate_limit_per_minute: number | null;
       /** Source */

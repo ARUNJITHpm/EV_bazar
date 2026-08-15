@@ -64,6 +64,12 @@ class SourceSpec:
     #: Turn a source off without deleting its recorded terms.
     enabled: bool = False
 
+    #: Researched (2026-08-15) route to this network's availability WITHOUT OCPI
+    #: and WITHOUT an app capture - the finding from CPO_SOURCES.md, surfaced so
+    #: the console shows which networks are realistic occupancy targets on the
+    #: public web and which are app-only. Descriptive, not a gate.
+    public_route: str | None = None
+
     def blocking_reason(self) -> str | None:
         """Why this source may not be polled, or None if it may."""
         if not self.enabled:
@@ -145,6 +151,7 @@ SOURCES: tuple[SourceSpec, ...] = (
         auth_mode=AuthMode.OCPI_TOKEN,
         authorised=True,
         enabled=False,  # flip on once a partner token exists
+        public_route="OCPI roaming feed (the later-upgrade path, per partner token)",
     ),
     SourceSpec(
         name="plugshare",
@@ -158,6 +165,8 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
+        public_route="Commercial license only; real-time is mostly crowd-sourced. ToS "
+        "forbids scraping.",
     ),
     # --- Scraped CPO apps. One generic `scrape` adapter serves them all. -----
     # base_url + rate_limit come from settings at poll time; the values here
@@ -171,6 +180,8 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
+        public_route="App-only for live status: its public web locator shows locations, no "
+        "free/busy. Needs app capture or OCPI.",
     ),
     SourceSpec(
         name="statiq",
@@ -181,6 +192,9 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
+        public_route="PUBLIC WEB (2026-08-15): per-connector live status is in the page HTML "
+        "(SSR) at statiq.in/ev-charging-station - parse per station, no clean JSON. Robots "
+        "permit crawl.",
     ),
     SourceSpec(
         name="kazam",
@@ -191,6 +205,8 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
+        public_route="App-only: no public web map; operator CMS is login-gated. Runs an OCPI "
+        "platform - ask for a token instead.",
     ),
     SourceSpec(
         name="chargemod",
@@ -201,6 +217,8 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
+        public_route="OURS - read occupancy from our own backend/CSMS/DB directly. Do NOT "
+        "scrape the app (superseded 2026-08-15).",
     ),
     SourceSpec(
         name="tata_power_ez",
@@ -211,6 +229,10 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
+        public_route="PUBLIC WEB (2026-08-15): the ezcharge.tatapower.com map POSTs to "
+        "HobsIntegration/syncRequestHandler?service=GET_CHARGING_STATIONS_ALL and gets JSON "
+        "with stationStatus:'AVAILABLE'. Best public occupancy target - confirm anon path + "
+        "ToS.",
     ),
     SourceSpec(
         name="ather_grid",
@@ -221,6 +243,8 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
+        public_route="App-only on its own site (Cloudflare-gated, /api disallowed). Live status "
+        "reachable only via Google Maps (Ather feeds Google).",
     ),
     SourceSpec(
         name="jio_bp",
@@ -231,6 +255,8 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
+        public_route="App-only for live status: the public site lists locations and says to check "
+        "availability in the app. Needs app capture or OCPI.",
     ),
 )
 

@@ -27,6 +27,8 @@ type CpoSource = {
   terms_url: string | null;
   terms_note: string | null;
   rate_limit_per_minute: number | null;
+  /** Researched route to availability without OCPI/app-capture (2026-08-15). */
+  public_route: string | null;
   last_success_at: string | null;
   last_error: string | null;
   stations_last_run: number;
@@ -75,6 +77,30 @@ export function Cpo() {
         terms={["CPO", "Scrape", "OCPI", "Two locks", "Connector", "Change log", "Occupancy"]}
       />
 
+      <section className="mb-6 max-w-3xl border border-rule bg-ground-sunk px-3 py-2">
+        <p className="font-ui text-[10px] font-bold tracking-[0.08em] text-ink-muted uppercase">
+          Public-web availability — research 2026-08-15
+        </p>
+        <p className="mt-1 max-w-prose text-[12px] text-ink-muted">
+          The small note under each network is the researched route to its <em>live</em>{" "}
+          availability <strong>without OCPI and without capturing an app</strong> (full detail in{" "}
+          <code>CPO_SOURCES.md</code>). The honest picture: only a <strong>few</strong> networks
+          expose free/busy on the public web — <strong>Tata Power</strong> (clean JSON with status)
+          and <strong>Statiq</strong> (status in page HTML). Most keep occupancy inside their app,
+          and Google's API has it but its ToS forbids storing it. chargeMOD is ours — read our own
+          backend, never the app.
+        </p>
+        <p className="mt-2 max-w-prose text-[12px] text-ink-muted">
+          <strong>Can we poll every CPO in India every 10 minutes?</strong> On cadence, yes —
+          trivially: each network is <em>one</em> bulk request per cycle, so even all of India is a
+          few dozen calls per 10 min, and the change-log only grows when a status actually flips.
+          The real limit is <strong>coverage, not compute</strong>: you can only poll the handful
+          that expose availability (start with KL+TN, then widen). Be a polite client — per-source
+          rate limit, jitter, honest User-Agent, back off on blocks — and run it on an always-on
+          VPS, because a sleeping laptop is a permanent hole in the record.
+        </p>
+      </section>
+
       {q.isPending ? (
         <p className="font-data text-[13px] text-ink-faint">…</p>
       ) : q.isError || !q.data ? (
@@ -106,7 +132,14 @@ export function Cpo() {
                 const st = stateLabel(s);
                 return (
                   <tr key={s.source} className="border-t border-rule align-top">
-                    <td className="py-1.5 font-data text-[13px]">{s.source}</td>
+                    <td className="py-1.5 font-data text-[13px]">
+                      {s.source}
+                      {s.public_route && (
+                        <span className="mt-0.5 block max-w-[22rem] font-data text-[10px] leading-snug text-ink-faint">
+                          {s.public_route}
+                        </span>
+                      )}
+                    </td>
                     <td className="py-1.5 font-data text-[12px] text-ink-muted">{s.kind}</td>
                     <td className="py-1.5 text-[13px]">
                       <span
