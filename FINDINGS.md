@@ -21,20 +21,25 @@ relitigate without a reason · `🐛 FOUND` a real defect caught and fixed.
 
 ## 1. Blockers — nothing downstream moves until these clear
 
-### 🚫 B1 · Self-hosted Nominatim is not running, and cannot be on this machine
-*Blocks: 1.3 live behaviour · all six Part 1 exit criteria · any real 1.5 site*
+### ✅ B1 · ~~Self-hosted Nominatim~~ — CLOSED 2026-08-15, differently than planned
+*Was blocking: 1.3 live behaviour · all six Part 1 exit criteria · any real 1.5 site*
 
-No Docker Desktop and no WSL distribution are installed. Free disk is **3.8 GB
-on C:, 17 GB on D:**, against an India import needing the ~1.5 GB PBF plus a
-**40–80 GB** database. Starting it would fail hours in, and the partial database
-is not resumable.
+Closed by pointing `NOMINATIM_URL` at the **public instance**
+(`nominatim.openstreetmap.org`) instead of self-hosting. At hundreds of
+reports/month this sits comfortably inside its usage policy; the identifying
+User-Agent and the 1 req/s throttle are enforced **in code**
+(`providers/nominatim.py`), switched on automatically when the URL is the
+public host, so no caller has to remember either.
 
-Consequence today: every address becomes an unlocated lead. L3–L5 are complete
-and tested against mock transports but have **never spoken to a live provider**.
+Verified live the same day: selftest **5/5**, and the first real end-to-end
+site row exists — "MG Road, Kochi 682035" → Nominatim (PIN match, `high`) →
+Ernakulam (555) `contained` → `sites` row, `requests=1`. Second run served
+from cache.
 
-*Unblocked by:* the import running on the VPS with `NOMINATIM_URL` pointed at
-it, or ~80 GB free plus Docker here. Compose profile and disk warning are in
-`docker-compose.yml`.
+Self-hosting is now a parked optimisation (revisit if G.2's public teaser
+takes off), not a blocker. The compose profile and disk warning remain in
+`docker-compose.yml` for that day. L3–L5 have still never spoken to a live
+provider — G1 stands, and D14 below is exactly the class of break it predicts.
 
 ### 🚫 B2 · The 200 KL+TN addresses do not exist
 *Blocks: all six Part 1 exit criteria, independently of B1*
@@ -210,6 +215,8 @@ close them.
 | D11 | Leaflet added 160 kB to the main bundle | The public report would have carried a mapping library so one operator could place pins. Lazy-loaded. |
 | D12 | The Lookup panel's step 1 named the **overriding** district, not the one the containment query returned | A trace reconstructed from `Resolution` could not see what a `pin_override` had replaced, so it described a query returning a district that query never saw. `Resolution` now carries `overridden_district`; a test asserts step 1 names Ernakulam while the answer says Thrissur. Exactly the drift the module docstring warns about. |
 | D13 | Two console-auth tests passed only while `.env` had no console password | `Settings()` reads `.env` from disk, so "unconfigured console returns 503" was asserting against the developer's machine. Both now pass `_env_file=None`. Found by configuring a console locally — i.e. by the first person to use the feature. |
+| D14 | Nominatim's **first real call returned 400** for an address with a PIN | The live API refuses `q` combined with any structured parameter ("cannot be used together with 'q'") — written from docs, never observed, exactly as G1 predicted. Now: structured `postalcode` only when the PIN is all we have; with a text query the PIN stays out of the request and the existing `doubt_about`/1.4 cross-checks do its work. Selftest went 4/5 → 5/5. Budget the same debugging pass for Ola/Mappls/Google's first real calls. |
+| D15 | D13's mirror image, caught pre-emptively | Adding `CONSOLE_AUTH_DISABLED=true` to the real `.env` broke two auth tests that read it implicitly — and would later have let real `CHARGEZONE__BASE_URL`/provider keys leak into poller and cascade-assembly tests (a test that assembles a real paid level is a test that spends). Every `Settings(...)` in tests now passes `_env_file=None`. |
 
 ---
 
@@ -280,6 +287,13 @@ three most likely to be regretted if skipped:
 
 ### PART C — Console
 C.0 and C.1 complete. C.2 partly (G7). C.3–C.6 not started.
+⚠️ **Console auth is currently bypassed for local dev** —
+`CONSOLE_AUTH_DISABLED=true` in `.env`, an explicit flag added 2026-08-15 at
+the operator's request. Two locks keep it dev-only: prod **refuses to boot**
+with the flag set (config.py validator, tested), and `require_operator`
+re-checks env before honouring it. The Progress panel flags the state as
+"needs attention" so it cannot be quietly forgotten. Remove the line to bring
+the password back.
 ⚠️ **Panels are read-only today**, so C.0's "writes are attributed to the
 operator" rule has not yet been tested by a real write — the manual queue's
 resolve/reject endpoints are the first, and they do record `resolved_by`.

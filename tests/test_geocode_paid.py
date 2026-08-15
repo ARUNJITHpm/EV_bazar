@@ -424,7 +424,9 @@ def test_at_cap_the_call_is_refused_and_the_refusal_is_visible(session: Session)
 
 
 def _settings(**over: object) -> Settings:
-    return Settings(env="test", **over)  # type: ignore[arg-type]
+    # _env_file=None: the developer's .env may carry real provider keys, and a
+    # test that quietly assembles a real paid level is a test that spends.
+    return Settings(env="test", _env_file=None, **over)  # type: ignore[arg-type]
 
 
 def test_with_no_keys_the_cascade_is_free_levels_only(session: Session) -> None:

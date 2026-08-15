@@ -31,7 +31,7 @@ from app.domain.resolution.providers.base import Geocoder
 from app.domain.resolution.providers.google import GoogleGeocoder
 from app.domain.resolution.providers.mappls import MapplsGeocoder
 from app.domain.resolution.providers.metered import MeteredGeocoder
-from app.domain.resolution.providers.nominatim import NominatimGeocoder
+from app.domain.resolution.providers.nominatim import PUBLIC_HOST, NominatimGeocoder
 from app.domain.resolution.providers.ola import OlaGeocoder
 
 #: Provider key in ``Settings.paid_providers`` -> its client class, in the order
@@ -59,7 +59,14 @@ def build_cascade(
     """
     from app.metering.cards import card_for  # local: keeps the free path import-light
 
-    levels: list[Geocoder] = [NominatimGeocoder(settings.nominatim_url)]
+    # The public instance's policy is 1 request/second; self-hosted needs no
+    # throttle. Decided here from the URL so no caller has to remember it.
+    levels: list[Geocoder] = [
+        NominatimGeocoder(
+            settings.nominatim_url,
+            min_interval_s=1.1 if PUBLIC_HOST in settings.nominatim_url else 0.0,
+        )
+    ]
 
     paid = settings.paid_providers
     for name, client_cls in PAID_LEVELS:

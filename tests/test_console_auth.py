@@ -55,10 +55,14 @@ def _settings() -> Settings:
     dependency override, so a ``**kwargs`` here turns every request into a
     422 about missing query parameters rather than the auth result under test.
     """
+    # _env_file=None everywhere in this file: these tests assert auth
+    # behaviour, and the developer's .env may carry CONSOLE_AUTH_DISABLED=true
+    # (or a real password) that would silently change what is being tested.
     return Settings(
         env="test",
         console_secret_key=SECRET,
         console_password_hash=hash_password(PASSWORD),
+        _env_file=None,
     )
 
 
@@ -207,7 +211,10 @@ def test_the_session_cookie_is_tls_only_in_production() -> None:
     """...and NOT in dev/test, where plain http would drop it silently."""
     app = create_app()
     app.dependency_overrides[get_settings] = lambda: Settings(
-        env="prod", console_secret_key=SECRET, console_password_hash=hash_password(PASSWORD)
+        env="prod",
+        console_secret_key=SECRET,
+        console_password_hash=hash_password(PASSWORD),
+        _env_file=None,
     )
     with TestClient(app) as c:
         response = c.post("/api/internal/console/login", json={"password": PASSWORD})
@@ -255,8 +262,37 @@ def test_production_will_not_boot_without_a_console_password() -> None:
         Settings(env="prod", _env_file=None)
 
 
+def test_the_dev_bypass_opens_the_console_without_a_session() -> None:
+    """CONSOLE_AUTH_DISABLED=true: no login, every request is the operator."""
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: Settings(
+        env="dev", console_auth_disabled=True, _env_file=None
+    )
+    with TestClient(app) as c:
+        me = c.get("/api/internal/console/me")
+        assert me.status_code == 200
+        assert me.json() == {"operator": "operator"}
+        assert c.get("/api/internal/sources").status_code == 200
+
+
+def test_production_will_not_boot_with_the_bypass_set() -> None:
+    """The bypass is a local convenience; prod dies loudly rather than opening.
+    Even with a password ALSO configured - the flag itself is the mistake."""
+    with pytest.raises(ValueError, match="console_auth_disabled"):
+        Settings(
+            env="prod",
+            console_auth_disabled=True,
+            console_secret_key=SECRET,
+            console_password_hash=hash_password(PASSWORD),
+            _env_file=None,
+        )
+
+
 def test_production_boots_once_it_is_configured() -> None:
     settings = Settings(
-        env="prod", console_secret_key=SECRET, console_password_hash=hash_password(PASSWORD)
+        env="prod",
+        console_secret_key=SECRET,
+        console_password_hash=hash_password(PASSWORD),
+        _env_file=None,
     )
     assert settings.console_configured

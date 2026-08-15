@@ -137,6 +137,11 @@ class Settings(BaseSettings):
     console_operator: str = "operator"
     console_secret_key: str | None = None
     console_password_hash: str | None = None
+    #: Dev-only escape hatch: skip the login entirely and treat every request
+    #: as the operator. Exists because a solo developer re-typing a password
+    #: all day stops reading what the console says. NEVER valid in prod - the
+    #: validator below refuses to boot, same shape as the quota-cap rule.
+    console_auth_disabled: bool = False
     #: 12 hours. Long enough not to be a nuisance, short enough that a laptop
     #: left in a cafe is not a standing invitation.
     console_session_max_age_seconds: int = 12 * 3600
@@ -194,6 +199,12 @@ class Settings(BaseSettings):
         to be unconfigured, but the guarded endpoints then return 503 rather
         than opening - "not set up" must never mean "not protected".
         """
+        if self.env == "prod" and self.console_auth_disabled:
+            raise ValueError(
+                "PLAN C.0: console_auth_disabled is a local-development convenience and "
+                "this is prod. The console exposes CPO terms and our own spend; remove "
+                "CONSOLE_AUTH_DISABLED from the environment."
+            )
         if self.env == "prod" and not self.console_configured:
             raise ValueError(
                 "PLAN C.0: the console exposes CPO terms and our own spend, and this "

@@ -48,6 +48,12 @@ def require_operator(
     settings: Settings = Depends(get_settings),
 ) -> str:
     """FastAPI dependency. Returns the operator name or refuses the request."""
+    # Dev-only bypass. The env check is belt-and-braces: config.py already
+    # refuses to boot prod with this flag set, so in prod this line is
+    # unreachable - but a guard this important gets two locks, not one.
+    if settings.console_auth_disabled and settings.env != "prod":
+        return settings.console_operator
+
     if not settings.console_configured:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,

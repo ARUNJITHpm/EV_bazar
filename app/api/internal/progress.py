@@ -613,12 +613,23 @@ def build_inputs(settings: Settings, *, urban_layer_loaded: bool) -> list[InputO
         InputOut(
             name="Console login",
             kind="infra",
-            status=(InputStatus.CONFIGURED if settings.console_configured else InputStatus.MISSING),
+            status=(
+                InputStatus.ATTENTION
+                if settings.console_auth_disabled
+                else InputStatus.CONFIGURED
+                if settings.console_configured
+                else InputStatus.MISSING
+            ),
             needed_for="PART C.0 - this console.",
             env_vars=["CONSOLE_SECRET_KEY=...", "CONSOLE_PASSWORD_HASH=..."],
             how_to_get="`uv run python -m scripts.console_password` prints both lines.",
             detail=(
-                "Configured - you are logged into the evidence."
+                "Login is switched OFF for local dev (CONSOLE_AUTH_DISABLED=true). "
+                "Deliberate, and prod refuses to boot in this state - but it stays "
+                "flagged here so it cannot be forgotten. Remove the line to bring "
+                "the password back."
+                if settings.console_auth_disabled
+                else "Configured - you are logged into the evidence."
                 if settings.console_configured
                 else "Not set; every console endpoint returns 503 until it is."
             ),

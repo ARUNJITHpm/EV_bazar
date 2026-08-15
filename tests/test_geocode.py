@@ -118,7 +118,11 @@ def test_parse_returns_none_rather_than_a_guessed_point(body: object) -> None:
 # --- L2 fetch (mock transport) ---------------------------------------------
 
 
-def test_nominatim_constrains_to_india_and_passes_the_pin() -> None:
+def test_nominatim_constrains_to_india_and_keeps_the_pin_out_of_a_text_query() -> None:
+    """The live API returns 400 for ``q`` combined with ``postalcode``
+    (FINDINGS D14 - found on the first real call, exactly as G1 predicted).
+    With a text query the PIN must stay out of the request; the cross-check
+    happens downstream in ``doubt_about`` and 1.4."""
     seen: dict[str, str] = {}
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -131,7 +135,37 @@ def test_nominatim_constrains_to_india_and_passes_the_pin() -> None:
     assert r is not None
     assert seen["countrycodes"] == "in"
     assert seen["q"] == "mg road kochi"
-    assert seen["postalcode"] == "682035"
+    assert "postalcode" not in seen
+
+
+def test_nominatim_uses_the_pin_as_a_structured_filter_when_it_is_all_we_have() -> None:
+    seen: dict[str, str] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.update(dict(request.url.params))
+        return httpx.Response(200, json=NOMINATIM_BODY)
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    r = NominatimGeocoder("http://nominatim.test").search(client, "", pincode="682001")
+
+    assert r is not None
+    assert seen["postalcode"] == "682001"
+    assert "q" not in seen
+
+
+def test_nominatim_sends_an_identifying_user_agent() -> None:
+    """The public instance's policy bans anonymous default agents; an
+    unidentified client gets blocked, which would look like an outage."""
+    seen: dict[str, str] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["ua"] = request.headers.get("user-agent", "")
+        return httpx.Response(200, json=NOMINATIM_BODY)
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    NominatimGeocoder("http://nominatim.test").search(client, "kochi")
+    assert "EVSiteIntelligence" in seen["ua"]
+    assert "python-httpx" not in seen["ua"]
 
 
 def test_nominatim_empty_result_is_a_clean_miss() -> None:

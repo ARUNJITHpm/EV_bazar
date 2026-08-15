@@ -267,7 +267,9 @@ def test_scrape_source_needs_both_config_and_authorisation() -> None:
     from workers.poller import build_targets, resolve_scrape_spec
 
     # Configured endpoint, but registry still has authorised=False.
-    configured = Settings(chargezone=ScrapeSource(base_url="https://cz.test"))
+    # _env_file=None: the developer's .env will one day carry REAL endpoints,
+    # and this test must keep testing its fixture, not that machine.
+    configured = Settings(chargezone=ScrapeSource(base_url="https://cz.test"), _env_file=None)
     spec = resolve_scrape_spec("chargezone", configured)
     assert spec.enabled is True  # endpoint is set
     assert spec.pollable is False  # ...but not authorised
@@ -293,7 +295,7 @@ def test_scrape_source_polls_once_authorised_and_configured() -> None:
     patched = dict(poller_mod.BY_NAME)
     patched["chargezone"] = vetted
 
-    configured = Settings(chargezone=ScrapeSource(base_url="https://cz.test"))
+    configured = Settings(chargezone=ScrapeSource(base_url="https://cz.test"), _env_file=None)
     # build_targets resolves through the module-level BY_NAME reference.
     with patch.object(poller_mod, "BY_NAME", patched):
         targets = poller_mod.build_targets(configured)
@@ -349,7 +351,10 @@ def test_cpo_sources_endpoint_lists_registry_with_measured_status() -> None:
     # This panel is behind the console guard (PLAN C.0), so the test signs in
     # like an operator rather than reaching past it.
     app.dependency_overrides[get_settings] = lambda: Settings(
-        env="test", console_secret_key="k", console_password_hash=hash_password("password-1234")
+        env="test",
+        console_secret_key="k",
+        console_password_hash=hash_password("password-1234"),
+        _env_file=None,
     )
     client = TestClient(app)
     assert (

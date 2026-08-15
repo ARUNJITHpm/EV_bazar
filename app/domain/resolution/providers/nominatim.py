@@ -1,9 +1,19 @@
-"""L2 of the cascade - self-hosted Nominatim. PART 1.3.
+"""L2 of the cascade - Nominatim. PART 1.3.
 
-Nominatim is the ⭐ layer: self-hosted from the India OSM extract, it is free
-and uncapped, and PLAN 1.3 wants ≥90% of addresses resolved before any paid
-geocoder is touched. So this is the workhorse, and L3-L5 (Ola, Mappls, Google)
-exist only for what it misses.
+Nominatim is the ⭐ layer: free and uncapped, and PLAN 1.3 wants ≥90% of
+addresses resolved before any paid geocoder is touched. So this is the
+workhorse, and L3-L5 (Ola, Mappls, Google) exist only for what it misses.
+
+Two deployments, one class:
+
+* the **public instance** (nominatim.openstreetmap.org) - no account, no key,
+  but a usage policy: an identifying User-Agent and at most 1 request/second.
+  Both are enforced structurally here (``USER_AGENT``, ``min_interval_s``)
+  rather than remembered by callers - at hundreds of reports a month this is
+  comfortably inside the policy, and the cache means no address is ever asked
+  twice.
+* **self-hosted** from the India OSM extract - parked until volume demands it
+  (a 40-80 GB import). Same API, so switching is one URL in ``.env``.
 
 Fetching and parsing are kept apart, the same way the poller's adapters are:
 ``search`` does HTTP and nothing else; ``parse_search`` is a pure function over
@@ -16,11 +26,21 @@ cascade at L3, its first paying caller.
 
 from __future__ import annotations
 
+import time
 from typing import Any
 
 import httpx
 
 from app.domain.resolution.providers.base import GeocodeResult, to_float
+
+#: The public instance's policy bans anonymous default agents (httpx's
+#: ``python-httpx/x.y`` included) and asks for a contact. Sent on every
+#: Nominatim request, self-hosted or not - it costs nothing there.
+USER_AGENT = "EVSiteIntelligence/0.1 (software@chargemod.com)"
+
+#: Hostname of the public instance, used by ``build_cascade`` to switch the
+#: politeness throttle on without anyone remembering to.
+PUBLIC_HOST = "nominatim.openstreetmap.org"
 
 #: Re-exported: ``GeocodeResult`` moved to ``base.py`` when Ola/Mappls/Google
 #: joined the cascade and needed to return the same type. Imports of it from
@@ -71,18 +91,28 @@ class NominatimGeocoder:
 
     source = "nominatim"
 
-    def __init__(self, base_url: str, *, timeout: float = 10.0) -> None:
+    def __init__(
+        self, base_url: str, *, timeout: float = 10.0, min_interval_s: float = 0.0
+    ) -> None:
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
+        #: Politeness floor between requests. 0 for self-hosted; ~1.1 s for the
+        #: public instance (its policy is "an absolute maximum of 1/second").
+        self.min_interval_s = min_interval_s
+        self._last_request = 0.0
 
     def search(
         self, client: httpx.Client, query: str, *, pincode: str | None = None
     ) -> GeocodeResult | None:
         """Resolve one address. Returns None on a clean miss (empty result set).
 
-        A PIN, when present, is passed as a structured ``postalcode`` filter
-        rather than jammed into the free-text query - Nominatim weights it as a
-        constraint that way, which is exactly what a customer-supplied PIN is.
+        The PIN is a structured ``postalcode`` filter ONLY when it is all we
+        have. The live API **refuses** ``q`` combined with any structured
+        parameter (400: "cannot be used together with 'q'") - a fact the docs
+        did not make obvious and the first real call did (FINDINGS D14). So
+        with a text query the PIN stays out of the request entirely; it still
+        does its work downstream, where ``doubt_about`` compares the match's
+        postcode against it and 1.4 cross-checks the polygon.
         """
         if not query and not pincode:
             return None
@@ -95,9 +125,20 @@ class NominatimGeocoder:
         }
         if query:
             params["q"] = query
-        if pincode:
+        elif pincode:
             params["postalcode"] = pincode
 
-        response = client.get(f"{self.base_url}/search", params=params, timeout=self.timeout)
+        if self.min_interval_s:
+            wait = self.min_interval_s - (time.monotonic() - self._last_request)
+            if wait > 0:
+                time.sleep(wait)
+
+        response = client.get(
+            f"{self.base_url}/search",
+            params=params,
+            timeout=self.timeout,
+            headers={"User-Agent": USER_AGENT},
+        )
+        self._last_request = time.monotonic()
         response.raise_for_status()
         return parse_search(response.json(), source=self.source)
