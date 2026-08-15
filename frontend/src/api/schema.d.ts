@@ -279,6 +279,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/internal/progress": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Progress */
+    get: operations["progress_api_internal_progress_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/readyz": {
     parameters: {
       query?: never;
@@ -467,6 +484,34 @@ export interface components {
       status: string;
     };
     /**
+     * InputOut
+     * @description One external thing only a human can supply: a key, an endpoint, a file.
+     *
+     *     The status is read from live settings at request time, so pasting a line
+     *     into ``.env`` and restarting the API flips the row on its own - the page
+     *     can never claim a key exists that the process cannot see.
+     */
+    InputOut: {
+      /** Detail */
+      detail: string;
+      /** Env Vars */
+      env_vars: string[];
+      /** How To Get */
+      how_to_get: string;
+      /** Kind */
+      kind: string;
+      /** Name */
+      name: string;
+      /** Needed For */
+      needed_for: string;
+      status: components["schemas"]["InputStatus"];
+    };
+    /**
+     * InputStatus
+     * @enum {string}
+     */
+    InputStatus: "configured" | "missing" | "attention" | "later";
+    /**
      * LayerOut
      * @description Provenance of the map data itself - PLAN C.5's data-vintage row.
      */
@@ -501,6 +546,22 @@ export interface components {
     LoginIn: {
       /** Password */
       password: string;
+    };
+    /** MilestoneOut */
+    MilestoneOut: {
+      /** Evidence */
+      evidence: string;
+      /** Order */
+      order: number;
+      /** Part */
+      part: string;
+      status: components["schemas"]["Status"];
+      /** Title */
+      title: string;
+      /** To Close */
+      to_close?: string | null;
+      /** What */
+      what: string;
     };
     /** NeighbourOut */
     NeighbourOut: {
@@ -577,6 +638,20 @@ export interface components {
       stale_sources: string[];
       /** Threshold Minutes */
       threshold_minutes: number;
+    };
+    /** ProgressOut */
+    ProgressOut: {
+      /**
+       * Checked At
+       * Format: date-time
+       */
+      checked_at: string;
+      /** Inputs */
+      inputs: components["schemas"]["InputOut"][];
+      /** Milestones */
+      milestones: components["schemas"]["MilestoneOut"][];
+      /** Summary */
+      summary: string;
     };
     /** QueueItemOut */
     QueueItemOut: {
@@ -692,6 +767,11 @@ export interface components {
       /** Why */
       why: string;
     };
+    /**
+     * Status
+     * @enum {string}
+     */
+    Status: "done" | "code_done" | "partial" | "next" | "parked" | "not_started";
     /**
      * Step
      * @description One question the resolver asked, and where it went for the answer.
@@ -1140,6 +1220,37 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["PollerHealthOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  progress_api_internal_progress_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProgressOut"];
         };
       };
       /** @description Validation Error */

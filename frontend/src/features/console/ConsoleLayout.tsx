@@ -30,6 +30,7 @@ const NAV: Group[] = [
   {
     heading: "Explain",
     items: [
+      { to: "/console/progress", label: "Progress", hint: "done · next · parked, in order" },
       { to: "/console/lookup", label: "Lookup", hint: "a point → district, with the working" },
       { to: "/console/data", label: "Data", hint: "tables · what each holds · tiers" },
     ],

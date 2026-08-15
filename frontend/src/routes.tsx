@@ -6,6 +6,7 @@ import { Cpo } from "./features/console/Cpo";
 import { Data } from "./features/console/Data";
 import { Lookup } from "./features/console/Lookup";
 import { Overview } from "./features/console/Overview";
+import { Progress } from "./features/console/Progress";
 import { Reports } from "./features/console/Reports";
 import { SpendLlm } from "./features/console/SpendLlm";
 import { SpendMaps } from "./features/console/SpendMaps";
@@ -46,6 +47,7 @@ export const router = createBrowserRouter([
     element: <ConsoleLayout />,
     children: [
       { index: true, element: <Overview /> },
+      { path: "progress", element: <Progress /> },
       { path: "lookup", element: <Lookup /> },
       { path: "cpo", element: <Cpo /> },
       { path: "data", element: <Data /> },

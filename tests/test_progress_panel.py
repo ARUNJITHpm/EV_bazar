@@ -1,0 +1,138 @@
+"""The Progress console panel - PART C.
+
+``build_milestones`` is pure prose over ``Signals``, and the thing worth
+pinning is that its statuses follow the database rather than the author's
+optimism: an empty ``poll_runs`` must read as the queue's first item, and a
+non-empty one must not.
+"""
+
+from __future__ import annotations
+
+from app.api.internal.progress import (
+    InputStatus,
+    Signals,
+    Status,
+    build_inputs,
+    build_milestones,
+)
+from app.config import Settings
+
+EMPTY_WORLD = Signals(
+    districts=783,
+    pincodes=19_312,
+    crosswalk_unverified=40,
+    geocoded=0,
+    queue_open=0,
+    sites=0,
+    poll_runs=0,
+    price_cards=3,
+    usage_events=0,
+    sources_authorised=0,
+    sources_total=8,
+)
+
+
+def test_a_silent_poller_is_the_first_item_in_the_queue() -> None:
+    first = build_milestones(EMPTY_WORLD)[0]
+    assert first.part == "0.1"
+    assert first.status is Status.NEXT
+    assert first.to_close is not None
+
+
+def test_a_running_poller_leaves_the_queue() -> None:
+    import dataclasses
+
+    live = dataclasses.replace(EMPTY_WORLD, poll_runs=1_000, sources_authorised=1)
+    first = build_milestones(live)[0]
+    assert first.status is Status.PARTIAL
+    assert first.to_close is None
+    assert "1,000" in first.evidence
+
+
+def test_nothing_unfinished_is_missing_its_way_out() -> None:
+    """An item that says 'not done' without saying what closes it is a
+    complaint, not a milestone. DONE items may omit it."""
+    for m in build_milestones(EMPTY_WORLD):
+        if m.status in (Status.NEXT, Status.PARKED, Status.NOT_STARTED):
+            assert m.to_close, f"{m.part} has no to_close"
+
+
+def test_live_counts_appear_in_the_prose() -> None:
+    by_part = {m.part: m for m in build_milestones(EMPTY_WORLD)}
+    assert "783" in by_part["1.1–1.2"].evidence
+    assert "19,312" in by_part["1.1–1.2"].evidence
+    assert "40" in by_part["1.1–1.2"].evidence
+
+
+def test_order_is_dense_and_starts_at_one() -> None:
+    orders = [m.order for m in build_milestones(EMPTY_WORLD)]
+    assert orders == list(range(1, len(orders) + 1))
+
+
+# --- the keys-and-inputs inventory -------------------------------------------
+
+
+def _bare_settings(**kwargs: object) -> Settings:
+    """Settings that see only what the test passes - never the developer's .env."""
+    return Settings(env="test", _env_file=None, **kwargs)  # type: ignore[arg-type]
+
+
+def test_the_localhost_nominatim_default_reads_as_needing_attention() -> None:
+    """The default points at a server that is not running - the page must say
+    so rather than showing a green 'configured'."""
+    inputs = {i.name: i for i in build_inputs(_bare_settings(), urban_layer_loaded=False)}
+    nominatim = next(v for k, v in inputs.items() if "Nominatim" in k)
+    assert nominatim.status is InputStatus.ATTENTION
+    assert "localhost" in nominatim.detail
+
+
+def test_a_pointed_nominatim_reads_as_configured() -> None:
+    settings = _bare_settings(nominatim_url="https://nominatim.openstreetmap.org")
+    inputs = build_inputs(settings, urban_layer_loaded=False)
+    nominatim = next(i for i in inputs if "Nominatim" in i.name)
+    assert nominatim.status is InputStatus.CONFIGURED
+
+
+def test_a_missing_paid_key_lists_all_three_env_lines() -> None:
+    """Pasting the key alone will not boot (cap-before-boot); the page must
+    hand over all three lines together."""
+    inputs = build_inputs(_bare_settings(), urban_layer_loaded=False)
+    google = next(i for i in inputs if "Google" in i.name)
+    assert google.status is InputStatus.MISSING
+    joined = " ".join(google.env_vars)
+    assert "GOOGLE_MAPS__API_KEY" in joined
+    assert "GOOGLE_MAPS__MONTHLY_CAP" in joined
+    assert "GOOGLE_MAPS__CONSOLE_CAP_CONFIRMED" in joined
+
+
+def test_a_configured_paid_key_flips_on_its_own() -> None:
+    settings = _bare_settings(
+        google_maps={"api_key": "k", "monthly_cap": 10_000, "console_cap_confirmed": True}
+    )
+    inputs = build_inputs(settings, urban_layer_loaded=False)
+    google = next(i for i in inputs if "Google" in i.name)
+    assert google.status is InputStatus.CONFIGURED
+    assert "10,000" in google.detail
+
+
+def test_a_configured_but_unauthorised_cpo_endpoint_is_flagged_not_green() -> None:
+    """Config alone is never consent - an endpoint without the sources.py
+    authorisation must read as a problem, not as done."""
+    settings = _bare_settings(chargemod={"base_url": "https://api.chargemod.example"})
+    inputs = build_inputs(settings, urban_layer_loaded=False)
+    chargemod = next(i for i in inputs if i.name.startswith("chargemod"))
+    assert chargemod.status is InputStatus.ATTENTION
+    assert "not authorised" in chargemod.detail.lower()
+
+
+def test_every_scraped_source_appears_in_the_inventory() -> None:
+    inputs = build_inputs(_bare_settings(), urban_layer_loaded=False)
+    names = {i.name for i in inputs}
+    for source in ("chargemod", "chargezone", "statiq", "kazam", "tata_power_ez"):
+        assert f"{source} endpoint (poller)" in names
+
+
+def test_later_items_say_not_to_chase_them() -> None:
+    inputs = build_inputs(_bare_settings(), urban_layer_loaded=False)
+    llm = next(i for i in inputs if "LLM" in i.name)
+    assert llm.status is InputStatus.LATER
