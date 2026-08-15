@@ -45,6 +45,74 @@ takes over from that date. Nothing is lost in the switch.
 
 ---
 
+## Verified 2026-08-15 — non-OCPI, non-app routes (live research sweep)
+
+The question: besides OCPI, and besides capturing our own chargeMOD app, what
+other **web-scrape or official API** gives competitor availability? Three parallel
+researchers read official API docs and inspected the **actual network requests each
+CPO's public web map makes** (anonymous browser, no logins, nothing bypassed).
+
+> **chargeMOD (ours) — do NOT scrape the app.** It is our own network: read
+> occupancy from our **own backend / CSMS / DB directly**, the cleanest and most
+> accurate feed. The earlier "scrape chargeMOD too, on one mechanism" note is
+> **superseded** — that was about uniformity, and a direct internal read is
+> strictly better for a source we own. App-scraping is for networks we do *not*
+> control.
+
+### Live occupancy (free/busy) — competitors
+
+| Rank | Source | How the data arrives | Occupancy? | KL/TN | Caveat |
+|---|---|---|---|---|---|
+| **1** | **Tata Power EZ Charge** (public web map) | `POST ezcharge.tatapower.com/…/HobsIntegration/syncRequestHandler?service=GET_CHARGING_STATIONS_ALL` → JSON with `stationStatus:"AVAILABLE"`; UI has "only available/free" toggles | **Yes** | Both | ⚠️ confirm the anonymous `#/home` path serves it without login (one session saw 200 anon; a deeper route redirected to Sign In), and read the evselfcare ToS |
+| **2** | **Statiq** (public web map) | Per-connector status baked into SSR HTML / `__NEXT_DATA__` on each station page — **no clean JSON** | **Yes** (per connector) | Both | HTML-parse per station; robots explicitly permits crawl + AI |
+| **3** | **Pulse Energy** (aggregator web map) | same-origin `GET pulseenergy.io/api/charging-stations/nearby` (geolocation-driven) | Unknown — needs a geo-enabled browser to confirm the shape | Both (multi-CPO) | Highest upside — one capture could span Tata, Zeon, Statiq, Charge+Zone |
+| — | **Google Places API** (New) | `evChargeOptions.connectorAggregation[].availableCount / outOfServiceCount / availabilityLastUpdateTime` | **Yes**, official REST, non-OCPI | only networks that feed Google — **Statiq + Ather confirmed** | ⛔ **ToS forbids storing/caching** the content → fine for ephemeral live display, **illegal to accumulate a time series**. Paid (~$25/1k, Enterprise+Atmosphere SKU) |
+
+### Inventory only (locations/connectors, NO occupancy) — clean, free, permissive JSON
+
+- **GoEC** — `GET goecworld.com/api/stations/locations` (~600 records, **dominant in Kerala**, ~550). `{lat,lng,state,label,power}`, no status.
+- **Zeon** — `GET zeoncharging.com/api/stations` (~460, **strong Tamil Nadu**, ~150). Full connector specs, no status.
+- Both complement Open Charge Map for the KL/TN competitor **master list**; neither carries free/busy.
+
+### The official *non-OCPI* standard: UBC / UEI (Beckn, not OCPI)
+
+India's national interoperability hub — **Unified Bharat eCharge / Unified Energy
+Interface** — runs on the **Beckn protocol, explicitly NOT OCPI**. An app joins as
+a **BAP** and receives standardized discover → **status** → stop across every
+onboarded CPO's BPP. This is the genuine official non-OCPI route to cross-network
+occupancy — but **nascent in 2026** (coverage ramping; Pulse integrated 10,000+
+points under UBC by Aug 2026, BHEL nodal). A pilot-as-BAP is the Phase-2 upgrade,
+not a today-source.
+
+### Not viable via the public web for occupancy
+ChargeZone, Jio-bp, **Ather** (Cloudflare-gated, `/api` disallowed — live status only
+via Google), **Kazam** (no public web map), **ElectricPe** (app-only aggregator,
+richest data but no API), **Relux** (only active/inactive commissioning flag) — all
+keep live status inside the app or an authenticated CMS.
+
+### Government / state / vendors
+- **e-AMRIT** (NITI), **EV Yatra** (BEE, Ministry of Power), **KSEB KeMAPP** (Kerala),
+  **TNEV** (Tamil Nadu) — locations, some declared status, but **no public API** →
+  scrape-only, inventory-grade.
+- **TomTom** EV Availability API — real-time globally but **static-only in India**.
+- **Eco-Movement / HERE** — paid B2B feeds with real-time occupancy; **India dynamic
+  depth unverified** — validate KL/TN before relying.
+- **PlugShare** — real-time is mostly crowd-sourced; official access is a **commercial
+  license only**, and scraping the unofficial `api.plugshare.com/v3` violates ToS.
+
+### Governance (unchanged) & open confirmations
+`sources.py` still gates everything: read + record each source's ToS and flip
+`authorised=True` before polling — **public-web is not permission-free**. Google
+Places' no-store clause is a hard stop for accumulation. The realistic starting
+targets are the robots-permissive JSON feeds (Tata for status; GoEC + Zeon for
+inventory), each ToS-checked first.
+
+**Two browser confirmations still open (one session each):** (a) Tata Power's
+anonymous `#/home` path + ToS; (b) Pulse Energy's `/api/charging-stations/nearby`
+response shape.
+
+---
+
 ## Per-network notes
 
 ### chargeMOD *(ours)*
