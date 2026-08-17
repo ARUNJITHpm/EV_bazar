@@ -31,6 +31,9 @@ dependencies = [
 scrape = [
   "selenium",
   "undetected-chromedriver",
+  # undetected-chromedriver 3.5.5 still imports distutils, removed in
+  # Python 3.12; setuptools' shim puts it back.
+  "setuptools",
 ]
 
 [dependency-groups]

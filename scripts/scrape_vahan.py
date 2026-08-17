@@ -35,6 +35,7 @@ import contextlib
 import csv
 import datetime as dt
 import random
+import sys
 import time
 from pathlib import Path
 from typing import Any
@@ -47,9 +48,6 @@ DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "vahan"
 SEED = DATA_DIR / "rto_reference.csv"
 
 STATE_NAMES = {"KL": "Kerala", "TN": "Tamil Nadu"}
-#: Header cells that are not vehicle-class counts. Everything else on the row -
-#: including TOTAL - is kept as a class, so nothing is silently dropped.
-_SKIP_HEADERS = {"S NO", "S.NO", "SNO", "SL NO", "FUEL", ""}
 
 
 # --------------------------------------------------------------------------- IO
@@ -79,6 +77,27 @@ def already_done(out_path: Path) -> set[tuple[str, str]]:
 # --------------------------------------------------- selenium / primefaces glue
 
 
+def _chrome_major_version() -> int | None:
+    """Installed Chrome's major version (Windows registry), or None.
+
+    undetected-chromedriver downloads the newest driver by default; when the
+    installed Chrome is one release behind, the session refuses to start
+    ("only supports Chrome version N"). Pinning version_main to the browser
+    actually present keeps the two in step. None falls back to uc's default.
+    """
+    if sys.platform != "win32":
+        return None
+    import winreg  # noqa: PLC0415 - windows only
+
+    try:
+        key_path = r"Software\Google\Chrome\BLBeacon"
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path) as key:
+            version, _ = winreg.QueryValueEx(key, "version")
+        return int(str(version).split(".")[0])
+    except OSError:
+        return None
+
+
 def start_driver() -> tuple[Any, Any]:
     try:
         import undetected_chromedriver as uc  # noqa: PLC0415 - optional, lazy on purpose
@@ -91,7 +110,7 @@ def start_driver() -> tuple[Any, Any]:
     options = uc.ChromeOptions()
     options.add_argument("--start-maximized")
     options.add_argument("--disable-blink-features=AutomationControlled")
-    driver = uc.Chrome(options=options)
+    driver = uc.Chrome(options=options, version_main=_chrome_major_version())
     wait = WebDriverWait(driver, 30)
     driver.get(URL)
     print("browser started")
@@ -138,6 +157,7 @@ def label_id(driver: Any, field: str) -> str | None:
 
 def pick(driver: Any, wait: Any, lid: str | None, option: str) -> None:
     """Open a PrimeFaces dropdown and click an option by its label."""
+    from selenium.common.exceptions import TimeoutException  # noqa: PLC0415
     from selenium.webdriver.common.by import By  # noqa: PLC0415
     from selenium.webdriver.support import expected_conditions as ec  # noqa: PLC0415
 
@@ -146,7 +166,17 @@ def pick(driver: Any, wait: Any, lid: str | None, option: str) -> None:
     panel = lid.replace("_label", "_panel")
     dropdown = wait.until(ec.element_to_be_clickable((By.ID, lid)))
     driver.execute_script("arguments[0].click();", dropdown)
-    wait.until(ec.visibility_of_element_located((By.ID, panel)))
+    try:
+        wait.until(ec.visibility_of_element_located((By.ID, panel)))
+    except TimeoutException:
+        # A lingering open panel or in-flight AJAX swallows the first click
+        # now and then; close whatever is open and try once more.
+        from selenium.webdriver.common.keys import Keys  # noqa: PLC0415
+
+        driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
+        time.sleep(0.6)
+        driver.execute_script("arguments[0].click();", dropdown)
+        wait.until(ec.visibility_of_element_located((By.ID, panel)))
     time.sleep(random.uniform(0.4, 0.9))
     try:
         xp = f"//div[@id='{panel}']//li[@data-label=\"{option}\"]"
@@ -167,51 +197,72 @@ def apply_base_filters(driver: Any, wait: Any, year: str) -> None:
     pick(driver, wait, label_id(driver, "Year"), year)
 
 
-def extract_long_rows(
-    driver: Any, state_code: str, rto: str, period: str
-) -> list[RtoClassCount]:
-    """The rendered table -> long rows: every EV fuel x every class column."""
+#: Pull every PrimeFaces datatable off the page as (class header row, body
+#: rows), via textContent. Selenium's ``.text`` is empty for anything scrolled
+#: out of view, and the scrollable table renders its real header in a cloned
+#: sibling <table> - so per-cell ``.text`` against ``//thead/tr/th`` reads a
+#: soup of clones and blanks. The wrapper div owns both clones; textContent
+#: does not care about visibility; and the class row is the only header row
+#: with every cell non-empty and none of the fixed labels.
+_TABLES_JS = """
+const out = [];
+const FIXED = new Set(['S NO', 'FUEL', 'VEHICLE CATEGORY', 'TOTAL']);
+for (const tb of document.querySelectorAll("tbody[id*='_data']")) {
+  const wrapper = tb.closest('div.ui-datatable');
+  if (!wrapper) continue;
+  const headRows = Array.from(wrapper.querySelectorAll('thead tr'))
+    .map(tr => Array.from(tr.children).map(th => th.textContent.trim()));
+  const hasFuel = headRows.some(r => r.some(c => c.toUpperCase() === 'FUEL'));
+  const classes = headRows.find(r =>
+    r.length > 1 && r.every(c => c) &&
+    !r.some(c => FIXED.has(c.toUpperCase())));
+  if (!hasFuel || !classes) continue;
+  const rows = Array.from(tb.querySelectorAll(':scope > tr')).map(tr =>
+    Array.from(tr.children).map(td => td.textContent.trim()));
+  if (rows.length) out.push({classes: classes, rows: rows});
+}
+return out;
+"""
+
+
+def extract_long_rows(driver: Any, state_code: str, rto: str, period: str) -> list[RtoClassCount]:
+    """The rendered table -> long rows: every EV fuel x every class column.
+
+    Body rows come as [S No, Fuel, <one count per class column>, TOTAL]; the
+    class names arrive positionally from the table's own header, so the TOTAL
+    at the end is kept under its own name and never mistaken for a class.
+    """
     from selenium.webdriver.common.by import By  # noqa: PLC0415
     from selenium.webdriver.support.ui import WebDriverWait  # noqa: PLC0415
 
     # Wait for the AJAX block-overlay to clear; if it never appeared, move on.
     with contextlib.suppress(Exception):
         WebDriverWait(driver, 5).until(
-            lambda d: not d.find_elements(By.CLASS_NAME, "ui-blockui")
-            or not d.find_element(By.CLASS_NAME, "ui-blockui").is_displayed()
+            lambda d: (
+                not d.find_elements(By.CLASS_NAME, "ui-blockui")
+                or not d.find_element(By.CLASS_NAME, "ui-blockui").is_displayed()
+            )
         )
 
-    headers = driver.find_elements(By.XPATH, "//thead/tr/th")
-    col: dict[str, int] = {}
-    for i, h in enumerate(headers):
-        name = normalise_class(h.text)
-        if name and name not in _SKIP_HEADERS:
-            col[name] = i
-    fuel_idx = next(
-        (i for i, h in enumerate(headers) if normalise_class(h.text) == "FUEL"), 1
-    )
-
-    body = driver.find_elements(By.XPATH, "//tbody[contains(@id,'_data')]/tr")
     out: list[RtoClassCount] = []
-    for tr in body:
-        cells = tr.find_elements(By.TAG_NAME, "td")
-        if len(cells) <= fuel_idx:
-            continue
-        try:
-            fuel = cells[fuel_idx].find_element(By.TAG_NAME, "label").text.strip()
-        except Exception:  # noqa: BLE001
-            fuel = cells[fuel_idx].text.strip()
-        if fuel not in EV_FUELS:
-            continue
-        for vclass, idx in col.items():
-            if idx >= len(cells):
+    for table in driver.execute_script(_TABLES_JS):
+        classes = [normalise_class(c) for c in table["classes"]]
+        for cells in table["rows"]:
+            if len(cells) < len(classes) + 2:
                 continue
-            raw = cells[idx].text.replace(",", "").strip()
-            if not raw.lstrip("-").isdigit():
+            fuel = cells[1].strip()
+            if fuel not in EV_FUELS:
                 continue
-            out.append(
-                RtoClassCount(state_code, rto, period, fuel, vclass, int(raw))
-            )
+            named = list(zip(classes, cells[2 : 2 + len(classes)], strict=True))
+            if len(cells) > len(classes) + 2:  # trailing row-total column
+                named.append(("TOTAL", cells[-1]))
+            for vclass, raw in named:
+                raw = raw.replace(",", "").strip()
+                if not raw.lstrip("-").isdigit():
+                    continue
+                out.append(RtoClassCount(state_code, rto, period, fuel, vclass, int(raw)))
+        if out:  # first table with EV rows is the fuel table; stop there
+            break
     return out
 
 
@@ -254,7 +305,19 @@ def scrape(
 
         for year in years:
             print(f"\n===== YEAR {year} =====")
-            apply_base_filters(driver, wait, year)
+            # One flaky dropdown must not cost the whole run: reload the
+            # dashboard and re-apply from scratch before giving up.
+            for attempt in range(1, 4):
+                try:
+                    apply_base_filters(driver, wait, year)
+                    break
+                except Exception:  # noqa: BLE001 - selenium raises many shapes
+                    if attempt == 3:
+                        raise
+                    print(f"  base filters failed (attempt {attempt}); reloading")
+                    driver.get(URL)
+                    time.sleep(3)
+                    wait_pf_ajax_idle(driver)
             for state_code, state_refs in by_state.items():
                 state_name = STATE_NAMES.get(state_code, state_code)
                 print(f"--- {state_name} ({state_code}) ---")
