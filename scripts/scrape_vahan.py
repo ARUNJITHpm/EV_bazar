@@ -373,6 +373,15 @@ def scrape(
                         for x in rows[:4]:
                             print(f"      {x.fuel} {x.vehicle_class}={x.count}")
                     elif writer is not None and fh is not None:
+                        if not rows:
+                            # Resume marker. Zero-row RTOs (head offices,
+                            # unit offices absent from the dashboard's list)
+                            # would otherwise be re-fought - three timeouts
+                            # and two browser restarts each - on every
+                            # relaunch. Fuel NONE is filtered out at ingest
+                            # (parse_vahan_csv ev_only), so it marks the
+                            # (rto, period) pair done without counting.
+                            writer.writerow((state_code, rto, year, "NONE", "TOTAL", 0))
                         for x in rows:
                             writer.writerow(
                                 (x.state_code, x.rto, x.period, x.fuel, x.vehicle_class, x.count)
