@@ -222,10 +222,18 @@ SOURCES: tuple[SourceSpec, ...] = (
     ),
     SourceSpec(
         name="tata_power_ez",
-        adapter="scrape",
+        adapter="tata",
         base_url="",
-        terms_url=None,
-        terms_note=_scrape_todo("Tata Power EZ"),
+        terms_url="https://ezcharge.tatapower.com/evselfcare/assets/images/termsandconditions.html",
+        terms_note=(
+            "Read 2026-08-15: a customer/service agreement (charging sessions, cards, "
+            "payments). NO explicit anti-scraping or automated-access clause - but no grant "
+            "either, and it disclaims the accuracy of the displayed status. The adapter is "
+            "BUILT (TataEzChargeAdapter: POST to syncRequestHandler, station-level occupancy). "
+            "Still authorised=False on purpose: polling replays the app's embedded credential, "
+            "so a human must decide that is acceptable, supply the token in .env, and confirm "
+            "the auth header + response shape with `python -m workers.poller --dry-run`."
+        ),
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,

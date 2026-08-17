@@ -377,6 +377,38 @@ on the Data panel on its own, and the VAHAN console panel lights up.
   real-time occupancy, so the app-scrape moat (starting with chargeMOD) stands.
   `CPO_SOURCES.md` updated with the verified shape and a KL+TN-first order.
 
+### PART 2.3 — GoEC + Zeon inventory added 2026-08-17
+Two more public inventory sources beside OCM, verified live and stored: **GoEC
+251 stations (Kerala-dominant), Zeon 458 (strong in Tamil Nadu)** — 709 rows,
+**every one placed in a district**. Competitor total 1,079 → **1,788**. Both are
+keyless national GETs. GoEC ships ~one row PER CONNECTOR with **no id**, so rows
+are grouped by (label, point) into one station with a hashed stable id (490 rows
+→ 251); its bare host 308-redirects to `www` (now followed). Zeon ships a stable
+`id` + `connector_data`. Each keeps its own `source`, so the same network seen via
+both OCM and its own feed is two rows until the downstream dedupe — visible now as
+"Zeon" (458) beside OCM's "Zeon Charging" (154). Inventory only; no occupancy.
+
+### PART 0.1 — Tata Power occupancy adapter — code done 2026-08-17
+`TataEzChargeAdapter` is built and tested: a **POST** to
+`ezcharge.tatapower.com/HobsIntegration/syncRequestHandler?service=GET_CHARGING_
+STATIONS_ALL`, station-level `stationStatus` normalised through the (extended)
+`from_scraped_stations` — `statusList` wrapper + `stationStatus`/`stationId` keys,
+plus `outofservice→OFFLINE`. Wired in `build_targets` (Tata gets this adapter, the
+rest keep the generic GET one). **The first confirmed live-occupancy route to a
+competitor** (browser-verified 2026-08-15).
+
+- ⚠️ **TWO things stay UNVERIFIED until one authorised `--dry-run`**, because a
+  clean replay without the app's embedded credential returns an app-level 401:
+  the **auth mechanism** (adapter assumes `Authorization: Bearer`; the real header
+  was redacted in capture) and the **exact success fields** (my 401 hid them).
+  Both are one clearly-marked fix each (`_auth_headers`, the id/status keys).
+- **Deliberately still `authorised=False`.** Polling replays Tata's own app
+  credential, so it is a governance decision a human owns — read the ToS (a
+  customer service agreement, no explicit anti-scraping clause), supply the token
+  in `.env`, flip `authorised`. Config + a token never grant permission alone.
+- The credential itself was **never extracted** — the browser tool redacted it,
+  and it must live in `.env`, never in the repo.
+
 ### PART 1.6 — Tier gate — **next**
 Not started. What it needs and what it unblocks:
 

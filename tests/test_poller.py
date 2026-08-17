@@ -248,11 +248,58 @@ def test_scrape_adapter_fetches_and_normalises() -> None:
     assert len(obs) == 3
 
 
+# Tata's endpoint wraps stations under `statusList`, keys the id as `stationId`,
+# and reports occupancy station-level as `stationStatus` (shape per the browser
+# capture; the exact fields are confirmed in an authorised --dry-run).
+TATA_PAYLOAD = {
+    "statusList": [
+        {"stationId": "TATA-KL-001", "lat": 9.9, "lng": 76.2, "stationStatus": "AVAILABLE"},
+        {"stationId": "TATA-TN-002", "lat": 13.0, "lng": 80.2, "stationStatus": "OCCUPIED"},
+        {"stationId": "TATA-KL-003", "lat": 10.0, "lng": 76.3, "stationStatus": "OUTOFSERVICE"},
+    ]
+}
+
+
+def test_tata_status_list_wrapper_and_station_status_are_read() -> None:
+    obs = from_scraped_stations(TATA_PAYLOAD, source="tata_power_ez", observed_at=NOW)
+    by_id = {o.source_station_id: o.status for o in obs}
+    assert by_id["TATA-KL-001"] == ConnectorStatus.AVAILABLE
+    assert by_id["TATA-TN-002"] == ConnectorStatus.OCCUPIED
+    assert by_id["TATA-KL-003"] == ConnectorStatus.OFFLINE  # OUTOFSERVICE -> OFFLINE
+
+
+def test_tata_adapter_posts_service_query_and_normalises() -> None:
+    import httpx
+
+    from app.domain.polling.adapters import TataEzChargeAdapter
+
+    spec = BY_NAME["tata_power_ez"]
+    seen: dict[str, str] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["method"] = request.method
+        seen["url"] = str(request.url)
+        assert request.headers.get("Authorization") == "Bearer tok"
+        return httpx.Response(200, json=TATA_PAYLOAD)
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    obs = TataEzChargeAdapter(
+        spec, base_url="https://ezcharge.tatapower.com", api_key="tok"
+    ).fetch(client, observed_at=NOW)
+
+    assert seen["method"] == "POST"
+    assert "/HobsIntegration/syncRequestHandler" in seen["url"]
+    assert "service=GET_CHARGING_STATIONS_ALL" in seen["url"]
+    assert "transid=" in seen["url"]  # a per-request id, like the real app
+    assert len(obs) == 3
+
+
 def test_all_scrape_sources_ship_unauthorised() -> None:
     """No CPO app is polled until its terms are read - traffic never a default."""
     for name in ("chargezone", "statiq", "kazam", "chargemod", "tata_power_ez", "jio_bp"):
         spec = BY_NAME[name]
-        assert spec.adapter == "scrape"
+        # Tata has its own POST adapter; the rest share the generic scrape one.
+        assert spec.adapter in ("scrape", "tata")
         assert spec.authorised is False
         assert spec.pollable is False
 

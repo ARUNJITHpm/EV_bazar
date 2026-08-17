@@ -164,6 +164,8 @@ SCRAPE_STATUS_MAP: dict[str, ConnectorStatus] = {
     "fault": ConnectorStatus.OFFLINE,
     "outoforder": ConnectorStatus.OFFLINE,
     "out_of_order": ConnectorStatus.OFFLINE,
+    "outofservice": ConnectorStatus.OFFLINE,  # Tata / Google availability vocab
+    "out_of_service": ConnectorStatus.OFFLINE,
     "maintenance": ConnectorStatus.OFFLINE,
     "unknown": ConnectorStatus.UNKNOWN,
 }
@@ -230,10 +232,13 @@ def from_scraped_stations(
             _as_list(payload.get("stations"))
             or _as_list(payload.get("data"))
             or _as_list(payload.get("results"))
+            or _as_list(payload.get("statusList"))  # Tata EZ Charge wraps the list here
         )
 
     for station in stations:
-        station_id = _first_str(station, ("id", "station_id", "cpId", "uuid", "code"))
+        station_id = _first_str(
+            station, ("id", "station_id", "stationId", "chargingStationId", "cpId", "uuid", "code")
+        )
         if not station_id:
             continue
 
@@ -252,7 +257,7 @@ def from_scraped_stations(
                     source_station_id=station_id,
                     connector_id=station_id,
                     status=map_scrape_status(
-                        _first_str(station, ("status", "state", "availability"))
+                        _first_str(station, ("status", "state", "availability", "stationStatus"))
                     ),
                     observed_at=observed_at,
                     raw_payload={"station": station},

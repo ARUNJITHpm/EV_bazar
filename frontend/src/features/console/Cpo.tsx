@@ -139,6 +139,26 @@ export function Cpo() {
                           {s.public_route}
                         </span>
                       )}
+                      {s.terms_note && (
+                        <details className="mt-1 max-w-[22rem]">
+                          <summary className="cursor-pointer font-data text-[10px] text-ink-faint">
+                            terms &amp; status ▾
+                          </summary>
+                          <p className="mt-0.5 font-data text-[10px] leading-snug text-ink-muted">
+                            {s.terms_note}
+                          </p>
+                          {s.terms_url && (
+                            <a
+                              href={s.terms_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="font-data text-[10px] text-info underline"
+                            >
+                              read the terms ↗
+                            </a>
+                          )}
+                        </details>
+                      )}
                     </td>
                     <td className="py-1.5 font-data text-[12px] text-ink-muted">{s.kind}</td>
                     <td className="py-1.5 text-[13px]">

@@ -37,7 +37,7 @@ from sqlalchemy.orm import Session
 
 from app.config import Settings, get_settings
 from app.db import SessionLocal
-from app.domain.polling.adapters import Adapter, ScrapeAdapter
+from app.domain.polling.adapters import Adapter, ScrapeAdapter, TataEzChargeAdapter
 from app.domain.polling.derive import derive_transitions
 from app.domain.polling.ingest import (
     finish_run,
@@ -91,17 +91,24 @@ def build_targets(settings: Settings) -> list[tuple[SourceSpec, Adapter]]:
             continue
 
         cfg = settings.scrape_sources[name]
-        targets.append(
-            (
-                spec,
-                ScrapeAdapter(
-                    spec,
-                    base_url=cfg.base_url,
-                    api_key=cfg.api_key,
-                    path=cfg.stations_path,
-                ),
+        adapter: Adapter
+        if name == "tata_power_ez":
+            # Tata's map endpoint is a POST with a service/transid query, not the
+            # generic GET; fall back to its real path when the config still holds
+            # the generic default.
+            tata_path = (
+                cfg.stations_path
+                if cfg.stations_path != "/stations"
+                else "/HobsIntegration/syncRequestHandler"
             )
-        )
+            adapter = TataEzChargeAdapter(
+                spec, base_url=cfg.base_url, api_key=cfg.api_key, path=tata_path
+            )
+        else:
+            adapter = ScrapeAdapter(
+                spec, base_url=cfg.base_url, api_key=cfg.api_key, path=cfg.stations_path
+            )
+        targets.append((spec, adapter))
 
     return targets
 
