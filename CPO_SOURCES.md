@@ -52,12 +52,12 @@ other **web-scrape or official API** gives competitor availability? Three parall
 researchers read official API docs and inspected the **actual network requests each
 CPO's public web map makes** (anonymous browser, no logins, nothing bypassed).
 
-> **chargeMOD (ours) — do NOT scrape the app.** It is our own network: read
-> occupancy from our **own backend / CSMS / DB directly**, the cleanest and most
-> accurate feed. The earlier "scrape chargeMOD too, on one mechanism" note is
-> **superseded** — that was about uniformity, and a direct internal read is
-> strictly better for a source we own. App-scraping is for networks we do *not*
-> control.
+> **chargeMOD (ours) — NOT wired via its backend (owner decision).** The poller
+> collects by **scraping**, like every competitor; the chargeMOD internal feed is
+> deliberately not fed into the product. Instead chargeMOD's real occupancy is the
+> private **ground truth**: the operator compares scraped-vs-real by hand to
+> confirm the scraping is accurate, and only then trusts the competitor numbers
+> that cannot be checked any other way. The accuracy proof, not a data source.
 
 ### Live occupancy (free/busy) — competitors
 

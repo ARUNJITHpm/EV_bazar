@@ -217,8 +217,10 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
-        public_route="OURS - read occupancy from our own backend/CSMS/DB directly. Do NOT "
-        "scrape the app (superseded 2026-08-15).",
+        public_route="NOT wired via chargeMOD's backend (owner decision) - the poller scrapes, "
+        "like every competitor. Because we own chargeMOD, its real occupancy is the private "
+        "GROUND TRUTH: scraped-vs-real is compared by hand to prove the scraping is accurate "
+        "before trusting competitor numbers we cannot otherwise check.",
     ),
     SourceSpec(
         name="tata_power_ez",

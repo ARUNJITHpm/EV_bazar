@@ -206,11 +206,12 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         ),
         None
         if poller_live
-        else "Human: open the chargeMOD app with devtools/mitmproxy, find the station-status "
-        "endpoint (~hours, once). Validate with `python -m workers.poller --dry-run` (no "
-        "database needed). Record terms + rate limit, flip authorised=True in "
-        "app/domain/polling/sources.py. Then a VPS, never a laptop - a laptop that "
-        "sleeps is a hole in the record.",
+        else "Human: the poller collects by SCRAPING competitors, and the Tata Power adapter "
+        "is BUILT with its route confirmed - authorise it in app/domain/polling/sources.py, put "
+        "TATA_POWER_EZ__BASE_URL + the token in .env, then validate with "
+        "`python -m workers.poller --dry-run`. chargeMOD's real occupancy is the private "
+        "accuracy check (scraped-vs-real, by hand), not a wired feed. Then a VPS, never a "
+        "laptop - a laptop that sleeps is a hole in the record.",
     )
     add(
         "1.3",
@@ -578,11 +579,11 @@ def build_inputs(
                 kind="endpoint",
                 status=status,
                 needed_for=(
-                    "PART 0.1 - the occupancy record. Start with chargeMOD: it is our "
-                    "own app, so authorising it is a decision we can make today, and it "
-                    "doubles as the accuracy check for scraping the others."
+                    "PART 0.1 - the occupancy record. chargeMOD is NOT fed from its own "
+                    "backend (owner decision); its real occupancy is the private accuracy "
+                    "check - scraped-vs-real is compared by hand to trust the scraping."
                     if spec.name == "chargemod"
-                    else "PART 0.1 - the occupancy record."
+                    else "PART 0.1 - the occupancy record, by scraping."
                 ),
                 env_vars=[
                     f"{prefix}__BASE_URL=https://...",
