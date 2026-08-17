@@ -52,19 +52,19 @@ other **web-scrape or official API** gives competitor availability? Three parall
 researchers read official API docs and inspected the **actual network requests each
 CPO's public web map makes** (anonymous browser, no logins, nothing bypassed).
 
-> **chargeMOD (ours) — NOT wired via its backend (owner decision).** The poller
-> collects by **scraping**, like every competitor; the chargeMOD internal feed is
-> deliberately not fed into the product. Instead chargeMOD's real occupancy is the
-> private **ground truth**: the operator compares scraped-vs-real by hand to
-> confirm the scraping is accurate, and only then trusts the competitor numbers
-> that cannot be checked any other way. The accuracy proof, not a data source.
+> **chargeMOD (ours) — scraped like every other source, no special treatment.**
+> The owner's call (2026-08-17): forget that it is our network; capture its
+> station-status endpoint the same way Tata's was captured (DevTools), wire it as
+> a normal scrape source. As a free bonus, because we own it, scraped-vs-real is
+> also a hand check on whether the scraping method is accurate — but it is a data
+> source first, a benchmark second.
 
 ### Live occupancy (free/busy) — competitors
 
 | Rank | Source | How the data arrives | Occupancy? | KL/TN | Caveat |
 |---|---|---|---|---|---|
 | **1** | **Tata Power EZ Charge** (public web map) | `POST ezcharge.tatapower.com/HobsIntegration/syncRequestHandler?service=GET_CHARGING_STATIONS_ALL` → JSON; UI has "only available/free" toggles | **Yes** | Both | **CONFIRMED IN BROWSER 2026-08-15** — see note below |
-| **2** | **Statiq** (public web map) | Per-connector status baked into SSR HTML / `__NEXT_DATA__` on each station page — **no clean JSON** | **Yes** (per connector) | Both | HTML-parse per station; robots explicitly permits crawl + AI |
+| **2** | **Statiq** (public web map) | Status is server-rendered into each per-station HTML page; the clean bulk data is auth-gated (`csms.statiq.in`) | **Yes** | Both | **Investigated 2026-08-17:** no keyless bulk JSON. Per-station HTML is too heavy/fragile to poll. Clean path = capture the map's data endpoint + auth from DevTools, like Tata |
 | **3** | **Pulse Energy** (aggregator web map) | same-origin `GET pulseenergy.io/api/charging-stations/nearby` (geolocation-driven) | Unknown — needs a geo-enabled browser to confirm the shape | Both (multi-CPO) | Highest upside — one capture could span Tata, Zeon, Statiq, Charge+Zone |
 | — | **Google Places API** (New) | `evChargeOptions.connectorAggregation[].availableCount / outOfServiceCount / availabilityLastUpdateTime` | **Yes**, official REST, non-OCPI | only networks that feed Google — **Statiq + Ather confirmed** | ⛔ **ToS forbids storing/caching** the content → fine for ephemeral live display, **illegal to accumulate a time series**. Paid (~$25/1k, Enterprise+Atmosphere SKU) |
 

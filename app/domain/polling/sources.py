@@ -192,9 +192,10 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
-        public_route="PUBLIC WEB (2026-08-15): per-connector live status is in the page HTML "
-        "(SSR) at statiq.in/ev-charging-station - parse per station, no clean JSON. Robots "
-        "permit crawl.",
+        public_route="INVESTIGATED 2026-08-17: live status IS on the public web, but the clean "
+        "bulk data is auth-gated (csms.statiq.in) - the only keyless data is per-station SSR "
+        "HTML (statiq.in/...-id-N), too heavy/fragile to poll at scale. Clean path = capture "
+        "the map's data endpoint + auth from DevTools, exactly like Tata, then a JSON adapter.",
     ),
     SourceSpec(
         name="kazam",
@@ -217,10 +218,10 @@ SOURCES: tuple[SourceSpec, ...] = (
         rate_limit_per_minute=None,
         authorised=False,
         enabled=False,
-        public_route="NOT wired via chargeMOD's backend (owner decision) - the poller scrapes, "
-        "like every competitor. Because we own chargeMOD, its real occupancy is the private "
-        "GROUND TRUTH: scraped-vs-real is compared by hand to prove the scraping is accurate "
-        "before trusting competitor numbers we cannot otherwise check.",
+        public_route="Scraped like every other source - NO special treatment for being ours. "
+        "Capture its station-status endpoint (browser DevTools, the way Tata's was captured), "
+        "set base_url + auth in .env, flip authorised. Being ours, its real data also doubles "
+        "as a free accuracy check on the scraping method.",
     ),
     SourceSpec(
         name="tata_power_ez",
