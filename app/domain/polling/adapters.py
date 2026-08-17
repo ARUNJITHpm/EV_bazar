@@ -198,13 +198,17 @@ class TataEzChargeAdapter:
     ``service`` + per-request ``transid`` in the query string, and the station
     list comes back wrapped under ``statusList`` (handled in ``normalise.py``).
 
-    ⚠️ TWO THINGS ARE UNVERIFIED until one authorised ``--dry-run``, because a
-    clean replay without the app's embedded credential returns an app-level 401:
+    AUTH IS CONFIRMED (2026-08-17, from a real request): HTTP **Basic** -
+    ``Authorization: Basic <base64>``. Put that base64 blob in ``api_key``
+    (``TATA_POWER_EZ__API_KEY``); ``_auth_headers`` prepends the scheme. It is a
+    static credential embedded in the app, so it can rotate - that is the upkeep
+    cost of this source.
 
-      1. THE AUTH MECHANISM. The token below (from ``api_key`` in config) is sent
-         as an ``Authorization: Bearer`` header - a documented ASSUMPTION. The
-         real header name / whether it belongs in the body was redacted in
-         capture. If dry-run returns a 401 envelope, correct ``_auth_headers``.
+    TWO THINGS STILL WANT A DRY-RUN CHECK:
+
+      1. THE REQUEST BODY. The real call sends a small JSON body (~225 bytes); we
+         POST ``{}``. If the response is empty or errors, capture the request
+         payload and pass it through ``json=`` here.
       2. THE EXACT SUCCESS FIELDS. ``normalise.from_scraped_stations`` reads
          ``stationStatus`` and a tolerant set of id keys; adjust those if the
          real record names them differently.
@@ -231,10 +235,15 @@ class TataEzChargeAdapter:
         self.path = path
 
     def _auth_headers(self) -> dict[str, str]:
-        # ASSUMPTION (confirm in dry-run): bearer token. See class docstring.
+        # CONFIRMED 2026-08-17 from a real request: HTTP Basic, not Bearer -
+        # `Authorization: Basic <base64>`. Config holds just the base64 blob;
+        # a pasted "Basic " prefix is tolerated so either form in .env works.
         headers = {"Accept": "application/json", "Content-Type": "application/json"}
         if self.api_key:
-            headers["Authorization"] = f"Bearer {self.api_key}"
+            token = self.api_key.strip()
+            if token.lower().startswith("basic "):
+                token = token[6:].strip()
+            headers["Authorization"] = f"Basic {token}"
         return headers
 
     def fetch_raw(self, client: httpx.Client) -> tuple[RawPage, ...]:

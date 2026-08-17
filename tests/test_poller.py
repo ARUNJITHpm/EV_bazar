@@ -279,7 +279,7 @@ def test_tata_adapter_posts_service_query_and_normalises() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         seen["method"] = request.method
         seen["url"] = str(request.url)
-        assert request.headers.get("Authorization") == "Bearer tok"
+        assert request.headers.get("Authorization") == "Basic tok"  # Basic, not Bearer
         return httpx.Response(200, json=TATA_PAYLOAD)
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
@@ -292,6 +292,17 @@ def test_tata_adapter_posts_service_query_and_normalises() -> None:
     assert "service=GET_CHARGING_STATIONS_ALL" in seen["url"]
     assert "transid=" in seen["url"]  # a per-request id, like the real app
     assert len(obs) == 3
+
+
+def test_tata_auth_is_basic_and_tolerates_pasted_prefix() -> None:
+    from app.domain.polling.adapters import TataEzChargeAdapter
+
+    spec = BY_NAME["tata_power_ez"]
+    bare = TataEzChargeAdapter(spec, base_url="https://x", api_key="blob==")
+    assert bare._auth_headers()["Authorization"] == "Basic blob=="
+    # a pasted "Basic <blob>" must not become "Basic Basic <blob>"
+    prefixed = TataEzChargeAdapter(spec, base_url="https://x", api_key="Basic blob==")
+    assert prefixed._auth_headers()["Authorization"] == "Basic blob=="
 
 
 def test_all_scrape_sources_ship_unauthorised() -> None:

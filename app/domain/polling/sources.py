@@ -231,10 +231,11 @@ SOURCES: tuple[SourceSpec, ...] = (
             "Read 2026-08-15: a customer/service agreement (charging sessions, cards, "
             "payments). NO explicit anti-scraping or automated-access clause - but no grant "
             "either, and it disclaims the accuracy of the displayed status. The adapter is "
-            "BUILT (TataEzChargeAdapter: POST to syncRequestHandler, station-level occupancy). "
-            "Still authorised=False on purpose: polling replays the app's embedded credential, "
-            "so a human must decide that is acceptable, supply the token in .env, and confirm "
-            "the auth header + response shape with `python -m workers.poller --dry-run`."
+            "BUILT (TataEzChargeAdapter: POST to syncRequestHandler, station-level occupancy; "
+            "auth is HTTP Basic, confirmed 2026-08-17). Still authorised=False on purpose: "
+            "polling replays the app's embedded credential, so a human must decide that is "
+            "acceptable, put the Basic blob in .env, and confirm it returns stations with "
+            "`python -m workers.poller --dry-run`."
         ),
         rate_limit_per_minute=None,
         authorised=False,
