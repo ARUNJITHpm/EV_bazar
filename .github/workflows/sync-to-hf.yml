@@ -28,6 +28,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git rm -rq --ignore-unmatch -- '*.pdf'
+          # Deterministic dates: the same main always yields the same mirror
+          # SHA, so re-running the workflow is a no-op push, not a rebuild.
+          export GIT_AUTHOR_DATE="$(git log -1 --format=%cI)"
+          export GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE"
           git diff --cached --quiet || git commit -qm "Strip PDFs from the Space mirror"
       - name: Push main to the Space
         env:
