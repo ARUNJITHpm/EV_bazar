@@ -35,6 +35,7 @@ import contextlib
 import csv
 import datetime as dt
 import random
+import socket
 import sys
 import time
 from pathlib import Path
@@ -106,6 +107,11 @@ def start_driver() -> tuple[Any, Any]:
         raise SystemExit(
             "browser deps missing. Install them with:  uv sync --extra scrape"
         ) from exc
+
+    # If Chrome dies mid-run, selenium's HTTP calls to the dead driver would
+    # otherwise block forever - the run hangs instead of failing. A socket
+    # default turns that into an exception the retry logic can act on.
+    socket.setdefaulttimeout(180)
 
     options = uc.ChromeOptions()
     options.add_argument("--start-maximized")
@@ -342,8 +348,25 @@ def scrape(
                             rows = extract_long_rows(driver, state_code, rto, year)
                             break
                         except Exception as exc:  # noqa: BLE001 - retry, then skip
-                            print(f"  {rto} [{year}] attempt {attempt}/3: {exc}")
+                            first = str(exc).splitlines()[0] if str(exc).strip() else ""
+                            print(
+                                f"  {rto} [{year}] attempt {attempt}/3: "
+                                f"{type(exc).__name__}: {first}"
+                            )
                             time.sleep(2)
+                            if attempt >= 2:
+                                # Two failures in a row usually means the
+                                # session itself is gone - only a fresh
+                                # browser can still save this RTO. If even
+                                # that fails, die loudly; --resume makes the
+                                # restart cheap.
+                                print("  restarting browser")
+                                with contextlib.suppress(Exception):
+                                    driver.quit()
+                                driver, wait = start_driver()
+                                time.sleep(2)
+                                apply_base_filters(driver, wait, year)
+                                pick(driver, wait, label_id(driver, "State"), state_name)
                     ev_total = sum(x.count for x in rows if x.vehicle_class == "TOTAL")
                     print(f"  {rto} [{year}]: {len(rows)} rows, {ev_total} EV total")
                     if dry_run:
@@ -372,6 +395,11 @@ def default_years() -> list[str]:
 
 
 def main() -> None:
+    # Line-buffer stdout so a redirected log shows progress live rather than
+    # in 4KB lumps half an hour late.
+    with contextlib.suppress(Exception):
+        sys.stdout.reconfigure(line_buffering=True)
+
     p = argparse.ArgumentParser(description="Scrape VAHAN EV registrations (PLAN 4.1)")
     p.add_argument("--state", default="kerala,tamilnadu", help="comma list: kerala,tamilnadu")
     p.add_argument("--years", default="", help="comma list, e.g. 2023,2024,2025 (default: last 4)")
