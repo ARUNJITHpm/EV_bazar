@@ -1,15 +1,20 @@
-"""Fetch the competitor inventory from Open Charge Map - PART 2.3.
+"""Fetch the competitor inventory - PART 2.3.
 
+    # Open Charge Map (needs a free key; per-state bbox or a point)
     uv run python -m scripts.fetch_competitors --state kerala --write
-    uv run python -m scripts.fetch_competitors --state tamilnadu --dry-run
     uv run python -m scripts.fetch_competitors --near 9.9312 76.2673 --radius 5
 
-Needs OPEN_CHARGE_MAP__API_KEY in .env (free key from openchargemap.org). Each
-station is resolved to its district via PLAN 1.4 on the way in, so
+    # GoEC and Zeon (no key; one national GET each)
+    uv run python -m scripts.fetch_competitors --source goec --write
+    uv run python -m scripts.fetch_competitors --source zeon --dry-run
+
+Each station is resolved to its district via PLAN 1.4 on the way in, so
 "competitors per district" is an integer lookup afterwards, not a spatial join.
 
-OCM gives existence + specs + an operational flag, NOT live occupancy - that is
-the poller's job (PART 0.1), and it will attach to these rows.
+All three sources give existence + specs, NOT live occupancy - that is the
+poller's job (PART 0.1), and it will attach to these rows. GoEC is dense in
+Kerala, Zeon in Tamil Nadu, OCM broad-but-thin; each carries its own ``source``
+so overlaps are reconciled downstream (2.3), not dropped at fetch.
 """
 
 from __future__ import annotations
@@ -24,7 +29,9 @@ from app.db import SessionLocal
 from app.domain.context import (
     CompetitorStationData,
     dedupe,
+    fetch_goec,
     fetch_ocm,
+    fetch_zeon,
     store_stations,
     tile_bbox,
 )
@@ -39,9 +46,15 @@ STATE_BBOX: dict[str, tuple[float, float, float, float]] = {
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Fetch competitor inventory (PLAN 2.3)")
-    parser.add_argument("--state", choices=sorted(STATE_BBOX), help="fetch a whole state's bbox")
     parser.add_argument(
-        "--near", nargs=2, type=float, metavar=("LAT", "LNG"), help="fetch near a point instead"
+        "--source",
+        choices=["ocm", "goec", "zeon"],
+        default="ocm",
+        help="inventory source (default ocm); goec/zeon need no key, ignore --state/--near",
+    )
+    parser.add_argument("--state", choices=sorted(STATE_BBOX), help="OCM: a whole state's bbox")
+    parser.add_argument(
+        "--near", nargs=2, type=float, metavar=("LAT", "LNG"), help="OCM: near a point"
     )
     parser.add_argument("--radius", type=float, default=25.0, help="km, with --near")
     parser.add_argument(
@@ -54,44 +67,51 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dry-run", action="store_true", help="fetch and show, store nothing")
     args = parser.parse_args(argv)
 
-    if not args.state and not args.near:
-        parser.error("give --state or --near")
-
-    settings = get_settings()
-    ocm = settings.open_charge_map
-    if not ocm.enabled:
-        print("OPEN_CHARGE_MAP__API_KEY is not set in .env - get a free key at openchargemap.org")
-        return 2
-
     stations: list[CompetitorStationData] = []
     raw_total = 0
-    with httpx.Client() as client:
-        assert ocm.api_key is not None  # noqa: S101 - narrowed by ocm.enabled
-        if args.state:
-            tiles = tile_bbox(STATE_BBOX[args.state], rows=args.grid, cols=args.grid)
-            print(f"fetching Open Charge Map for {args.state} across {len(tiles)} tiles...")
-            for i, tile in enumerate(tiles, 1):
+
+    if args.source in ("goec", "zeon"):
+        with httpx.Client() as client:
+            print(f"fetching {args.source} (one national request, no key)...")
+            res = fetch_goec(client) if args.source == "goec" else fetch_zeon(client)
+        raw_total = res.raw_count
+        stations.extend(res.stations)
+        print(f"  {res.raw_count} raw rows -> {res.parsed_count} stations")
+    else:
+        if not args.state and not args.near:
+            parser.error("OCM needs --state or --near (or use --source goec/zeon)")
+        settings = get_settings()
+        ocm = settings.open_charge_map
+        if not ocm.enabled:
+            print("OPEN_CHARGE_MAP__API_KEY is not set in .env - free key at openchargemap.org")
+            return 2
+        with httpx.Client() as client:
+            assert ocm.api_key is not None  # noqa: S101 - narrowed by ocm.enabled
+            if args.state:
+                tiles = tile_bbox(STATE_BBOX[args.state], rows=args.grid, cols=args.grid)
+                print(f"fetching Open Charge Map for {args.state} across {len(tiles)} tiles...")
+                for i, tile in enumerate(tiles, 1):
+                    res = fetch_ocm(
+                        client, ocm.api_key, bbox=tile, max_results=args.max, base_url=ocm.base_url
+                    )
+                    raw_total += res.raw_count
+                    stations.extend(res.stations)
+                    cap = " (HIT CAP - increase --grid)" if res.raw_count >= args.max else ""
+                    print(f"  tile {i:>2}/{len(tiles)}: {res.raw_count} POIs{cap}")
+            else:
+                lat, lng = args.near
+                print(f"fetching Open Charge Map within {args.radius} km of {lat},{lng}...")
                 res = fetch_ocm(
-                    client, ocm.api_key, bbox=tile, max_results=args.max, base_url=ocm.base_url
+                    client,
+                    ocm.api_key,
+                    lat=lat,
+                    lng=lng,
+                    distance_km=args.radius,
+                    max_results=args.max,
+                    base_url=ocm.base_url,
                 )
                 raw_total += res.raw_count
                 stations.extend(res.stations)
-                cap = " (HIT CAP - increase --grid)" if res.raw_count >= args.max else ""
-                print(f"  tile {i:>2}/{len(tiles)}: {res.raw_count} POIs{cap}")
-        else:
-            lat, lng = args.near
-            print(f"fetching Open Charge Map within {args.radius} km of {lat},{lng}...")
-            res = fetch_ocm(
-                client,
-                ocm.api_key,
-                lat=lat,
-                lng=lng,
-                distance_km=args.radius,
-                max_results=args.max,
-                base_url=ocm.base_url,
-            )
-            raw_total += res.raw_count
-            stations.extend(res.stations)
 
     stations = dedupe(stations)
     print(f"\n  {raw_total} raw POIs across tiles -> {len(stations)} unique stations")

@@ -17,6 +17,7 @@ poller's job. So this builds the competitor *denominator*; the poller fills in
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -270,3 +271,165 @@ def fetch_ocm(
 
     parsed = [s for s in (parse_ocm_poi(p) for p in payload) if s is not None]
     return FetchResult(stations=parsed, raw_count=len(payload), parsed_count=len(parsed))
+
+
+# ---------------------------------------------------------------------------
+# Additional public inventory sources: GoEC and Zeon.
+#
+# Each serves a plain public JSON endpoint - no key, robots-permissive, verified
+# live 2026-08-15. INVENTORY ONLY, exactly like OCM: existence + specs, never
+# occupancy. They earn their place because each is dense where OCM is thin - GoEC
+# dominates Kerala, Zeon is strong in Tamil Nadu - so together they thicken the
+# KL+TN competitor denominator. Same fetch/parse split; kept beside OCM because
+# they produce the same ``CompetitorStationData`` and store through one shell.
+#
+# They carry their own ``source`` ("goec"/"zeon"), so a GO EC station seen via
+# both OCM and GoEC's own feed is two rows until PLAN 2.3's downstream dedupe -
+# the overlap is signal, reconciled at analysis time, not dropped at fetch.
+# ---------------------------------------------------------------------------
+
+GOEC_URL = "https://www.goecworld.com/api/stations/locations"  # bare host 308-redirects to www
+ZEON_URL = "https://zeoncharging.com/api/stations"
+
+_INVENTORY_UA = {"User-Agent": "EVSiteIntelligence/0.1 (software@chargemod.com)"}
+
+
+def _stable_id(prefix: str, *parts: object) -> str:
+    """A deterministic, <=64-char id for a source that ships none of its own.
+
+    Hashing (label, rounded lat/lng) is stable across fetches, so the upsert key
+    stays constant and a re-fetch updates in place rather than duplicating.
+    """
+    digest = hashlib.md5("|".join(str(p) for p in parts).encode()).hexdigest()[:24]  # noqa: S324
+    return f"{prefix}-{digest}"
+
+
+def parse_goec_stations(rows: object) -> list[CompetitorStationData]:
+    """GoEC's flat rows -> one station per (label, point). Pure.
+
+    The endpoint returns roughly one row PER CONNECTOR - a station with two
+    chargers appears twice, identical label and coordinates, different ``power``
+    - so rows are grouped by (label, lat, lng) into a single station whose
+    connectors are the grouped rows. No stable id ships, so one is derived from
+    the label and rounded coordinates.
+    """
+    if not isinstance(rows, list):
+        return []
+    groups: dict[tuple[str, float, float], list[dict[str, Any]]] = {}
+    order: list[tuple[str, float, float]] = []
+    for r in rows:
+        if not isinstance(r, dict):
+            continue
+        lat = _to_float(r.get("lat"))
+        lng = _to_float(r.get("lng"))
+        if lat is None or lng is None:
+            continue
+        key = (str(r.get("label") or "").strip(), round(lat, 6), round(lng, 6))
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(r)
+
+    out: list[CompetitorStationData] = []
+    for label, lat, lng in order:
+        members = groups[(label, lat, lng)]
+        connectors: list[Connector] = []
+        powers: list[float] = []
+        for m in members:
+            p = _to_float(m.get("power"))
+            connectors.append(Connector(connector_type=None, power_kw=p, quantity=1))
+            if p:
+                powers.append(p)
+        out.append(
+            CompetitorStationData(
+                source="goec",
+                source_id=_stable_id("goec", label, f"{lat:.6f}", f"{lng:.6f}"),
+                lat=lat,
+                lng=lng,
+                name=label or None,
+                operator="GO EC",
+                number_of_points=len(members),
+                max_power_kw=max(powers) if powers else None,
+                connectors=tuple(connectors),
+            )
+        )
+    return out
+
+
+def parse_zeon_station(rec: object) -> CompetitorStationData | None:
+    """One Zeon ``data[]`` record -> a station, or None. Pure.
+
+    Zeon ships a stable integer ``id`` and a ``connector_data`` list, so this is
+    a straight field map - the connector count and peak power come from that
+    list, the town/postcode from the nested ``address``.
+    """
+    if not isinstance(rec, dict):
+        return None
+    sid = rec.get("id")
+    lat = _to_float(rec.get("latitude"))
+    lng = _to_float(rec.get("longitude"))
+    if sid is None or lat is None or lng is None:
+        return None
+
+    addr_raw = rec.get("address")
+    addr: dict[str, Any] = addr_raw if isinstance(addr_raw, dict) else {}
+    connectors: list[Connector] = []
+    powers: list[float] = []
+    points = 0
+    conns = rec.get("connector_data")
+    if isinstance(conns, list):
+        for c in conns:
+            if not isinstance(c, dict):
+                continue
+            p = _to_float(c.get("peak_power"))
+            qty = c.get("connector_count")
+            qty = int(qty) if isinstance(qty, int) else 1
+            ctype = c.get("connector_type")
+            connectors.append(
+                Connector(
+                    connector_type=ctype.strip() if isinstance(ctype, str) else None,
+                    power_kw=p,
+                    quantity=qty,
+                )
+            )
+            points += qty
+            if p:
+                powers.append(p)
+
+    zip_code = addr.get("zipCode")
+    return CompetitorStationData(
+        source="zeon",
+        source_id=str(sid),
+        lat=lat,
+        lng=lng,
+        name=rec.get("station_name"),
+        operator="Zeon",
+        town=addr.get("city"),
+        postcode=str(zip_code) if zip_code else None,
+        access=map_access(rec.get("accessibility_type")),
+        number_of_points=points or None,
+        max_power_kw=max(powers) if powers else None,
+        connectors=tuple(connectors),
+    )
+
+
+def fetch_goec(client: httpx.Client, *, url: str = GOEC_URL) -> FetchResult:
+    """Fetch the whole GoEC station list (one national GET). Pure HTTP."""
+    response = client.get(url, headers=_INVENTORY_UA, timeout=60.0, follow_redirects=True)
+    response.raise_for_status()
+    payload = response.json()
+    stations = parse_goec_stations(payload)
+    raw = len(payload) if isinstance(payload, list) else 0
+    return FetchResult(stations=stations, raw_count=raw, parsed_count=len(stations))
+
+
+def fetch_zeon(client: httpx.Client, *, url: str = ZEON_URL) -> FetchResult:
+    """Fetch the whole Zeon station list (one national GET). Pure HTTP."""
+    response = client.get(url, headers=_INVENTORY_UA, timeout=60.0, follow_redirects=True)
+    response.raise_for_status()
+    payload = response.json()
+    data = payload.get("data") if isinstance(payload, dict) else None
+    if not isinstance(data, list):
+        return FetchResult()
+    stations = [s for s in (parse_zeon_station(rec) for rec in data) if s is not None]
+    return FetchResult(stations=stations, raw_count=len(data), parsed_count=len(stations))

@@ -90,11 +90,24 @@ session, no login, nothing bypassed:
   availability of the displayed status. The durable path for Tata occupancy remains
   an **OCPI/partner ask**; the web endpoint is a viable interim with upkeep risk.
 
-### Inventory only (locations/connectors, NO occupancy) — clean, free, permissive JSON
+### Inventory only (locations/connectors, NO occupancy) — WIRED 2026-08-17
 
-- **GoEC** — `GET goecworld.com/api/stations/locations` (~600 records, **dominant in Kerala**, ~550). `{lat,lng,state,label,power}`, no status.
-- **Zeon** — `GET zeoncharging.com/api/stations` (~460, **strong Tamil Nadu**, ~150). Full connector specs, no status.
-- Both complement Open Charge Map for the KL/TN competitor **master list**; neither carries free/busy.
+Both are now sources in `scripts/fetch_competitors.py` (parsers + fetchers in
+`app/domain/context/competitors.py`, tested). One national GET each, no key:
+
+- **GoEC** — `GET www.goecworld.com/api/stations/locations` (bare host 308-redirects
+  to `www`). Verified live: **490 rows → 251 stations**. `{lat,lng,state,label,power}`;
+  ships ~one row PER CONNECTOR and no id, so rows are grouped by (label, point) into
+  one station with a derived stable id. **Kerala-dominant** (448 of 490 rows). No status.
+  Run: `fetch_competitors --source goec --write`.
+- **Zeon** — `GET zeoncharging.com/api/stations` → `{data:[…]}`. Verified live: **458
+  stations**, each with a stable `id`, address, and a `connector_data` list (peak power,
+  type, count). **Strong in Tamil Nadu.** No status.
+  Run: `fetch_competitors --source zeon --write`.
+- Each carries its own `source` ("goec"/"zeon"), so a GO EC station seen via both OCM
+  and GoEC's own feed is two rows until the downstream dedupe (2.3) — overlap kept as
+  signal, not dropped at fetch. Both complement OCM for the KL/TN master list; neither
+  carries free/busy (occupancy stays the poller's job).
 
 ### The official *non-OCPI* standard: UBC / UEI (Beckn, not OCPI)
 
