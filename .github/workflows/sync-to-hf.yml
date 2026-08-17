@@ -18,9 +18,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # The PDFs are LFS objects (HF refuses raw binaries); fetch them so
-          # the push can carry them to the Space's LFS store.
+          # Historical commits still reference the PDFs as LFS pointers; fetch
+          # the objects so the push can satisfy the Space's LFS store.
           lfs: true
+      - name: Strip PDFs from the mirror
+        # The PDFs are reference documents for the GitHub repo, not part of
+        # the deployed app - the Space mirror carries main minus *.pdf.
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -rq --ignore-unmatch -- '*.pdf'
+          git diff --cached --quiet || git commit -qm "Strip PDFs from the Space mirror"
       - name: Push main to the Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
