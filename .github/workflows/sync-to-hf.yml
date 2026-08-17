@@ -1,0 +1,29 @@
+# Every push to main republishes the Hugging Face Space (talk-to/nitara),
+# so GitHub stays the single source of truth and the Space is only ever a
+# mirror. Force-push is HF's own recommended sync shape - the Space's git
+# history is disposable by design.
+#
+# Needs a repository secret HF_TOKEN (a Hugging Face write token).
+name: Sync to Hugging Face Space
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Push main to the Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [ -z "$HF_TOKEN" ]; then
+            echo "::error::HF_TOKEN secret is not set; add it in Settings > Secrets and variables > Actions"
+            exit 1
+          fi
+          git push --force "https://talk-to:${HF_TOKEN}@huggingface.co/spaces/talk-to/nitara" main

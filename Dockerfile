@@ -1,5 +1,20 @@
-# Backend image. The frontend is a build artifact served by Caddy, not a
-# service in this image (STACK.md section 8).
+# One image, two lives (STACK.md section 8):
+#
+#   * docker-compose: `api` and `poller` build this and override CMD, so the
+#     compose services behave exactly as before - the frontend stage and the
+#     Caddy binary just ride along unused.
+#   * Hugging Face Space (talk-to/nitara): the default CMD runs
+#     deploy/start.sh, which is the production topology in one container -
+#     Caddy serves the built SPA and proxies /api to uvicorn on the loopback.
+#     No Node process at runtime.
+
+FROM node:24-slim AS frontend-build
+WORKDIR /build
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
+
 FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1 \
@@ -10,6 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+COPY --from=caddy:2 /usr/bin/caddy /usr/local/bin/caddy
 
 WORKDIR /srv
 
@@ -22,6 +38,7 @@ RUN uv pip install --system --no-cache -r pyproject.toml
 RUN playwright install --with-deps chromium
 
 COPY . .
+COPY --from=frontend-build /build/dist ./frontend/dist
 
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["bash", "deploy/start.sh"]

@@ -1,0 +1,21 @@
+# HF Space edition of the production topology (STACK.md section 8): Caddy
+# serves the built SPA and proxies /api to uvicorn on the loopback. TLS is
+# terminated by the Space's own front proxy, so plain HTTP here.
+{
+	admin off
+	auto_https off
+}
+
+:8000 {
+	encode gzip
+
+	handle /api/* {
+		reverse_proxy 127.0.0.1:8001
+	}
+
+	handle {
+		root * /srv/frontend/dist
+		try_files {path} /index.html
+		file_server
+	}
+}
