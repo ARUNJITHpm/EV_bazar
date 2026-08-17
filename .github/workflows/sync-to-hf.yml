@@ -18,6 +18,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # The PDFs are LFS objects (HF refuses raw binaries); fetch them so
+          # the push can carry them to the Space's LFS store.
+          lfs: true
       - name: Push main to the Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
