@@ -13,12 +13,26 @@ REM from scratch under the new day's name. The scraper's browser dies every
 REM few hours on the real dashboard, so the scrape is retried in a loop until
 REM its "done:" marker appears in the log - resume makes each retry cheap.
 REM
+REM "vahan_refresh.bat --smoke" is a fast end-to-end rehearsal: 2 RTOs, its
+REM own scrape_smoke.csv, and a sentinel snapshot date (2000-01-01) so it can
+REM never touch a real snapshot. Clean up after with:
+REM   delete from vahan_ev_registrations where snapshot_date='2000-01-01'
+REM   del data\vahan\scrape_smoke.csv data\vahan\refresh_smoke.log
+REM
 REM Prereqs (once): uv sync --extra scrape   (installs the browser driver)
 REM ---------------------------------------------------------------------------
 title EV_Bazar VAHAN monthly refresh
 cd /d "%~dp0.."
 
-for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd"') do set STAMP=%%i
+set SCRAPE_EXTRA=
+set INGEST_EXTRA=
+if "%~1"=="--smoke" (
+    set STAMP=smoke
+    set SCRAPE_EXTRA=--limit 2
+    set INGEST_EXTRA=--snapshot-date 2000-01-01
+) else (
+    for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd"') do set STAMP=%%i
+)
 set CSV=data\vahan\scrape_%STAMP%.csv
 set LOG=data\vahan\refresh_%STAMP%.log
 
@@ -31,7 +45,7 @@ set ATTEMPT=0
 :scrape
 set /a ATTEMPT+=1
 echo REFRESH: scrape attempt %ATTEMPT% >> "%LOG%"
-call uv run python -m scripts.scrape_vahan --state kerala,tamilnadu --out %CSV% >> "%LOG%" 2>&1
+call uv run python -m scripts.scrape_vahan --state kerala,tamilnadu --out %CSV% %SCRAPE_EXTRA% >> "%LOG%" 2>&1
 findstr /b /c:"done: " "%LOG%" >nul
 if %errorlevel%==0 goto scraped
 if %ATTEMPT% geq 12 (
@@ -43,9 +57,9 @@ goto scrape
 :scraped
 
 echo [2/2] ingesting %CSV% into the database...
-call uv run python -m scripts.ingest_vahan --csv %CSV% --write
+call uv run python -m scripts.ingest_vahan --csv %CSV% --write %INGEST_EXTRA%
 if not %errorlevel%==0 (
-    echo ingest failed - the CSV is safe, rerun: uv run python -m scripts.ingest_vahan --csv %CSV% --write
+    echo ingest failed - the CSV is safe, rerun: uv run python -m scripts.ingest_vahan --csv %CSV% --write %INGEST_EXTRA%
     exit /b 1
 )
 
