@@ -1,9 +1,12 @@
-<?xml version="1.0" encoding="UTF-16"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Windows Task Scheduler definition for the monthly VAHAN refresh (PLAN 4.1).
 
-  Register it (edit the <Command> path to this checkout first):
-    schtasks /Create /TN "EV_Bazar_VAHAN_Refresh" /XML scripts\vahan_etl_task.xml
+  Register it (edit the <Command> path to this checkout first). schtasks
+  refuses UTF-8 task XML, so feed it a UTF-16 copy (PowerShell):
+    $x = (Get-Content scripts\vahan_etl_task.xml -Raw) -replace 'UTF-8','UTF-16'
+    $x | Out-File $env:TEMP\vahan_task.xml -Encoding Unicode
+    schtasks /Create /TN "EV_Bazar_VAHAN_Refresh" /XML $env:TEMP\vahan_task.xml
 
   Monthly on the 1st at 02:00. Skipped on battery, so a laptop must be on mains -
   but the poller is the job that must never miss; a VAHAN snapshot a day late is
@@ -26,7 +29,10 @@
     <StopIfGoingOnBatteries>true</StopIfGoingOnBatteries>
     <AllowHardTerminate>true</AllowHardTerminate>
     <StartWhenAvailable>true</StartWhenAvailable>
-    <ExecutionTimeLimit>PT6H</ExecutionTimeLimit>
+    <!-- A from-scratch scrape of both states is ~9h of browser time plus
+         crash-retry overhead; 16h leaves room without letting a wedged run
+         squat forever. -->
+    <ExecutionTimeLimit>PT16H</ExecutionTimeLimit>
     <Enabled>true</Enabled>
   </Settings>
   <Triggers>
