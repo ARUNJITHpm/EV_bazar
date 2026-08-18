@@ -416,6 +416,12 @@ def main() -> None:
     p.add_argument("--limit", type=int, default=0, help="only the first N RTOs (smoke test)")
     p.add_argument("--dry-run", action="store_true", help="print, do not write the CSV")
     p.add_argument("--no-resume", action="store_true", help="ignore any partial output file")
+    p.add_argument(
+        "--out",
+        default="",
+        help="output CSV path (default: data/vahan/scrape_<today>.csv; pin this when a"
+        " supervised run may cross midnight, or resume restarts from an empty file)",
+    )
     args = p.parse_args()
 
     code_of = {"kerala": "KL", "tamilnadu": "TN", "tamil_nadu": "TN", "tn": "TN", "kl": "KL"}
@@ -429,7 +435,7 @@ def main() -> None:
     if args.cumulative:
         years = [*years, "Till Today"]
 
-    out_path = DATA_DIR / f"scrape_{dt.date.today():%Y%m%d}.csv"
+    out_path = Path(args.out) if args.out else DATA_DIR / f"scrape_{dt.date.today():%Y%m%d}.csv"
     print(f"{len(refs)} RTOs x {len(years)} periods {years}")
     print(f"output: {out_path}" if not args.dry_run else "dry run - nothing written")
 
