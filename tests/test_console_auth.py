@@ -45,6 +45,10 @@ PUBLIC_PATHS = {
     "/api/internal/poller/alive",
     "/api/internal/console/login",
     "/api/internal/console/logout",
+    # Open BY DECISION (api/internal/reports.py): the report page is customer-
+    # facing and the customer holds a link, not a console login. The report id
+    # is the capability.
+    "/api/internal/reports/{report_id}",
 }
 
 

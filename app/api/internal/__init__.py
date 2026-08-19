@@ -28,6 +28,7 @@ from app.api.internal import (
     lookup,
     poller,
     progress,
+    reports,
     vahan,
 )
 from app.api.internal.console_auth import require_operator
@@ -38,6 +39,10 @@ router = APIRouter()
 router.include_router(health.router, tags=["internal-health"])
 router.include_router(poller.public_router, tags=["internal-poller"])
 router.include_router(console_auth.router, tags=["console-auth"])
+# Reports are open BY DECISION: the report page is customer-facing and the
+# customer holds a link, not a login. The report id is the capability - see
+# the module docstring.
+router.include_router(reports.router, tags=["internal-reports"])
 
 # --- guarded ---------------------------------------------------------------
 guarded = APIRouter(dependencies=[Depends(require_operator)])

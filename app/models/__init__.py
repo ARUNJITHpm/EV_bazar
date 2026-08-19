@@ -21,6 +21,7 @@ from app.models.charger_status import (
 from app.models.competitors import CompetitorStation
 from app.models.geocode import GeocodeCache
 from app.models.manual_queue import GeocodeManualQueue, QueueStatus
+from app.models.predictions import Prediction
 from app.models.price_cards import ProviderPriceCard
 from app.models.reference import (
     District,
@@ -29,6 +30,7 @@ from app.models.reference import (
     ReferenceLayer,
     State,
 )
+from app.models.report import Report
 from app.models.schema_version import SchemaVersion
 from app.models.site import Site
 from app.models.tariffs import ElectricityTariff, SubsidyRule
@@ -51,9 +53,11 @@ __all__ = [
     "PollOutcome",
     "PollRawPayload",
     "PollRun",
+    "Prediction",
     "ProviderPriceCard",
     "QueueStatus",
     "ReferenceLayer",
+    "Report",
     "SchemaVersion",
     "Site",
     "State",
