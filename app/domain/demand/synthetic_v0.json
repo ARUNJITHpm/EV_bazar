@@ -1,0 +1,27 @@
+{
+  "model_version": "synthetic_v0",
+  "note": "PLAN 4.2 heuristic coefficients - versioned config, never hardcoded. These anchors are UNCALIBRATED: no polled station exists to calibrate against, which is why every prediction this file shapes is flagged modelled-not-measured.",
+  "archetype_base_kwh_per_connector_day": {
+    "highway_dhaba": 55.0,
+    "urban_office_arterial": 45.0,
+    "mall_basement": 60.0,
+    "urban_fleet_depot": 90.0,
+    "residential_ac": 12.0,
+    "default": 35.0
+  },
+  "ev_density_pivot": 8000,
+  "ev_density_span": 0.35,
+  "growth_pivot": 0.25,
+  "growth_gain": 0.6,
+  "competition_per_station": 0.06,
+  "dc_fast_extra": 0.04,
+  "competition_floor": 0.45,
+  "dwell_gain": 0.05,
+  "dwell_cap": 0.25,
+  "road_on_major_bonus": 0.1,
+  "band_p10": 0.55,
+  "band_p90": 1.5,
+  "unknown_widen": 0.12,
+  "ramp_years": [0.55, 0.8, 1.0],
+  "ceiling_fraction": 0.6
+}
