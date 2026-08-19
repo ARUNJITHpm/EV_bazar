@@ -24,10 +24,11 @@ export function Landing() {
         Build status
       </h2>
       <dl className="border-t border-rule">
-        <Row label="Part 1.1 · Infrastructure" value="scaffolded" />
-        <Row label="Part 1.1 · Frontend (Vite + React)" value="scaffolded" />
-        <Row label="Part C.1 · Spend metering" value="in progress" />
-        <Row label="Part 1.2–1.6 · Site resolution" value="pending" />
+        <Row label="Part 1 · Pin → district resolution" value="live, verified" />
+        <Row label="Part 2 · Site context (OSM roads · POIs)" value="scraping live" />
+        <Row label="Part 3 · Tariffs + ROI engine" value="built" />
+        <Row label="Part 4.1 · VAHAN registrations" value="scheduled scrape" />
+        <Row label="Part 5 · Report served from stored payload" value="demo live" />
         <Row label="Part 0.1 · Status poller" value="not yet running" warn />
       </dl>
 
@@ -37,6 +38,14 @@ export function Landing() {
       </p>
 
       <p className="mt-8">
+        <Link
+          to="/report/KL-TVM-DEMO-001"
+          className="font-ui text-[13px] underline underline-offset-4"
+        >
+          Demonstration report — Kazhakkoottam, NH-66 →
+        </Link>
+      </p>
+      <p className="mt-2">
         <Link to="/console" className="font-ui text-[13px] underline underline-offset-4">
           Operations console →
         </Link>

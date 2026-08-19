@@ -481,6 +481,26 @@ _TABLES: tuple[tuple[str, str, str, str, str], ...] = (
         "the Data panel until one is.",
     ),
     (
+        "predictions",
+        "Demand",
+        "Every demand prediction the system has ever made: P10/P50/P90 kWh per "
+        "connector-day, stamped with the model and economics versions. Append-only "
+        "by database rule; actual_kwh stays NULL until reality is observed, so the "
+        "model's error is measurable later. Demo runs are flagged, never skipped.",
+        "PLAN 4/5 - report generation (scripts/generate_demo_report.py today)",
+        "No prediction has been made yet.",
+    ),
+    (
+        "reports",
+        "Reports",
+        "The stored JSONB payload behind every /report/:id - the data of record. "
+        "Serving re-reads this row verbatim, never recomputes, so the customer sees "
+        "exactly what was generated. Immutable by database rule, except that a "
+        "payload flagged demo may be regenerated.",
+        "PLAN 5 - assemble_report() -> save_report()",
+        "No report has been generated yet.",
+    ),
+    (
         "poll_runs",
         "Poller",
         "One row per sweep per source: when it ran, whether it worked, what it saw. "

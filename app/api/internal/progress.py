@@ -59,6 +59,8 @@ class Signals:
     competitor_stations: int
     vahan_rows: int
     vahan_states: int
+    predictions: int
+    reports: int
     sources_authorised: int
     sources_total: int
 
@@ -82,7 +84,9 @@ def read_signals(session: Session) -> Signals:
               (SELECT count(*) FROM competitor_stations),
               (SELECT count(*) FROM vahan_ev_registrations),
               (SELECT count(DISTINCT lgd_state_code) FROM vahan_ev_registrations
-               WHERE lgd_state_code IS NOT NULL)
+               WHERE lgd_state_code IS NOT NULL),
+              (SELECT count(*) FROM predictions),
+              (SELECT count(*) FROM reports)
         """)
     ).one()
     return Signals(
@@ -100,6 +104,8 @@ def read_signals(session: Session) -> Signals:
         competitor_stations=int(row[11]),
         vahan_rows=int(row[12]),
         vahan_states=int(row[13]),
+        predictions=int(row[14]),
+        reports=int(row[15]),
         sources_authorised=sum(1 for s in SOURCES if s.authorised),
         sources_total=len(SOURCES),
     )
@@ -363,7 +369,12 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "never overwritten, each RTO resolved to its district. This is the third of the "
         "four Tier-1 layers for a state; occupancy is the last.",
         (
-            f"{s.vahan_rows:,} rows across {s.vahan_states} state(s) (see the VAHAN panel)."
+            f"{s.vahan_rows:,} rows across {s.vahan_states} state(s) (see the VAHAN "
+            "panel), refreshed by the scheduled job scripts/vahan_refresh.bat: it pins "
+            "one CSV per run (--out, so midnight cannot split it), retries the scrape "
+            "up to 12x on top of resume (sentinel rows make retries cheap), ingests "
+            "that exact file, and has a --smoke mode that rehearses the whole job on "
+            "2 RTOs under a sentinel snapshot date."
             if vahan_live
             else "Scraper, schema and ingest are BUILT and tested - zero rows yet, which "
             "is why every state's vehicle-count flag is false on the Data panel. Scrape "
@@ -374,7 +385,8 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         else "Human: `uv sync --extra scrape` (installs the browser), then "
         "`python -m scripts.scrape_vahan --state kerala` (a long run against the "
         "portal), then `python -m scripts.ingest_vahan --csv <the CSV> --write`. "
-        "Validate first with `--dry-run --limit 2`.",
+        "Validate first with `--dry-run --limit 2`. Once proven, schedule "
+        "scripts/vahan_refresh.bat so the time series grows on its own.",
     )
     add(
         "3.1 + 3.2",
@@ -391,6 +403,72 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "reality: 3.3 requires reconciling one operator's real monthly P&L to within "
         "5%, and no tariff row or real P&L exists yet.",
         None,
+    )
+    add(
+        "2.1–2.2",
+        "Site context from OpenStreetMap - roads and what holds a driver",
+        Status.DONE,
+        "What surrounds a pin, scraped FREE from OSM's Overpass API (no key, no "
+        "account; throttled to 1 request/second with an identified User-Agent): the "
+        "nearest major road with its class, ref and measured distance, whether it is "
+        "divided, junctions within 500 m - and POI counts in 500 m / 1 km / 3 km "
+        "rings weighted into a dwell score (a mall holds a driver 45 minutes; a fuel "
+        "pump holds nobody). Fetch and parse are split, so every parse is tested "
+        "against recorded fixtures, and a failed fetch degrades to 'not assessed' in "
+        "the report's ledger rather than a guess.",
+        "Built, tested, and fed real data: the demo report found its adjacent road at "
+        "4.1 m and scored real named dwell anchors. Deliberately NOT claimed in v0: "
+        "which SIDE of a divided road the site is on (needs carriageway-pair "
+        "matching), and drive-time catchments (OpenRouteService is keyed, and every "
+        "keyed call must be metered first).",
+        None,
+    )
+    demand_live = s.predictions > 0
+    add(
+        "4.2",
+        "Synthetic demand v0 - the stopgap the report admits to",
+        Status.PARTIAL if demand_live else Status.CODE_DONE,
+        "Until the poller's occupancy record exists, demand is a pure, deterministic "
+        "heuristic: archetype base x district EV growth x competition x dwell, with "
+        "coefficients declared in a versioned JSON file - guesses, but WRITTEN-DOWN "
+        "guesses. It outputs only kWh/connector-day as a P10-P90 band, never money; "
+        "every input it is missing WIDENS the band instead of narrowing the story. "
+        "Each run writes an append-only row to `predictions` with actual_kwh NULL, "
+        "so when reality arrives the model's error is measurable, not deniable.",
+        (
+            f"{s.predictions:,} prediction(s) logged (demo runs flagged is_demo, never skipped)."
+            if demand_live
+            else "Module and coefficients built and tested; no prediction logged yet."
+        ),
+        "Replaced, never patched: the trained model (Part 8) takes over 90 days "
+        "after the poller's first row, and the predictions table is the scorecard "
+        "that proves it earned the job.",
+    )
+    reports_live = s.reports > 0
+    add(
+        "5 + 6 + G.2",
+        "The report pipeline - pin to verdict, stored and served",
+        Status.PARTIAL if reports_live else Status.CODE_DONE,
+        "The customer-facing product: assemble VAHAN + tariff + competitors + OSM "
+        "context + the synthetic band, run the ROI engine per percentile and per "
+        "CPO arrangement (the comparison table, Part 6), and persist the whole "
+        "payload as JSONB in `reports`. GET /api/internal/reports/{id} serves that "
+        "row VERBATIM - never recomputes - and the frontend renders it at "
+        "/report/:id, with the /assess teaser reading the same stored row. Every "
+        "rupee figure comes from the engine; the report's job is to show its work.",
+        (
+            f"{s.reports:,} report(s) stored. The demo (KL-TVM-DEMO-001, "
+            "Kazhakkoottam NH-66) renders live from the database - and its verdict "
+            "is DON'T BUILD at -3.5 pp, because eight real competitors sit within "
+            "3 km. An honest 'no' on our own doorstep is the product working."
+            if reports_live
+            else "Pipeline, storage, endpoint and frontend built and tested; no "
+            "report generated yet. `python -m scripts.generate_demo_report --write` "
+            "creates the first."
+        ),
+        "Real customer flow: POST /assess with a dropped pin (Leaflet, logged as a "
+        "lead with its district), then attribution (Part 7) once the 0.3 "
+        "conversations decide its schema.",
     )
     add(
         "C (explain)",
@@ -426,31 +504,33 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "Revisit if the free 'drop a pin' public tool (PLAN G.2) takes off and volume jumps.",
     )
     add(
-        "2 / 4 / 8",
-        "Context, demand, and the model",
+        "2 (rest) / 8",
+        "The context that needs more than OSM, and the trained model",
         Status.PARKED,
-        "Part 2 describes each site's surroundings: distance to the nearest highway/"
-        "main road, WHICH SIDE of a divided road (wrong side loses ~half the "
-        "traffic), junction count, urban vs rural at the exact point, what holds a "
-        "driver for 30-45 minutes nearby, competitors and their measured busyness, "
-        "grid distance. Part 4's later steps (the 4.2 heuristic onward) turn that into "
-        "a demand estimate with honest P10/P50/P90 bands - 4.1's vehicle counts are "
-        "carved out above, already built. Part 8 is the trained model.",
-        "Correctly waiting: 2 pays off once there are sites to describe, 4.2 needs 2, "
-        "and 8 cannot start until 90 days after the poller's first row - which is why "
+        "What Part 2 still owes after the OSM layer above: WHICH SIDE of a divided "
+        "road the site sits on (wrong side loses ~half the traffic - needs "
+        "carriageway-pair matching), urban vs rural at the exact point (blocked on "
+        "the Census town layer, B4), grid/transformer distance, drive-time "
+        "catchments (needs a metered ORS key), and each competitor's measured "
+        "busyness - which only the poller can supply. Part 8 is the trained model "
+        "that retires synthetic_v0.",
+        "Correctly waiting: every item is blocked on a named input (a data layer, a "
+        "key, or the poller's record), not on code.",
+        "Unblocked by: the town-boundary load, an ORS key behind the meter, and - "
+        "for busyness and Part 8 - the poller's first 90 days, which is why "
         "milestone #1 is the whole schedule.",
-        "Unblocked by, in order: sites flowing, Part 2 imports, the poller's 90 days.",
     )
     add(
-        "5 / 6 / 7 / G",
-        "Reports, comparison, attribution, revenue",
+        "7 / G",
+        "Attribution and the revenue ladder",
         Status.NOT_STARTED,
-        "The customer-facing report, the CPO comparison table, the prove-the-lead "
-        "attribution chain (DO NOT DEFER once selling starts), and the revenue ladder: "
-        "audits → institutional subscriptions → commissions.",
+        "The prove-the-lead attribution chain (DO NOT DEFER once selling starts) and "
+        "the revenue ladder: audits → institutional subscriptions → commissions. The "
+        "report and CPO comparison that used to sit here are built - carved out "
+        "above.",
         "Nothing built. Part 7's schema is decided by the 0.3 conversations - which is "
         "why they are in the queue above.",
-        "Deps: 5 needs 1-4; 6 needs 0.3 + 3; 7 needs 0.3; G.1 pairs with Part 3.",
+        "Deps: 7 needs 0.3's verbatim answers; G.1 pairs with Part 3's tariff audit.",
     )
 
     return out
@@ -601,6 +681,49 @@ def build_inputs(
             )
         )
 
+    # --- context scraping (free, keyless) ---------------------------------------
+    out.append(
+        InputOut(
+            name="OSM Overpass (context layer - roads and POIs)",
+            kind="endpoint",
+            status=InputStatus.CONFIGURED,
+            needed_for=(
+                "PART 2.1-2.2 - the nearest major road, its distance and class, "
+                "junction density, and the POI rings behind the dwell score in every "
+                "report."
+            ),
+            env_vars=[],
+            how_to_get=(
+                "Nothing to get: overpass-api.de is free and keyless. The client "
+                "identifies itself with a proper User-Agent and throttles to 1 "
+                "request/second - report generation makes a handful of calls, well "
+                "inside the fair-use policy. Unmetered on purpose: the meter exists "
+                "to cap SPEND, and this cannot spend."
+            ),
+            detail="Built in, nothing to configure. Used live by report generation.",
+        )
+    )
+    out.append(
+        InputOut(
+            name="OpenRouteService key (drive-time catchments)",
+            kind="key",
+            status=InputStatus.LATER,
+            needed_for=(
+                "PART 2.2 - the 5/10-minute drive-time catchment around a site. The "
+                "free tier (500 isochrones/day) is plenty; the report currently says "
+                "'not assessed' instead."
+            ),
+            env_vars=[],
+            how_to_get=(
+                "Do not chase it yet - before any keyed call is made, ORS must be "
+                "wired through the meter (api_usage_events) like every other keyed "
+                "provider, even at price zero. Free account at openrouteservice.org "
+                "when that lands."
+            ),
+            detail="Not wired into config.py yet, deliberately.",
+        )
+    )
+
     # --- data files (no accounts, no keys) --------------------------------------
     out.append(
         InputOut(
@@ -673,10 +796,14 @@ def build_inputs(
                 "Our own fetcher, no vendor: `uv sync --extra scrape` then "
                 "`python -m scripts.scrape_vahan --state kerala` (long run against the "
                 "government dashboard), then `python -m scripts.ingest_vahan --csv "
-                "<the CSV> --write`. RTO list + coordinates are already seeded."
+                "<the CSV> --write`. RTO list + coordinates are already seeded. For "
+                "steady state, schedule scripts/vahan_refresh.bat (Task Scheduler): "
+                "scrape with retries + resume, ingest the pinned CSV, all in one job "
+                "- rehearse it first with --smoke."
             ),
             detail=(
-                "Loaded - at least one state scraped and ingested."
+                "Loaded - at least one state scraped and ingested; the scheduled "
+                "refresh job keeps the time series growing."
                 if vahan_loaded
                 else "Not scraped yet. The scraper, schema and ingest are built and "
                 "tested; running the scrape is a human step (it drives a browser)."
@@ -742,12 +869,13 @@ def build_inputs(
 
 
 _SUMMARY = (
-    "The foundation is built and verified: maps loaded, pin-to-district working live, "
-    "the cascade complete, money metering structural, console guarded. What is missing "
-    "is REALITY flowing through it - no source polled, no real address geocoded, no "
-    "tariff typed in. Every item in the queue below is about connecting the machine to "
-    "the world, and all five can proceed in parallel. The poller is first because its "
-    "delay is the only one that can never be recovered."
+    "The machine now runs end to end: pin → district → site context scraped free from "
+    "OpenStreetMap → a versioned demand band → the ROI engine → a report stored as "
+    "JSONB and served verbatim at /report/:id. Real data has started flowing through "
+    "it - VAHAN counts on a scheduled nightly scrape, competitor inventory, typed "
+    "tariffs - and the statuses below read the database, not the plan. Still missing "
+    "is the one input that cannot be backfilled: the poller's occupancy record. Its "
+    "delay is the only permanent loss, which is why it stays at the top of the queue."
 )
 
 

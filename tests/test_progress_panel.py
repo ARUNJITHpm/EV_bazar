@@ -32,6 +32,8 @@ EMPTY_WORLD = Signals(
     competitor_stations=0,
     vahan_rows=0,
     vahan_states=0,
+    predictions=0,
+    reports=0,
     sources_authorised=0,
     sources_total=8,
 )
@@ -44,6 +46,24 @@ def test_typed_tariffs_move_the_milestone_off_the_queue() -> None:
     tariffs = next(m for m in build_milestones(live) if m.part == "0.2 → 3.1")
     assert tariffs.status is Status.PARTIAL
     assert "1 state(s)" in tariffs.evidence
+
+
+def test_a_stored_report_moves_the_pipeline_off_code_done() -> None:
+    """The report pipeline may only claim to be live when a `reports` row can
+    testify - and an empty table must read as code_done, never as done."""
+    import dataclasses
+
+    empty = next(m for m in build_milestones(EMPTY_WORLD) if m.part == "5 + 6 + G.2")
+    assert empty.status is Status.CODE_DONE
+
+    live = dataclasses.replace(EMPTY_WORLD, reports=1, predictions=3)
+    report = next(m for m in build_milestones(live) if m.part == "5 + 6 + G.2")
+    assert report.status is Status.PARTIAL
+    assert "1 report(s) stored" in report.evidence
+
+    demand = next(m for m in build_milestones(live) if m.part == "4.2")
+    assert demand.status is Status.PARTIAL
+    assert "3 prediction(s)" in demand.evidence
 
 
 def test_a_silent_poller_is_the_first_item_in_the_queue() -> None:
