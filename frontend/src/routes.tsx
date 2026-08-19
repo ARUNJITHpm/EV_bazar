@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
+import { Assess } from "./features/assess/Assess";
 import { ConsoleLayout } from "./features/console/ConsoleLayout";
 import { Competitors } from "./features/console/Competitors";
 import { Cpo } from "./features/console/Cpo";
@@ -13,6 +14,7 @@ import { SpendLlm } from "./features/console/SpendLlm";
 import { SpendMaps } from "./features/console/SpendMaps";
 import { Vahan } from "./features/console/Vahan";
 import { Landing } from "./features/landing/Landing";
+import { ReportRoute } from "./features/report/ReportRoute";
 
 /**
  * One SPA, two very different surfaces.
@@ -44,6 +46,13 @@ function Deferred({ children }: { children: ReactNode }) {
 
 export const router = createBrowserRouter([
   { path: "/", element: <Landing /> },
+  { path: "/assess", element: <Assess /> },
+  /**
+   * The stored JSONB payload, fetched by id and rendered verbatim (AGENTS.md
+   * rule 9). The demo report is /report/KL-TVM-DEMO-001; customer ids are
+   * UUID strings.
+   */
+  { path: "/report/:id", element: <ReportRoute /> },
   {
     path: "/console",
     element: <ConsoleLayout />,

@@ -337,6 +337,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/internal/reports/{report_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Report */
+    get: operations["report_api_internal_reports__report_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/sources": {
     parameters: {
       query?: never;
@@ -406,12 +423,43 @@ export interface components {
       /** Never Run */
       never_run: boolean;
     };
+    /** AnchorNote */
+    AnchorNote: {
+      /** Irr Pct */
+      irr_pct: number;
+      /** Kwh Year */
+      kwh_year: number;
+      /** Npv Paise */
+      npv_paise: number;
+    };
+    /** BreakevenPayload */
+    BreakevenPayload: {
+      /** Kwh Day */
+      kwh_day: number;
+      /** Kwh Year */
+      kwh_year: number;
+      /** Utilisation */
+      utilisation: number;
+    };
     /** ClassRow */
     ClassRow: {
       /** Ev Total */
       ev_total: number;
       /** Group */
       group: string;
+    };
+    /** CompetitorRow */
+    CompetitorRow: {
+      /** Distance M */
+      distance_m: number;
+      /** Max Power Kw */
+      max_power_kw: number;
+      /** Name */
+      name: string;
+      /** Operator */
+      operator: string;
+      /** Points */
+      points: number;
     };
     /** CompetitorsOut */
     CompetitorsOut: {
@@ -431,6 +479,15 @@ export interface components {
       /** Unplaced */
       unplaced: number;
     };
+    /** CompetitorsPayload */
+    CompetitorsPayload: {
+      /** Nearest */
+      nearest: components["schemas"]["CompetitorRow"][];
+      /** Source */
+      source: string;
+      /** Within 3Km */
+      within_3km: number;
+    };
     /** CoverageOut */
     CoverageOut: {
       /**
@@ -444,6 +501,25 @@ export interface components {
       rule: string;
       /** States */
       states: components["schemas"]["StateCoverageOut"][];
+    };
+    /** CpoRow */
+    CpoRow: {
+      /** Irr P50 Pct */
+      irr_p50_pct: number;
+      /** Margin Of Safety Pp */
+      margin_of_safety_pp: number;
+      /** Ocpi Roaming */
+      ocpi_roaming: boolean;
+      /** Operator */
+      operator: string;
+      /** Ours */
+      ours: boolean;
+      /** Platform Fee Paise Year */
+      platform_fee_paise_year: number;
+      /** Revenue Share Pct */
+      revenue_share_pct: number;
+      /** Uptime */
+      uptime: string;
     };
     /**
      * CpoSourceOut
@@ -491,6 +567,17 @@ export interface components {
       /** Sources */
       sources: components["schemas"]["CpoSourceOut"][];
     };
+    /** DemandPayload */
+    DemandPayload: {
+      /** District Ev 2025 */
+      district_ev_2025: number;
+      /** District Growth Yoy Pct */
+      district_growth_yoy_pct: number;
+      /** Two Wheeler Share Pct */
+      two_wheeler_share_pct: number;
+      /** Vahan Snapshot */
+      vahan_snapshot: string;
+    };
     /** DistrictVahanRow */
     DistrictVahanRow: {
       /** District */
@@ -517,6 +604,21 @@ export interface components {
       source: string;
       /** Value */
       value: string;
+    };
+    /** FinancialsPayload */
+    FinancialsPayload: {
+      anchor_note: components["schemas"]["AnchorNote"];
+      /** Capex Paise */
+      capex_paise: number;
+      /** Energy Tariff Paise Kwh */
+      energy_tariff_paise_kwh: number;
+      /** Price Sensitivity */
+      price_sensitivity: components["schemas"]["PriceSensitivityPoint"][];
+      sanctioned_load: components["schemas"]["SanctionedLoad"];
+      /** Scenarios */
+      scenarios: components["schemas"]["Scenario"][];
+      /** Selling Price Paise Kwh */
+      selling_price_paise_kwh: number;
     };
     /** FunnelOut */
     FunnelOut: {
@@ -551,6 +653,15 @@ export interface components {
     HTTPValidationError: {
       /** Detail */
       detail?: components["schemas"]["ValidationError"][];
+    };
+    /** HardwarePayload */
+    HardwarePayload: {
+      /** Connectors */
+      connectors: number;
+      /** Rated Kw Each */
+      rated_kw_each: number;
+      /** Sanctioned Kva Full */
+      sanctioned_kva_full: number;
     };
     /** Health */
     Health: {
@@ -603,6 +714,17 @@ export interface components {
       name: string;
       /** Source Url */
       source_url: string;
+    };
+    /** LedgerRow */
+    LedgerRow: {
+      /** Item */
+      item: string;
+      /** Source */
+      source: string;
+      /** Unverified */
+      unverified: boolean;
+      /** Value */
+      value: string;
     };
     /**
      * LevelOut
@@ -722,6 +844,13 @@ export interface components {
       /** Threshold Minutes */
       threshold_minutes: number;
     };
+    /** PriceSensitivityPoint */
+    PriceSensitivityPoint: {
+      /** Breakeven Utilisation */
+      breakeven_utilisation: number;
+      /** Price Paise Kwh */
+      price_paise_kwh: number;
+    };
     /** ProgressOut */
     ProgressOut: {
       /**
@@ -735,6 +864,18 @@ export interface components {
       milestones: components["schemas"]["MilestoneOut"][];
       /** Summary */
       summary: string;
+    };
+    /** ProvenanceRow */
+    ProvenanceRow: {
+      /** Label */
+      label: string;
+      /**
+       * Unverified
+       * @default false
+       */
+      unverified: boolean;
+      /** Value */
+      value: string;
     };
     /** QueueItemOut */
     QueueItemOut: {
@@ -785,6 +926,31 @@ export interface components {
       /** Note */
       note?: string | null;
     };
+    /** ReportPayload */
+    ReportPayload: {
+      breakeven: components["schemas"]["BreakevenPayload"];
+      competitors: components["schemas"]["CompetitorsPayload"];
+      /** Cpo */
+      cpo: components["schemas"]["CpoRow"][];
+      demand: components["schemas"]["DemandPayload"];
+      /** Demo */
+      demo: boolean;
+      financials: components["schemas"]["FinancialsPayload"];
+      hardware: components["schemas"]["HardwarePayload"];
+      /** Ledger */
+      ledger: components["schemas"]["LedgerRow"][];
+      /** Margin Of Safety Pp */
+      margin_of_safety_pp: number;
+      predicted: components["schemas"]["UtilisationBand"];
+      /** Provenance */
+      provenance: components["schemas"]["ProvenanceRow"][];
+      /** Report Id */
+      report_id: string;
+      site: components["schemas"]["SitePayload"];
+      /** Site Facts */
+      site_facts: components["schemas"]["SiteFact"][];
+      verdict: components["schemas"]["VerdictPayload"];
+    };
     /** ResolveIn */
     ResolveIn: {
       /** Lat */
@@ -793,6 +959,67 @@ export interface components {
       lng: number;
       /** Note */
       note?: string | null;
+    };
+    /** SanctionedLoad */
+    SanctionedLoad: {
+      /** Buffered Kva */
+      buffered_kva: number;
+      /** Full Kva */
+      full_kva: number;
+      /** Recommended Kva */
+      recommended_kva: number;
+      /** Recommended Label */
+      recommended_label: string;
+      /** Saving Paise Year */
+      saving_paise_year: number;
+    };
+    /** Scenario */
+    Scenario: {
+      /** Irr Pct */
+      irr_pct: number | null;
+      /** Kwh Year */
+      kwh_year: number;
+      /** Label */
+      label: string;
+      /** Npv Paise */
+      npv_paise: number;
+      /** Payback Years */
+      payback_years: number | null;
+      /** Utilisation */
+      utilisation: number;
+    };
+    /** SiteFact */
+    SiteFact: {
+      /** Label */
+      label: string;
+      /** Source */
+      source: string;
+      /** Unverified */
+      unverified: boolean;
+      /** Value */
+      value: string;
+    };
+    /** SitePayload */
+    SitePayload: {
+      /** Archetype */
+      archetype: string;
+      /**
+       * Data Tier
+       * @enum {integer}
+       */
+      data_tier: 1 | 2 | 3;
+      /** District */
+      district: string;
+      /** Lat */
+      lat: number;
+      /** Lgd District Code */
+      lgd_district_code: number;
+      /** Line */
+      line: string;
+      /** Lng */
+      lng: number;
+      /** Name */
+      name: string;
     };
     /** SourceHealthOut */
     SourceHealthOut: {
@@ -929,6 +1156,19 @@ export interface components {
       /** Undocumented */
       undocumented: string[];
     };
+    /** UtilisationBand */
+    UtilisationBand: {
+      /** Model Version */
+      model_version: string;
+      /** Modelled Not Measured */
+      modelled_not_measured: boolean;
+      /** P10 */
+      p10: number;
+      /** P50 */
+      p50: number;
+      /** P90 */
+      p90: number;
+    };
     /** VahanOut */
     VahanOut: {
       /** By Class */
@@ -963,6 +1203,16 @@ export interface components {
       msg: string;
       /** Error Type */
       type: string;
+    };
+    /** VerdictPayload */
+    VerdictPayload: {
+      /** Reason */
+      reason: string;
+      /**
+       * Value
+       * @enum {string}
+       */
+      value: "build" | "conditional" | "dont";
     };
   };
   responses: never;
@@ -1442,6 +1692,37 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["Readiness"];
+        };
+      };
+    };
+  };
+  report_api_internal_reports__report_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        report_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReportPayload"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
         };
       };
     };
