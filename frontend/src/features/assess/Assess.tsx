@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
+import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -21,6 +21,15 @@ import { DEMO_REPORT_ID } from "../report/payload";
  *
  * This route is lazy-loaded (routes.tsx) because it carries Leaflet, and the
  * public report must not pay for a mapping library it never draws.
+ *
+ * The search box above the map is NAVIGATION ONLY — it flies the map to a
+ * typed place so the customer can then click or drag the pin to the exact
+ * spot. Nothing from the search is recorded or trusted: the pin is the sole
+ * input, which is why this box is allowed here while the console's Geocoding
+ * panel forbids one (there, a search box would be a fourth geocoder quietly
+ * influencing a resolution of record; here it only moves the viewport).
+ * Nominatim's public search is keyless and free — explicit one-shot lookups
+ * on a button press, well inside its fair-use policy.
  */
 
 const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -88,13 +97,57 @@ function ClickToPlace({ onPick }: { onPick: (lat: number, lng: number) => void }
   return null;
 }
 
+/** Flies the map when a search result is chosen. Render-only side effect. */
+function FlyTo({ target }: { target: [number, number] | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (target) map.flyTo(target, 16, { duration: 1.2 });
+  }, [target, map]);
+  return null;
+}
+
+/** One Nominatim search hit — only what the navigation needs. */
+interface Place {
+  display_name: string;
+  lat: string;
+  lon: string;
+}
+
 export function Assess() {
   const [pin, setPin] = useState<[number, number] | null>(null);
+  const [query, setQuery] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [results, setResults] = useState<Place[] | null>(null);
+  const [focus, setFocus] = useState<[number, number] | null>(null);
   const [connection, setConnection] = useState("");
   const [kva, setKva] = useState("");
   const [transformer, setTransformer] = useState("");
   const [land, setLand] = useState("");
   const [budget, setBudget] = useState("");
+
+  async function search() {
+    const q = query.trim();
+    if (!q) return;
+    setSearching(true);
+    try {
+      const res = await fetch(
+        "https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=in&limit=5&q=" +
+          encodeURIComponent(q),
+      );
+      setResults(res.ok ? ((await res.json()) as Place[]) : []);
+    } catch {
+      setResults([]);
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  function goTo(p: Place) {
+    const at: [number, number] = [Number(p.lat), Number(p.lon)];
+    setPin(at);
+    setFocus(at);
+    setResults(null);
+  }
 
   const assess = useMutation({
     mutationFn: async (body: AssessIn): Promise<AssessOut> => {
@@ -137,7 +190,47 @@ export function Assess() {
         arithmetic, before any model.
       </h1>
 
-      <div className="mt-6 h-[300px] border border-rule">
+      <div className="mt-6 flex gap-2">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") void search();
+          }}
+          placeholder="type a place — town, landmark, junction…"
+          className="min-w-0 flex-1 border border-rule bg-ground px-2 py-1.5 font-data text-[13px]"
+        />
+        <button
+          type="button"
+          onClick={() => void search()}
+          disabled={searching || !query.trim()}
+          className="border border-rule-strong px-3 py-1.5 font-ui text-[12px] font-bold tracking-[0.04em] uppercase disabled:opacity-40"
+        >
+          {searching ? "…" : "Find"}
+        </button>
+      </div>
+      {results &&
+        (results.length ? (
+          <ul className="border-x border-b border-rule">
+            {results.map((r) => (
+              <li key={`${r.lat},${r.lon}`}>
+                <button
+                  type="button"
+                  onClick={() => goTo(r)}
+                  className="block w-full border-b border-rule px-2 py-1.5 text-left font-data text-[12px] text-ink-muted hover:bg-ground-sunk"
+                >
+                  {r.display_name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="border-x border-b border-rule px-2 py-1.5 font-data text-[12px] text-ink-faint">
+            nothing found — try a nearby town, then drag the pin to the spot
+          </p>
+        ))}
+
+      <div className="mt-2 h-[300px] border border-rule">
         <MapContainer
           center={DEFAULT_CENTRE}
           zoom={7}
@@ -146,13 +239,26 @@ export function Assess() {
         >
           <TileLayer url={TILE_URL} attribution="© OpenStreetMap contributors" />
           <ClickToPlace onPick={(lat, lng) => setPin([lat, lng])} />
-          {pin && <Marker position={pin} icon={PIN} />}
+          <FlyTo target={focus} />
+          {pin && (
+            <Marker
+              position={pin}
+              icon={PIN}
+              draggable
+              eventHandlers={{
+                dragend: (e) => {
+                  const at = (e.target as L.Marker).getLatLng();
+                  setPin([at.lat, at.lng]);
+                },
+              }}
+            />
+          )}
         </MapContainer>
       </div>
       <p className="mt-1 font-data text-[11px] text-ink-faint">
         {pin
-          ? `pin at ${pin[0].toFixed(5)}, ${pin[1].toFixed(5)}`
-          : "click the map to place the pin"}
+          ? `pin at ${pin[0].toFixed(5)}, ${pin[1].toFixed(5)} — drag it or click to adjust; the pin, not the search, is what gets assessed`
+          : "type a place to jump there, or click the map — then drag the pin to the exact spot"}
       </p>
 
       <h2 className="mt-8 mb-3 border-b border-rule pb-2 font-ui text-[11px] font-bold tracking-[0.08em] text-ink-muted uppercase">
