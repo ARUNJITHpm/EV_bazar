@@ -29,6 +29,7 @@ export function Landing() {
         <Row label="Part 3 · Tariffs + ROI engine" value="built" />
         <Row label="Part 4.1 · VAHAN registrations" value="scheduled scrape" />
         <Row label="Part 5 · Report served from stored payload" value="demo live" />
+        <Row label="Part G.2 · Pin-drop breakeven teaser" value="live" />
         <Row label="Part 0.1 · Status poller" value="not yet running" warn />
       </dl>
 
@@ -38,6 +39,11 @@ export function Landing() {
       </p>
 
       <p className="mt-8">
+        <Link to="/assess" className="font-ui text-[13px] underline underline-offset-4">
+          Drop a pin — free breakeven check →
+        </Link>
+      </p>
+      <p className="mt-2">
         <Link
           to="/report/KL-TVM-DEMO-001"
           className="font-ui text-[13px] underline underline-offset-4"

@@ -49,6 +49,10 @@ PUBLIC_PATHS = {
     # facing and the customer holds a link, not a console login. The report id
     # is the capability.
     "/api/internal/reports/{report_id}",
+    # Open BY DECISION (api/internal/assess.py): the funnel's front door - the
+    # customer dropping the pin holds no login. It writes one sites lead row
+    # and prices from typed tariffs; nothing paid, nothing keyed.
+    "/api/internal/assess",
 }
 
 

@@ -1,7 +1,6 @@
 import { lazy, Suspense, type ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
-import { Assess } from "./features/assess/Assess";
 import { Concept } from "./features/console/Concept";
 import { ConsoleLayout } from "./features/console/ConsoleLayout";
 import { Competitors } from "./features/console/Competitors";
@@ -37,6 +36,9 @@ const Geocoding = lazy(() =>
   import("./features/console/Geocoding").then((m) => ({ default: m.Geocoding })),
 );
 
+/** Same payload decision: /assess now carries the pin-drop map (Leaflet). */
+const Assess = lazy(() => import("./features/assess/Assess").then((m) => ({ default: m.Assess })));
+
 function Deferred({ children }: { children: ReactNode }) {
   return (
     <Suspense fallback={<p className="font-data text-[13px] text-ink-faint">…</p>}>
@@ -47,7 +49,14 @@ function Deferred({ children }: { children: ReactNode }) {
 
 export const router = createBrowserRouter([
   { path: "/", element: <Landing /> },
-  { path: "/assess", element: <Assess /> },
+  {
+    path: "/assess",
+    element: (
+      <Deferred>
+        <Assess />
+      </Deferred>
+    ),
+  },
   /**
    * The stored JSONB payload, fetched by id and rendered verbatim (AGENTS.md
    * rule 9). The demo report is /report/KL-TVM-DEMO-001; customer ids are

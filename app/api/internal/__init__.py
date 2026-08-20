@@ -21,6 +21,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 
 from app.api.internal import (
+    assess,
     competitors,
     console_auth,
     geocoding,
@@ -43,6 +44,10 @@ router.include_router(console_auth.router, tags=["console-auth"])
 # customer holds a link, not a login. The report id is the capability - see
 # the module docstring.
 router.include_router(reports.router, tags=["internal-reports"])
+# /assess is open for the same reason: it is the funnel's front door, and the
+# customer dropping the pin holds no login. It writes exactly one thing - a
+# `sites` lead row - and prices from typed tariffs; nothing paid, nothing keyed.
+router.include_router(assess.router, tags=["internal-assess"])
 
 # --- guarded ---------------------------------------------------------------
 guarded = APIRouter(dependencies=[Depends(require_operator)])

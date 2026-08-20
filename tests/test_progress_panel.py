@@ -34,6 +34,7 @@ EMPTY_WORLD = Signals(
     vahan_states=0,
     predictions=0,
     reports=0,
+    pin_leads=0,
     sources_authorised=0,
     sources_total=8,
 )
@@ -53,17 +54,51 @@ def test_a_stored_report_moves_the_pipeline_off_code_done() -> None:
     testify - and an empty table must read as code_done, never as done."""
     import dataclasses
 
-    empty = next(m for m in build_milestones(EMPTY_WORLD) if m.part == "5 + 6 + G.2")
+    empty = next(m for m in build_milestones(EMPTY_WORLD) if m.part == "5 + 6")
     assert empty.status is Status.CODE_DONE
 
     live = dataclasses.replace(EMPTY_WORLD, reports=1, predictions=3)
-    report = next(m for m in build_milestones(live) if m.part == "5 + 6 + G.2")
+    report = next(m for m in build_milestones(live) if m.part == "5 + 6")
     assert report.status is Status.PARTIAL
     assert "1 report(s) stored" in report.evidence
 
     demand = next(m for m in build_milestones(live) if m.part == "4.2")
     assert demand.status is Status.PARTIAL
     assert "3 prediction(s)" in demand.evidence
+
+
+def test_a_customer_pin_moves_assess_off_code_done() -> None:
+    """The funnel's front door sits right behind the poller in the queue, and
+    only a customer's own pin - a sites row with geocode_source='pin' - may
+    move it off code_done. Operator-made sites must not."""
+    import dataclasses
+
+    milestones = build_milestones(EMPTY_WORLD)
+    assert milestones[1].part == "G.2"
+    assert milestones[1].status is Status.CODE_DONE
+
+    live = dataclasses.replace(EMPTY_WORLD, sites=5, pin_leads=2)
+    assess = next(m for m in build_milestones(live) if m.part == "G.2")
+    assert assess.status is Status.PARTIAL
+    assert "2 customer pin(s)" in assess.evidence
+
+    operator_only = dataclasses.replace(EMPTY_WORLD, sites=5, pin_leads=0)
+    assess = next(m for m in build_milestones(operator_only) if m.part == "G.2")
+    assert assess.status is Status.CODE_DONE
+
+
+def test_the_first_tariff_unparks_the_tier_gate() -> None:
+    """1.6 parked itself 'until the first tariff loads' - the panel must honour
+    its own stated condition instead of staying parked out of habit."""
+    import dataclasses
+
+    parked = next(m for m in build_milestones(EMPTY_WORLD) if m.part == "1.6")
+    assert parked.status is Status.PARKED
+
+    live = dataclasses.replace(EMPTY_WORLD, tariff_rows=4, tariff_states=2)
+    gate = next(m for m in build_milestones(live) if m.part == "1.6")
+    assert gate.status is Status.NEXT
+    assert "2 state(s)" in gate.evidence
 
 
 def test_a_silent_poller_is_the_first_item_in_the_queue() -> None:

@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+  "/api/internal/assess": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Assess */
+    post: operations["assess_api_internal_assess_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/competitors": {
     parameters: {
       query?: never;
@@ -431,6 +448,46 @@ export interface components {
       kwh_year: number;
       /** Npv Paise */
       npv_paise: number;
+    };
+    /** AssessIn */
+    AssessIn: {
+      /** Budget Band */
+      budget_band?: string | null;
+      /** Existing Connection */
+      existing_connection?: boolean | null;
+      /** Land Owned */
+      land_owned?: boolean | null;
+      /** Lat */
+      lat: number;
+      /** Lng */
+      lng: number;
+      /** Sanctioned Kva */
+      sanctioned_kva?: number | null;
+      /** Transformer On Site */
+      transformer_on_site?: boolean | null;
+    };
+    /** AssessOut */
+    AssessOut: {
+      /** Boundary Ambiguous */
+      boundary_ambiguous: boolean;
+      /** Confidence */
+      confidence: string | null;
+      /** District */
+      district: string | null;
+      /** Requests */
+      requests: number;
+      /**
+       * Site Id
+       * Format: uuid
+       */
+      site_id: string;
+      /** State */
+      state: string | null;
+      teaser: components["schemas"]["TeaserOut"] | null;
+      /** Waitlist Reason */
+      waitlist_reason: string | null;
+      /** Waitlisted */
+      waitlisted: boolean;
     };
     /** BreakevenPayload */
     BreakevenPayload: {
@@ -1156,6 +1213,40 @@ export interface components {
       /** Undocumented */
       undocumented: string[];
     };
+    /** TapOut */
+    TapOut: {
+      /** Effect */
+      effect: string;
+      /** Label */
+      label: string;
+      /** Provided */
+      provided: boolean;
+    };
+    /** TeaserOut */
+    TeaserOut: {
+      /** Breakeven Kwh Day */
+      breakeven_kwh_day: number | null;
+      /** Breakeven Kwh Year */
+      breakeven_kwh_year: number | null;
+      /** Breakeven Utilisation */
+      breakeven_utilisation: number | null;
+      /** Connectors */
+      connectors: number;
+      /** Energy Tariff Paise Per Kwh */
+      energy_tariff_paise_per_kwh: number;
+      /** Notes */
+      notes: string[];
+      /** Rated Kw Each */
+      rated_kw_each: number;
+      /** Sanctioned Kva */
+      sanctioned_kva: number;
+      /** Selling Paise Per Kwh */
+      selling_paise_per_kwh: number;
+      /** Taps */
+      taps: components["schemas"]["TapOut"][];
+      /** Tariff Source */
+      tariff_source: string;
+    };
     /** UtilisationBand */
     UtilisationBand: {
       /** Model Version */
@@ -1223,6 +1314,39 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  assess_api_internal_assess_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AssessIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AssessOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   competitors_api_internal_competitors_get: {
     parameters: {
       query?: {

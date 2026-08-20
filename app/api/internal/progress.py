@@ -61,6 +61,9 @@ class Signals:
     vahan_states: int
     predictions: int
     reports: int
+    #: Sites created by a customer pin on /assess - the funnel's own rows,
+    #: distinct from operator-made sites.
+    pin_leads: int
     sources_authorised: int
     sources_total: int
 
@@ -86,7 +89,8 @@ def read_signals(session: Session) -> Signals:
               (SELECT count(DISTINCT lgd_state_code) FROM vahan_ev_registrations
                WHERE lgd_state_code IS NOT NULL),
               (SELECT count(*) FROM predictions),
-              (SELECT count(*) FROM reports)
+              (SELECT count(*) FROM reports),
+              (SELECT count(*) FROM sites WHERE geocode_source = 'pin')
         """)
     ).one()
     return Signals(
@@ -106,6 +110,7 @@ def read_signals(session: Session) -> Signals:
         vahan_states=int(row[13]),
         predictions=int(row[14]),
         reports=int(row[15]),
+        pin_leads=int(row[16]),
         sources_authorised=sum(1 for s in SOURCES if s.authorised),
         sources_total=len(SOURCES),
     )
@@ -219,6 +224,28 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "accuracy check (scraped-vs-real, by hand), not a wired feed. Then a VPS, never a "
         "laptop - a laptop that sleeps is a hole in the record.",
     )
+    assess_live = s.pin_leads > 0
+    add(
+        "G.2",
+        "POST /assess - the funnel's front door",
+        Status.PARTIAL if assess_live else Status.CODE_DONE,
+        "The free teaser as a real flow: a customer drops a pin, answers up to five "
+        "taps, and gets the utilisation that site must clear to break even - pure "
+        "arithmetic against the state's typed tariff, no model consulted, so no "
+        "prediction row (rule 5 governs model outputs; the teaser makes none). "
+        "EVERY pin writes a `sites` lead row first: a pin in an uncovered state "
+        "joins the district waitlist, which is capture, not failure - the request "
+        "counter on a waitlisted district is the expansion roadmap.",
+        (
+            f"{s.pin_leads:,} customer pin(s) dropped ({s.sites:,} sites total)."
+            if assess_live
+            else "Endpoint, arithmetic and frontend built and tested; no customer "
+            "has dropped a pin yet. The first one flips this on its own."
+        ),
+        "Put it in front of people - nothing in the codebase closes this. Then "
+        "contact capture on the lead, whose schema is Part 7's (decided by the "
+        "0.3 conversations below).",
+    )
     add(
         "1.3",
         "Feed the geocoder something real",
@@ -250,6 +277,21 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "Human: assemble 200 addresses (by hand or a public directory). Then "
         "`python -m scripts.cascade_batch addresses.csv --out verify.csv --write` "
         "and hand-check the correct_y_n column.",
+    )
+    add(
+        "3.3",
+        "Reconcile the engine against one real P&L",
+        Status.NEXT,
+        "The exit test the ROI engine still owes: reproduce one operator's real "
+        "monthly P&L to within 5% using the engine's arithmetic. The 43 green tests "
+        "prove the formulas agree with the plan; only a real bill proves the plan "
+        "agrees with the world. Until this runs, every rupee in every report is "
+        "uncalibrated arithmetic - correct by construction, unproven by evidence.",
+        "Never run. No real month's numbers have been fed in; chargeMOD's own "
+        "stations are the natural first candidate.",
+        "Human: one month of one real station - energy purchased, revenue, rent, "
+        "demand charges. Code: `uv run python -m scripts.roi_example` already shows "
+        "how to state them as RoiInputs; the comparison itself is an afternoon.",
     )
     tariffs_live = s.tariff_states > 0
     add(
@@ -283,6 +325,27 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "Not started. Long lead time - conversations take weeks to arrange, so "
         "starting them costs nothing now and unblocks Part 7 later.",
         "Human: arrange them. Nothing in the codebase can.",
+    )
+    add(
+        "1.6",
+        "Tier gate",
+        Status.NEXT if tariffs_live else Status.PARKED,
+        "Persist per-district 'how much do we know' and stamp it on every site, "
+        "waitlisting Tier 2/3 customers while still logging the pin.",
+        (
+            f"Its unlock condition has arrived: {s.tariff_states} state(s) now hold "
+            "tariffs, so the answer varies by state and is worth persisting - the "
+            "Data panel computes the same judgement live, but /assess needs it "
+            "stamped on the site."
+            if tariffs_live
+            else "The Data panel already computes the same judgement live, and today "
+            "it says Tier 3 everywhere - persisting that adds nothing."
+        ),
+        "Code, cheap: a data_coverage derivation plus the stamp on sites.data_tier. "
+        "It was parked until the first tariff loaded; that day has passed."
+        if tariffs_live
+        else "Becomes worth building the day the first tariff loads and the answer "
+        "starts varying by state. Cheap then.",
     )
 
     # ------------------------------------------------------------------ DONE
@@ -446,7 +509,7 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
     )
     reports_live = s.reports > 0
     add(
-        "5 + 6 + G.2",
+        "5 + 6",
         "The report pipeline - pin to verdict, stored and served",
         Status.PARTIAL if reports_live else Status.CODE_DONE,
         "The customer-facing product: assemble VAHAN + tariff + competitors + OSM "
@@ -466,9 +529,9 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
             "report generated yet. `python -m scripts.generate_demo_report --write` "
             "creates the first."
         ),
-        "Real customer flow: POST /assess with a dropped pin (Leaflet, logged as a "
-        "lead with its district), then attribution (Part 7) once the 0.3 "
-        "conversations decide its schema.",
+        "Attribution (Part 7) once the 0.3 conversations decide its schema - the "
+        "customer intake itself (POST /assess) is built and carved out into G.2 "
+        "at the top of the queue.",
     )
     add(
         "C (explain)",
@@ -482,17 +545,6 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
     )
 
     # ---------------------------------------------------------------- PARKED
-    add(
-        "1.6",
-        "Tier gate",
-        Status.PARKED,
-        "Persist per-district 'how much do we know' and stamp it on every site, "
-        "waitlisting Tier 2/3 customers while still logging the pin.",
-        "The Data panel already computes the same judgement live, and today it says "
-        "Tier 3 everywhere - persisting that adds nothing.",
-        "Becomes worth building the day the first tariff loads and the answer starts "
-        "varying by state. Cheap then.",
-    )
     add(
         "L2 self-host",
         "Self-hosted Nominatim",
@@ -869,13 +921,15 @@ def build_inputs(
 
 
 _SUMMARY = (
-    "The machine now runs end to end: pin → district → site context scraped free from "
-    "OpenStreetMap → a versioned demand band → the ROI engine → a report stored as "
-    "JSONB and served verbatim at /report/:id. Real data has started flowing through "
-    "it - VAHAN counts on a scheduled nightly scrape, competitor inventory, typed "
-    "tariffs - and the statuses below read the database, not the plan. Still missing "
-    "is the one input that cannot be backfilled: the poller's occupancy record. Its "
-    "delay is the only permanent loss, which is why it stays at the top of the queue."
+    "The machine now runs end to end and has a front door: a customer can drop a pin "
+    "on /assess and get the breakeven number from pure arithmetic, every pin logged "
+    "as a lead - and behind it, pin → district → OSM context → a versioned demand "
+    "band → the ROI engine → a report stored as JSONB and served verbatim at "
+    "/report/:id. Real data flows through it all - VAHAN on a scheduled nightly "
+    "scrape, competitor inventory, typed tariffs - and the statuses below read the "
+    "database, not the plan. Still missing is the one input that cannot be "
+    "backfilled: the poller's occupancy record. Its delay is the only permanent "
+    "loss, which is why it stays at the top of the queue."
 )
 
 
