@@ -7,6 +7,13 @@ state's typed tariff (``domain/report/teaser.py``). Every pin is logged as a
 not a failure, and the waitlist it lands on is the expansion roadmap
 (OVERVIEW.md §4).
 
+The tier gate (PLAN 1.6) decides which of those two answers a pin gets:
+``state_tier`` derives "how much do we know here" from the live tables, the
+verdict is stamped on ``sites.data_tier`` (what we knew when the site was
+asked about), and Tier 3 pins are waitlisted while still being logged.
+Tier 1-2 pins get the teaser - Tier 2 is exactly the claim the teaser makes,
+a breakeven number and nothing more.
+
 Mounted on the OPEN group, and that is a decision, not an oversight: the
 teaser is the top of the funnel and a customer holds no console login - the
 same reasoning as the reports endpoint above it in ``__init__.py``.
@@ -34,6 +41,7 @@ from sqlalchemy.orm import Session
 from app.db import get_session
 from app.domain.report.assemble import state_ev_tariff
 from app.domain.report.teaser import Taps, compute_teaser
+from app.domain.resolution.coverage import state_tier
 from app.domain.resolution.geography import resolve
 from app.domain.resolution.sites import SiteFacts, upsert_site
 
@@ -84,6 +92,10 @@ class AssessOut(BaseModel):
     confidence: str | None
     #: Another district within 500 m: two tariff regimes, said out loud.
     boundary_ambiguous: bool
+    #: PLAN 1.6 - the gate. 1 = full report honest, 2 = breakeven + tariff
+    #: audit honest, 3 = waitlist. None when the pin resolved to no district.
+    tier: int | None
+    tier_why: str | None
     waitlisted: bool
     waitlist_reason: str | None
     teaser: TeaserOut | None
@@ -93,6 +105,9 @@ class AssessOut(BaseModel):
 def assess(body: AssessIn, session: Session = Depends(get_session)) -> AssessOut:
     resolution = resolve(session, body.lat, body.lng)
     district = resolution.district
+    # The tier gate (PLAN 1.6): how much we know about this state, decided by
+    # the same function the coverage panel displays.
+    verdict = None if district is None else state_tier(session, district.lgd_state_code)
 
     taps = Taps(
         existing_connection=body.existing_connection,
@@ -123,6 +138,9 @@ def assess(body: AssessIn, session: Session = Depends(get_session)) -> AssessOut
             reasons=("pin dropped by the customer on /assess",) + resolution.reasons,
         ),
     )
+    # The 1.6 stamp: what we knew when this site was asked about, recorded the
+    # same way its geocode confidence is. Re-asking re-stamps - coverage grows.
+    site.data_tier = None if verdict is None else verdict.tier
 
     out = AssessOut(
         site_id=site.site_id,
@@ -131,12 +149,14 @@ def assess(body: AssessIn, session: Session = Depends(get_session)) -> AssessOut
         state=district.state_name if district else None,
         confidence=resolution.confidence.value,
         boundary_ambiguous=resolution.boundary_ambiguous,
+        tier=None if verdict is None else verdict.tier,
+        tier_why=None if verdict is None else verdict.why,
         waitlisted=False,
         waitlist_reason=None,
         teaser=None,
     )
 
-    if district is None:
+    if district is None or verdict is None:
         out.waitlisted = True
         out.waitlist_reason = (
             "The pin could not be resolved to a district: "
@@ -145,14 +165,24 @@ def assess(body: AssessIn, session: Session = Depends(get_session)) -> AssessOut
         )
         return out
 
-    tariff_row = state_ev_tariff(session, district.lgd_state_code, dt.date.today())
-    if tariff_row is None:
+    if verdict.tier >= 3:
         out.waitlisted = True
         out.waitlist_reason = (
-            f"{district.state_name} is not covered yet - no EV tariff is loaded for it, "
-            "and a breakeven number without a defensible tariff would be a guess. "
+            f"{district.state_name} is Tier {verdict.tier}: {verdict.why}. "
             f"The pin is logged ({site.requests} request(s) for this spot); the waitlist "
             "decides which state's tariffs load next."
+        )
+        return out
+
+    tariff_row = state_ev_tariff(session, district.lgd_state_code, dt.date.today())
+    if tariff_row is None:
+        # Tier 2 needs an effective tariff row; the teaser needs it to be the
+        # EV-SPECIFIC one. A state with only a general schedule lands here.
+        out.waitlisted = True
+        out.waitlist_reason = (
+            f"{district.state_name} has a tariff on file but not the EV-specific order, "
+            "and pricing EV charging off the general schedule would be a guess. "
+            f"The pin is logged ({site.requests} request(s) for this spot)."
         )
         return out
 

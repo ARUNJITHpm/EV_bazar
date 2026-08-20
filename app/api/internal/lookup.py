@@ -12,10 +12,10 @@ Three read-only panels whose job is to make the system *legible*:
 * ``/lookup/coverage`` - what we actually know per state, and the tier that
                          honestly follows from it.
 
-⚠️ ``/lookup/coverage`` is a **live view, not PLAN 1.6's gate.** 1.6 persists a
-``data_coverage`` row per district and stamps ``sites.data_tier`` from it. This
-computes the same judgement from what is loaded right now, so the tier can be
-read before 1.6 exists - and so that when 1.6 lands, the two can be compared.
+``/lookup/coverage`` and PLAN 1.6's gate are now the SAME judgement: the tier
+function lives in ``domain/resolution/coverage.py``, /assess derives it per
+request and stamps ``sites.data_tier``, and this panel displays it per state.
+They cannot disagree because neither owns a copy.
 
 Guarded: mounted on the ``guarded`` router in ``api/internal/__init__.py``.
 """
@@ -30,6 +30,7 @@ from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.db import get_session
+from app.domain.resolution.coverage import FOCUS_STATES, TIER_RULE, tier_for
 from app.domain.resolution.geography import (
     DEFAULT_AMBIGUOUS_M,
     DEFAULT_MAX_FALLBACK_M,
@@ -667,38 +668,8 @@ class CoverageOut(BaseModel):
     states: list[StateCoverageOut]
 
 
-_TIER_RULE = (
-    "A tier measures how much WE know about a state - it is our data coverage, not "
-    "the size or importance of its cities. Tier 1 = we hold tariffs AND competitor "
-    "occupancy AND vehicle counts, so a full report is honest. Tier 2 = tariffs "
-    "alone - enough for a breakeven number and a tariff audit, the first sellable "
-    "product. Tier 3 = we know too little; log the pin, waitlist the customer, and "
-    "count the district as demand. A state moves UP by us loading data for it, "
-    "starting with the focus states."
-)
-
-#: LGD state codes of PLAN Part 1's first markets: Kerala (32), Tamil Nadu (33).
-FOCUS_STATES = frozenset({32, 33})
-
-
-def tier_for(*, tariff: bool, poll: bool, vahan: bool, osm: bool) -> tuple[int, str]:
-    """The gate, as a pure function. PLAN 1.6 will persist this per district."""
-    if tariff and poll and vahan:
-        return 1, "tariffs, occupancy and vehicle counts are all present"
-    if tariff:
-        missing = [
-            label
-            for label, present in (
-                ("competitor occupancy", poll),
-                ("VAHAN vehicle counts", vahan),
-                ("road quality", osm),
-            )
-            if not present
-        ]
-        return 2, "tariffs are loaded, so a breakeven number is honest; still missing " + ", ".join(
-            missing
-        )
-    return 3, "no tariff data for this state, so no number here would be trustworthy"
+# The rule and the gate live in domain/resolution/coverage.py (PLAN 1.6);
+# imported above so this panel and /assess can never hold diverging copies.
 
 
 @router.get("/lookup/coverage", response_model=CoverageOut)
@@ -766,7 +737,7 @@ def lookup_coverage(session: Session = Depends(get_session)) -> CoverageOut:
 
     return CoverageOut(
         checked_at=dt.datetime.now(dt.UTC),
-        rule=_TIER_RULE,
+        rule=TIER_RULE,
         note=(
             "Tariff flags are live per state from the electricity_tariffs table - type "
             "in a state's SERC order and it turns Tier 2 here on its own. VAHAN (4.1) is "
@@ -774,8 +745,9 @@ def lookup_coverage(session: Session = Depends(get_session)) -> CoverageOut:
             "vehicle-count flag turns true. OSM roads (2.1) has no table yet, so that "
             "flag is false everywhere by construction. Competitor occupancy is read from "
             "poll_runs and is national, not per state, until a poll can be attributed to "
-            "a district (needs FINDINGS B3). This view is computed live; PLAN 1.6 will "
-            "persist the same judgement per district."
+            "a district (needs FINDINGS B3). The gate itself (PLAN 1.6) is live: /assess "
+            "derives this same judgement per request, stamps sites.data_tier, and "
+            "waitlists Tier 3 pins while still logging them."
         ),
         # Focus states first, then alphabetical - the two rows a reader acts on
         # should not be buried under A-for-Andaman.

@@ -65,6 +65,9 @@ interface AssessOut {
   state: string | null;
   confidence: string | null;
   boundary_ambiguous: boolean;
+  /** PLAN 1.6: 1 = full report · 2 = breakeven + tariff audit · 3 = waitlist. */
+  tier: number | null;
+  tier_why: string | null;
   waitlisted: boolean;
   waitlist_reason: string | null;
   teaser: TeaserOut | null;
@@ -267,6 +270,11 @@ export function Assess() {
             tariff {formatRupeesPrecise(out.teaser.energy_tariff_paise_per_kwh as Paise)}/kWh (
             {out.teaser.tariff_source}) · {Math.round(out.teaser.sanctioned_kva)} kVA
           </p>
+          {out.tier !== null && (
+            <p className="mt-1 font-data text-[11px] text-ink-faint">
+              data tier {out.tier} — {out.tier_why}
+            </p>
+          )}
 
           <dl className="mt-6 border-t border-rule">
             {out.teaser.taps.map((t) => (

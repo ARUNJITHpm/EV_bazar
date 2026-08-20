@@ -64,6 +64,8 @@ class Signals:
     #: Sites created by a customer pin on /assess - the funnel's own rows,
     #: distinct from operator-made sites.
     pin_leads: int
+    #: Sites carrying a data_tier stamp - PLAN 1.6's gate leaving evidence.
+    tiered_sites: int
     sources_authorised: int
     sources_total: int
 
@@ -90,7 +92,8 @@ def read_signals(session: Session) -> Signals:
                WHERE lgd_state_code IS NOT NULL),
               (SELECT count(*) FROM predictions),
               (SELECT count(*) FROM reports),
-              (SELECT count(*) FROM sites WHERE geocode_source = 'pin')
+              (SELECT count(*) FROM sites WHERE geocode_source = 'pin'),
+              (SELECT count(*) FROM sites WHERE data_tier IS NOT NULL)
         """)
     ).one()
     return Signals(
@@ -111,6 +114,7 @@ def read_signals(session: Session) -> Signals:
         predictions=int(row[14]),
         reports=int(row[15]),
         pin_leads=int(row[16]),
+        tiered_sites=int(row[17]),
         sources_authorised=sum(1 for s in SOURCES if s.authorised),
         sources_total=len(SOURCES),
     )
@@ -326,27 +330,6 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "starting them costs nothing now and unblocks Part 7 later.",
         "Human: arrange them. Nothing in the codebase can.",
     )
-    add(
-        "1.6",
-        "Tier gate",
-        Status.NEXT if tariffs_live else Status.PARKED,
-        "Persist per-district 'how much do we know' and stamp it on every site, "
-        "waitlisting Tier 2/3 customers while still logging the pin.",
-        (
-            f"Its unlock condition has arrived: {s.tariff_states} state(s) now hold "
-            "tariffs, so the answer varies by state and is worth persisting - the "
-            "Data panel computes the same judgement live, but /assess needs it "
-            "stamped on the site."
-            if tariffs_live
-            else "The Data panel already computes the same judgement live, and today "
-            "it says Tier 3 everywhere - persisting that adds nothing."
-        ),
-        "Code, cheap: a data_coverage derivation plus the stamp on sites.data_tier. "
-        "It was parked until the first tariff loaded; that day has passed."
-        if tariffs_live
-        else "Becomes worth building the day the first tariff loads and the answer "
-        "starts varying by state. Cheap then.",
-    )
 
     # ------------------------------------------------------------------ DONE
     add(
@@ -532,6 +515,28 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "Attribution (Part 7) once the 0.3 conversations decide its schema - the "
         "customer intake itself (POST /assess) is built and carved out into G.2 "
         "at the top of the queue.",
+    )
+    tiered = s.tiered_sites > 0
+    add(
+        "1.6",
+        "Tier gate",
+        Status.PARTIAL if tiered else Status.CODE_DONE,
+        "'How much do we know here', as a number a site carries: Tier 1 = full "
+        "report honest, Tier 2 = breakeven + tariff audit honest, Tier 3 = "
+        "waitlist. One pure function in domain/resolution/coverage.py, derived "
+        "from the live tables - /assess stamps every pin's sites.data_tier with "
+        "it and waitlists Tier 3 while still logging the lead; the coverage "
+        "panel displays the same judgement per state. Neither owns a copy, so "
+        "they cannot disagree.",
+        (
+            f"{s.tiered_sites:,} site(s) carry a stamped tier; "
+            f"{s.tariff_states} state(s) currently reach Tier 2."
+            if tiered
+            else "Built and tested; no site stamped yet - the next /assess pin stamps itself."
+        ),
+        "Per-district data_coverage rows become worth persisting the day tiers "
+        "vary WITHIN a state - which needs district-attributed occupancy (the "
+        "poller + FINDINGS B3). Until then three subselects are the truth.",
     )
     add(
         "C (explain)",

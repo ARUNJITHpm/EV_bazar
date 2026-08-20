@@ -35,6 +35,7 @@ EMPTY_WORLD = Signals(
     predictions=0,
     reports=0,
     pin_leads=0,
+    tiered_sites=0,
     sources_authorised=0,
     sources_total=8,
 )
@@ -87,17 +88,18 @@ def test_a_customer_pin_moves_assess_off_code_done() -> None:
     assert assess.status is Status.CODE_DONE
 
 
-def test_the_first_tariff_unparks_the_tier_gate() -> None:
-    """1.6 parked itself 'until the first tariff loads' - the panel must honour
-    its own stated condition instead of staying parked out of habit."""
+def test_a_stamped_site_moves_the_tier_gate_off_code_done() -> None:
+    """1.6 is built; only a sites row carrying a data_tier stamp may claim it
+    is live - the same row-count discipline as every other milestone."""
     import dataclasses
 
-    parked = next(m for m in build_milestones(EMPTY_WORLD) if m.part == "1.6")
-    assert parked.status is Status.PARKED
+    built = next(m for m in build_milestones(EMPTY_WORLD) if m.part == "1.6")
+    assert built.status is Status.CODE_DONE
 
-    live = dataclasses.replace(EMPTY_WORLD, tariff_rows=4, tariff_states=2)
+    live = dataclasses.replace(EMPTY_WORLD, tiered_sites=3, tariff_states=2)
     gate = next(m for m in build_milestones(live) if m.part == "1.6")
-    assert gate.status is Status.NEXT
+    assert gate.status is Status.PARTIAL
+    assert "3 site(s)" in gate.evidence
     assert "2 state(s)" in gate.evidence
 
 

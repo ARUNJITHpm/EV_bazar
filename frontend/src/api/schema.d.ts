@@ -484,6 +484,10 @@ export interface components {
       /** State */
       state: string | null;
       teaser: components["schemas"]["TeaserOut"] | null;
+      /** Tier */
+      tier: number | null;
+      /** Tier Why */
+      tier_why: string | null;
       /** Waitlist Reason */
       waitlist_reason: string | null;
       /** Waitlisted */
