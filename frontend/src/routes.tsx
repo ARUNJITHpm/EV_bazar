@@ -2,6 +2,7 @@ import { lazy, Suspense, type ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import { Assess } from "./features/assess/Assess";
+import { Concept } from "./features/console/Concept";
 import { ConsoleLayout } from "./features/console/ConsoleLayout";
 import { Competitors } from "./features/console/Competitors";
 import { Cpo } from "./features/console/Cpo";
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
     element: <ConsoleLayout />,
     children: [
       { index: true, element: <Overview /> },
+      { path: "concept", element: <Concept /> },
       { path: "progress", element: <Progress /> },
       { path: "lookup", element: <Lookup /> },
       { path: "cpo", element: <Cpo /> },
