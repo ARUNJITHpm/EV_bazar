@@ -51,12 +51,12 @@ router = APIRouter()
 class AssessIn(BaseModel):
     lat: float = Field(ge=-90, le=90)
     lng: float = Field(ge=-180, le=180)
-    #: The taps, every one optional (the teaser's whole premise).
-    existing_connection: bool | None = None
-    sanctioned_kva: float | None = Field(default=None, gt=0, le=5_000)
-    transformer_on_site: bool | None = None
-    land_owned: bool | None = None
-    budget_band: str | None = Field(default=None, max_length=32)
+    #: The design flow's taps, every one optional (the teaser's whole premise).
+    #: "small" | "medium" | "large" - how much space, driving connector count.
+    space: str | None = Field(default=None, max_length=16)
+    #: An existing transformer's nameplate kVA, and the metres to it.
+    transformer_kva: float | None = Field(default=None, gt=0, le=5_000)
+    transformer_distance_m: float | None = Field(default=None, ge=0, le=5_000)
     #: What the owner wants the site to do (income / fleet / visitors) -
     #: echoed honestly as "changes the operator match, not this arithmetic".
     intent: str | None = Field(default=None, max_length=32)
@@ -113,11 +113,9 @@ def assess(body: AssessIn, session: Session = Depends(get_session)) -> AssessOut
     verdict = None if district is None else state_tier(session, district.lgd_state_code)
 
     taps = Taps(
-        existing_connection=body.existing_connection,
-        sanctioned_kva=body.sanctioned_kva,
-        transformer_on_site=body.transformer_on_site,
-        land_owned=body.land_owned,
-        budget_band=body.budget_band,
+        space=body.space,
+        transformer_kva=body.transformer_kva,
+        transformer_distance_m=body.transformer_distance_m,
         intent=body.intent,
     )
 

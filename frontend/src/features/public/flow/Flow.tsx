@@ -18,33 +18,35 @@ import {
 import { Working } from "./Working";
 
 /**
- * The seven-step public assessment flow (design/, per design/DECISIONS.md).
+ * The public assessment flow, built to the design (design/flow-images/).
  *
- * locate · connection (+ load) · transformer · land · intent · working ·
- * result. Every step is a real URL under /assess, so the browser back
- * button works for free and a link into the middle of the flow resolves;
- * the answers live in sessionStorage, so a refresh loses nothing.
+ * Four counted steps — locate · transformer · space · intent — then working
+ * and result. The transformer step nests two sliders (distance, then size)
+ * that stay inside 02 / 04, exactly as the artboards number them. Every step
+ * is a real URL under /assess, so the browser back button works for free and
+ * a link into the middle of the flow resolves; the answers live in
+ * sessionStorage, so a refresh loses nothing.
  *
- * The question set is the ENGINE'S, not the reference build's: the flow
- * asks what compute_teaser actually reads. The reference's transformer
- * distance and capacity sliders are gone — collecting inputs the arithmetic
- * cannot use, on a product whose thesis is honesty, is theatre, and
- * "how big is the transformer" invites exactly the kVA/kW conflation
- * AGENTS.md forbids. Intent survives because it feeds the operator match
- * and its echo says so. The reasoning is in design/DECISIONS.md.
+ * The design's inputs are WIRED FOR REAL (owner's call, design/DECISIONS.md
+ * Task 3): space drives the connector count and moves breakeven; the
+ * transformer's size and distance move capex, so their echoes say "payback,
+ * not this breakeven" — the honesty firewall, unbroken. Intent feeds the
+ * operator match, never the arithmetic, and its echo owns that.
  */
 
 type StepId =
-  "locate" | "connection" | "load" | "transformer" | "land" | "intent" | "working" | "result";
+  "locate" | "transformer" | "distance" | "size" | "land" | "intent" | "working" | "result";
 
-/** Total over StepId, so the chrome can never index its way to undefined. */
+/** Total over StepId, so the chrome can never index its way to undefined.
+ *  distance and size are sub-steps of the transformer question, so they hold
+ *  02 / 04 — the customer is still answering "the transformer question". */
 const STEP_META: Record<StepId, { label: string; progress: number }> = {
-  locate: { label: "01 / 05", progress: 20 },
-  connection: { label: "02 / 05", progress: 40 },
-  load: { label: "02 / 05", progress: 50 },
-  transformer: { label: "03 / 05", progress: 60 },
-  land: { label: "04 / 05", progress: 80 },
-  intent: { label: "05 / 05", progress: 100 },
+  locate: { label: "01 / 04", progress: 25 },
+  transformer: { label: "02 / 04", progress: 50 },
+  distance: { label: "02 / 04", progress: 50 },
+  size: { label: "02 / 04", progress: 50 },
+  land: { label: "03 / 04", progress: 75 },
+  intent: { label: "04 / 04", progress: 100 },
   working: { label: "WORKING", progress: 100 },
   result: { label: "RESULT", progress: 100 },
 };
@@ -52,10 +54,8 @@ const STEP_META: Record<StepId, { label: string; progress: number }> = {
 const isStep = (v: string): v is StepId => v in STEP_META;
 
 const BACK_LABEL: Partial<Record<StepId, string>> = {
-  load: "Back to the connection question",
-  transformer: "Back to the connection question",
-  land: "Back to the transformer question",
-  intent: "Back to the land question",
+  distance: "Back to the transformer question",
+  size: "Back to the distance",
   working: "Change an answer",
   result: "Back to my answers",
 };
@@ -126,149 +126,150 @@ export function Flow() {
             onChecked={(out) => setState((s) => ({ ...s, confirmed: out }))}
             onContinue={(out) => {
               // A pin we cannot price is still a lead, and the waitlist is
-              // the answer — do not march them through five questions we
+              // the answer — do not march them through four questions we
               // are only going to decline to answer.
               if (out.waitlisted) {
                 setState((s) => ({ ...s, result: out }));
                 go("result");
               } else {
-                go("connection");
+                go("transformer");
               }
             }}
           />
         );
 
-      case "connection":
+      case "transformer":
         return (
-          <Screen question="Does the site already have an electricity connection?">
+          <Screen question="Is there a transformer near this site?">
             <Answers>
               <Answer
-                title="Yes, there is one"
-                sub="One more question about how much load it is sanctioned for."
+                title="Yes, I know the details"
+                sub="You will enter the distance and the capacity next. Two questions, no forms."
                 onClick={() => {
-                  set({ connection: "yes" });
-                  go("load");
+                  set({ transformerNear: "yes" });
+                  go("distance");
                 }}
               />
               <Answer
-                title="No, it would be new"
-                sub="We price a new connection into the capital cost."
+                title="Not sure — skip this"
+                sub="Most owners do not know. We will estimate it from the grid records instead."
                 onClick={() => {
-                  set({ connection: "no", kva: "skip" });
-                  go("transformer");
+                  set({ transformerNear: "skip", transformerDistanceM: "skip", transformerKva: "skip" });
+                  go("land");
                 }}
               />
             </Answers>
             <Aside>
-              <button
-                type="button"
-                onClick={() => {
-                  set({ connection: "skip", kva: "skip" });
-                  go("transformer");
-                }}
-                className="inline-flex min-h-[56px] items-center text-[17px] text-cw-muted underline underline-offset-4 transition-colors duration-200 hover:text-cw-text"
-              >
-                I don’t know this one — skip it
-              </button>
+              Skipping widens the range on the estimate. It does not stop the assessment, and the
+              report will mark the figure unverified.
             </Aside>
           </Screen>
         );
 
-      case "load":
+      case "distance":
         return (
-          <Screen question="How much load is it sanctioned for?">
+          <Screen question="How far is the transformer from the site?">
             <Slider
-              id="sanctioned-kva"
-              label="Sanctioned load"
+              id="transformer-distance"
+              label="Distance from the site"
+              unit="m"
+              min={0}
+              max={500}
+              step={10}
+              value={
+                typeof state.answers.transformerDistanceM === "number"
+                  ? state.answers.transformerDistanceM
+                  : 120
+              }
+              onChange={(v) => set({ transformerDistanceM: v })}
+            />
+            <Aside>
+              The cabling run from the transformer to the site is priced at ₹2,000 a metre. It moves
+              the full report’s payback, not the breakeven figure on the last screen.
+            </Aside>
+            <StepFooter
+              skipLabel="I am not sure — skip this one"
+              onSkip={() => {
+                set({ transformerDistanceM: "skip" });
+                go("size");
+              }}
+              onNext={() => {
+                if (typeof state.answers.transformerDistanceM !== "number")
+                  set({ transformerDistanceM: 120 });
+                go("size");
+              }}
+            />
+          </Screen>
+        );
+
+      case "size":
+        return (
+          <Screen question="How big is it?">
+            <Slider
+              id="transformer-capacity"
+              label="Transformer capacity"
               unit="kVA"
               min={25}
               max={1000}
               step={25}
-              value={typeof state.answers.kva === "number" ? state.answers.kva : 150}
-              onChange={(v) => set({ kva: v })}
+              value={
+                typeof state.answers.transformerKva === "number" ? state.answers.transformerKva : 250
+              }
+              onChange={(v) => set({ transformerKva: v })}
             />
             <Aside>
-              This is the load your connection is sanctioned for — the figure on the bill, in kVA.
-              It sets the demand charges, which is why it moves the answer.
+              If the transformer already covers the station’s managed-peak load, a new one does not
+              have to be built — that lowers the capital cost, and so the payback, not the breakeven
+              figure.
             </Aside>
             <StepFooter
+              skipLabel="I am not sure — skip this one"
               onSkip={() => {
-                set({ kva: "skip" });
-                go("transformer");
+                set({ transformerKva: "skip" });
+                go("land");
               }}
               onNext={() => {
-                if (typeof state.answers.kva !== "number") set({ kva: 150 });
-                go("transformer");
+                if (typeof state.answers.transformerKva !== "number") set({ transformerKva: 250 });
+                go("land");
               }}
             />
-          </Screen>
-        );
-
-      case "transformer":
-        return (
-          <Screen question="Is there a transformer on the site itself?">
-            <Answers cols={3}>
-              <Answer
-                title="Yes, on the site"
-                sub="One less thing to build, so the capital cost drops."
-                onClick={() => {
-                  set({ transformer: "yes" });
-                  go("land");
-                }}
-              />
-              <Answer
-                title="No, there isn’t"
-                sub="A new transformer is priced into the capital cost."
-                onClick={() => {
-                  set({ transformer: "no" });
-                  go("land");
-                }}
-              />
-              <Answer
-                title="I don’t know"
-                sub="Most owners don’t. We assume one has to be built."
-                onClick={() => {
-                  set({ transformer: "skip" });
-                  go("land");
-                }}
-              />
-            </Answers>
-            <Aside>
-              Skipping does not stop the assessment. The report marks the figure unverified, and the
-              answer below shows you exactly what we assumed instead.
-            </Aside>
           </Screen>
         );
 
       case "land":
         return (
-          <Screen question="Do you own the land, or lease it?">
+          <Screen question="How much space do you have?">
             <Answers cols={3}>
               <Answer
-                title="I own it"
-                sub="No rent to cover, which lowers the bar directly."
+                title="A couple of car parks"
+                sub="Room for two or three vehicles to charge at once."
                 onClick={() => {
-                  set({ land: "own" });
+                  set({ space: "small" });
                   go("intent");
                 }}
               />
               <Answer
-                title="I lease it"
-                sub="Rent stays in the running costs."
+                title="A corner of a plot or yard"
+                sub="Room for four to eight, with space to turn in and out."
                 onClick={() => {
-                  set({ land: "lease" });
+                  set({ space: "medium" });
                   go("intent");
                 }}
               />
               <Answer
-                title="Not settled yet"
-                sub="We assume a lease — the more cautious of the two."
+                title="An open site"
+                sub="Room for a full station, a canopy and queueing."
                 onClick={() => {
-                  set({ land: "skip" });
+                  set({ space: "large" });
                   go("intent");
                 }}
               />
             </Answers>
+            <Aside>
+              A rough answer is enough. We measure the plot properly during the site survey — more
+              plugs spread the fixed costs, which is the one answer here that moves the breakeven
+              number.
+            </Aside>
           </Screen>
         );
 
@@ -375,15 +376,25 @@ export function Flow() {
         </div>
       </div>
 
+      {/* The background map suppresses its own attribution control, so the
+          footer carries it: Mapbox renders the style, OSM supplies the data. */}
       {!bare && (
-        <div className="relative z-10 flex justify-end px-[clamp(24px,7vw,112px)] pb-[18px] text-[13px] text-cw-muted">
+        <div className="relative z-10 flex justify-end gap-4 px-[clamp(24px,7vw,112px)] pb-[18px] text-[13px] text-cw-muted">
+          <a
+            href="https://www.mapbox.com/about/maps/"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex min-h-[44px] items-center text-[13px] transition-colors duration-200 hover:text-cw-text"
+          >
+            © Mapbox
+          </a>
           <a
             href="https://www.openstreetmap.org/copyright"
             target="_blank"
             rel="noreferrer noopener"
             className="inline-flex min-h-[44px] items-center text-[13px] transition-colors duration-200 hover:text-cw-text"
           >
-            © OpenStreetMap contributors
+            © OpenStreetMap
           </a>
         </div>
       )}

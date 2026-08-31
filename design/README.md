@@ -33,6 +33,13 @@ Wordmark direction **C — Instrument** (IBM Plex Mono caps) is the one chosen a
 the one used throughout. It stays legible as a mark against a grotesque page
 instead of dissolving into the nav.
 
+> **2026-08-31:** all four canvas links above return "artifact not found" from
+> this account — the images exist nowhere in `design/`. If the canvases are
+> still wanted on record, whoever holds the publishing account must export
+> them (PNG or HTML) into `design/canvases/`. The social-images canvas is the
+> only source of `og-identity.png`, which the reference build's `<head>`
+> references but never included.
+
 ## Mapbox
 
 A dark style is published at
@@ -40,3 +47,8 @@ A dark style is published at
 
 Whether to use it is an open decision — see INTEGRATION.md §4. If Leaflet wins,
 the style is still useful as a colour specification.
+
+> **2026-08-31:** decided, then amended. Leaflet + colour-spec first
+> (DECISIONS.md (c)); after the owner supplied the style's public token the
+> public surface switched to the real style — credentials and the
+> URL-restriction action item are in `MAPBOX.md`.

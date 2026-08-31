@@ -6,33 +6,30 @@ const PIN = { lat: 8.5695, lng: 76.873 };
 
 describe("toBody", () => {
   it("maps skip and unasked alike to null, so the backend echoes the default", () => {
-    const body = toBody(PIN, { connection: "skip", transformer: "skip" });
-    expect(body.existing_connection).toBeNull();
-    expect(body.transformer_on_site).toBeNull();
-    expect(body.land_owned).toBeNull();
+    const body = toBody(PIN, { transformerNear: "skip", transformerKva: "skip" });
+    expect(body.transformer_kva).toBeNull();
+    expect(body.transformer_distance_m).toBeNull();
+    expect(body.space).toBeNull();
     expect(body.intent).toBeNull();
-    expect(body.sanctioned_kva).toBeNull();
   });
 
-  it("carries real answers through, including a skipped kVA after a yes", () => {
+  it("carries real answers through, including a skipped size after a yes", () => {
     const body = toBody(PIN, {
-      connection: "yes",
-      kva: 150,
-      transformer: "no",
-      land: "own",
+      transformerNear: "yes",
+      transformerDistanceM: 120,
+      transformerKva: 250,
+      space: "large",
       intent: "income",
     });
-    expect(body.existing_connection).toBe(true);
-    expect(body.sanctioned_kva).toBe(150);
-    expect(body.transformer_on_site).toBe(false);
-    expect(body.land_owned).toBe(true);
+    expect(body.transformer_distance_m).toBe(120);
+    expect(body.transformer_kva).toBe(250);
+    expect(body.space).toBe("large");
     expect(body.intent).toBe("earn from land I own");
 
-    // "Yes there is a connection, but I don't know the load" must not
+    // "Yes there is a transformer, but I don't know its size" must not
     // invent a number.
-    const skipped = toBody(PIN, { connection: "yes", kva: "skip" });
-    expect(skipped.existing_connection).toBe(true);
-    expect(skipped.sanctioned_kva).toBeNull();
+    const skipped = toBody(PIN, { transformerNear: "yes", transformerKva: "skip" });
+    expect(skipped.transformer_kva).toBeNull();
   });
 });
 
@@ -49,8 +46,8 @@ describe("placeName", () => {
 
 describe("session persistence", () => {
   it("round-trips the state and survives garbage", () => {
-    saveState({ pin: PIN, answers: { land: "lease" } });
-    expect(loadState().answers.land).toBe("lease");
+    saveState({ pin: PIN, answers: { space: "medium" } });
+    expect(loadState().answers.space).toBe("medium");
     expect(loadState().pin).toEqual(PIN);
 
     sessionStorage.setItem("cw.assessment", "{not json");

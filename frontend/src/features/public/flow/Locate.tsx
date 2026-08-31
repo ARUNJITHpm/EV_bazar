@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 
 import { api } from "../../../api/client";
+import { MAP_STYLE, createPinElement, mapboxgl } from "../mapCore";
 import { placeName, toBody, type AssessOut } from "./state";
 
 /**
@@ -26,35 +24,13 @@ import { placeName, toBody, type AssessOut } from "./state";
  * card never needs a third-party reverse geocode.
  */
 
-const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-
 /** Kerala/Tamil Nadu, the covered states - where most pins will land. */
-const DEFAULT_CENTRE: [number, number] = [10.2, 77.2];
-
-const PIN = L.divIcon({
-  className: "",
-  html: '<div class="cw-pin"></div>',
-  iconSize: [16, 16],
-  iconAnchor: [8, 8],
-});
+const DEFAULT_CENTRE = { lng: 77.2, lat: 10.2 };
 
 interface Place {
   display_name: string;
   lat: string;
   lon: string;
-}
-
-function ClickToPlace({ onPick }: { onPick: (lat: number, lng: number) => void }) {
-  useMapEvents({ click: (e) => onPick(e.latlng.lat, e.latlng.lng) });
-  return null;
-}
-
-function FlyTo({ target }: { target: [number, number] | null }) {
-  const map = useMap();
-  useEffect(() => {
-    if (target) map.flyTo(target, 16, { duration: 1.2 });
-  }, [target, map]);
-  return null;
 }
 
 export function Locate({
@@ -75,9 +51,62 @@ export function Locate({
   const [query, setQuery] = useState(seeded);
   const [searching, setSearching] = useState(false);
   const [results, setResults] = useState<Place[] | null>(null);
-  const [focus, setFocus] = useState<[number, number] | null>(null);
   const [checking, setChecking] = useState(false);
   const [failed, setFailed] = useState(false);
+
+  const mapEl = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const markerRef = useRef<mapboxgl.Marker | null>(null);
+  // Latest callback for map event handlers, which outlive any one render.
+  const onPinRef = useRef(onPin);
+  onPinRef.current = onPin;
+  // Construction-time view only: a returning visitor opens on their pin.
+  const initial = useRef(pin);
+
+  useEffect(() => {
+    if (!mapEl.current) return;
+    let map: mapboxgl.Map;
+    try {
+      map = new mapboxgl.Map({
+        container: mapEl.current,
+        style: MAP_STYLE,
+        center: initial.current ? { lng: initial.current.lng, lat: initial.current.lat } : DEFAULT_CENTRE,
+        zoom: initial.current ? 15 : 6,
+      });
+    } catch {
+      return;
+    }
+    mapRef.current = map;
+    map.on("click", (e) => onPinRef.current({ lat: e.lngLat.lat, lng: e.lngLat.lng }));
+    return () => {
+      mapRef.current = null;
+      markerRef.current = null;
+      map.remove();
+    };
+  }, []);
+
+  // The pin is owned by flow state; the marker only mirrors it.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !pin) return;
+    const at = { lng: pin.lng, lat: pin.lat };
+    if (!markerRef.current) {
+      const marker = new mapboxgl.Marker({
+        element: createPinElement({ draggable: true }),
+        draggable: true,
+        anchor: "bottom",
+      })
+        .setLngLat(at)
+        .addTo(map);
+      marker.on("dragend", () => {
+        const p = marker.getLngLat();
+        onPinRef.current({ lat: p.lat, lng: p.lng });
+      });
+      markerRef.current = marker;
+    } else {
+      markerRef.current.setLngLat(at);
+    }
+  }, [pin]);
 
   async function search() {
     const q = query.trim();
@@ -97,9 +126,9 @@ export function Locate({
   }
 
   function goTo(p: Place) {
-    const at: [number, number] = [Number(p.lat), Number(p.lon)];
-    onPin({ lat: at[0], lng: at[1] });
-    setFocus(at);
+    const at = { lat: Number(p.lat), lng: Number(p.lon) };
+    onPin(at);
+    mapRef.current?.flyTo({ center: { lng: at.lng, lat: at.lat }, zoom: 15, duration: 1200 });
     setResults(null);
   }
 
@@ -115,26 +144,7 @@ export function Locate({
 
   return (
     <div className="relative min-h-[60vh] flex-grow">
-      <div className="absolute inset-0">
-        <MapContainer center={DEFAULT_CENTRE} zoom={7} className="h-full w-full" scrollWheelZoom>
-          <TileLayer url={TILE_URL} attribution="© OpenStreetMap contributors" />
-          <ClickToPlace onPick={(lat, lng) => onPin({ lat, lng })} />
-          <FlyTo target={focus} />
-          {pin && (
-            <Marker
-              position={[pin.lat, pin.lng]}
-              icon={PIN}
-              draggable
-              eventHandlers={{
-                dragend: (e) => {
-                  const at = (e.target as L.Marker).getLatLng();
-                  onPin({ lat: at.lat, lng: at.lng });
-                },
-              }}
-            />
-          )}
-        </MapContainer>
-      </div>
+      <div ref={mapEl} className="absolute inset-0 bg-cw-surface" />
 
       <div className="absolute top-8 left-1/2 z-[1000] w-[min(620px,calc(100%-40px))] -translate-x-1/2">
         <div className="flex min-h-[58px] items-center gap-3 border border-cw-line bg-cw-surface px-5 text-cw-muted">

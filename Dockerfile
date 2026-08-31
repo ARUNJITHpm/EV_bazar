@@ -10,6 +10,13 @@
 
 FROM node:24-slim AS frontend-build
 WORKDIR /build
+# The public Mapbox token (pk.) is injected at build time, never committed.
+# On the HF Space add VITE_MAPBOX_TOKEN as a Space VARIABLE (not a secret -
+# it is a public client token, restricted by URL in the Mapbox console). If
+# it is absent the build still succeeds; the public maps render an empty
+# panel and the rest of the page works. See design/MAPBOX.md.
+ARG VITE_MAPBOX_TOKEN=""
+ENV VITE_MAPBOX_TOKEN=$VITE_MAPBOX_TOKEN
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 COPY frontend/ ./

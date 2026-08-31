@@ -154,34 +154,10 @@
   }
 }
 
-/* The flow's continuous background map: OSM tiles pulled into the dark
- * ground. The published Mapbox dark style is the colour specification this
- * filter approximates (design/DECISIONS.md (c)); the locate map carries no
- * filter because there the map is the interface, not a backdrop. */
-.cw-map-dark .leaflet-tile {
-  /* Invert-first with gentle contrast: the earlier contrast(3) + stacked
-   * brightness blew parks and water into bright blobs and mudded the
-   * rest. This is the quiet slate the Mapbox dark style specifies. */
-  filter: invert(1) hue-rotate(190deg) saturate(0.3) brightness(0.55) contrast(1.15);
-}
-
-/* The copper pin (a Leaflet divIcon) and the slate catchment rings. Styled
- * here because Leaflet writes SVG presentation attributes, where var() does
- * not resolve - CSS wins over attributes, tokens stay authoritative. */
-.cw-pin {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--cw-accent);
-  border: 2px solid var(--cw-ground);
-  box-shadow: 0 0 0 2px var(--cw-accent);
-}
-.cw-ring {
-  stroke: var(--cw-slate);
-  fill: var(--cw-slate);
-  fill-opacity: 0.05;
-  stroke-opacity: 0.5;
-}
+/* The public maps render the published Chargeworthy dark style via Mapbox
+ * GL (features/public/mapCore.ts) - the pin and rings are built there and
+ * read their colours from these tokens at runtime, so nothing map-related
+ * needs styling here any more. */
 
 /* Focus is never removed - a meaningful share of this audience uses a
  * keyboard. Scoped to the dark surface where the console's default ring

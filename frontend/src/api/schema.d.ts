@@ -451,22 +451,18 @@ export interface components {
     };
     /** AssessIn */
     AssessIn: {
-      /** Budget Band */
-      budget_band?: string | null;
-      /** Existing Connection */
-      existing_connection?: boolean | null;
       /** Intent */
       intent?: string | null;
-      /** Land Owned */
-      land_owned?: boolean | null;
       /** Lat */
       lat: number;
       /** Lng */
       lng: number;
-      /** Sanctioned Kva */
-      sanctioned_kva?: number | null;
-      /** Transformer On Site */
-      transformer_on_site?: boolean | null;
+      /** Space */
+      space?: string | null;
+      /** Transformer Distance M */
+      transformer_distance_m?: number | null;
+      /** Transformer Kva */
+      transformer_kva?: number | null;
     };
     /** AssessOut */
     AssessOut: {

@@ -11,16 +11,18 @@ import type { components } from "../../../api/schema";
 export type AssessOut = components["schemas"]["AssessOut"];
 export type AssessIn = components["schemas"]["AssessIn"];
 
-export type YesNoSkip = "yes" | "no" | "skip";
-export type LandAnswer = "own" | "lease" | "skip";
+export type SpaceAnswer = "small" | "medium" | "large";
 export type IntentAnswer = "income" | "fleet" | "visitors" | "skip";
 
 export interface Answers {
-  connection?: YesNoSkip;
-  /** Sanctioned load in kVA; "skip" when the owner does not know it. */
-  kva?: number | "skip";
-  transformer?: YesNoSkip;
-  land?: LandAnswer;
+  /** Step 2 branch: did the owner say a transformer is near the site? */
+  transformerNear?: "yes" | "skip";
+  /** Metres to that transformer; "skip" when the owner does not know it. */
+  transformerDistanceM?: number | "skip";
+  /** The transformer's nameplate kVA; "skip" when the owner does not know it. */
+  transformerKva?: number | "skip";
+  /** How much space (car parks / plot corner / open site) → connector count. */
+  space?: SpaceAnswer;
   intent?: IntentAnswer;
 }
 
@@ -93,11 +95,12 @@ export function toBody(pin: { lat: number; lng: number }, a: Answers): AssessIn 
   return {
     lat: pin.lat,
     lng: pin.lng,
-    existing_connection: a.connection === "yes" ? true : a.connection === "no" ? false : null,
-    sanctioned_kva: typeof a.kva === "number" ? a.kva : null,
-    transformer_on_site: a.transformer === "yes" ? true : a.transformer === "no" ? false : null,
-    land_owned: a.land === "own" ? true : a.land === "lease" ? false : null,
-    budget_band: null,
+    // A "near" transformer with no size given still carries no kVA - the
+    // backend prices a new transformer, which is the honest default.
+    transformer_kva: typeof a.transformerKva === "number" ? a.transformerKva : null,
+    transformer_distance_m:
+      typeof a.transformerDistanceM === "number" ? a.transformerDistanceM : null,
+    space: a.space ?? null,
     intent: a.intent && a.intent !== "skip" ? intents[a.intent] : null,
   };
 }

@@ -9,9 +9,16 @@ writes no ``predictions`` row (rule 5 governs model outputs; there is none).
 Every number the customer did not supply is the v0 archetype default - the
 same figures the demo report's ledger declares as "archetype default" - and
 each tap echoes back what it changed, so the teaser shows its work the way
-the report does. Two of the taps (existing connection, transformer) move
-CAPEX, which breakeven does not read; their echo says so instead of
-pretending the number moved.
+the report does.
+
+The customer-facing taps are the design flow's four (design/flow-images):
+how much space, whether a transformer is near and how big, how far it is, and
+what the site is for. Of these, only SPACE moves the breakeven number - more
+plugs spread the fixed costs over more capacity. The transformer answers move
+CAPEX (a new transformer, the cabling run to it), which breakeven does not
+read; their echo says so instead of pretending the number moved, exactly as
+the shipped firewall does. The wiring numbers are signed off in
+design/DECISIONS.md ("Task 3 - the design inputs, wired for real").
 
 Money only from ``compute_roi`` (AGENTS.md rule 1): this module builds the
 engine's inputs and reads its outputs, nothing more.
@@ -19,10 +26,10 @@ engine's inputs and reads its outputs, nothing more.
 
 from __future__ import annotations
 
-import dataclasses
 from dataclasses import dataclass
 
 from app.domain.roi.engine import (
+    MANAGED_PEAK_FACTOR,
     Capex,
     ChargerSpec,
     RoiInputs,
@@ -41,34 +48,62 @@ POWER_FACTOR = 0.9
 #: the demo's ledger already calls these "archetype default" and two surfaces
 #: quoting two different defaults for the same pin would be indefensible.
 ARCHETYPE = "urban_office_arterial"
-CONNECTORS = 2
 RATED_KW_EACH = 60.0
 SELLING_PAISE_PER_KWH = 2200
-DEFAULT_CAPEX = Capex(
-    hardware_paise=120_000_000,
-    civil_paise=30_000_000,
-    transformer_paise=20_000_000,
-    discom_connection_paise=10_000_000,
-    signage_canopy_paise=2_000_000,
-)
 RENT_PAISE_PER_MONTH = 4_000_000
+
+#: Capex line items that do not scale with the connector count. Hardware is
+#: not here: it scales, at PER_CONNECTOR_HARDWARE_PAISE below.
+CIVIL_PAISE = 30_000_000
+NEW_TRANSFORMER_PAISE = 20_000_000
+DISCOM_CONNECTION_PAISE = 10_000_000
+SIGNAGE_CANOPY_PAISE = 2_000_000
+
+#: ---- The signed-off wiring numbers (design/DECISIONS.md, Task 3) ----------
+#: Hardware per connector. The v0 archetype was ₹12.0 L of hardware for two
+#: 60 kW connectors; ₹6.0 L each is that same figure made to scale rather than
+#: fixed, so the default two-connector site is byte-identical to before.
+PER_CONNECTOR_HARDWARE_PAISE = 60_000_000
+#: Connectors per "how much space" tier. More plugs is the one design input
+#: that lowers breakeven: the fixed costs (demand charge, rent) spread over a
+#: larger ceiling.
+CONNECTORS_BY_SPACE = {"small": 2, "medium": 4, "large": 6}
+DEFAULT_CONNECTORS = 2
+#: LT cabling + trenching from the transformer to the site, per metre. Feeds
+#: the connection cost, so it moves payback, not breakeven.
+CABLE_PAISE_PER_M = 200_000  # ₹2,000/m
 
 
 @dataclass(frozen=True)
 class Taps:
     """The customer taps, every one optional. ``None`` means the tap was
     left unanswered and the archetype default applies - shown as such, never
-    silently."""
+    silently.
 
-    existing_connection: bool | None = None
-    sanctioned_kva: float | None = None
-    transformer_on_site: bool | None = None
-    land_owned: bool | None = None
-    budget_band: str | None = None
+    ``space``, ``transformer_kva`` and ``transformer_distance_m`` are the
+    design flow's inputs. The rest are engine levers the current flow does not
+    surface but the arithmetic still honours if a caller supplies them (they
+    default to the archetype), so the teaser stays general."""
+
+    #: "small" | "medium" | "large" - how much space, driving the connector
+    #: count. The one tap that moves breakeven.
+    space: str | None = None
+    #: An existing transformer's nameplate kVA. At or above the station's
+    #: managed-peak kVA it covers the load and the new-transformer cost drops.
+    transformer_kva: float | None = None
+    #: Metres from that transformer to the site - the cabling run to price.
+    transformer_distance_m: float | None = None
     #: What the owner wants the site to do (income / fleet / visitors). It
     #: changes which operators suit the site - the matching half of the
     #: product - and none of this arithmetic; the echo says exactly that.
     intent: str | None = None
+
+    #: Latent engine levers, not asked by the design flow (archetype default
+    #: applies). Kept so the pure engine stays fully addressable.
+    existing_connection: bool | None = None
+    sanctioned_kva: float | None = None
+    transformer_on_site: bool | None = None
+    land_owned: bool | None = None
 
 
 @dataclass(frozen=True)
@@ -103,8 +138,41 @@ class TeaserResult:
     notes: tuple[str, ...]
 
 
-def _run(tariff: TariffTerms, kva: float, capex: Capex, rent_paise_month: int) -> RoiResult:
-    chargers = (ChargerSpec(kw=RATED_KW_EACH, count=CONNECTORS),)
+def _connectors(taps: Taps) -> int:
+    if taps.space is None:
+        return DEFAULT_CONNECTORS
+    return CONNECTORS_BY_SPACE.get(taps.space, DEFAULT_CONNECTORS)
+
+
+def _capex(taps: Taps, connectors: int, managed_peak_kva: float) -> Capex:
+    """Build cost for this site. Hardware scales with the plug count; the
+    transformer and cabling lines follow the customer's transformer answers."""
+    hardware = connectors * PER_CONNECTOR_HARDWARE_PAISE
+
+    # An existing transformer covers the load if its nameplate meets the
+    # station's managed-peak kVA; then no new transformer is built. (The
+    # latent transformer_on_site lever still forces it to zero if set.)
+    covered = taps.transformer_on_site is True or (
+        taps.transformer_kva is not None and taps.transformer_kva >= managed_peak_kva
+    )
+    transformer = 0 if covered else NEW_TRANSFORMER_PAISE
+
+    discom = 0 if taps.existing_connection else DISCOM_CONNECTION_PAISE
+    cabling = round((taps.transformer_distance_m or 0.0) * CABLE_PAISE_PER_M)
+
+    return Capex(
+        hardware_paise=hardware,
+        civil_paise=CIVIL_PAISE,
+        transformer_paise=transformer,
+        discom_connection_paise=discom + cabling,
+        signage_canopy_paise=SIGNAGE_CANOPY_PAISE,
+    )
+
+
+def _run(
+    tariff: TariffTerms, kva: float, capex: Capex, rent_paise_month: int, connectors: int
+) -> RoiResult:
+    chargers = (ChargerSpec(kw=RATED_KW_EACH, count=connectors),)
     return compute_roi(
         RoiInputs(
             chargers=chargers,
@@ -119,72 +187,67 @@ def _run(tariff: TariffTerms, kva: float, capex: Capex, rent_paise_month: int) -
     )
 
 
-def _lakh(paise: int) -> str:
+def _lakh(paise: float) -> str:
     return f"₹{paise / 10_000_000:.1f} L"
 
 
-def _echoes(taps: Taps, recommended_kva: float) -> tuple[TapEcho, ...]:
-    discom, transformer = DEFAULT_CAPEX.discom_connection_paise, DEFAULT_CAPEX.transformer_paise
-    rent_month = f"₹{RENT_PAISE_PER_MONTH / 100:,.0f}/month"
-
-    if taps.existing_connection is None:
-        connection = f"not provided - a new discom connection ({_lakh(discom)}) stays in capex"
-    elif taps.existing_connection:
-        connection = (
-            f"the {_lakh(discom)} new-connection cost drops out of capex; that moves the "
-            "full report's payback, not breakeven utilisation"
+def _echoes(taps: Taps, connectors: int, managed_peak_kva: float, cabling_paise: int) -> tuple[
+    TapEcho, ...
+]:
+    # SPACE - the one that moves the number.
+    if taps.space is None:
+        space_fx = (
+            f"not provided - {DEFAULT_CONNECTORS} connectors assumed, the archetype default"
         )
     else:
-        connection = f"a new discom connection ({_lakh(discom)}) is in the capex"
-
-    if taps.sanctioned_kva is not None:
-        load = f"demand charges priced at the supplied {taps.sanctioned_kva:.0f} kVA"
-    else:
-        load = (
-            f"not provided - the engine recommends managed-peak {recommended_kva:.0f} kVA "
-            "and prices that"
+        tier = {"small": "a couple of car parks", "medium": "a corner of a plot or yard",
+                "large": "an open site"}.get(taps.space, "the space given")
+        space_fx = (
+            f"{tier} - {connectors} connectors; more plugs spread the fixed costs over more "
+            "capacity, which is why this breakeven figure moved"
         )
 
-    if taps.transformer_on_site is None:
-        transformer_fx = f"not provided - a new transformer ({_lakh(transformer)}) stays in capex"
-    elif taps.transformer_on_site:
-        transformer_fx = (
-            f"the {_lakh(transformer)} transformer drops out of capex; that moves the "
-            "full report's payback, not breakeven utilisation"
+    # TRANSFORMER near + how big -> whether a new one is built (capex).
+    if taps.transformer_kva is None:
+        tx_fx = (
+            f"not provided - a new transformer ({_lakh(NEW_TRANSFORMER_PAISE)}) stays in capex; "
+            "that moves the full report's payback, not this breakeven"
+        )
+    elif taps.transformer_kva >= managed_peak_kva:
+        tx_fx = (
+            f"a {taps.transformer_kva:.0f} kVA transformer covers the station's "
+            f"~{managed_peak_kva:.0f} kVA managed peak, so the {_lakh(NEW_TRANSFORMER_PAISE)} "
+            "new-transformer cost drops out - that moves payback, not this breakeven"
         )
     else:
-        transformer_fx = f"a new transformer ({_lakh(transformer)}) is in the capex"
-
-    if taps.land_owned is None:
-        land = f"not provided - leased assumed, {rent_month} rent stays in the fixed costs"
-    elif taps.land_owned:
-        land = "owned - rent drops to zero, which lowers breakeven directly"
-    else:
-        land = f"leased - {rent_month} rent stays in the fixed costs"
-
-    if taps.budget_band is not None:
-        budget = (
-            f"noted ({taps.budget_band}) - it changes no arithmetic; "
-            "capex stays the archetype default"
+        tx_fx = (
+            f"{taps.transformer_kva:.0f} kVA is under the station's ~{managed_peak_kva:.0f} kVA "
+            f"managed peak, so a new transformer ({_lakh(NEW_TRANSFORMER_PAISE)}) stays in "
+            "capex - payback, not this breakeven"
         )
-    else:
-        budget = "not provided - it would change no arithmetic; capex stays the archetype default"
 
+    # DISTANCE -> the cabling run (capex).
+    if taps.transformer_distance_m is None:
+        dist_fx = "not provided - no cabling run is priced yet; the site survey sets it"
+    else:
+        dist_fx = (
+            f"{taps.transformer_distance_m:.0f} m of cabling at ₹2,000/m adds "
+            f"{_lakh(cabling_paise)} to the connection cost - payback, not this breakeven"
+        )
+
+    # INTENT -> operator match, never arithmetic.
     if taps.intent is not None:
-        intent = (
+        intent_fx = (
             f"noted ({taps.intent}) - it changes which operators suit the site, not this arithmetic"
         )
     else:
-        intent = "not provided - it would change the operator match, not this arithmetic"
+        intent_fx = "not provided - it would change the operator match, not this arithmetic"
 
-    connection_given = taps.existing_connection is not None
     return (
-        TapEcho("Existing electricity connection?", connection_given, connection),
-        TapEcho("Sanctioned load (kVA)?", taps.sanctioned_kva is not None, load),
-        TapEcho("Transformer on site?", taps.transformer_on_site is not None, transformer_fx),
-        TapEcho("Land owned or leased?", taps.land_owned is not None, land),
-        TapEcho("Budget band?", taps.budget_band is not None, budget),
-        TapEcho("What should this site do?", taps.intent is not None, intent),
+        TapEcho("How much space is there?", taps.space is not None, space_fx),
+        TapEcho("Transformer near the site?", taps.transformer_kva is not None, tx_fx),
+        TapEcho("How far is the transformer?", taps.transformer_distance_m is not None, dist_fx),
+        TapEcho("What should this site do?", taps.intent is not None, intent_fx),
     )
 
 
@@ -200,25 +263,25 @@ def compute_teaser(tariff_row: ElectricityTariff, taps: Taps) -> TeaserResult:
         fixed_paise_per_month=tariff_row.fixed_paise_per_month,
         duty_pct=tariff_row.duty_bp / 10_000,
     )
-    default_discom = DEFAULT_CAPEX.discom_connection_paise
-    capex = dataclasses.replace(
-        DEFAULT_CAPEX,
-        discom_connection_paise=0 if taps.existing_connection else default_discom,
-        transformer_paise=0 if taps.transformer_on_site else DEFAULT_CAPEX.transformer_paise,
-    )
+
+    connectors = _connectors(taps)
+    full_kva = connectors * RATED_KW_EACH / POWER_FACTOR
+    managed_peak_kva = full_kva * MANAGED_PEAK_FACTOR
+
+    capex = _capex(taps, connectors, managed_peak_kva)
+    cabling_paise = round((taps.transformer_distance_m or 0.0) * CABLE_PAISE_PER_M)
     rent = 0 if taps.land_owned else RENT_PAISE_PER_MONTH
 
     # Same discipline as assemble.py: when the customer has not named a
     # sanctioned load, price the kVA we would actually advise - the engine's
     # managed-peak recommendation off a full-load base run.
-    full_kva = CONNECTORS * RATED_KW_EACH / POWER_FACTOR
     if taps.sanctioned_kva is not None:
         kva = taps.sanctioned_kva
     else:
-        base = _run(tariff, full_kva, capex, rent)
+        base = _run(tariff, full_kva, capex, rent, connectors)
         kva = next(o for o in base.sanctioned_load_options if o.name.startswith("managed")).kva
 
-    run = _run(tariff, kva, capex, rent)
+    run = _run(tariff, kva, capex, rent, connectors)
 
     notes = [
         f"Hardware, civil and price assumptions are the {ARCHETYPE} archetype defaults - "
@@ -235,12 +298,12 @@ def compute_teaser(tariff_row: ElectricityTariff, taps: Taps) -> TeaserResult:
         utilisation=run.breakeven_utilisation,
         kwh_year=run.breakeven_kwh_year,
         kwh_day=None if run.breakeven_kwh_year is None else run.breakeven_kwh_year / 365.0,
-        connectors=CONNECTORS,
+        connectors=connectors,
         rated_kw_each=RATED_KW_EACH,
         selling_paise_per_kwh=SELLING_PAISE_PER_KWH,
         sanctioned_kva=kva,
         energy_tariff_paise_per_kwh=tariff_row.energy_paise_per_kwh,
         tariff_source=f"{tariff_row.discom or 'SERC'} · {tariff_row.order_number}",
-        taps=_echoes(taps, kva),
+        taps=_echoes(taps, connectors, managed_peak_kva, cabling_paise),
         notes=tuple(notes),
     )

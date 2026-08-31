@@ -1,62 +1,70 @@
-import { useEffect } from "react";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import { useEffect, useRef } from "react";
+
+import { MAP_STYLE, createPinElement, mapboxgl } from "../mapCore";
 
 /**
  * The map stays continuous behind every step, so location context is never
  * lost — a non-negotiable from design/IMPLEMENT.md.
  *
- * Dimmed, aria-hidden and inert: it is context, not an interface. OSM tiles
- * are pulled into the dark ground by the .cw-map-dark filter, which is our
- * Leaflet rendering of the published Mapbox dark style (design/DECISIONS.md
- * (c) — the style is a colour specification, not a dependency).
+ * Dimmed, aria-hidden and inert: it is context, not an interface. This is
+ * the published Chargeworthy dark style itself, quiet enough at 30% that the
+ * question column needs no scrim over it (the scrim existed to tame the
+ * filtered-OSM approximation this replaced). Attribution for the same data
+ * is carried by the flow's footer.
  */
 
-const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-
-const PIN = L.divIcon({
-  className: "",
-  html: '<div class="cw-pin"></div>',
-  iconSize: [16, 16],
-  iconAnchor: [8, 8],
-});
-
-/** Follows the confirmed site without remounting the map. */
-function Follow({ centre }: { centre: [number, number] }) {
-  const map = useMap();
-  useEffect(() => {
-    map.setView(centre, map.getZoom(), { animate: true, duration: 0.7 });
-  }, [centre, map]);
-  return null;
-}
-
 export function BackgroundMap({ pin }: { pin: { lat: number; lng: number } }) {
-  const centre: [number, number] = [pin.lat, pin.lng];
+  const el = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const markerRef = useRef<mapboxgl.Marker | null>(null);
+  // Construction-time view only; later pin moves go through easeTo below.
+  const initial = useRef(pin);
+
+  useEffect(() => {
+    if (!el.current) return;
+    let map: mapboxgl.Map;
+    try {
+      map = new mapboxgl.Map({
+        container: el.current,
+        style: MAP_STYLE,
+        center: { lng: initial.current.lng, lat: initial.current.lat },
+        zoom: 12,
+        interactive: false,
+        attributionControl: false,
+      });
+    } catch {
+      return;
+    }
+    mapRef.current = map;
+    return () => {
+      mapRef.current = null;
+      markerRef.current = null;
+      map.remove();
+    };
+  }, []);
+
+  // Follows the confirmed site without remounting the map.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const at = { lng: pin.lng, lat: pin.lat };
+    if (!markerRef.current) {
+      markerRef.current = new mapboxgl.Marker({ element: createPinElement(), anchor: "bottom" })
+        .setLngLat(at)
+        .addTo(map);
+      map.jumpTo({ center: at });
+    } else {
+      markerRef.current.setLngLat(at);
+      map.easeTo({ center: at, duration: 700 });
+    }
+  }, [pin.lat, pin.lng]);
+
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-30">
-      <MapContainer
-        center={centre}
-        zoom={13}
-        className="cw-map-dark h-full w-full"
-        zoomControl={false}
-        attributionControl={false}
-        dragging={false}
-        scrollWheelZoom={false}
-        doubleClickZoom={false}
-        touchZoom={false}
-        keyboard={false}
-      >
-        <TileLayer url={TILE_URL} />
-        <Follow centre={centre} />
-        <Marker position={centre} icon={PIN} interactive={false} />
-      </MapContainer>
-      {/* The question column sits on the left; a scrim settles the ground
-          under it so the type reads while the map still breathes on the
-          right. Filtered OSM is busier than the Mapbox dark style it
-          stands in for - this is the correction, not a departure. */}
-      <div className="absolute inset-0 bg-gradient-to-r from-cw-ground via-cw-ground/60 to-cw-ground/10" />
-    </div>
+    <div
+      ref={el}
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 z-0 bg-cw-ground opacity-30"
+    />
   );
 }
 

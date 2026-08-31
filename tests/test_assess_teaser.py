@@ -1,18 +1,23 @@
 """The /assess teaser - PLAN G.2's arithmetic, pure and pinned.
 
-``compute_teaser`` takes a tariff row and the five taps and returns the one
-certain number. The properties worth pinning are the honesty rules: taps that
-move fixed costs move breakeven in the right DIRECTION, taps that move only
-capex say so instead of pretending, an unanswered tap is echoed as not
-provided, and a negative margin comes back as "no utilisation breaks even"
-with the engine's own reason - never as an exception or a softened story.
+``compute_teaser`` takes a tariff row and the design flow's taps and returns
+the one certain number. The properties worth pinning are the honesty rules:
+the SPACE tap moves breakeven in the right DIRECTION (more plugs spread fixed
+costs, so the bar drops), the transformer taps move only CAPEX and say so
+instead of pretending, an unanswered tap is echoed as not provided, and a
+negative margin comes back as "no utilisation breaks even" with the engine's
+own reason - never as an exception or a softened story.
 """
 
 from __future__ import annotations
 
 import datetime as dt
 
-from app.domain.report.teaser import Taps, compute_teaser
+from app.domain.report.teaser import (
+    DEFAULT_CONNECTORS,
+    Taps,
+    compute_teaser,
+)
 from app.models.tariffs import ElectricityTariff
 
 
@@ -38,39 +43,53 @@ def test_defaults_produce_a_defensible_breakeven() -> None:
     t = compute_teaser(_tariff(), Taps())
     assert t.utilisation is not None and 0 < t.utilisation < 0.5
     assert t.kwh_day is not None and t.kwh_day > 0
+    # The archetype default is a two-connector site.
+    assert t.connectors == DEFAULT_CONNECTORS
     # Provenance must survive to the customer: the SERC order, by name.
     assert "OA-XX/2024" in t.tariff_source
-    # All five taps unanswered - every echo must say so.
+    # All four taps unanswered - every echo must say so.
     assert all(not tap.provided for tap in t.taps)
     assert all("not provided" in tap.effect for tap in t.taps)
 
 
-def test_owned_land_lowers_breakeven_and_supplied_kva_is_priced() -> None:
+def test_more_space_means_more_plugs_and_a_lower_breakeven() -> None:
     base = compute_teaser(_tariff(), Taps())
-    owned = compute_teaser(_tariff(), Taps(land_owned=True))
-    assert owned.utilisation is not None and base.utilisation is not None
-    # Rent is a fixed cost; dropping it must lower the bar, never raise it.
-    assert owned.utilisation < base.utilisation
+    big = compute_teaser(_tariff(), Taps(space="large"))
+    assert base.utilisation is not None and big.utilisation is not None
+    # An open site is six connectors, not two.
+    assert big.connectors == 6 and base.connectors == DEFAULT_CONNECTORS
+    # More plugs spread the fixed costs (demand charge, rent) over a larger
+    # ceiling, so the bar drops - never rises.
+    assert big.utilisation < base.utilisation
+    # And the echo must own the fact that this is the tap that moved it.
+    echo = next(tap for tap in big.taps if tap.label == "How much space is there?")
+    assert echo.provided
+    assert "moved" in echo.effect
 
-    heavy = compute_teaser(_tariff(), Taps(sanctioned_kva=400.0))
-    assert heavy.sanctioned_kva == 400.0
-    assert heavy.utilisation is not None
-    # A fatter sanctioned load means fatter demand charges: a higher bar than
-    # the managed-peak kVA the engine recommends when the tap is unanswered.
-    assert heavy.utilisation > base.utilisation
-    assert base.sanctioned_kva < 400.0  # the recommendation, not the ceiling
 
-
-def test_capex_taps_admit_they_do_not_move_breakeven() -> None:
+def test_transformer_answers_move_capex_not_breakeven() -> None:
     base = compute_teaser(_tariff(), Taps())
-    trimmed = compute_teaser(_tariff(), Taps(existing_connection=True, transformer_on_site=True))
-    # Connection and transformer are capex; breakeven reads fixed costs and
-    # margin only. The number must NOT move - and the echo must say why.
-    assert trimmed.utilisation == base.utilisation
-    for label in ("Existing electricity connection?", "Transformer on site?"):
-        echo = next(tap for tap in trimmed.taps if tap.label == label)
-        assert echo.provided
-        assert "not breakeven" in echo.effect
+    # A big transformer on hand (covers the ~93 kVA managed peak) and a 200 m
+    # cabling run: both are capex, which breakeven does not read.
+    wired = compute_teaser(_tariff(), Taps(transformer_kva=250.0, transformer_distance_m=200.0))
+    assert wired.utilisation == base.utilisation
+
+    tx = next(tap for tap in wired.taps if tap.label == "Transformer near the site?")
+    assert tx.provided
+    assert "drops out" in tx.effect and "not this breakeven" in tx.effect
+
+    dist = next(tap for tap in wired.taps if tap.label == "How far is the transformer?")
+    assert dist.provided
+    assert "connection cost" in dist.effect and "not this breakeven" in dist.effect
+
+
+def test_a_small_transformer_still_needs_a_new_one() -> None:
+    # 40 kVA is under the two-connector station's ~93 kVA managed peak, so a
+    # new transformer stays in capex - the echo must not claim the cost dropped.
+    t = compute_teaser(_tariff(), Taps(transformer_kva=40.0))
+    tx = next(tap for tap in t.taps if tap.label == "Transformer near the site?")
+    assert tx.provided
+    assert "new transformer" in tx.effect and "stays in capex" in tx.effect
 
 
 def test_intent_is_noted_but_admits_it_moves_no_arithmetic() -> None:

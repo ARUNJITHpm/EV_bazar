@@ -93,23 +93,64 @@ surface (low opacity over the page ground, exactly the reference's
 `BackgroundMap` treatment), and the locate map stays full-colour because
 there the map is the interface.
 
+### Amended 2026-08-31 — the owner supplied the style's credentials
+
+The argument above was made while the style existed only as a colour spec
+with no token. The owner has since delivered the published style's own
+public token and directed its use (recorded in `design/MAPBOX.md`), which
+changes the weights:
+
+- **Rendering** — the public surface (`features/public/`) now runs Mapbox
+  GL JS with the real style via `frontend/src/features/public/mapCore.ts`.
+  The CSS-filter approximation is deleted; it was the visibly weakest part
+  of the port. The console keeps Leaflet — its maps are operational tools,
+  not the brand surface.
+- **Rule 10, stated not solved** — browser map loads still cannot write
+  `api_usage_events`. The meter for this spend is the Mapbox account
+  dashboard, and the cap is Mapbox's own free tier (50k loads/month).
+  This is the owner's accepted trade, on the owner's own account, for the
+  brand surface only; every server-side metered call keeps rule 10.
+- **The geocoder still buys nothing** — search stays navigation-only
+  Nominatim, the confirmation card stays on our own resolver. Only the
+  rendering layer changed.
+
 ---
 
-## Deviations from the reference flow — each with its reason
+## Task 3 — the design inputs, wired for real (owner's call, 2026-08-31)
 
-- **The question set is the engine's, not the reference's.** The reference
-  asks transformer-distance and transformer-capacity (sliders) and land
-  *size*; `compute_teaser` reads none of those. Collecting inputs the
-  arithmetic cannot use, on a product whose thesis is honesty, is theater —
-  and AGENTS.md's sanctioned-load rule (kVA of the *connection*, never the
-  transformer's rating) makes "how big is the transformer" actively
-  dangerous to conflate. The flow asks what the engine reads: existing
-  connection (+ sanctioned kVA slider when yes), transformer on site,
-  land owned/leased — plus **intent** (income / fleet / visitors), kept
-  from the design because it is echoed honestly ("changes which operators
-  suit you — it does not move this arithmetic") and it is the one question
-  the CPO-matching half of the positioning needs. `AssessIn` gains the
-  optional `intent` field; `api/internal` is free to reshape.
+An earlier pass shipped the *engine's* question set instead of the design's,
+on a theatre argument: `compute_teaser` did not read transformer distance,
+transformer size or parking space, so asking them looked like collecting
+inputs that changed nothing. When the owner saw the actual design
+(`design/flow-images/`) they overruled that — the four-step flow (locate ·
+transformer · space · intent) is the product, and the engine should be made
+to read what the flow asks, not the reverse. So the inputs are **wired for
+real**, with the numbers signed off before they were written:
+
+- **"How much space" → connector count.** car parks = 2, plot corner = 4,
+  open site = 6. This is the ONE tap that moves breakeven: more plugs raise
+  the utilisation ceiling while the non-hardware fixed costs (demand charge,
+  rent) stay put, so the bar drops. Hardware scales at **₹6.0 L/connector**
+  — that is the v0 archetype (₹12 L for two) made to scale, so the default
+  two-connector site is byte-identical to before.
+- **Transformer size (kVA) → whether a new transformer is built.** If the
+  existing transformer's nameplate meets the station's managed-peak kVA, the
+  new-transformer line (the archetype's **₹2.0 L**, unchanged) drops out;
+  otherwise it stays. This is capex, so the echo says "moves payback, not
+  this breakeven" — the same honesty the shipped firewall already gave the
+  connection and transformer taps.
+- **Transformer distance (m) → the cabling run.** `distance × ₹2,000/m`,
+  added to the connection cost. Capex again, echoed as payback not breakeven.
+- **Intent** (income / fleet / visitors) → the CPO match, echoed as "changes
+  which operators suit the site, not this arithmetic."
+
+`AssessIn`/`Taps` drop the un-asked levers (existing-connection, land-owned,
+budget) from the customer surface; `Taps` keeps them as latent fields so the
+pure engine stays fully addressable. The honesty firewall is intact: exactly
+one tap moves the number and says so; the rest move payback and say so. No
+kVA/kW conflation — the size slider is the transformer's nameplate, compared
+against the station's managed-peak kVA, never treated as the sanctioned load.
+The wiring is exercised live in `tests/test_assess_teaser.py`.
 - **The confirmation card uses our own resolver, and logging it is a
   feature.** `GET /api/internal/lookup/point` is console-auth'd; instead
   the locate step's "Is this the spot?" card comes from `POST /assess`

@@ -1,5 +1,9 @@
 # Secrets
 .env
+.env.local
+.env.*.local
+frontend/.env
+frontend/.env.local
 *.pem
 
 # Python
@@ -32,6 +36,12 @@ data/vahan/*
 # Tariff PDFs are archived deliberately (PLAN 0.2) but not in git.
 # Keep the index/metadata in the DB, the blobs in object storage.
 tariffs/pdf/
+
+# Design reference images: the owner's exported flow/UI artboards. Kept on
+# disk as the design record, but not tracked - they are stripped from the HF
+# mirror anyway and only slow the push. The design DOCS (DECISIONS.md,
+# MAPBOX.md, brand/) stay tracked.
+design/flow-images/
 
 # OS
 .DS_Store
