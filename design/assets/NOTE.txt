@@ -1,0 +1,1 @@
+Cut from the design: this clip carries a KlingAI 3.0 watermark in the bottom-right, and removing it would circumvent a paid feature. Kept only as a record of the work. Do not ship it.

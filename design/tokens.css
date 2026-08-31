@@ -1,0 +1,62 @@
+/* Chargeworthy design tokens.
+ *
+ * Merge into frontend/src/styles/tokens.css and wire into the Tailwind theme.
+ * Per AGENTS.md, no component may carry a raw hex — every colour a component
+ * uses comes from here.
+ *
+ * Two surfaces, one brand: the public site and console run on the dark ground,
+ * the report runs on paper. The report palette is the dark one inverted, which
+ * is what makes them read as one product rather than two vendors.
+ */
+
+:root {
+  /* --- Public site and console: dark ------------------------------------ */
+  --cw-ground: #0d151e;      /* page background */
+  --cw-surface: #16212c;     /* cards, elevated panels */
+  --cw-surface-2: #1e2c39;   /* hover, nested panels */
+  --cw-line: #253340;        /* borders, dividers, hairlines */
+  --cw-text: #f4f1ec;        /* primary text — warm white, never pure white */
+  --cw-muted: #93a1ad;       /* secondary text, labels */
+  --cw-slate: #4a8fb8;       /* brand blue, lifted for dark backgrounds */
+  --cw-accent: #d98a3d;      /* copper — CTAs, one hero figure, the map pin */
+  --cw-positive: #3fa37f;    /* semantic only */
+  --cw-negative: #c4564a;    /* semantic only */
+
+  /* --- Report: paper ----------------------------------------------------- */
+  --cw-paper: #faf8f4;
+  --cw-ink: #12171a;
+  --cw-paper-slate: #1c3a4f;
+  --cw-rule: #d6d2c8;
+  --cw-paper-muted: #5c5852;
+  --cw-verdict-positive: #1f5e4a;
+  --cw-verdict-negative: #8c2a20;
+  --cw-caution: #a65b1f;
+  --cw-caution-tint: #f5e6d3;
+  --cw-caution-text: #7a4113;
+
+  /* --- Type -------------------------------------------------------------- */
+  --cw-sans: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --cw-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --cw-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* --- Motion ------------------------------------------------------------ */
+  --cw-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --cw-enter: 520ms;
+  --cw-state: 200ms;
+}
+
+/* Rules the tokens cannot enforce on their own — carry them into review:
+ *
+ * 1. Copper appears on roughly 5% of any surface and is never decorative.
+ *    CTAs, one hero figure, the map pin. Nowhere else.
+ * 2. Every number renders in --cw-mono with tabular figures. Prose renders in
+ *    --cw-sans on the site and --cw-serif in the report.
+ * 3. Body text is never below 17px and never below 400 weight. The audience is
+ *    35–55. Small mono eyebrow labels may go to 13px; nothing goes below that
+ *    except report provenance, which may go to 12px.
+ * 4. Nothing in the report may carry meaning by colour alone. A bank file gets
+ *    photocopied: a red dot and a green dot become two identical grey dots.
+ *    Direction markers are a sign plus a word — "+ FAVOURS", "− AGAINST".
+ * 5. Green and red are semantic only. The brand colour is slate, deliberately,
+ *    so a green-branded report saying DON'T BUILD is never a contradiction.
+ */
