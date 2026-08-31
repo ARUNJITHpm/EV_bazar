@@ -1,7 +1,17 @@
 # Every push to main republishes the Hugging Face Space (talk-to/nitara),
 # so GitHub stays the single source of truth and the Space is only ever a
-# mirror. Force-push is HF's own recommended sync shape - the Space's git
-# history is disposable by design.
+# mirror.
+#
+# The mirror is ONE ORPHAN COMMIT carrying the current tree, not a copy of
+# main's history. That is deliberate. HF Spaces ship a .gitattributes that
+# requires whole families of binary files (*.tar.*, *.gz, *.mp4, *.zip ...)
+# to be in LFS, and its pre-receive hook scans every object in the push -
+# so a binary anywhere in HISTORY breaks the deployment even when the tip
+# no longer contains it. Deleting the file at the tip does not help; the
+# blob still travels. Publishing only the tree we actually deploy removes
+# that entire class of failure, needs no LFS objects at all, and costs
+# nothing real: HF builds from the tip, and this Space's git history was
+# always declared disposable.
 #
 # Needs a repository secret HF_TOKEN (a Hugging Face write token).
 name: Sync to Hugging Face Space
@@ -15,27 +25,34 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # Only the tip is published, so there is no history to fetch and no
+      # LFS objects to satisfy - the PDFs are deleted below anyway, and a
+      # pointer file is all this checkout needs to see of them.
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          # Historical commits still reference the PDFs as LFS pointers; fetch
-          # the objects so the push can satisfy the Space's LFS store.
-          lfs: true
-      - name: Strip PDFs and the design archive from the mirror
+
+      - name: Build the mirror commit
         # The PDFs and design/ are reference material for the GitHub repo,
-        # not part of the deployed app - and design/ carries binaries
-        # (tarballs, an mp4) that the Space's pre-receive hook would reject
-        # outside LFS. The mirror carries main minus both.
+        # not part of the deployed app.
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm -rq --ignore-unmatch -- '*.pdf' design/
+          SOURCE_DATE="$(git log -1 --format=%cI)"
+          SOURCE_SHA="$(git rev-parse --short HEAD)"
+          git checkout -q --orphan space-mirror
+          rm -rf design
+          find . -path ./.git -prune -o -name '*.pdf' -print0 | xargs -0 -r rm -f
+          git add -A
           # Deterministic dates: the same main always yields the same mirror
           # SHA, so re-running the workflow is a no-op push, not a rebuild.
-          export GIT_AUTHOR_DATE="$(git log -1 --format=%cI)"
-          export GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE"
-          git diff --cached --quiet || git commit -qm "Strip PDFs and design/ from the Space mirror"
-      - name: Push main to the Space
+          export GIT_AUTHOR_DATE="$SOURCE_DATE"
+          export GIT_COMMITTER_DATE="$SOURCE_DATE"
+          git commit -qm "Deploy $SOURCE_SHA"
+          echo "Mirror tree:"
+          git ls-files | wc -l
+          echo "files. Any binaries HF would demand in LFS:"
+          git ls-files -- '*.tar*' '*.gz' '*.mp4' '*.zip' '*.pdf' || true
+
+      - name: Push the mirror to the Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
@@ -43,4 +60,4 @@ jobs:
             echo "::error::HF_TOKEN secret is not set; add it in Settings > Secrets and variables > Actions"
             exit 1
           fi
-          git push --force "https://talk-to:${HF_TOKEN}@huggingface.co/spaces/talk-to/nitara" main
+          git push --force "https://talk-to:${HF_TOKEN}@huggingface.co/spaces/talk-to/nitara" space-mirror:main
