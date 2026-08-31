@@ -33,6 +33,7 @@ from app.api.internal import (
     vahan,
 )
 from app.api.internal.console_auth import require_operator
+from app.api.internal.ratelimit import rate_limit
 
 router = APIRouter()
 
@@ -47,7 +48,13 @@ router.include_router(reports.router, tags=["internal-reports"])
 # /assess is open for the same reason: it is the funnel's front door, and the
 # customer dropping the pin holds no login. It writes exactly one thing - a
 # `sites` lead row - and prices from typed tariffs; nothing paid, nothing keyed.
-router.include_router(assess.router, tags=["internal-assess"])
+# It is throttled precisely BECAUSE it is the one open write: a per-IP ceiling
+# on how fast a single caller can log leads (api/internal/ratelimit.py).
+router.include_router(
+    assess.router,
+    tags=["internal-assess"],
+    dependencies=[Depends(rate_limit)],
+)
 
 # --- guarded ---------------------------------------------------------------
 guarded = APIRouter(dependencies=[Depends(require_operator)])

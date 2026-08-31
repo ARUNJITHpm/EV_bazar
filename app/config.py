@@ -145,6 +145,15 @@ class Settings(BaseSettings):
     # ...and flag it if it sits this close to a district line (two tariff regimes)
     boundary_ambiguous_m: int = 500
 
+    # --- Public funnel throttle (api/internal/ratelimit.py) ----------------
+    # /assess is the one open endpoint that writes - a lead row on every call -
+    # so it is the one worth a per-IP ceiling: without it a runaway client or a
+    # naive flood fills the leads table for free. Requests per minute, per
+    # caller IP; 0 disables it. A completed flow is a handful of calls, so this
+    # sits far above genuine use and only bites a loop. It is the honest-failure
+    # guard, not an edge WAF - the module says what it does and does not defend.
+    assess_rate_limit_per_minute: int = 60
+
     # --- Operations console (PLAN C.0) -------------------------------------
     # One operator, one password, a signed httpOnly cookie. The console
     # exposes CPO commercial terms and our own spend, so it is the most
