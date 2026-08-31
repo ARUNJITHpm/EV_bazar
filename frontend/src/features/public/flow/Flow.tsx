@@ -330,7 +330,7 @@ export function Flow() {
       <header className="relative z-10 flex items-center justify-between gap-6 bg-cw-ground px-[clamp(24px,7vw,112px)] py-5">
         <Link
           to="/"
-          className="inline-flex min-h-[44px] items-center font-cw-mono text-[16px] font-medium tracking-[0.09em] text-cw-text uppercase"
+          className="inline-flex min-h-[44px] items-center font-cw-mono text-[clamp(18px,1.6vw,21px)] font-medium tracking-[0.08em] text-cw-text uppercase"
         >
           Chargeworthy
         </Link>

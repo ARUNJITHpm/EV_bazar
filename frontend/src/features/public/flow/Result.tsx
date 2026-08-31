@@ -46,7 +46,7 @@ export function Result({ out, onRestart }: { out: AssessOut; onRestart: () => vo
         <Eyebrow>What this site must do</Eyebrow>
         {t.breakeven_utilisation != null ? (
           <>
-            <div className="font-cw-mono text-[clamp(48px,8vw,84px)] leading-none font-medium tracking-[-0.03em] text-cw-accent">
+            <div className="font-cw-mono text-[clamp(52px,9vw,96px)] leading-none font-medium tracking-[-0.03em] text-cw-accent">
               {formatUtilisation(t.breakeven_utilisation)}
             </div>
             <p className="max-w-[720px] text-[clamp(17px,2.2vw,19px)] leading-[1.55]">
@@ -147,7 +147,7 @@ function Figure({ label, value, detail }: { label: string; value: string; detail
   return (
     <div className="flex flex-col gap-2">
       <span className="text-cw-muted">{label}</span>
-      <span className="font-cw-mono text-[clamp(24px,3.4vw,32px)] font-medium tracking-[-0.02em] tabular-nums">
+      <span className="font-cw-mono text-[clamp(26px,3.6vw,36px)] font-medium tracking-[-0.02em] tabular-nums">
         {value}
       </span>
       {detail && <span className="font-cw-mono text-[13px] text-cw-muted">{detail}</span>}

@@ -159,7 +159,10 @@
  * filter approximates (design/DECISIONS.md (c)); the locate map carries no
  * filter because there the map is the interface, not a backdrop. */
 .cw-map-dark .leaflet-tile {
-  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+  /* Invert-first with gentle contrast: the earlier contrast(3) + stacked
+   * brightness blew parks and water into bright blobs and mudded the
+   * rest. This is the quiet slate the Mapbox dark style specifies. */
+  filter: invert(1) hue-rotate(190deg) saturate(0.3) brightness(0.55) contrast(1.15);
 }
 
 /* The copper pin (a Leaflet divIcon) and the slate catchment rings. Styled
@@ -186,6 +189,25 @@
 .cw-surface-root :focus-visible {
   outline: 2px solid var(--cw-slate);
   outline-offset: 3px;
+}
+
+/* Native widgets (number spinners, select arrows, scrollbars) should not
+ * flash light-mode chrome inside the dark surface. */
+.cw-surface-root {
+  color-scheme: dark;
+}
+
+/* The default blue selection highlight fights the slate ground. */
+.cw-surface-root ::selection {
+  background: var(--cw-slate);
+  color: var(--cw-ground);
+}
+
+/* No orphaned last words on the brand surface - the reference set
+ * text-wrap: pretty globally; scoped here so the console keeps its own
+ * typography untouched. */
+.cw-surface-root :is(h1, h2, h3, p) {
+  text-wrap: pretty;
 }
 
 /* Native range input restyled for a phone held at a site: 56px hit area,

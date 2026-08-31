@@ -51,6 +51,11 @@ export function BackgroundMap({ pin }: { pin: { lat: number; lng: number } }) {
         <Follow centre={centre} />
         <Marker position={centre} icon={PIN} interactive={false} />
       </MapContainer>
+      {/* The question column sits on the left; a scrim settles the ground
+          under it so the type reads while the map still breathes on the
+          right. Filtered OSM is busier than the Mapbox dark style it
+          stands in for - this is the correction, not a departure. */}
+      <div className="absolute inset-0 bg-gradient-to-r from-cw-ground via-cw-ground/60 to-cw-ground/10" />
     </div>
   );
 }

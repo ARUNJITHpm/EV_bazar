@@ -132,7 +132,10 @@ function Header() {
     <header
       className={`flex items-center justify-between gap-8 border-b border-cw-line ${PAD_X} py-[26px]`}
     >
-      <span className="font-cw-mono text-[17px] font-medium tracking-[0.09em] uppercase">
+      {/* The wordmark is the identity (design C - Instrument, Plex Mono
+          caps); the reference build set it at 17px and it read as a nav
+          item, not a mark. Owner's call 2026-08-31: give it real presence. */}
+      <span className="font-cw-mono text-[clamp(20px,1.8vw,24px)] font-medium tracking-[0.08em] uppercase">
         Chargeworthy
       </span>
       <Link
@@ -159,7 +162,7 @@ function Hero() {
           </div>
           <h1
             data-reveal="1"
-            className="text-[clamp(34px,5.2vw,60px)] leading-[1.15] font-semibold tracking-[-0.025em] text-pretty"
+            className="text-[clamp(36px,5.5vw,68px)] leading-[1.1] font-semibold tracking-[-0.025em] text-pretty"
           >
             Will your land pay for a charger?
           </h1>
@@ -237,7 +240,7 @@ function HowItWorks() {
           <div data-reveal="0">
             <Eyebrow>How it works</Eyebrow>
           </div>
-          <h2 data-reveal="1" className="text-[clamp(26px,3.4vw,34px)] leading-[1.15] font-medium">
+          <h2 data-reveal="1" className="text-[clamp(27px,3.5vw,36px)] leading-[1.15] font-medium">
             Three steps, and we stop at any of them.
           </h2>
         </div>
@@ -273,7 +276,7 @@ function WhatWeCheck() {
           <div data-reveal="0">
             <Eyebrow>What a full assessment checks</Eyebrow>
           </div>
-          <h2 data-reveal="1" className="text-[clamp(26px,3.4vw,34px)] leading-[1.15] font-medium">
+          <h2 data-reveal="1" className="text-[clamp(27px,3.5vw,36px)] leading-[1.15] font-medium">
             Nothing here is a guess.
           </h2>
           <p data-reveal="2" className="max-w-[580px] text-cw-muted">
@@ -330,7 +333,7 @@ function Cards() {
           <div data-reveal="0">
             <Eyebrow>Why trust the answer</Eyebrow>
           </div>
-          <h2 data-reveal="1" className="text-[clamp(26px,3.4vw,34px)] leading-[1.15] font-medium">
+          <h2 data-reveal="1" className="text-[clamp(27px,3.5vw,36px)] leading-[1.15] font-medium">
             We have no stake in you building.
           </h2>
           <p data-reveal="2" className="max-w-[620px] text-[18px] text-cw-muted">
@@ -462,7 +465,7 @@ function ReportShowcase() {
       >
         <div className="flex max-w-[452px] flex-col gap-5">
           <Eyebrow>The report</Eyebrow>
-          <h2 className="text-[clamp(26px,3.4vw,34px)] leading-[1.15] font-medium">
+          <h2 className="text-[clamp(27px,3.5vw,36px)] leading-[1.15] font-medium">
             Detailed enough for your bank to lend against.
           </h2>
           <p className="text-cw-muted">
@@ -522,7 +525,7 @@ function Close() {
         className={`flex flex-wrap items-start justify-between gap-10 border-t border-cw-line ${PAD_X} pt-10 pb-12`}
       >
         <div className="flex max-w-[620px] flex-col gap-4">
-          <span className="font-cw-mono text-[15px] font-medium tracking-[0.09em] uppercase">
+          <span className="font-cw-mono text-[18px] font-medium tracking-[0.08em] uppercase">
             Chargeworthy
           </span>
           <p className="text-[16px] text-cw-muted">

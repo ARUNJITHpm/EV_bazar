@@ -49,7 +49,7 @@ export function ReportPaper({ compact = false }: { compact?: boolean }) {
           {FIGURES.map(([label, value]) => (
             <div key={label} className="flex flex-col gap-1.5">
               <span className="text-[14px] text-cw-paper-muted">{label}</span>
-              <span className="font-cw-mono text-[24px] font-medium tabular-nums">{value}</span>
+              <span className="font-cw-mono text-[28px] font-medium tabular-nums">{value}</span>
             </div>
           ))}
         </div>
