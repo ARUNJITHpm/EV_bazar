@@ -1,6 +1,6 @@
 """POST /assess - the funnel's front door. PLAN G.2.
 
-A customer drops a pin and answers up to five taps; the response is the
+A customer drops a pin and answers up to six taps; the response is the
 breakeven utilisation that pin must clear, from pure arithmetic against the
 state's typed tariff (``domain/report/teaser.py``). Every pin is logged as a
 ``sites`` row FIRST, whatever happens next - a pin we cannot price is a lead,
@@ -23,7 +23,7 @@ Two honesty notes:
 * The pin needs no geocoder (the customer placed the point themselves), so
   the site's combined confidence is simply 1.4's district confidence - the
   weaker-claim rule of ``sites.combine`` collapses when the point is given.
-* The five taps are echoed in the response and ride along in ``raw_input``
+* The taps are echoed in the response and ride along in ``raw_input``
   on the lead's first sighting; a real lead schema (which tap answers, which
   contact) is Part 7's, decided by the 0.3 conversations. Until then this
   endpoint must not invent one.
@@ -51,12 +51,15 @@ router = APIRouter()
 class AssessIn(BaseModel):
     lat: float = Field(ge=-90, le=90)
     lng: float = Field(ge=-180, le=180)
-    #: The five taps, every one optional (the teaser's whole premise).
+    #: The taps, every one optional (the teaser's whole premise).
     existing_connection: bool | None = None
     sanctioned_kva: float | None = Field(default=None, gt=0, le=5_000)
     transformer_on_site: bool | None = None
     land_owned: bool | None = None
     budget_band: str | None = Field(default=None, max_length=32)
+    #: What the owner wants the site to do (income / fleet / visitors) -
+    #: echoed honestly as "changes the operator match, not this arithmetic".
+    intent: str | None = Field(default=None, max_length=32)
 
 
 class TapOut(BaseModel):
@@ -115,6 +118,7 @@ def assess(body: AssessIn, session: Session = Depends(get_session)) -> AssessOut
         transformer_on_site=body.transformer_on_site,
         land_owned=body.land_owned,
         budget_band=body.budget_band,
+        intent=body.intent,
     )
 
     # The lead row, before any pricing question is asked. 5 decimals ~ 1 m,

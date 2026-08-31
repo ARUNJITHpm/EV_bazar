@@ -73,6 +73,17 @@ def test_capex_taps_admit_they_do_not_move_breakeven() -> None:
         assert "not breakeven" in echo.effect
 
 
+def test_intent_is_noted_but_admits_it_moves_no_arithmetic() -> None:
+    base = compute_teaser(_tariff(), Taps())
+    with_intent = compute_teaser(_tariff(), Taps(intent="income"))
+    # Intent feeds the operator match, never the arithmetic - the number must
+    # not move, and the echo must own that rather than implying influence.
+    assert with_intent.utilisation == base.utilisation
+    echo = next(tap for tap in with_intent.taps if tap.label == "What should this site do?")
+    assert echo.provided
+    assert "not this arithmetic" in echo.effect
+
+
 def test_negative_margin_is_an_answer_not_an_error() -> None:
     # An energy tariff above the selling price: nothing breaks even, and the
     # teaser says so with the engine's own words rather than raising.

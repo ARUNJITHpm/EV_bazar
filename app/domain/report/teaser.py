@@ -8,10 +8,10 @@ writes no ``predictions`` row (rule 5 governs model outputs; there is none).
 
 Every number the customer did not supply is the v0 archetype default - the
 same figures the demo report's ledger declares as "archetype default" - and
-each of the five taps echoes back what it changed, so the teaser shows its
-work the way the report does. Two of the taps (existing connection,
-transformer) move CAPEX, which breakeven does not read; their echo says so
-instead of pretending the number moved.
+each tap echoes back what it changed, so the teaser shows its work the way
+the report does. Two of the taps (existing connection, transformer) move
+CAPEX, which breakeven does not read; their echo says so instead of
+pretending the number moved.
 
 Money only from ``compute_roi`` (AGENTS.md rule 1): this module builds the
 engine's inputs and reads its outputs, nothing more.
@@ -56,7 +56,7 @@ RENT_PAISE_PER_MONTH = 4_000_000
 
 @dataclass(frozen=True)
 class Taps:
-    """The five customer taps, every one optional. ``None`` means the tap was
+    """The customer taps, every one optional. ``None`` means the tap was
     left unanswered and the archetype default applies - shown as such, never
     silently."""
 
@@ -65,6 +65,10 @@ class Taps:
     transformer_on_site: bool | None = None
     land_owned: bool | None = None
     budget_band: str | None = None
+    #: What the owner wants the site to do (income / fleet / visitors). It
+    #: changes which operators suit the site - the matching half of the
+    #: product - and none of this arithmetic; the echo says exactly that.
+    intent: str | None = None
 
 
 @dataclass(frozen=True)
@@ -166,6 +170,13 @@ def _echoes(taps: Taps, recommended_kva: float) -> tuple[TapEcho, ...]:
     else:
         budget = "not provided - it would change no arithmetic; capex stays the archetype default"
 
+    if taps.intent is not None:
+        intent = (
+            f"noted ({taps.intent}) - it changes which operators suit the site, not this arithmetic"
+        )
+    else:
+        intent = "not provided - it would change the operator match, not this arithmetic"
+
     connection_given = taps.existing_connection is not None
     return (
         TapEcho("Existing electricity connection?", connection_given, connection),
@@ -173,6 +184,7 @@ def _echoes(taps: Taps, recommended_kva: float) -> tuple[TapEcho, ...]:
         TapEcho("Transformer on site?", taps.transformer_on_site is not None, transformer_fx),
         TapEcho("Land owned or leased?", taps.land_owned is not None, land),
         TapEcho("Budget band?", taps.budget_band is not None, budget),
+        TapEcho("What should this site do?", taps.intent is not None, intent),
     )
 
 

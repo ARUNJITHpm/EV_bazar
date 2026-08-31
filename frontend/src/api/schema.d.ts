@@ -455,6 +455,8 @@ export interface components {
       budget_band?: string | null;
       /** Existing Connection */
       existing_connection?: boolean | null;
+      /** Intent */
+      intent?: string | null;
       /** Land Owned */
       land_owned?: boolean | null;
       /** Lat */
