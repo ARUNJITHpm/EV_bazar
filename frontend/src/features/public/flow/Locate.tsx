@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { api } from "../../../api/client";
-import { MAP_STYLE, createPinElement, mapboxgl } from "../mapCore";
+import { MAP_STYLE, autoResize, createPinElement, mapboxgl } from "../mapCore";
 import { placeName, toBody, type AssessOut } from "./state";
 
 /**
@@ -77,8 +77,10 @@ export function Locate({
       return;
     }
     mapRef.current = map;
+    const stopResize = autoResize(map, mapEl.current);
     map.on("click", (e) => onPinRef.current({ lat: e.lngLat.lat, lng: e.lngLat.lng }));
     return () => {
+      stopResize();
       mapRef.current = null;
       markerRef.current = null;
       map.remove();
@@ -144,7 +146,13 @@ export function Locate({
 
   return (
     <div className="relative min-h-[60vh] flex-grow">
-      <div ref={mapEl} className="absolute inset-0 bg-cw-surface" />
+      {/* Mapbox's own CSS forces position:relative on the element it mounts
+          into, which would cancel `absolute inset-0` and collapse the map to
+          zero height. So the absolute fill layer is the WRAPPER, and Mapbox
+          mounts into a plain h-full child. */}
+      <div className="absolute inset-0 bg-cw-surface">
+        <div ref={mapEl} className="h-full w-full" />
+      </div>
 
       <div className="absolute top-8 left-1/2 z-[1000] w-[min(620px,calc(100%-40px))] -translate-x-1/2">
         <div className="flex min-h-[58px] items-center gap-3 border border-cw-line bg-cw-surface px-5 text-cw-muted">

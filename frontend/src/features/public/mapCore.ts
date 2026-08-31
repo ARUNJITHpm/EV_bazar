@@ -35,6 +35,26 @@ function cssToken(name: string): string {
 }
 
 /**
+ * Mapbox reads the container size ONCE at construction. In a flex / absolute
+ * layout the container is often not at its final height yet on the frame the
+ * map is created, so the first paint is black until something forces a
+ * resize. Observing the container and calling `map.resize()` on every change
+ * fixes the initial settle and later viewport/rotation changes alike (the RO
+ * fires immediately on observe, so a correct size costs one harmless resize).
+ * Returns a disconnect for effect cleanup.
+ */
+export function autoResize(map: mapboxgl.Map, container: HTMLElement): () => void {
+  const ro = new ResizeObserver(() => map.resize());
+  ro.observe(container);
+  // The observer's first fire can land before the GL context is ready, so it
+  // does not un-black the initial paint on its own. A resize once the style
+  // has loaded guarantees the first real paint; the observer then handles
+  // every later size change (rotation, the flex settling).
+  map.once("load", () => map.resize());
+  return () => ro.disconnect();
+}
+
+/**
  * The copper pin as a DOM element for mapboxgl.Marker (anchor: "bottom").
  * Colours are inline var() styles, not presentation attributes, so the
  * tokens resolve from CSS and no raw hex lands in a component.

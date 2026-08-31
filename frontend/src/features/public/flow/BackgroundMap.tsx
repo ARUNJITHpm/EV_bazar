@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import { MAP_STYLE, createPinElement, mapboxgl } from "../mapCore";
+import { MAP_STYLE, autoResize, createPinElement, mapboxgl } from "../mapCore";
 
 /**
  * The map stays continuous behind every step, so location context is never
@@ -36,7 +36,9 @@ export function BackgroundMap({ pin }: { pin: { lat: number; lng: number } }) {
       return;
     }
     mapRef.current = map;
+    const stopResize = autoResize(map, el.current);
     return () => {
+      stopResize();
       mapRef.current = null;
       markerRef.current = null;
       map.remove();
@@ -59,12 +61,14 @@ export function BackgroundMap({ pin }: { pin: { lat: number; lng: number } }) {
     }
   }, [pin.lat, pin.lng]);
 
+  // The absolute fill layer is the WRAPPER; Mapbox mounts into a plain
+  // h-full child. Mounting Mapbox directly on an `absolute inset-0` element
+  // fails: its own CSS forces position:relative, cancelling inset-0 and
+  // collapsing the map to zero height.
   return (
-    <div
-      ref={el}
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-0 bg-cw-ground opacity-30"
-    />
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-30">
+      <div ref={el} className="h-full w-full bg-cw-ground" />
+    </div>
   );
 }
 

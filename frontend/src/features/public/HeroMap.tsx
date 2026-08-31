@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import { MAP_STYLE, createPinElement, mapboxgl, setRings } from "./mapCore";
+import { MAP_STYLE, autoResize, createPinElement, mapboxgl, setRings } from "./mapCore";
 
 /**
  * The landing hero's map: decorative, non-interactive, aria-hidden. The pin
@@ -42,7 +42,11 @@ export function HeroMap() {
         .setLngLat(CENTRE)
         .addTo(map);
     });
-    return () => map.remove();
+    const stopResize = autoResize(map, el.current);
+    return () => {
+      stopResize();
+      map.remove();
+    };
   }, []);
 
   return (
