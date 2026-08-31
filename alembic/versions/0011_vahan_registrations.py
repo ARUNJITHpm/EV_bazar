@@ -52,9 +52,7 @@ def upgrade() -> None:
         ),
     )
     op.create_index("ix_vahan_district", "vahan_ev_registrations", ["lgd_district_code"])
-    op.create_index(
-        "ix_vahan_state_period", "vahan_ev_registrations", ["lgd_state_code", "period"]
-    )
+    op.create_index("ix_vahan_state_period", "vahan_ev_registrations", ["lgd_state_code", "period"])
 
     op.execute(
         """

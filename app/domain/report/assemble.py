@@ -237,9 +237,7 @@ def competitors_near(session: Session, lat: float, lng: float) -> CompetitorCont
     )
 
 
-def state_ev_tariff(
-    session: Session, lgd_state_code: int, on: dt.date
-) -> ElectricityTariff | None:
+def state_ev_tariff(session: Session, lgd_state_code: int, on: dt.date) -> ElectricityTariff | None:
     """The EV-specific tariff row governing ``on`` - PART 3.1's selection."""
     rows = (
         session.execute(
@@ -312,9 +310,7 @@ def assemble_report(
     if vahan is None:
         raise ValueError(f"no VAHAN data for district {spec.lgd_district_code}")
     competitors = (
-        competitors
-        if competitors is not None
-        else competitors_near(session, spec.lat, spec.lng)
+        competitors if competitors is not None else competitors_near(session, spec.lat, spec.lng)
     )
     on = on or vahan.snapshot_date
 
@@ -329,10 +325,14 @@ def assemble_report(
     )
 
     # --- demand: the one uncertain number, quarantined --------------------
-    on_major = None if roads is None else (
-        roads.nearest_class in MAJOR_CLASSES[:3]
-        and roads.distance_m is not None
-        and roads.distance_m <= 100
+    on_major = (
+        None
+        if roads is None
+        else (
+            roads.nearest_class in MAJOR_CLASSES[:3]
+            and roads.distance_m is not None
+            and roads.distance_m <= 100
+        )
     )
     prediction = predict(
         SyntheticInputs(
@@ -349,16 +349,14 @@ def assemble_report(
     )
 
     # --- economics: one engine, run per scenario and per operator ---------
-    headline_cpo = spec.cpo_options[0] if spec.cpo_options else CpoOption(
-        "Self-operate", False, CpoTerms(), False
+    headline_cpo = (
+        spec.cpo_options[0]
+        if spec.cpo_options
+        else CpoOption("Self-operate", False, CpoTerms(), False)
     )
     full_kva = spec.connectors * spec.rated_kw_each / POWER_FACTOR
-    base = _roi(
-        spec, tariff, full_kva, prediction.kwh_year_ramp_p50, headline_cpo.terms
-    )
-    managed = next(
-        o for o in base.sanctioned_load_options if o.name.startswith("managed")
-    )
+    base = _roi(spec, tariff, full_kva, prediction.kwh_year_ramp_p50, headline_cpo.terms)
+    managed = next(o for o in base.sanctioned_load_options if o.name.startswith("managed"))
     buffered = next(o for o in base.sanctioned_load_options if o.name.startswith("battery"))
 
     # The report's economics assume the kVA we would actually advise.
@@ -417,28 +415,37 @@ def assemble_report(
 
     # --- verdict: from P10, stated as an argument -------------------------
     if margin_pp >= 0:
-        verdict_value, verdict_reason = "build", (
-            "Even the downside case clears breakeven by "
-            f"{margin_pp:+.1f} points. The economics hold without heroic assumptions."
+        verdict_value, verdict_reason = (
+            "build",
+            (
+                "Even the downside case clears breakeven by "
+                f"{margin_pp:+.1f} points. The economics hold without heroic assumptions."
+            ),
         )
     elif util["P50 · central"] >= p50_run.breakeven_utilisation:
-        verdict_value, verdict_reason = "conditional", (
-            "The prediction band straddles the breakeven rule: the downside case (P10) sits "
-            f"{abs(margin_pp):.1f} points under it"
-            + (
-                f" in a corridor that already has {competitors.within_3km} competing stations "
-                "within 3 km"
-                if competitors.within_3km
-                else ""
-            )
-            + ". A fleet or campus charging contract is what moves the downside, "
-            "not walk-in traffic."
+        verdict_value, verdict_reason = (
+            "conditional",
+            (
+                "The prediction band straddles the breakeven rule: the downside case (P10) sits "
+                f"{abs(margin_pp):.1f} points under it"
+                + (
+                    f" in a corridor that already has {competitors.within_3km} competing stations "
+                    "within 3 km"
+                    if competitors.within_3km
+                    else ""
+                )
+                + ". A fleet or campus charging contract is what moves the downside, "
+                "not walk-in traffic."
+            ),
         )
     else:
-        verdict_value, verdict_reason = "dont", (
-            "Even the central case falls short of breakeven by "
-            f"{(p50_run.breakeven_utilisation - util['P50 · central']) * 100:.1f} points. "
-            "At this cost structure and price the site does not pay for itself."
+        verdict_value, verdict_reason = (
+            "dont",
+            (
+                "Even the central case falls short of breakeven by "
+                f"{(p50_run.breakeven_utilisation - util['P50 · central']) * 100:.1f} points. "
+                "At this cost structure and price the site does not pay for itself."
+            ),
         )
 
     # --- section slices ---------------------------------------------------
@@ -683,8 +690,7 @@ def _ledger(
         ),
         LedgerRow(
             item="Energy tariff",
-            value=f"₹{tariff_row.energy_paise_per_kwh / 100:.2f}/kWh EV-specific "
-            "+ demand charge",
+            value=f"₹{tariff_row.energy_paise_per_kwh / 100:.2f}/kWh EV-specific + demand charge",
             source=f"{tariff_row.discom or 'SERC'} · {tariff_row.order_number}",
             unverified=False,
         ),
@@ -771,12 +777,8 @@ def _provenance(
             value="none — hand-assigned" if spec.archetype_hand_assigned else spec.archetype,
             unverified=spec.archetype_hand_assigned,
         ),
-        ProvenanceRow(
-            label="VAHAN snapshot", value=vahan.snapshot_date.isoformat()
-        ),
+        ProvenanceRow(label="VAHAN snapshot", value=vahan.snapshot_date.isoformat()),
         ProvenanceRow(label="competitor fetch", value=competitors.source),
-        ProvenanceRow(
-            label="tariff_effective_date", value=tariff_row.effective_from.isoformat()
-        ),
+        ProvenanceRow(label="tariff_effective_date", value=tariff_row.effective_from.isoformat()),
         ProvenanceRow(label="renderer_version", value="dev — unpinned", unverified=True),
     ]

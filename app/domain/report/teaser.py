@@ -191,17 +191,18 @@ def _lakh(paise: float) -> str:
     return f"₹{paise / 10_000_000:.1f} L"
 
 
-def _echoes(taps: Taps, connectors: int, managed_peak_kva: float, cabling_paise: int) -> tuple[
-    TapEcho, ...
-]:
+def _echoes(
+    taps: Taps, connectors: int, managed_peak_kva: float, cabling_paise: int
+) -> tuple[TapEcho, ...]:
     # SPACE - the one that moves the number.
     if taps.space is None:
-        space_fx = (
-            f"not provided - {DEFAULT_CONNECTORS} connectors assumed, the archetype default"
-        )
+        space_fx = f"not provided - {DEFAULT_CONNECTORS} connectors assumed, the archetype default"
     else:
-        tier = {"small": "a couple of car parks", "medium": "a corner of a plot or yard",
-                "large": "an open site"}.get(taps.space, "the space given")
+        tier = {
+            "small": "a couple of car parks",
+            "medium": "a corner of a plot or yard",
+            "large": "an open site",
+        }.get(taps.space, "the space given")
         space_fx = (
             f"{tier} - {connectors} connectors; more plugs spread the fixed costs over more "
             "capacity, which is why this breakeven figure moved"

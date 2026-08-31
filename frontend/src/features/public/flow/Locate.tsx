@@ -70,7 +70,9 @@ export function Locate({
       map = new mapboxgl.Map({
         container: mapEl.current,
         style: MAP_STYLE,
-        center: initial.current ? { lng: initial.current.lng, lat: initial.current.lat } : DEFAULT_CENTRE,
+        center: initial.current
+          ? { lng: initial.current.lng, lat: initial.current.lat }
+          : DEFAULT_CENTRE,
         zoom: initial.current ? 15 : 6,
       });
     } catch {

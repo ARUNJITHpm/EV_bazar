@@ -40,9 +40,7 @@ class Prediction(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
 
-    site_id: Mapped[uuid.UUID] = mapped_column(
-        Uuid(), ForeignKey("sites.site_id"), nullable=False
-    )
+    site_id: Mapped[uuid.UUID] = mapped_column(Uuid(), ForeignKey("sites.site_id"), nullable=False)
 
     #: Which model produced the band - "synthetic_v0" for the stopgap.
     model_version: Mapped[str] = mapped_column(String(32), nullable=False)

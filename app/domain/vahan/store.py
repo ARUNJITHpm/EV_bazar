@@ -62,7 +62,8 @@ def resolve_rto_districts(
     """
     placeable = [r for r in refs if r.lat is not None and r.lng is not None]
     resolved = bulk_resolve_districts(
-        session, [(float(r.lat), float(r.lng)) for r in placeable]  # type: ignore[arg-type]
+        session,
+        [(float(r.lat), float(r.lng)) for r in placeable],  # type: ignore[arg-type]
     )
 
     out: dict[tuple[str, str], tuple[int | None, int | None]] = {}

@@ -80,9 +80,7 @@ def main() -> None:
     counts = parse_vahan_csv(raw.decode("utf-8"))
     refs = load_refs()
 
-    snapshot = (
-        dt.date.fromisoformat(args.snapshot_date) if args.snapshot_date else dt.date.today()
-    )
+    snapshot = dt.date.fromisoformat(args.snapshot_date) if args.snapshot_date else dt.date.today()
 
     periods = sorted({c.period for c in counts})
     print(f"{len(counts):,} count rows, {len(refs)} RTOs, periods {periods}")

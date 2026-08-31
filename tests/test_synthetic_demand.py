@@ -86,9 +86,7 @@ def test_missing_inputs_widen_the_band_not_narrow_it(weights: SyntheticWeights) 
 
 def test_every_percentile_respects_the_physical_ceiling(weights: SyntheticWeights) -> None:
     """A 7 kW AC connector cannot deliver a DC-fast day of energy."""
-    p = predict(
-        _inputs(archetype="urban_fleet_depot", rated_kw_per_connector=7.0), weights
-    )
+    p = predict(_inputs(archetype="urban_fleet_depot", rated_kw_per_connector=7.0), weights)
     ceiling = 7.0 * 24.0
     assert p.kwh_per_connector_day_p90 <= ceiling
 

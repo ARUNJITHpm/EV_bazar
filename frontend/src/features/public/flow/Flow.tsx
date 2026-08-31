@@ -154,7 +154,11 @@ export function Flow() {
                 title="Not sure — skip this"
                 sub="Most owners do not know. We will estimate it from the grid records instead."
                 onClick={() => {
-                  set({ transformerNear: "skip", transformerDistanceM: "skip", transformerKva: "skip" });
+                  set({
+                    transformerNear: "skip",
+                    transformerDistanceM: "skip",
+                    transformerKva: "skip",
+                  });
                   go("land");
                 }}
               />
@@ -213,7 +217,9 @@ export function Flow() {
               max={1000}
               step={25}
               value={
-                typeof state.answers.transformerKva === "number" ? state.answers.transformerKva : 250
+                typeof state.answers.transformerKva === "number"
+                  ? state.answers.transformerKva
+                  : 250
               }
               onChange={(v) => set({ transformerKva: v })}
             />

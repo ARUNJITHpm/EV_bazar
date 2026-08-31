@@ -141,10 +141,7 @@ def _demand_factor(inputs: SyntheticInputs, w: SyntheticWeights) -> tuple[float,
         unknown += 1
     else:
         dc_fast = inputs.dc_fast_within_3km or 0
-        cut = (
-            inputs.competitors_within_3km * w.competition_per_station
-            + dc_fast * w.dc_fast_extra
-        )
+        cut = inputs.competitors_within_3km * w.competition_per_station + dc_fast * w.dc_fast_extra
         factor *= max(w.competition_floor, 1.0 - cut)
 
     if inputs.dwell_anchor_score is None:

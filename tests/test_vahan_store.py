@@ -35,7 +35,7 @@ def test_rto_without_coordinates_is_unplaced_not_queried(monkeypatch) -> None:  
     monkeypatch.setattr(
         store,
         "bulk_resolve_districts",
-        lambda _s, points: ([] if not points else pytest_fail_unexpected()),
+        lambda _s, points: [] if not points else pytest_fail_unexpected(),
     )
     placement = resolve_rto_districts(session=None, refs=refs)  # type: ignore[arg-type]
     assert placement[("KL", "NO COORDS - KL00")] == (None, 32)

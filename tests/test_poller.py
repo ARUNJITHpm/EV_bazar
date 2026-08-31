@@ -283,9 +283,9 @@ def test_tata_adapter_posts_service_query_and_normalises() -> None:
         return httpx.Response(200, json=TATA_PAYLOAD)
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
-    obs = TataEzChargeAdapter(
-        spec, base_url="https://ezcharge.tatapower.com", api_key="tok"
-    ).fetch(client, observed_at=NOW)
+    obs = TataEzChargeAdapter(spec, base_url="https://ezcharge.tatapower.com", api_key="tok").fetch(
+        client, observed_at=NOW
+    )
 
     assert seen["method"] == "POST"
     assert "/HobsIntegration/syncRequestHandler" in seen["url"]

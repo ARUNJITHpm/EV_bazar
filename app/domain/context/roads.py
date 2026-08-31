@@ -113,8 +113,7 @@ def _way_distance_m(lat: float, lng: float, geometry: list[dict[str, Any]]) -> f
     if len(points) == 1:
         return _equirectangular_m(lat, lng, *points[0])
     return min(
-        _point_segment_distance_m(lat, lng, a, b)
-        for a, b in zip(points, points[1:], strict=False)
+        _point_segment_distance_m(lat, lng, a, b) for a, b in zip(points, points[1:], strict=False)
     )
 
 

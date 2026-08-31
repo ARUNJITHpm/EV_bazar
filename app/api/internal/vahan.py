@@ -98,9 +98,7 @@ def _year_periods(periods: list[str]) -> list[str]:
 @router.get("/vahan", response_model=VahanOut)
 def vahan(session: Session = Depends(get_session), limit: int = 12) -> VahanOut:
     checked = dt.datetime.now(dt.UTC)
-    total_rows = session.execute(
-        select(func.count()).select_from(VahanEvRegistration)
-    ).scalar_one()
+    total_rows = session.execute(select(func.count()).select_from(VahanEvRegistration)).scalar_one()
 
     latest = session.execute(
         select(func.max(VahanEvRegistration.snapshot_date))
@@ -225,9 +223,7 @@ def vahan(session: Session = Depends(get_session), limit: int = 12) -> VahanOut:
         for vclass, count in class_rows:
             grouped[_group_for(str(vclass))] += int(count or 0)
         order = [g for g, _ in _CLASS_GROUPS] + ["Other"]
-        by_class = [
-            ClassRow(group=g, ev_total=grouped[g]) for g in order if grouped.get(g)
-        ]
+        by_class = [ClassRow(group=g, ev_total=grouped[g]) for g in order if grouped.get(g)]
 
     return VahanOut(
         checked_at=checked,
