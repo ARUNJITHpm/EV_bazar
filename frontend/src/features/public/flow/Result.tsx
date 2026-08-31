@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { formatRupeesPrecise, type Paise } from "../../../lib/money";
 import { formatUtilisation } from "../../../lib/units";
 import { DEMO_REPORT_ID } from "../../report/payload";
-import type { AssessOut } from "./state";
+import { placeName, type AssessOut } from "./state";
 
 /**
  * The flow's last screen - the shipped teaser, dressed for the new surface.
@@ -28,7 +28,7 @@ export function Result({ out, onRestart }: { out: AssessOut; onRestart: () => vo
           </p>
           {out.district && (
             <p className="font-cw-mono text-[14px] text-cw-muted">
-              {out.district} · {out.state} · request #{out.requests} for this spot
+              {placeName(out.district, out.state)} · request #{out.requests} for this spot
             </p>
           )}
         </div>
@@ -88,7 +88,7 @@ export function Result({ out, onRestart }: { out: AssessOut; onRestart: () => vo
         <Figure
           label="Sanctioned load priced"
           value={`${Math.round(t.sanctioned_kva)} kVA`}
-          detail={out.district ? `${out.district}, ${out.state}` : ""}
+          detail={placeName(out.district, out.state)}
         />
       </div>
 

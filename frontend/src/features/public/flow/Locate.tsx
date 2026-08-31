@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 import { api } from "../../../api/client";
-import { toBody, type AssessOut } from "./state";
+import { placeName, toBody, type AssessOut } from "./state";
 
 /**
  * Step one: the map IS the interface, not a backdrop.
@@ -189,7 +189,7 @@ export function Locate({
             </div>
             <h2 className="text-[clamp(21px,3vw,27px)] font-medium">
               {confirmed?.district
-                ? `${confirmed.district}, ${confirmed.state}`
+                ? placeName(confirmed.district, confirmed.state)
                 : "Drag the pin to the exact spot"}
             </h2>
           </div>

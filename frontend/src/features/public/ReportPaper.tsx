@@ -19,7 +19,7 @@ const FIGURES: [string, string][] = [
 export function ReportPaper({ compact = false }: { compact?: boolean }) {
   return (
     <div
-      className={`flex flex-col bg-cw-paper text-cw-ink ${
+      className={`flex flex-col bg-cw-paper font-cw-serif text-cw-ink ${
         compact ? "gap-3 px-8 py-7" : "gap-5 p-8 sm:px-12 sm:py-10"
       }`}
     >

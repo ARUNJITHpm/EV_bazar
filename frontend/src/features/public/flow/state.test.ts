@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { loadState, saveState, toBody } from "./state";
+import { loadState, placeName, saveState, toBody } from "./state";
 
 const PIN = { lat: 8.5695, lng: 76.873 };
 
@@ -33,6 +33,17 @@ describe("toBody", () => {
     const skipped = toBody(PIN, { connection: "yes", kva: "skip" });
     expect(skipped.existing_connection).toBe(true);
     expect(skipped.sanctioned_kva).toBeNull();
+  });
+});
+
+describe("placeName", () => {
+  it("stops the reference layer's caps from shouting at the customer", () => {
+    expect(placeName("Thiruvananthapuram", "KERALA")).toBe("Thiruvananthapuram, Kerala");
+    expect(placeName("Coimbatore", "TAMIL NADU")).toBe("Coimbatore, Tamil Nadu");
+    expect(placeName("Dakshina Kannada", "JAMMU AND KASHMIR")).toBe(
+      "Dakshina Kannada, Jammu And Kashmir",
+    );
+    expect(placeName(null, null)).toBe("");
   });
 });
 

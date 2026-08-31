@@ -309,13 +309,7 @@ export function Flow() {
         );
 
       case "working":
-        return (
-          <Working
-            run={run}
-            onDone={() => navigate("/assess/result", { replace: true })}
-            onFailed={() => navigate("/assess/intent", { replace: true })}
-          />
-        );
+        return <Working run={run} onDone={() => navigate("/assess/result", { replace: true })} />;
 
       case "result":
         return state.result ? (
@@ -374,7 +368,11 @@ export function Flow() {
         }`}
       >
         {!bare && state.pin && <BackgroundMap pin={state.pin} />}
-        <div className="relative z-10">{body}</div>
+        {/* On the locate step the map IS the interface, so the wrapper has
+            to pass the flex chain through rather than shrink-wrap it. */}
+        <div className={bare ? "relative z-10 flex flex-grow flex-col" : "relative z-10"}>
+          {body}
+        </div>
       </div>
 
       {!bare && (

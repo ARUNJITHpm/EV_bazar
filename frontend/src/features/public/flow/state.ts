@@ -35,6 +35,23 @@ export interface FlowState {
 
 const STORE = "cw.assessment";
 
+/**
+ * State names arrive from the LGD reference layer in caps ("KERALA"). That is
+ * right for a database and shouting on a customer's screen, so it is cased
+ * here rather than in the payload - the stored value stays what was resolved.
+ */
+export function placeName(district: string | null, state: string | null): string {
+  const cased = state
+    ? state
+        .toLocaleLowerCase("en-IN")
+        .replace(
+          /(^|[\s-])(\p{L})/gu,
+          (_, sep: string, c: string) => sep + c.toLocaleUpperCase("en-IN"),
+        )
+    : null;
+  return [district, cased].filter(Boolean).join(", ");
+}
+
 export function loadState(): FlowState {
   try {
     const raw = sessionStorage.getItem(STORE);

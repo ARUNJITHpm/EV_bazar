@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * The working screen. It shows the REAL request, however short.
@@ -59,30 +59,76 @@ function Ring({ active }: { active: boolean }) {
 export function Working({
   run,
   onDone,
-  onFailed,
 }: {
   /** The real assessment call. Resolves true when the answer is stored. */
   run: () => Promise<boolean>;
   onDone: () => void;
-  onFailed: () => void;
 }) {
   const [settled, setSettled] = useState(false);
+  const [failed, setFailed] = useState(false);
   const started = useRef(false);
+  const alive = useRef(true);
+  // The request is fired once and must survive re-renders, so the callbacks
+  // are read through a ref rather than being effect dependencies. Without
+  // this the effect re-runs on every render, its own cleanup clears the
+  // liveness flag, and the completion callback silently no-ops - which
+  // strands the customer on this screen after a request that succeeded.
+  // StrictMode's deliberate double-invoke does the same thing, so the flag
+  // is RE-ARMED on every run rather than only initialised.
+  const latest = useRef({ run, onDone });
+  latest.current = { run, onDone };
+
+  const fire = useCallback(() => {
+    setFailed(false);
+    latest.current
+      .run()
+      .then((ok) => {
+        if (!alive.current) return;
+        if (ok) {
+          setSettled(true);
+          latest.current.onDone();
+        } else setFailed(true);
+      })
+      .catch(() => {
+        // A thrown request must land somewhere the customer can act on -
+        // never on a screen that spins for ever.
+        if (alive.current) setFailed(true);
+      });
+  }, []);
 
   useEffect(() => {
-    if (started.current) return;
-    started.current = true;
-    let alive = true;
-    void run().then((ok) => {
-      if (!alive) return;
-      setSettled(true);
-      if (ok) onDone();
-      else onFailed();
-    });
+    alive.current = true;
+    if (!started.current) {
+      started.current = true;
+      fire();
+    }
     return () => {
-      alive = false;
+      alive.current = false;
     };
-  }, [run, onDone, onFailed]);
+  }, [fire]);
+
+  if (failed) {
+    return (
+      <div className="flex max-w-[720px] flex-col gap-6">
+        <h1 className="text-[clamp(28px,4vw,40px)] leading-[1.15] font-medium">
+          We could not finish the check.
+        </h1>
+        <p className="text-cw-muted">
+          Nothing was priced and your answers are still here. This is our end, not yours — try it
+          again.
+        </p>
+        <div>
+          <button
+            type="button"
+            onClick={fire}
+            className="inline-flex min-h-[58px] items-center justify-center bg-cw-accent px-7 text-[17px] font-semibold text-cw-ground transition-[filter] duration-200 hover:brightness-107"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex max-w-[880px] flex-col gap-[clamp(32px,5vw,44px)]">
