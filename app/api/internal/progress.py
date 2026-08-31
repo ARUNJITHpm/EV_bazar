@@ -233,13 +233,17 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "G.2",
         "POST /assess - the funnel's front door",
         Status.PARTIAL if assess_live else Status.CODE_DONE,
-        "The free teaser as a real flow: a customer drops a pin, answers up to five "
-        "taps, and gets the utilisation that site must clear to break even - pure "
-        "arithmetic against the state's typed tariff, no model consulted, so no "
-        "prediction row (rule 5 governs model outputs; the teaser makes none). "
-        "EVERY pin writes a `sites` lead row first: a pin in an uncovered state "
-        "joins the district waitlist, which is capture, not failure - the request "
-        "counter on a waitlisted district is the expansion roadmap.",
+        "The free teaser as a real flow: a customer drops a pin on the published "
+        "Chargeworthy map (Mapbox on the public surface; the console keeps Leaflet), "
+        "answers the design flow's four taps - how much space, whether a transformer "
+        "is near and how big, how far it is, and what the site is for - and gets the "
+        "utilisation that site must clear to break even. Pure arithmetic against the "
+        "state's typed tariff, no model consulted, so no prediction row (rule 5 "
+        "governs model outputs; the teaser makes none); the taps feed the engine for "
+        "real, but only 'how much space' (2/4/6 plugs) moves the number and each tap "
+        "echoes what it did. EVERY pin writes a `sites` lead row first: a pin in an "
+        "uncovered state joins the district waitlist, which is capture, not failure - "
+        "the request counter on a waitlisted district is the expansion roadmap.",
         (
             f"{s.pin_leads:,} customer pin(s) dropped ({s.sites:,} sites total)."
             if assess_live

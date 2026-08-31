@@ -59,7 +59,11 @@ const FIREWALL: { rule: string; why: string }[] = [
   },
   {
     rule: "Missing inputs WIDEN the band.",
-    why: "Not knowing something makes the answer less certain, never more convenient. Five unanswered taps on /assess mean a wider band, visibly.",
+    why: "Not knowing something makes the answer less certain, never more convenient: an unanswered input widens the report's demand band, and on the /assess teaser it falls to the labelled archetype default — shown as 'not provided' — never a quiet guess that flatters the site.",
+  },
+  {
+    rule: "A tap that moves cost, not the number, says so.",
+    why: "The /assess taps feed the ROI engine for real, but only 'how much space' — more plugs spreading the fixed costs over a larger ceiling — moves the breakeven figure. Transformer size and distance move a report's payback; each tap echoes that it did NOT touch this number, instead of borrowing its authority.",
   },
   {
     rule: "The report is stored JSONB, served verbatim.",
@@ -160,7 +164,7 @@ export function Concept() {
           <FunnelStep
             n="1"
             name="/assess — the free teaser"
-            what="Breakeven utilisation from pure arithmetic in 30 seconds, before any model — the certain number, sellable on day one. Five taps sharpen it; each unanswered tap is shown as 'not provided' and widens the band. A pin outside Kerala/Tamil Nadu joins the district waitlist — capture, not failure: the queue decides which state's tariffs load next."
+            what="Breakeven utilisation from pure arithmetic in 30 seconds, before any model — the certain number, sellable on day one. A pin dropped on the published Chargeworthy map, then the design flow's four taps — how much space, whether a transformer is near and how big, how far it is, and what the site is for — wired into the ROI engine for real: only 'how much space' (2 / 4 / 6 plugs) moves the number, and each tap echoes what it did, or that it moved a report's payback and not this figure. A pin outside Kerala/Tamil Nadu joins the district waitlist — capture, not failure: the queue decides which state's tariffs load next."
           />
           <FunnelStep
             n="2"
