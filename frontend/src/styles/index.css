@@ -42,6 +42,24 @@
   --font-text: var(--font-text);
   --font-data: var(--font-data);
   --font-ui: var(--font-ui);
+
+  /* Chargeworthy - the public surface. Scoping note: cw-* classes belong to
+   * features/public/ only; the console and report keep the tokens above. */
+  --color-cw-ground: var(--cw-ground);
+  --color-cw-surface: var(--cw-surface);
+  --color-cw-surface-2: var(--cw-surface-2);
+  --color-cw-line: var(--cw-line);
+  --color-cw-text: var(--cw-text);
+  --color-cw-muted: var(--cw-muted);
+  --color-cw-slate: var(--cw-slate);
+  --color-cw-accent: var(--cw-accent);
+  --color-cw-positive: var(--cw-positive);
+  --color-cw-negative: var(--cw-negative);
+
+  --font-cw-sans: var(--cw-sans);
+  --font-cw-mono: var(--cw-mono);
+
+  --ease-cw: var(--cw-ease);
 }
 
 /* shadcn/ui reads these names. Pointing them at our tokens means a copied-in
@@ -87,4 +105,95 @@
     font-family: var(--font-data);
     font-variant-numeric: tabular-nums;
   }
+}
+
+/* =========================================================================
+ * Chargeworthy public surface (features/public/ only).
+ * ========================================================================= */
+
+/* Scroll reveal, the reference build's progressive-enhancement shape:
+ * content is visible in the DOM by default; the hidden state is applied
+ * only after JS confirms it can observe (the .cw-reveal-armed class), so a
+ * failed script leaves a readable page, never a blank one. Fires once at
+ * 20% viewport entry, never replays. */
+.cw-reveal-armed [data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+[data-reveal] {
+  transition:
+    opacity var(--cw-enter) var(--cw-ease),
+    transform var(--cw-enter) var(--cw-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cw-reveal-armed [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+  [data-reveal] {
+    transition-duration: 0.01ms;
+  }
+}
+
+/* The flow's continuous background map: OSM tiles pulled into the dark
+ * ground. The published Mapbox dark style is the colour specification this
+ * filter approximates (design/DECISIONS.md (c)); the locate map carries no
+ * filter because there the map is the interface, not a backdrop. */
+.cw-map-dark .leaflet-tile {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+/* Focus is never removed - a meaningful share of this audience uses a
+ * keyboard. Scoped to the dark surface where the console's default ring
+ * would vanish into the ground. */
+.cw-surface-root :focus-visible {
+  outline: 2px solid var(--cw-slate);
+  outline-offset: 3px;
+}
+
+/* Native range input restyled for a phone held at a site: 56px hit area,
+ * 34px thumb, square corners. Native so keyboard arrows keep working. */
+.cw-surface-root input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 56px;
+  background: transparent;
+  cursor: pointer;
+}
+.cw-surface-root input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: var(--cw-line);
+}
+.cw-surface-root input[type="range"]::-moz-range-track {
+  height: 6px;
+  background: var(--cw-line);
+}
+.cw-surface-root input[type="range"]::-moz-range-progress {
+  height: 6px;
+  background: var(--cw-slate);
+}
+.cw-surface-root input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 34px;
+  height: 34px;
+  margin-top: -14px;
+  background: var(--cw-text);
+  border: 1px solid var(--cw-line);
+}
+.cw-surface-root input[type="range"]::-moz-range-thumb {
+  width: 34px;
+  height: 34px;
+  border-radius: 0;
+  background: var(--cw-text);
+  border: 1px solid var(--cw-line);
 }

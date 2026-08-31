@@ -87,4 +87,54 @@
 
   --measure: 34rem;
   --page-max: 52rem;
+
+  /* =====================================================================
+   * Chargeworthy - the public surface (design/tokens.css, merged verbatim).
+   *
+   * Two surfaces, one brand: the public site and flow run on this dark
+   * ground; the report runs on paper (the same palette inverted). The
+   * console keeps the instrument-panel tokens above - it is an admin tool,
+   * not a brand surface.
+   *
+   * Rules the tokens cannot enforce (design/tokens.css, carried into
+   * review): copper (--cw-accent) on ~5% of any surface - CTAs, one hero
+   * figure, the map pin, nowhere else; every number in --cw-mono with
+   * tabular figures; body never below 17px or 400 weight; green/red are
+   * semantic only - the brand colour is slate, deliberately, so a report
+   * saying DON'T BUILD is never a contradiction.
+   * ===================================================================== */
+
+  /* --- Public site and flow: dark -------------------------------------- */
+  --cw-ground: #0d151e; /* page background */
+  --cw-surface: #16212c; /* cards, elevated panels */
+  --cw-surface-2: #1e2c39; /* hover, nested panels */
+  --cw-line: #253340; /* borders, dividers, hairlines */
+  --cw-text: #f4f1ec; /* primary text - warm white, never pure white */
+  --cw-muted: #93a1ad; /* secondary text, labels */
+  --cw-slate: #4a8fb8; /* brand blue, lifted for dark backgrounds */
+  --cw-accent: #d98a3d; /* copper - CTAs, one hero figure, the map pin */
+  --cw-positive: #3fa37f; /* semantic only */
+  --cw-negative: #c4564a; /* semantic only */
+
+  /* --- Report: paper (reserved for the report reskin; unused until then) */
+  --cw-paper: #faf8f4;
+  --cw-ink: #12171a;
+  --cw-paper-slate: #1c3a4f;
+  --cw-rule: #d6d2c8;
+  --cw-paper-muted: #5c5852;
+  --cw-verdict-positive: #1f5e4a;
+  --cw-verdict-negative: #8c2a20;
+  --cw-caution: #a65b1f;
+  --cw-caution-tint: #f5e6d3;
+  --cw-caution-text: #7a4113;
+
+  /* --- Type - webfonts are progressive enhancement over these stacks ---- */
+  --cw-sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --cw-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --cw-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* --- Motion: weight settling, not play -------------------------------- */
+  --cw-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --cw-enter: 520ms;
+  --cw-state: 200ms;
 }
