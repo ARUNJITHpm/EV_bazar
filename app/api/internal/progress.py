@@ -319,9 +319,12 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
             "zero rows, which is exactly why every state shows Tier 3 on the Data "
             "panel. Type in Kerala's order and Kerala turns Tier 2 on its own."
         ),
-        "Human: KSERC first, then TNERC - one state per evening. Each row needs the "
-        "order number and PDF as provenance; a tariff that cannot be defended to a "
-        "customer whose bill disagrees is not data.",
+        "Human, one state per evening: `uv run python -m scripts.add_tariff --template`, "
+        "fill it from the order (KSERC, then TNERC, then the next market), preview with "
+        "`--file <state>.json` (it shows the plan and the breakeven the row unlocks), then "
+        "`--write` - it supersedes a prior order safely and prints the state's new tier. "
+        "Each row needs the order number and PDF as provenance; a tariff that cannot be "
+        "defended to a customer whose bill disagrees is not data.",
     )
     add(
         "0.3",
