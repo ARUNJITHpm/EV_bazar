@@ -56,6 +56,16 @@
   --color-cw-positive: var(--cw-positive);
   --color-cw-negative: var(--cw-negative);
 
+  /* The paper palette - report previews on the public site, and the report
+   * itself when its reskin lands. */
+  --color-cw-paper: var(--cw-paper);
+  --color-cw-ink: var(--cw-ink);
+  --color-cw-paper-slate: var(--cw-paper-slate);
+  --color-cw-rule: var(--cw-rule);
+  --color-cw-paper-muted: var(--cw-paper-muted);
+  --color-cw-verdict-negative: var(--cw-verdict-negative);
+  --color-cw-verdict-positive: var(--cw-verdict-positive);
+
   --font-cw-sans: var(--cw-sans);
   --font-cw-mono: var(--cw-mono);
 
@@ -149,6 +159,24 @@
  * filter because there the map is the interface, not a backdrop. */
 .cw-map-dark .leaflet-tile {
   filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+/* The copper pin (a Leaflet divIcon) and the slate catchment rings. Styled
+ * here because Leaflet writes SVG presentation attributes, where var() does
+ * not resolve - CSS wins over attributes, tokens stay authoritative. */
+.cw-pin {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--cw-accent);
+  border: 2px solid var(--cw-ground);
+  box-shadow: 0 0 0 2px var(--cw-accent);
+}
+.cw-ring {
+  stroke: var(--cw-slate);
+  fill: var(--cw-slate);
+  fill-opacity: 0.05;
+  stroke-opacity: 0.5;
 }
 
 /* Focus is never removed - a meaningful share of this audience uses a
