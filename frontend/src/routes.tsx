@@ -22,6 +22,8 @@ import { ReportRoute } from "./features/report/ReportRoute";
  *   /            public - Chargeworthy: the landing and the assessment
  *                flow, on the dark brand ground (design/)
  *   /report/:id  the document, on paper - a stored payload served verbatim
+ *   /animation   a review surface for candidate hero animations - unlinked
+ *                and carrying no real data (features/animation/)
  *   /console/*   internal - an ordinary admin tool, behind auth, keeping
  *                the instrument-panel palette
  *
@@ -40,6 +42,15 @@ const Geocoding = lazy(() =>
 
 /** Same payload decision: the flow carries the pin-drop map (Leaflet). */
 const Flow = lazy(() => import("./features/public/flow/Flow").then((m) => ({ default: m.Flow })));
+
+/**
+ * The motion workbench. Lazy for the same reason: nobody arriving at the
+ * landing page should pay to download three candidate hero animations they
+ * are not going to see.
+ */
+const Animations = lazy(() =>
+  import("./features/animation/Animations").then((m) => ({ default: m.Animations })),
+);
 
 function Deferred({ children }: { children: ReactNode }) {
   return <Suspense fallback={<div className="min-h-dvh bg-cw-ground" />}>{children}</Suspense>;
@@ -65,6 +76,18 @@ export const router = createBrowserRouter([
    * UUID strings.
    */
   { path: "/report/:id", element: <ReportRoute /> },
+  /**
+   * Unlinked on purpose - a review surface, not a page. Nothing on it is
+   * real data; see features/animation/data.ts.
+   */
+  {
+    path: "/animation",
+    element: (
+      <Deferred>
+        <Animations />
+      </Deferred>
+    ),
+  },
   {
     path: "/console",
     element: <ConsoleLayout />,

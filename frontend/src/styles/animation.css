@@ -1,0 +1,622 @@
+/* animation.css - the /animation surface (features/animation/ only).
+ *
+ * Imported from index.css. Every class is prefixed cwa- so nothing collides
+ * with a Tailwind utility, and every colour is var(--cw-*) - there is not one
+ * hex value in this file, because tokens.css stays the single source.
+ *
+ * Motion budget, design/IMPLEMENT.md:65-68 - cubic-bezier(0.16, 1, 0.3, 1),
+ * no animation library, full prefers-reduced-motion. Animation A is pure CSS
+ * with no script at all; B and C step through named states on a setTimeout
+ * clock (useLoopClock.ts) and do all their movement here.
+ *
+ * The loops are long and low-contrast on purpose. A hero that re-attacks
+ * every two seconds fights the copy for attention.
+ */
+
+/* =========================================================================
+ * A - Route to charge. <RouteToCharge />. 11s, no JS.
+ * ========================================================================= */
+
+.cwa-road {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: cwa-road 11s var(--cw-ease) infinite;
+}
+@keyframes cwa-road {
+  0% {
+    stroke-dashoffset: 1200;
+    opacity: 1;
+  }
+  12%,
+  93% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  99%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+/* Lane markings keep their dash ATTRIBUTE, so they cannot share the draw
+ * above - a CSS stroke-dasharray would overwrite it and render them solid.
+ * This class animates opacity and nothing else. */
+.cwa-centre {
+  opacity: 0;
+  animation: cwa-centre 11s var(--cw-ease) infinite;
+}
+@keyframes cwa-centre {
+  0%,
+  6% {
+    opacity: 0;
+  }
+  16%,
+  93% {
+    opacity: 0.5;
+  }
+  99%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Two locations assessed and set aside. They stay on the map, dimmed: the
+ * comparison happened, and hiding the losers would erase it. */
+.cwa-candidate {
+  opacity: 0;
+  animation: cwa-candidate 11s var(--cw-ease) infinite;
+}
+/* Negative delay on an infinite loop shifts PHASE - -10.85s of an 11s cycle
+ * puts this pin 0.15s behind the first, not 10.85s ahead. */
+.cwa-candidate--2 {
+  animation-delay: -10.85s;
+}
+@keyframes cwa-candidate {
+  0%,
+  12% {
+    opacity: 0;
+  }
+  20%,
+  30% {
+    opacity: 0.9;
+  }
+  38%,
+  93% {
+    opacity: 0.22;
+  }
+  99%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The one that was kept. Copper here is the map pin tokens.css licenses. */
+.cwa-chosen {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: cwa-chosen 11s var(--cw-ease) infinite;
+}
+@keyframes cwa-chosen {
+  0%,
+  12% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  20%,
+  30% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  38% {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+  46%,
+  93% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  99%,
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+.cwa-site {
+  opacity: 0;
+  animation: cwa-site 11s var(--cw-ease) infinite;
+}
+@keyframes cwa-site {
+  0%,
+  36% {
+    opacity: 0;
+  }
+  44%,
+  93% {
+    opacity: 1;
+  }
+  99%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The drive. offset-path carries the same d as the corridor in
+ * RouteToCharge.tsx - edit one and you must edit the other. */
+.cwa-car {
+  offset-path: path(
+    "M 30 566 C 172 566 232 502 302 466 C 382 424 430 376 500 338 C 566 302 622 250 700 232"
+  );
+  offset-rotate: auto;
+  offset-distance: 0%;
+  animation: cwa-drive 11s cubic-bezier(0.32, 0, 0.28, 1) infinite;
+}
+@keyframes cwa-drive {
+  0%,
+  42% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  45% {
+    offset-distance: 3%;
+    opacity: 1;
+  }
+  64%,
+  93% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  99%,
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+.cwa-beam {
+  opacity: 0;
+  animation: cwa-beam 11s linear infinite;
+}
+@keyframes cwa-beam {
+  0%,
+  44% {
+    opacity: 0;
+  }
+  48%,
+  60% {
+    opacity: 0.5;
+  }
+  64%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.cwa-cable {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: cwa-cable 11s var(--cw-ease) infinite;
+}
+@keyframes cwa-cable {
+  0%,
+  64% {
+    stroke-dashoffset: 80;
+  }
+  70%,
+  93% {
+    stroke-dashoffset: 0;
+  }
+  99%,
+  100% {
+    stroke-dashoffset: 80;
+  }
+}
+
+.cwa-pulse {
+  stroke-dasharray: 10 70;
+  stroke-dashoffset: 80;
+  opacity: 0;
+  animation: cwa-pulse 11s linear infinite;
+}
+@keyframes cwa-pulse {
+  0%,
+  70% {
+    stroke-dashoffset: 80;
+    opacity: 0;
+  }
+  71% {
+    opacity: 1;
+  }
+  81% {
+    stroke-dashoffset: -80;
+    opacity: 1;
+  }
+  81.01% {
+    stroke-dashoffset: 80;
+  }
+  91% {
+    stroke-dashoffset: -80;
+    opacity: 1;
+  }
+  93%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The unit's LED strip IS the charge meter - one element, one meaning,
+ * rather than a status ring floating off the pedestal. */
+.cwa-meter {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: cwa-meter 11s var(--cw-ease) infinite;
+}
+@keyframes cwa-meter {
+  0%,
+  68% {
+    stroke-dashoffset: 48;
+  }
+  90%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* 3 / 5 / 10 km, expanding only once the vehicle is charging - the catchment
+ * is the consequence of the choice, never the opening claim. */
+.cwa-catch {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cwa-catch 11s var(--cw-ease) infinite;
+}
+.cwa-catch--2 {
+  animation-delay: -10.78s;
+}
+.cwa-catch--3 {
+  animation-delay: -10.56s;
+}
+@keyframes cwa-catch {
+  0%,
+  70% {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  80% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  93% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  99%,
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* @property animates an integer counter with no script. */
+@property --cwa-pct {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
+.cwa-readout {
+  opacity: 0;
+  animation: cwa-readout 11s var(--cw-ease) infinite;
+}
+@keyframes cwa-readout {
+  0%,
+  66% {
+    opacity: 0;
+  }
+  72%,
+  93% {
+    opacity: 1;
+  }
+  99%,
+  100% {
+    opacity: 0;
+  }
+}
+.cwa-pct {
+  --cwa-pct: 0;
+  counter-reset: cwa-pct var(--cwa-pct);
+  animation: cwa-count 11s linear infinite;
+}
+.cwa-pct::after {
+  content: counter(cwa-pct) "%";
+}
+@keyframes cwa-count {
+  0%,
+  68% {
+    --cwa-pct: 0;
+  }
+  90%,
+  100% {
+    --cwa-pct: 100;
+  }
+}
+
+/* =========================================================================
+ * B - The site, assessed. <SiteAssessed />.
+ * ========================================================================= */
+
+/* The plan's layers lift as their category is read, so the drawing and the
+ * ledger are one assessment rather than a picture beside a list. */
+.cwa-layer {
+  opacity: 0.34;
+  transition: opacity var(--cw-enter) var(--cw-ease);
+}
+.cwa-assess[data-stage="road"] .cwa-layer[data-layer="road"],
+.cwa-assess[data-stage="demand"] .cwa-layer[data-layer="demand"],
+.cwa-assess[data-stage="grid"] .cwa-layer[data-layer="grid"],
+.cwa-assess[data-stage="plot"] .cwa-layer[data-layer="plot"],
+.cwa-assess[data-stage="commercial"] .cwa-layer[data-layer="commercial"] {
+  opacity: 1;
+}
+.cwa-assess[data-stage="summary"] .cwa-layer {
+  opacity: 0.75;
+}
+
+/* One-shot on mount: the parcel is the frame, not part of the loop. */
+.cwa-parcel {
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: cwa-parcel 1400ms var(--cw-ease) both;
+}
+@keyframes cwa-parcel {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* The survey sweep - the assessment happening, not a sci-fi flourish. It
+ * runs only while a category is actually being read. */
+.cwa-survey {
+  animation: cwa-survey 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.cwa-assess[data-stage="intro"] .cwa-survey,
+.cwa-assess[data-stage="summary"] .cwa-survey {
+  animation: none;
+  opacity: 0;
+}
+@keyframes cwa-survey {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  15%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(450px);
+  }
+}
+
+.cwa-cat {
+  opacity: 0.4;
+  border-top: 2px solid transparent;
+  transition:
+    opacity var(--cw-state) var(--cw-ease),
+    border-color var(--cw-state) var(--cw-ease);
+}
+.cwa-cat[data-state="active"] {
+  opacity: 1;
+  border-top-color: var(--cw-slate);
+}
+.cwa-cat[data-state="done"] {
+  opacity: 0.75;
+  border-top-color: var(--cw-line);
+}
+
+/* Rows arrive already correct, one after another. They never flicker
+ * through alternatives first: this product's claim is that nothing is
+ * assumed, and a slot-machine would animate the opposite. */
+.cwa-check {
+  animation: cwa-arrive 420ms var(--cw-ease) both;
+}
+.cwa-fade {
+  animation: cwa-arrive 420ms var(--cw-ease) both;
+}
+@keyframes cwa-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.cwa-band {
+  width: 0;
+  animation: cwa-band 800ms var(--cw-ease) 400ms both;
+}
+@keyframes cwa-band {
+  to {
+    width: 30%;
+  }
+}
+
+.cwa-threshold {
+  animation: cwa-arrive 420ms var(--cw-ease) 900ms both;
+}
+
+/* The verdict lands LAST. Never first. */
+.cwa-verdict {
+  animation: cwa-arrive 520ms var(--cw-ease) 1250ms both;
+}
+
+/* =========================================================================
+ * C - Sources in, report out. <SourcesToReport />.
+ * ========================================================================= */
+
+/* Each element carries its own stagger in an inline animation-delay, so one
+ * keyframe serves the whole band. */
+.cwa-source {
+  animation: cwa-arrive 420ms var(--cw-ease) both;
+}
+
+.cwa-source__dot {
+  opacity: 0.35;
+}
+.cwa-source[data-state="feeding"] .cwa-source__dot {
+  animation: cwa-feed 1.4s ease-in-out infinite;
+}
+@keyframes cwa-feed {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.cwa-group {
+  transition: opacity var(--cw-state) var(--cw-ease);
+}
+.cwa-group[data-state="waiting"] {
+  opacity: 0.55;
+}
+
+.cwa-node {
+  background: var(--cw-line);
+}
+.cwa-group[data-state="live"] .cwa-node {
+  animation: cwa-node-fill 300ms var(--cw-ease) both;
+}
+.cwa-group[data-state="live"] .cwa-node[data-unverified],
+.cwa-group[data-state="done"] .cwa-node[data-unverified] {
+  background: var(--cw-accent);
+}
+.cwa-group[data-state="done"] .cwa-node {
+  background: var(--cw-slate);
+}
+@keyframes cwa-node-fill {
+  from {
+    background: var(--cw-line);
+  }
+  to {
+    background: var(--cw-slate);
+  }
+}
+
+.cwa-line,
+.cwa-summary {
+  opacity: 0;
+}
+.cwa-line[data-state="in"],
+.cwa-summary[data-state="in"] {
+  animation: cwa-arrive 460ms var(--cw-ease) both;
+}
+
+/* The sheet is the output tray: it sits there blank and waiting rather than
+   leaving a third of the composition empty for most of the loop. */
+.cwa-paper {
+  opacity: 0.24;
+  transition: opacity var(--cw-enter) var(--cw-ease);
+}
+.cwa-paper[data-state="in"] {
+  opacity: 1;
+}
+
+/* =========================================================================
+ * Reduced motion - reveal.ts's contract: the finished state, immediately,
+ * with nothing looping. useLoopClock parks B and C on their last step; A is
+ * pure CSS, so its final frame is spelled out here.
+ * ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .cwa-road,
+  .cwa-centre,
+  .cwa-candidate,
+  .cwa-chosen,
+  .cwa-site,
+  .cwa-car,
+  .cwa-beam,
+  .cwa-cable,
+  .cwa-pulse,
+  .cwa-meter,
+  .cwa-catch,
+  .cwa-readout,
+  .cwa-pct,
+  .cwa-parcel,
+  .cwa-survey,
+  .cwa-check,
+  .cwa-fade,
+  .cwa-band,
+  .cwa-threshold,
+  .cwa-verdict,
+  .cwa-source,
+  .cwa-source__dot,
+  .cwa-node,
+  .cwa-paper,
+  .cwa-line,
+  .cwa-summary {
+    animation: none !important;
+  }
+
+  .cwa-road,
+  .cwa-cable,
+  .cwa-meter,
+  .cwa-parcel {
+    stroke-dashoffset: 0 !important;
+  }
+  .cwa-site,
+  .cwa-car,
+  .cwa-chosen,
+  .cwa-readout,
+  .cwa-check,
+  .cwa-fade,
+  .cwa-threshold,
+  .cwa-verdict,
+  .cwa-source,
+  .cwa-paper,
+  .cwa-line,
+  .cwa-summary {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .cwa-centre {
+    opacity: 0.5 !important;
+  }
+  .cwa-candidate {
+    opacity: 0.22 !important;
+  }
+  .cwa-car {
+    offset-distance: 100% !important;
+  }
+  .cwa-catch {
+    opacity: 0.5 !important;
+    transform: none !important;
+  }
+  .cwa-beam,
+  .cwa-pulse,
+  .cwa-survey {
+    opacity: 0 !important;
+  }
+  .cwa-pct {
+    --cwa-pct: 100 !important;
+  }
+  .cwa-band {
+    width: 30% !important;
+  }
+  .cwa-source__dot {
+    opacity: 0.35 !important;
+  }
+  .cwa-layer {
+    opacity: 0.75 !important;
+  }
+  .cwa-paper {
+    opacity: 1 !important;
+  }
+}

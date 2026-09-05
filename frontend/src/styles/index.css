@@ -10,6 +10,8 @@
 
 @import "tailwindcss";
 @import "./tokens.css";
+/* The /animation review surface. Scoped by a cwa- prefix; see the file. */
+@import "./animation.css";
 
 /* `inline` lets the theme reference other custom properties rather than
  * copying literal values - so tokens.css stays authoritative. */
