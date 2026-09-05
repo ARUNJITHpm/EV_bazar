@@ -17,6 +17,13 @@
  * A - Route to charge. <RouteToCharge />. 11s, no JS.
  * ========================================================================= */
 
+/* The readout is HTML laid over an SVG that scales with its column, so it
+ * is sized in cqw against this box rather than in px - correct in a narrow
+ * hero panel and in a full-width review surface alike. */
+.cwa-route {
+  container-type: inline-size;
+}
+
 .cwa-road {
   stroke-dasharray: 1200;
   stroke-dashoffset: 1200;

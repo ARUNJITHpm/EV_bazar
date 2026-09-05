@@ -1,4 +1,4 @@
-import { SITE_ID } from "./data";
+import { SITE_LABEL } from "./data";
 
 /**
  * A - Route to charge. The landing hero's right panel. 11s loop, no JS.
@@ -40,9 +40,13 @@ const REJECTED = [
 /** A map pin, drawn about its own point. */
 const PIN = "M0 0 C -13 -16 -19 -24 -19 -33 A 19 19 0 1 1 19 -33 C 19 -24 13 -16 0 0 Z";
 
-export function RouteToCharge({ siteId = SITE_ID }: { siteId?: string }) {
+export function RouteToCharge({ label = SITE_LABEL }: { label?: string }) {
   return (
-    <div className="cwa-route relative">
+    // The border matters: the substrate is --cw-ground, the same colour as
+    // the page, so without a frame this reads as loose shapes floating in
+    // the layout rather than a panel. HeroMap, which this replaces in the
+    // landing hero, was framed the same way.
+    <div className="cwa-route relative border border-cw-line">
       <svg
         className="block h-auto w-full"
         viewBox="0 0 1000 620"
@@ -253,17 +257,22 @@ export function RouteToCharge({ siteId = SITE_ID }: { siteId?: string }) {
       {/* The only number that moves anywhere on the public surface, and it is
           a state of the animation - a fictional car's charge level - not a
           statistic about the business. The bracketed figures elsewhere stay
-          still, deliberately. */}
+          still, deliberately.
+
+          Sized in cqw against .cwa-route's container, NOT in px. This is
+          HTML over an SVG that scales with its column, so fixed pixels are
+          correct at one width and wrong everywhere else - at hero width the
+          px version swamped the map it was sitting on. */}
       <div
-        className="cwa-readout absolute top-[clamp(16px,3vw,28px)] left-[clamp(16px,3vw,32px)] min-w-[168px] border border-cw-line bg-cw-ground/85 px-[18px] py-3.5"
+        className="cwa-readout absolute top-[3.5cqw] left-[3.5cqw] min-w-[17cqw] border border-cw-line bg-cw-ground/85 px-[2cqw] py-[1.5cqw]"
         aria-hidden="true"
       >
-        <div className="font-cw-mono text-[11px] tracking-[0.16em] text-cw-muted uppercase">
+        <div className="font-cw-mono text-[clamp(8px,1.15cqw,12px)] tracking-[0.16em] text-cw-muted uppercase">
           Charging
         </div>
-        <div className="cwa-pct font-cw-mono text-[30px] leading-[1.2] font-medium tracking-[-0.02em] text-cw-accent tabular-nums" />
-        <div className="mt-1.5 font-cw-mono text-[11px] tracking-[0.16em] text-cw-muted uppercase">
-          {siteId}
+        <div className="cwa-pct font-cw-mono text-[clamp(19px,3cqw,32px)] leading-[1.2] font-medium tracking-[-0.02em] text-cw-accent tabular-nums" />
+        <div className="mt-[0.6cqw] font-cw-mono text-[clamp(8px,1.15cqw,12px)] tracking-[0.16em] text-cw-muted uppercase">
+          {label}
         </div>
       </div>
     </div>

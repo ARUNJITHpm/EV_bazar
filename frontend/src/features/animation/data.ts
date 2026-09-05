@@ -121,6 +121,24 @@ export const GROUPS: readonly Group[] = [
 
 export const TOTAL_CHECKS = GROUPS.reduce((n, g) => n + g.checks.length, 0);
 
+/** Every check, keyed by the factor name Landing.tsx and Working.tsx share. */
+const BY_LABEL = new Map(GROUPS.flatMap((g) => g.checks.map((c) => [c.label, c] as const)));
+
+/**
+ * The illustrative value for a factor, for callers that hold the 34 names in
+ * a DIFFERENT grouping - flow/Working.tsx groups them 12/4/8/7/3 by source
+ * where this file groups them 9/7/8/6/4 by subject. The names are identical
+ * in both (they come from Landing.tsx's FACTORS), so a label lookup crosses
+ * between them safely; the counts do not.
+ *
+ * Returns undefined for an unknown label rather than inventing something -
+ * a factor added in one place and not the other should render blank, not
+ * wrong.
+ */
+export function checkFor(label: string): Check | undefined {
+  return BY_LABEL.get(label);
+}
+
 /** Where the factors come from. Names are public data sources, not partners. */
 export const SOURCES: readonly { readonly name: string; readonly stamp: string }[] = [
   { name: "VAHAN · Parivahan", stamp: "Registrations · mix" },
@@ -147,5 +165,14 @@ export const VERDICT = {
   p90: "34%",
 } as const;
 
-/** The demo site the rest of the product already uses. */
-export const SITE_ID = "KL-TVM-DEMO-001";
+/**
+ * An unnamed candidate site - and it must stay unnamed.
+ *
+ * This deliberately is NOT DEMO_REPORT_ID. The stored report under that id
+ * returns DON'T BUILD on a 0.9-2.4% band against a 4.3% breakeven, and
+ * ReportPaper renders it twice on the landing page. An animation labelled
+ * with that id while ending on "conditional build" would contradict the
+ * document sitting a few hundred pixels below it. The verdict here is
+ * illustrative, so the site it describes has to be illustrative too.
+ */
+export const SITE_LABEL = "Candidate site";

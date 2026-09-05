@@ -1,4 +1,4 @@
-import { COVERAGE, GROUPS, SITE_ID, SOURCES, TOTAL_CHECKS, VERDICT } from "./data";
+import { COVERAGE, GROUPS, SITE_LABEL, SOURCES, TOTAL_CHECKS, VERDICT } from "./data";
 import { useLoopClock } from "./useLoopClock";
 
 /**
@@ -128,10 +128,10 @@ export function SourcesToReport() {
             className="cwa-paper mt-4 bg-cw-paper px-[clamp(16px,2vw,24px)] py-[clamp(18px,2.2vw,26px)] text-cw-ink"
           >
             <div className="font-cw-mono text-[10px] tracking-[0.16em] text-cw-paper-muted uppercase">
-              Site assessment · {SITE_ID}
+              Site assessment · Illustrative
             </div>
             <div className="mt-3 border-b border-cw-rule pb-2.5 font-cw-serif text-[19px] leading-tight">
-              Candidate site, assessed
+              {SITE_LABEL}, assessed
             </div>
 
             <dl className="m-0">

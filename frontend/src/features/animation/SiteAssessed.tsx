@@ -1,4 +1,4 @@
-import { COVERAGE, GROUPS, SITE_ID, TOTAL_CHECKS, VERDICT, illustrative } from "./data";
+import { COVERAGE, GROUPS, SITE_LABEL, TOTAL_CHECKS, VERDICT, illustrative } from "./data";
 import { useLoopClock } from "./useLoopClock";
 
 /**
@@ -31,7 +31,16 @@ const DURATIONS = [900, 2300, 2000, 2400, 1900, 1700, 4200] as const;
 const FIRST_GROUP = 1;
 const SUMMARY = DURATIONS.length - 1;
 
-export function SiteAssessed() {
+/**
+ * `headless` drops the eyebrow, heading and intro paragraph.
+ *
+ * Landing.tsx's WhatWeCheck already says "Nothing here is a guess" over
+ * "Each one is measured or sourced, and the unverified ones are marked, not
+ * buried" - which is this component's own header, in different words. Two
+ * of them stacked would read as a stutter, so the section keeps its copy
+ * and this keeps the plan, the category strip and the ledger.
+ */
+export function SiteAssessed({ headless = false }: { headless?: boolean } = {}) {
   const [ref, step] = useLoopClock<HTMLDivElement>(DURATIONS);
   const groupIndex = step - FIRST_GROUP;
   /* Undefined on the intro and summary steps, which is the point - those two
@@ -49,19 +58,27 @@ export function SiteAssessed() {
       <SitePlan />
 
       <div className="flex min-w-0 flex-col">
-        <div className="font-cw-mono text-[13px] tracking-[0.16em] text-cw-muted uppercase">
-          {TOTAL_CHECKS} assessment checks · {SITE_ID}
-        </div>
-        <h3 className="mt-3.5 text-[clamp(24px,3vw,32px)] leading-[1.15] font-medium">
-          Nothing here is assumed.
-        </h3>
-        <p className="mt-3 text-cw-muted">
-          Every factor is measured or sourced. Anything we could not verify is marked, never quietly
-          filled in.
-        </p>
+        {!headless && (
+          <>
+            <div className="font-cw-mono text-[13px] tracking-[0.16em] text-cw-muted uppercase">
+              {TOTAL_CHECKS} assessment checks · {SITE_LABEL}
+            </div>
+            <h3 className="mt-3.5 text-[clamp(24px,3vw,32px)] leading-[1.15] font-medium">
+              Nothing here is assumed.
+            </h3>
+            <p className="mt-3 text-cw-muted">
+              Every factor is measured or sourced. Anything we could not verify is marked, never
+              quietly filled in.
+            </p>
+          </>
+        )}
 
         {/* Five categories, and how far through them the assessment is. */}
-        <ol className="mt-7 grid grid-cols-5 gap-px border border-cw-line bg-cw-line">
+        <ol
+          className={`grid grid-cols-5 gap-px border border-cw-line bg-cw-line ${
+            headless ? "" : "mt-7"
+          }`}
+        >
           {GROUPS.map((g, i) => (
             <li
               key={g.key}
@@ -274,7 +291,7 @@ function SitePlan() {
             strokeDasharray="5 4"
           />
           <path d="M274 327 L290 320 L286 337 Z" fill="var(--cw-slate)" />
-          <PlanBadge x={316} y={474} w={112} label={`${illustrative("8.2 m")} entry`} />
+          <PlanBadge x={316} y={444} w={112} label={`${illustrative("8.2 m")} entry`} />
         </g>
 
         {/* Demand & mobility */}

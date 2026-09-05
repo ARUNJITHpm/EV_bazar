@@ -1,6 +1,8 @@
-import { lazy, Suspense, useState, type FormEvent, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { RouteToCharge } from "../animation/RouteToCharge";
+import { SiteAssessed } from "../animation/SiteAssessed";
 import { DEMO_REPORT_ID } from "../report/payload";
 import { ReportPaper } from "./ReportPaper";
 import { useReveal, useScrollProgress } from "./reveal";
@@ -22,6 +24,48 @@ import { useReveal, useScrollProgress } from "./reveal";
  */
 
 const HeroMap = lazy(() => import("./HeroMap"));
+
+/**
+ * Renders its children only once the viewport gets near them, then keeps
+ * them forever.
+ *
+ * React.lazy defers PARSING, not fetching: a lazy component that renders on
+ * mount still downloads on arrival. HeroMap pulls mapCore, and mapCore is
+ * ~1.8 MB of Mapbox - which used to be on the critical path of every visit
+ * because the map sat in the hero. It now sits above the closing call to
+ * action, and this gate means a reader who never scrolls that far never
+ * pays for it at all.
+ *
+ * No IntersectionObserver (an old browser, a disabled script) means show it
+ * immediately. Degrading to "visible" costs bandwidth; degrading to
+ * "hidden" would silently drop content.
+ */
+function NearViewport({ children, minHeight }: { children: ReactNode; minHeight: string }) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [show, setShow] = useState(() => !("IntersectionObserver" in window));
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || show) return undefined;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        setShow(true);
+        observer.disconnect();
+      },
+      // A screen of lead time, so the map is painted by the time it arrives.
+      { rootMargin: "600px 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [show]);
+
+  return (
+    <div ref={ref} style={{ minHeight }}>
+      {show ? children : null}
+    </div>
+  );
+}
 
 const FACTORS = [
   "Road class",
@@ -179,14 +223,14 @@ function Hero() {
           </div>
         </div>
 
+        {/* The hero argues the product, not the geography: several candidate
+            locations are compared, one is chosen, and only then does a
+            vehicle reach it and charge. HeroMap used to sit here and showed
+            a real place, which was good - but it cost ~1.8 MB of Mapbox on
+            every arrival for a decorative panel. It now sits above the
+            closing CTA, where a reader has asked for it. */}
         <div data-reveal="5">
-          <Suspense
-            fallback={
-              <div className="h-[clamp(260px,42vw,452px)] w-full border border-cw-line bg-cw-surface" />
-            }
-          >
-            <HeroMap />
-          </Suspense>
+          <RouteToCharge />
         </div>
       </div>
 
@@ -284,11 +328,24 @@ function WhatWeCheck() {
             including the factors that argue in the site&rsquo;s favour.
           </p>
         </div>
+
+        {/* The assessment, moving: a plan on the left, the same 34 factors
+            grouped 9/7/8/6/4 and walked one category at a time on the
+            right, ending on the verdict. Headless, because the section
+            above already carries the heading and the promise. */}
+        <div data-reveal="3">
+          <SiteAssessed headless />
+        </div>
+
+        {/* And the full list, still. The animation shows at most nine names
+            at once; these are all 34, in the DOM, scannable and crawlable.
+            Losing them to the animation would be a content regression, not
+            a tidy-up. */}
         <div className="flex flex-wrap gap-3">
           {FACTORS.map((f, i) => (
             <span
               key={f}
-              data-reveal={i + 3}
+              data-reveal={i + 4}
               className="border border-cw-line bg-cw-surface px-[17px] py-[11px] text-[16px]"
             >
               {f}
@@ -509,15 +566,36 @@ function Close() {
   const ref = useReveal<HTMLElement>(60);
   return (
     <section ref={ref}>
-      <div className={`flex flex-col items-start gap-7 ${SECTION}`}>
-        <h2
-          data-reveal="0"
-          className="max-w-[660px] text-[clamp(28px,4vw,42px)] leading-[1.15] font-medium"
-        >
-          Start with the location. We will tell you the rest.
-        </h2>
-        <div data-reveal="1" className="w-full">
-          <LocationCta id="close-location" />
+      <div
+        className={`grid items-center gap-[clamp(36px,5vw,72px)] ${SECTION}`}
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))" }}
+      >
+        <div className="flex flex-col items-start gap-7">
+          <h2
+            data-reveal="0"
+            className="max-w-[660px] text-[clamp(28px,4vw,42px)] leading-[1.15] font-medium"
+          >
+            Start with the location. We will tell you the rest.
+          </h2>
+          <div data-reveal="1" className="w-full">
+            <LocationCta id="close-location" />
+          </div>
+        </div>
+
+        {/* The real map, next to the field that asks for a real pin - a
+            site we actually assessed, on the highway the demo report is
+            written about. Gated so its ~1.8 MB of Mapbox is fetched only
+            for a reader who gets this far. */}
+        <div data-reveal="2">
+          <NearViewport minHeight="clamp(260px,42vw,452px)">
+            <Suspense
+              fallback={
+                <div className="h-[clamp(260px,42vw,452px)] w-full border border-cw-line bg-cw-surface" />
+              }
+            >
+              <HeroMap />
+            </Suspense>
+          </NearViewport>
         </div>
       </div>
 
