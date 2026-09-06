@@ -67,6 +67,7 @@
   --color-cw-paper-muted: var(--cw-paper-muted);
   --color-cw-verdict-negative: var(--cw-verdict-negative);
   --color-cw-verdict-positive: var(--cw-verdict-positive);
+  --color-cw-caution: var(--cw-caution);
 
   --font-cw-sans: var(--cw-sans);
   --font-cw-serif: var(--cw-serif);
