@@ -271,6 +271,7 @@ export function RouteToCharge({ label = SITE_LABEL }: { label?: string }) {
           <g transform={`translate(${SITE.x} ${SITE.y})`}>
             <g className="cwa-best">
               <path
+                className="cwa-best__pin"
                 d={BEST_PIN}
                 fill="var(--cw-accent)"
                 stroke="var(--cw-accent)"
@@ -283,7 +284,7 @@ export function RouteToCharge({ label = SITE_LABEL }: { label?: string }) {
                 <rect
                   width="114"
                   height="27"
-                  rx="2"
+                  rx="13.5"
                   fill="var(--cw-ground)"
                   stroke="var(--cw-accent)"
                   strokeWidth="1"
@@ -363,7 +364,7 @@ export function RouteToCharge({ label = SITE_LABEL }: { label?: string }) {
           in. The counter is the same device; what it counts is a number the
           product actually produces. */}
       <div
-        className="cwa-card absolute top-[6%] left-[4.5%] w-[clamp(164px,32cqw,300px)] border border-cw-line bg-cw-ground/92 px-[2.2cqw] py-[2cqw]"
+        className="cwa-card absolute top-[6%] left-[4.5%] w-[clamp(164px,32cqw,300px)] border bg-cw-ground/92 px-[2.2cqw] py-[2cqw]"
         aria-hidden="true"
       >
         <div className="font-cw-mono text-[clamp(8px,1.15cqw,12px)] font-semibold tracking-[0.14em] text-cw-accent uppercase">

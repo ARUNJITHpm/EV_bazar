@@ -321,9 +321,29 @@
   }
 }
 
+/* The pin is the one copper object on the map, and the reference lifts it
+ * off the surface rather than letting it sit flat on the roads. */
+.cwa-best__pin {
+  filter: drop-shadow(0 5px 10px color-mix(in srgb, var(--cw-ground) 62%, transparent));
+}
+
+/* This is the recommendation's own popup, not a neutral panel, so it is
+ * bordered in the accent and carries the reference's corner rule. Both are
+ * hairlines - the copper budget in tokens.css is about area, and a 1px
+ * outline plus a 44x2 mark is a rounding error against the map behind it. */
 .cwa-card {
   opacity: 0;
+  border-color: color-mix(in srgb, var(--cw-accent) 45%, transparent);
   animation: cwa-card 18s var(--cw-ease) infinite;
+}
+.cwa-card::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 44px;
+  height: 2px;
+  background: var(--cw-accent);
 }
 @keyframes cwa-card {
   0%,
