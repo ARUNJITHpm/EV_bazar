@@ -9,9 +9,12 @@
  * be taken deliberately, for a site whose numbers someone has actually
  * sourced.
  *
- * The factor names are NOT illustrative. They are Landing.tsx's FACTORS
- * array verbatim, in order, grouped into the five categories the flat list
- * implies (9 / 7 / 8 / 6 / 4 = 34). If a factor is added there, add it here.
+ * The factor names and the grouping are NOT illustrative. The names are
+ * Landing.tsx's FACTORS verbatim; the grouping is by SOURCE, 12 / 4 / 8 / 7
+ * / 3 = 34, and it is the product's only one - the landing page, the
+ * /animation surface and the live assessment screen all read it from here.
+ * If a factor is added to FACTORS, add it to the group whose source fetches
+ * it.
  *
  * Deliberately absent: a 0-100 "site fit" score. The report payload has no
  * such field (app/domain/report/payload.py), and marketing a headline metric
@@ -42,14 +45,31 @@ export type Group = {
   /** Shown in the category strip - short enough to sit in five columns. */
   readonly short: string;
   readonly name: string;
+  /** What is read for this group - a source, never a result. ONE group is
+   *  ONE fetch, which is what makes this grouping the true one. */
+  readonly source: string;
   readonly checks: readonly Check[];
 };
 
+/**
+ * The 34, grouped 12 / 4 / 8 / 7 / 3 BY SOURCE.
+ *
+ * This is the only grouping in the product. An earlier version of this file
+ * grouped them 9 / 7 / 8 / 6 / 4 by subject, which read better on a
+ * marketing page and was wrong everywhere else: a visitor met one taxonomy
+ * on the landing page and a different one ten seconds into their own
+ * assessment. Owner's call - the source grouping wins, because one group is
+ * one real fetch and flow/Working.tsx walks it against a live request.
+ *
+ * flow/Working.tsx imports these rather than declaring its own, so the two
+ * cannot drift apart again.
+ */
 export const GROUPS: readonly Group[] = [
   {
-    key: "road",
-    short: "Road",
-    name: "Road access & geometry",
+    key: "access",
+    short: "Access",
+    name: "Access and geometry",
+    source: "OpenStreetMap road layer",
     checks: [
       { label: "Road class", value: "NH arterial" },
       { label: "Distance from main road", value: "0.4 km" },
@@ -60,16 +80,17 @@ export const GROUPS: readonly Group[] = [
       { label: "Turning radius", value: "12.5 m" },
       { label: "Entry and exit width", value: "8.2 m" },
       { label: "Frontage width", value: "46 m" },
+      { label: "AADT traffic count", value: "18,400 /day" },
+      { label: "Dominant flow direction", value: "Inbound AM" },
+      { label: "Peak hour timing", value: "08:00–10:00" },
     ],
   },
   {
     key: "demand",
     short: "Demand",
-    name: "Demand & mobility",
+    name: "Demand",
+    source: "VAHAN registrations, this district",
     checks: [
-      { label: "AADT traffic count", value: "18,400 /day" },
-      { label: "Dominant flow direction", value: "Inbound AM" },
-      { label: "Peak hour timing", value: "08:00–10:00" },
       { label: "EV registrations", value: "12,540" },
       { label: "Registration mix", value: "68% 4W" },
       { label: "Fleet operators within 10 km", value: "14" },
@@ -77,9 +98,10 @@ export const GROUPS: readonly Group[] = [
     ],
   },
   {
-    key: "grid",
-    short: "Grid",
-    name: "Grid, tariff & policy",
+    key: "power",
+    short: "Power",
+    name: "Power and tariff",
+    source: "State regulator’s EV tariff order",
     checks: [
       { label: "Tariff order", value: "TOU C&I" },
       { label: "Demand charges", value: "₹390 /kVA" },
@@ -94,9 +116,10 @@ export const GROUPS: readonly Group[] = [
     ],
   },
   {
-    key: "plot",
-    short: "Plot",
-    name: "Plot readiness",
+    key: "site",
+    short: "Site",
+    name: "Site and amenities",
+    source: "OpenStreetMap places within 1 km",
     checks: [
       { label: "Plot area", value: "3,420 m²" },
       { label: "Parking bays", value: "12" },
@@ -104,14 +127,15 @@ export const GROUPS: readonly Group[] = [
       { label: "Amenities within walking distance", value: "6" },
       { label: "Mobile network coverage", value: "−79 dBm" },
       { label: "Night lighting", value: "18 lux" },
+      { label: "Land or lease cost", value: "₹1.8 lakh/mo" },
     ],
   },
   {
-    key: "commercial",
-    short: "Market",
-    name: "Commercial landscape",
+    key: "competition",
+    short: "Competition",
+    name: "Competition",
+    source: "Competitor inventory, 10 km radius",
     checks: [
-      { label: "Land or lease cost", value: "₹1.8 lakh/mo" },
       { label: "Competitor distance", value: "2.4 km" },
       { label: "Competitor density at 3 / 5 / 10 km", value: "1 / 3 / 5" },
       { label: "Announced stations", value: "2" },
@@ -121,33 +145,15 @@ export const GROUPS: readonly Group[] = [
 
 export const TOTAL_CHECKS = GROUPS.reduce((n, g) => n + g.checks.length, 0);
 
-/** Every check, keyed by the factor name Landing.tsx and Working.tsx share. */
-const BY_LABEL = new Map(GROUPS.flatMap((g) => g.checks.map((c) => [c.label, c] as const)));
-
 /**
- * The illustrative value for a factor, for callers that hold the 34 names in
- * a DIFFERENT grouping - flow/Working.tsx groups them 12/4/8/7/3 by source
- * where this file groups them 9/7/8/6/4 by subject. The names are identical
- * in both (they come from Landing.tsx's FACTORS), so a label lookup crosses
- * between them safely; the counts do not.
- *
- * Returns undefined for an unknown label rather than inventing something -
- * a factor added in one place and not the other should render blank, not
- * wrong.
+ * The source plates, derived so they can never name something the checks do
+ * not actually read. An earlier hand-written list carried "Field survey" and
+ * "Land & policy", neither of which the pipeline fetches - a claim about
+ * capability, not decoration, and worse than an illustrative number.
  */
-export function checkFor(label: string): Check | undefined {
-  return BY_LABEL.get(label);
-}
-
-/** Where the factors come from. Names are public data sources, not partners. */
-export const SOURCES: readonly { readonly name: string; readonly stamp: string }[] = [
-  { name: "VAHAN · Parivahan", stamp: "Registrations · mix" },
-  { name: "OpenStreetMap", stamp: "Roads · POIs · access" },
-  { name: "DISCOM tariff orders", stamp: "Load · cost · policy" },
-  { name: "Field survey", stamp: "Geometry · amenities" },
-  { name: "Competitor census", stamp: "3 · 5 · 10 km" },
-  { name: "Land & policy", stamp: "Lease · subsidy" },
-];
+export const SOURCES: readonly { readonly name: string; readonly stamp: string }[] = GROUPS.map(
+  (g) => ({ name: g.source, stamp: g.name }),
+);
 
 /** Counts across the 34. measured + sourced + unverified must equal TOTAL_CHECKS. */
 export const COVERAGE = [

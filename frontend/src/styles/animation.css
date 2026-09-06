@@ -360,11 +360,11 @@
   opacity: 0.34;
   transition: opacity var(--cw-enter) var(--cw-ease);
 }
-.cwa-assess[data-stage="road"] .cwa-layer[data-layer="road"],
+.cwa-assess[data-stage="access"] .cwa-layer[data-layer="access"],
 .cwa-assess[data-stage="demand"] .cwa-layer[data-layer="demand"],
-.cwa-assess[data-stage="grid"] .cwa-layer[data-layer="grid"],
-.cwa-assess[data-stage="plot"] .cwa-layer[data-layer="plot"],
-.cwa-assess[data-stage="commercial"] .cwa-layer[data-layer="commercial"] {
+.cwa-assess[data-stage="power"] .cwa-layer[data-layer="power"],
+.cwa-assess[data-stage="site"] .cwa-layer[data-layer="site"],
+.cwa-assess[data-stage="competition"] .cwa-layer[data-layer="competition"] {
   opacity: 1;
 }
 .cwa-assess[data-stage="summary"] .cwa-layer {

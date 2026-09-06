@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AssemblingReport } from "../../animation/AssemblingReport";
-import { checkFor, illustrative } from "../../animation/data";
+import { GROUPS, TOTAL_CHECKS, illustrative, type Group } from "../../animation/data";
 
 /**
  * The working screen: the 34 factors, checked in front of the customer.
@@ -35,79 +35,9 @@ import { checkFor, illustrative } from "../../animation/data";
  * alone.
  */
 
-interface Group {
-  name: string;
-  /** What is being read for this group — a source, never a result. */
-  source: string;
-  factors: string[];
-}
-
-const GROUPS: Group[] = [
-  {
-    name: "Access and geometry",
-    source: "OpenStreetMap road layer",
-    factors: [
-      "Road class",
-      "Distance from main road",
-      "Carriageway direction served",
-      "Sub-road access",
-      "Median or divider",
-      "Sight line",
-      "Turning radius",
-      "Entry and exit width",
-      "Frontage width",
-      "AADT traffic count",
-      "Dominant flow direction",
-      "Peak hour timing",
-    ],
-  },
-  {
-    name: "Demand",
-    source: "VAHAN registrations, this district",
-    factors: [
-      "EV registrations",
-      "Registration mix",
-      "Fleet operators within 10 km",
-      "Distance to nearest city",
-    ],
-  },
-  {
-    name: "Power and tariff",
-    source: "State regulator’s EV tariff order",
-    factors: [
-      "Tariff order",
-      "Demand charges",
-      "Sanctioned load",
-      "Transformer distance",
-      "Transformer spare capacity",
-      "Grid outage hours",
-      "New connection cost",
-      "State subsidy applicability",
-    ],
-  },
-  {
-    name: "Site and amenities",
-    source: "OpenStreetMap places within 1 km",
-    factors: [
-      "Plot area",
-      "Parking bays",
-      "Canopy feasibility",
-      "Amenities within walking distance",
-      "Mobile network coverage",
-      "Night lighting",
-      "Land or lease cost",
-    ],
-  },
-  {
-    name: "Competition",
-    source: "Competitor inventory, 10 km radius",
-    factors: ["Competitor distance", "Competitor density at 3 / 5 / 10 km", "Announced stations"],
-  },
-];
-
-const TOTAL = GROUPS.reduce((n, g) => n + g.factors.length, 0);
+const TOTAL = TOTAL_CHECKS;
 /** The same groups, in the shape the assembling sheet wants. */
-const SHEET_GROUPS = GROUPS.map((g) => ({ name: g.name, count: g.factors.length }));
+const SHEET_GROUPS = GROUPS.map((g) => ({ name: g.name, count: g.checks.length }));
 /** About fourteen seconds end to end, with a little unevenness so it reads
  *  as reading, not as a metronome. */
 const TARGET_MS = 14_000;
@@ -319,7 +249,7 @@ export function Working({
             let offset = 0;
             return GROUPS.map((g) => {
               const start = offset;
-              offset += g.factors.length;
+              offset += g.checks.length;
               return (
                 <GroupRow
                   key={g.name}
@@ -353,7 +283,7 @@ function GroupRow({
   paced: boolean;
   settled: boolean;
 }) {
-  const end = start + group.factors.length;
+  const end = start + group.checks.length;
   const complete = done >= end;
   const active = !complete && done >= start;
   // Unpaced, every group stays open so the whole list is on the page at once.
@@ -372,10 +302,10 @@ function GroupRow({
         <span className="flex-grow font-cw-mono text-[17px]">{group.name}</span>
         <span className="font-cw-mono text-[14px] text-cw-muted tabular-nums">
           {complete
-            ? `${group.factors.length} checked`
+            ? `${group.checks.length} checked`
             : active
-              ? `${done - start} / ${group.factors.length}`
-              : `${group.factors.length}`}
+              ? `${done - start} / ${group.checks.length}`
+              : `${group.checks.length}`}
         </span>
       </div>
 
@@ -389,16 +319,13 @@ function GroupRow({
               single column puts the values in a line under each other -
               which is how this product wants numbers read. */}
           <ul className="m-0 flex max-w-[560px] list-none flex-col gap-y-1 p-0">
-            {group.factors.map((f, i) => {
+            {group.checks.map((c, i) => {
               const idx = start + i;
               const ticked = done > idx;
               const reading = done === idx;
-              // Illustrative, and bracketed so it says so. See the module
-              // note: these are placeholders until real values are passed in.
-              const check = checkFor(f);
               return (
                 <li
-                  key={f}
+                  key={c.label}
                   className={`flex min-h-[36px] items-center gap-3 text-[16px] transition-colors duration-300 ${
                     ticked ? "text-cw-text" : reading ? "text-cw-text" : "text-cw-muted"
                   }`}
@@ -406,14 +333,14 @@ function GroupRow({
                   <span className="flex w-[17px] shrink-0 justify-center">
                     {ticked ? <Tick animate={paced} /> : <Ring active={reading} />}
                   </span>
-                  <span className="min-w-0 flex-grow truncate font-cw-mono">{f}</span>
-                  {ticked && check && (
+                  <span className="min-w-0 flex-grow truncate font-cw-mono">{c.label}</span>
+                  {ticked && (
                     <span
                       className={`shrink-0 font-cw-mono text-[14px] tabular-nums ${
-                        check.unverified ? "text-cw-accent" : "text-cw-muted"
+                        c.unverified ? "text-cw-accent" : "text-cw-muted"
                       }`}
                     >
-                      {check.unverified ? check.value : illustrative(check.value)}
+                      {c.unverified ? c.value : illustrative(c.value)}
                     </span>
                   )}
                 </li>

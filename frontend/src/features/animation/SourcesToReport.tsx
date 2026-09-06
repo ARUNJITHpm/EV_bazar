@@ -23,7 +23,7 @@ import { useLoopClock } from "./useLoopClock";
  */
 
 /** sources, then one step per category, then the sheet, then the verdict. */
-const DURATIONS = [1600, 1500, 1400, 1600, 1300, 1200, 2600, 3200] as const;
+const DURATIONS = [1600, 1900, 1100, 1600, 1500, 1000, 2600, 3200] as const;
 const FIRST_GROUP = 1;
 const PAPER = 6;
 const VERDICT_STEP = 7;

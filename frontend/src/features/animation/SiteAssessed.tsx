@@ -27,7 +27,7 @@ import { useLoopClock } from "./useLoopClock";
  */
 
 /** intro, then one step per category, then the summary. */
-const DURATIONS = [900, 2300, 2000, 2400, 1900, 1700, 4200] as const;
+const DURATIONS = [900, 3000, 1600, 2400, 2200, 1500, 4200] as const;
 const FIRST_GROUP = 1;
 const SUMMARY = DURATIONS.length - 1;
 
@@ -94,7 +94,7 @@ export function SiteAssessed({ headless = false }: { headless?: boolean } = {}) 
               <div className="font-cw-mono text-[15px] leading-none font-medium tabular-nums">
                 {String(g.checks.length).padStart(2, "0")}
               </div>
-              <div className="mt-1.5 font-cw-mono text-[10px] tracking-[0.12em] uppercase">
+              <div className="mt-1.5 truncate font-cw-mono text-[clamp(8px,0.78vw,10px)] tracking-[0.1em] uppercase">
                 {g.short}
               </div>
             </li>
@@ -102,7 +102,7 @@ export function SiteAssessed({ headless = false }: { headless?: boolean } = {}) 
         </ol>
 
         {/* Fixed height: the panel must not resize the page as it cycles. */}
-        <div className="relative mt-6 min-h-[330px]">
+        <div className="relative mt-6 min-h-[500px]">
           {step === 0 && (
             <p className="cwa-fade font-cw-mono text-[13px] tracking-[0.14em] text-cw-muted uppercase">
               Connecting sources…
@@ -267,7 +267,7 @@ function SitePlan() {
         />
 
         {/* Road access & geometry */}
-        <g className="cwa-layer" data-layer="road">
+        <g className="cwa-layer" data-layer="access">
           <path
             d="M-15 471 C95 435 206 468 303 451 C382 437 425 416 500 398"
             fill="none"
@@ -295,14 +295,27 @@ function SitePlan() {
         </g>
 
         {/* Demand & mobility */}
-        <g className="cwa-layer" data-layer="demand">
+        {/* Traffic count and flow moved here with the source grouping: they
+            come off the same OSM road fetch as the geometry, so they light
+            with it rather than in their own beat. */}
+        <g className="cwa-layer" data-layer="access">
           <path d="M74 447 l19 -4 l-10 16z" fill="var(--cw-muted)" />
           <path d="M161 451 l19 -1 l-12 14z" fill="var(--cw-muted)" />
           <PlanBadge x={70} y={380} w={128} label={`AADT ${illustrative("18,400/day")}`} />
         </g>
 
+        {/* Demand is the VAHAN read, which is district-scale - nothing about
+            this parcel. It gets the two factors that can be drawn at all:
+            the registrations behind it and the city it faces. */}
+        <g className="cwa-layer" data-layer="demand">
+          {/* Clear of the AADT badge (x 70-198, y 380-402), which belongs to
+              the access layer and would otherwise clip these. */}
+          <PlanBadge x={212} y={390} w={116} label={`EV ${illustrative("12,540")}`} />
+          <PlanBadge x={212} y={416} w={128} label={`city ${illustrative("6.8 km")}`} />
+        </g>
+
         {/* Grid, tariff & policy */}
-        <g className="cwa-layer" data-layer="grid">
+        <g className="cwa-layer" data-layer="power">
           <rect
             x="17"
             y="92"
@@ -341,7 +354,7 @@ function SitePlan() {
         </g>
 
         {/* Plot readiness */}
-        <g className="cwa-layer" data-layer="plot">
+        <g className="cwa-layer" data-layer="site">
           <rect
             x="126"
             y="196"
@@ -393,7 +406,7 @@ function SitePlan() {
         </g>
 
         {/* Commercial landscape */}
-        <g className="cwa-layer" data-layer="commercial" transform="translate(344 112)">
+        <g className="cwa-layer" data-layer="competition" transform="translate(344 112)">
           <circle r="23" fill="none" stroke="var(--cw-line)" strokeWidth="1.25" />
           <circle r="41" fill="none" stroke="var(--cw-line)" strokeWidth="1.25" />
           <circle r="57" fill="none" stroke="var(--cw-line)" strokeWidth="1.25" />
