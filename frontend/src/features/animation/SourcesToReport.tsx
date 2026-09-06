@@ -143,15 +143,26 @@ export function SourcesToReport() {
                     </div>
 
                     {/* One mark per real check. The count is the taxonomy,
-                        not a decoration - 12 / 4 / 8 / 7 / 3 across the
-                        five groups. */}
+                        not a decoration - 12 / 4 / 8 / 7 / 3 across the five
+                        groups.
+
+                        Each mark fills in turn, spread across THIS group's
+                        own beat, so twelve checks take longer to resolve
+                        than three do. The clock only reports which step it
+                        is on, so the within-step pacing is a CSS stagger
+                        computed from the same DURATIONS the clock runs on. */}
                     <div className="mt-2.5 flex flex-wrap gap-[5px]">
-                      {g.checks.map((c) => (
+                      {g.checks.map((c, j) => (
                         <span
                           key={c.label}
                           title={c.label}
                           data-unverified={c.unverified ? "" : undefined}
                           className="cwa-node h-[9px] w-[9px]"
+                          style={{
+                            animationDelay: `${
+                              (j * (DURATIONS[i + FIRST_GROUP] ?? 1500) * 0.7) / g.checks.length
+                            }ms`,
+                          }}
                         />
                       ))}
                     </div>
@@ -300,11 +311,10 @@ function reportLines() {
 
 function BandLabel({ n, text }: { n: string; text: string }) {
   return (
-    <div className="flex items-baseline gap-2.5">
-      <span className="font-cw-mono text-[11px] font-semibold text-cw-slate tabular-nums">{n}</span>
-      <span className="font-cw-mono text-[11px] font-semibold tracking-[0.15em] text-cw-slate uppercase">
-        {text}
-      </span>
+    <div className="flex items-baseline gap-2 font-cw-mono text-[11px] font-semibold text-cw-slate">
+      <span className="tabular-nums">{n}</span>
+      <span aria-hidden="true">·</span>
+      <span className="tracking-[0.15em] uppercase">{text}</span>
     </div>
   );
 }

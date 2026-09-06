@@ -570,7 +570,7 @@
   background: linear-gradient(
     90deg,
     transparent 0 35%,
-    var(--cw-slate) 45% 55%,
+    color-mix(in srgb, var(--cw-slate) 45%, var(--cw-text)) 45% 55%,
     transparent 65% 100%
   );
   background-size: 240% 100%;
@@ -599,7 +599,7 @@
   background: linear-gradient(
     90deg,
     transparent 0 35%,
-    var(--cw-slate) 45% 55%,
+    color-mix(in srgb, var(--cw-slate) 45%, var(--cw-text)) 45% 55%,
     transparent 65% 100%
   );
   background-size: 240% 100%;
@@ -644,15 +644,45 @@
     background-color 120ms ease,
     border-color 120ms ease;
 }
-.cwa-group[data-state="live"] .cwa-node,
+
+/* While a group is live its marks fill ONE AT A TIME, on a delay the
+ * component computes from that group's own step duration. They used to
+ * switch on together the moment the group went live, which made the row a
+ * label rather than a progress bar - and the comment beside them claimed
+ * otherwise. `both` holds the empty state until each mark's turn. */
+.cwa-group[data-state="live"] .cwa-node {
+  animation: cwa-node-fill 260ms var(--cw-ease) both;
+}
+.cwa-group[data-state="live"] .cwa-node[data-unverified] {
+  animation-name: cwa-node-open;
+}
 .cwa-group[data-state="done"] .cwa-node {
   border-color: color-mix(in srgb, var(--cw-slate) 70%, transparent);
   background: var(--cw-slate);
 }
-.cwa-group[data-state="live"] .cwa-node[data-unverified],
 .cwa-group[data-state="done"] .cwa-node[data-unverified] {
   border-color: var(--cw-accent);
   background: var(--cw-accent);
+}
+@keyframes cwa-node-fill {
+  from {
+    border-color: var(--cw-line);
+    background: var(--cw-ground);
+  }
+  to {
+    border-color: color-mix(in srgb, var(--cw-slate) 70%, transparent);
+    background: var(--cw-slate);
+  }
+}
+@keyframes cwa-node-open {
+  from {
+    border-color: var(--cw-line);
+    background: var(--cw-ground);
+  }
+  to {
+    border-color: var(--cw-accent);
+    background: var(--cw-accent);
+  }
 }
 
 .cwa-line,
