@@ -4,349 +4,368 @@
  * with a Tailwind utility, and every colour is var(--cw-*) - there is not one
  * hex value in this file, because tokens.css stays the single source.
  *
- * Motion budget, design/IMPLEMENT.md:65-68 - cubic-bezier(0.16, 1, 0.3, 1),
- * no animation library, full prefers-reduced-motion. Animation A is pure CSS
- * with no script at all; B and C step through named states on a setTimeout
- * clock (useLoopClock.ts) and do all their movement here.
+ * The three animations are ports of Designv3/*.html into this stack. Timings
+ * and beats are the reference's; colour is this site's. Where the reference
+ * used a script the port uses CSS if CSS can do the same job - A is now pure
+ * CSS including the drive, which the reference ran on requestAnimationFrame.
+ * B and C step through named states on a setTimeout clock (useLoopClock.ts)
+ * and do all their movement here.
  *
- * The loops are long and low-contrast on purpose. A hero that re-attacks
- * every two seconds fights the copy for attention.
+ * Motion budget, design/IMPLEMENT.md:65-68 - cubic-bezier(0.16, 1, 0.3, 1),
+ * no animation library, full prefers-reduced-motion.
  */
 
 /* =========================================================================
- * A - Route to charge. <RouteToCharge />. 11s, no JS.
+ * Shared panel chrome.
+ *
+ * The reference frames B and C the same way: a hairline border, a 40px
+ * survey grid, and two corner brackets. It is the strongest identity mark
+ * in the set - the composition reads as a drawing on a sheet rather than a
+ * div - so it lives here once and both surfaces use it.
+ * ========================================================================= */
+.cwa-frame {
+  position: relative;
+  border: 1px solid var(--cw-line);
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--cw-line) 62%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--cw-line) 62%, transparent) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.cwa-frame::before,
+.cwa-frame::after {
+  content: "";
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  pointer-events: none;
+}
+.cwa-frame::before {
+  top: 14px;
+  left: 14px;
+  border-top: 1px solid color-mix(in srgb, var(--cw-slate) 62%, transparent);
+  border-left: 1px solid color-mix(in srgb, var(--cw-slate) 62%, transparent);
+}
+.cwa-frame::after {
+  right: 14px;
+  bottom: 14px;
+  border-right: 1px solid color-mix(in srgb, var(--cw-slate) 62%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--cw-slate) 62%, transparent);
+}
+
+/* Below the reference's own breakpoint the padding is too tight for a 46px
+ * bracket to sit in - it would cross the content instead of framing it. */
+@media (max-width: 899px) {
+  .cwa-frame::before,
+  .cwa-frame::after {
+    display: none;
+  }
+}
+
+/* =========================================================================
+ * A - Route to charge. <RouteToCharge />. 18s, no JS.
+ *
+ * Beats are the reference's, as percentages of the loop:
+ *   candidates 2.7-8.3 in, hold to 19.4, recede to 25
+ *   recommended pin 19.4-25
+ *   corridor draws 25-30.55
+ *   drive 30.5-69.4
+ *   halo, catchment and card 69.4-78
+ *   count 72-86
+ *   everything out 94.4-100
  * ========================================================================= */
 
-/* The readout is HTML laid over an SVG that scales with its column, so it
- * is sized in cqw against this box rather than in px - correct in a narrow
+/* The card is HTML laid over an SVG that scales with its column, so it is
+ * sized in cqw against this box rather than in px - correct in a narrow
  * hero panel and in a full-width review surface alike. */
 .cwa-route {
   container-type: inline-size;
 }
 
-.cwa-road {
-  stroke-dasharray: 1200;
-  stroke-dashoffset: 1200;
-  animation: cwa-road 11s var(--cw-ease) infinite;
+.cwa-candidates {
+  opacity: 0;
+  animation: cwa-candidates 18s var(--cw-ease) infinite;
 }
-@keyframes cwa-road {
-  0% {
-    stroke-dashoffset: 1200;
+@keyframes cwa-candidates {
+  0%,
+  2.7% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  8.3%,
+  19.4% {
     opacity: 1;
+    transform: translateY(0);
+  }
+  25%,
+  94.4% {
+    opacity: 0.38;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+/* The chosen location while it is still just a candidate. It hands over to
+ * .cwa-best, which is the same point wearing the verdict. */
+.cwa-shortlist {
+  opacity: 0;
+  animation: cwa-shortlist 18s var(--cw-ease) infinite;
+}
+@keyframes cwa-shortlist {
+  0%,
+  8.3% {
+    opacity: 0;
   }
   12%,
-  93% {
-    stroke-dashoffset: 0;
+  19.4% {
     opacity: 1;
   }
-  99%,
-  100% {
-    stroke-dashoffset: 0;
-    opacity: 0;
-  }
-}
-
-/* Lane markings keep their dash ATTRIBUTE, so they cannot share the draw
- * above - a CSS stroke-dasharray would overwrite it and render them solid.
- * This class animates opacity and nothing else. */
-.cwa-centre {
-  opacity: 0;
-  animation: cwa-centre 11s var(--cw-ease) infinite;
-}
-@keyframes cwa-centre {
-  0%,
-  6% {
-    opacity: 0;
-  }
-  16%,
-  93% {
-    opacity: 0.5;
-  }
-  99%,
+  24%,
   100% {
     opacity: 0;
   }
 }
 
-/* Two locations assessed and set aside. They stay on the map, dimmed: the
- * comparison happened, and hiding the losers would erase it. */
-.cwa-candidate {
-  opacity: 0;
-  animation: cwa-candidate 11s var(--cw-ease) infinite;
-}
-/* Negative delay on an infinite loop shifts PHASE - -10.85s of an 11s cycle
- * puts this pin 0.15s behind the first, not 10.85s ahead. */
-.cwa-candidate--2 {
-  animation-delay: -10.85s;
-}
-@keyframes cwa-candidate {
-  0%,
-  12% {
-    opacity: 0;
-  }
-  20%,
-  30% {
-    opacity: 0.9;
-  }
-  38%,
-  93% {
-    opacity: 0.22;
-  }
-  99%,
-  100% {
-    opacity: 0;
-  }
-}
-
-/* The one that was kept. Copper here is the map pin tokens.css licenses. */
-.cwa-chosen {
+.cwa-best {
   opacity: 0;
   transform-box: fill-box;
   transform-origin: center bottom;
-  animation: cwa-chosen 11s var(--cw-ease) infinite;
+  animation: cwa-best 18s var(--cw-ease) infinite;
 }
-@keyframes cwa-chosen {
+@keyframes cwa-best {
   0%,
-  12% {
+  19.4% {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.76);
   }
-  20%,
-  30% {
-    opacity: 0.9;
-    transform: scale(1);
-  }
-  38% {
-    opacity: 1;
-    transform: scale(1.14);
-  }
-  46%,
-  93% {
+  25%,
+  94.4% {
     opacity: 1;
     transform: scale(1);
   }
-  99%,
   100% {
     opacity: 0;
     transform: scale(1);
   }
 }
 
-.cwa-site {
+/* The corridor draws itself. pathLength="1" on #cwaRoutePath is what lets
+ * the dash be written as one unit instead of a measured guess - and stroke
+ * properties inherit into a <use>, so both layers read the same geometry. */
+.cwa-route-edge,
+.cwa-route-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
   opacity: 0;
-  animation: cwa-site 11s var(--cw-ease) infinite;
+  animation: cwa-route-draw 18s var(--cw-ease) infinite;
 }
-@keyframes cwa-site {
+.cwa-route-line {
+  animation-name: cwa-route-draw-line;
+}
+@keyframes cwa-route-draw {
   0%,
-  36% {
+  25% {
+    stroke-dashoffset: 1;
     opacity: 0;
   }
-  44%,
-  93% {
+  25.1% {
     opacity: 1;
   }
-  99%,
+  30.55%,
+  94.4% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
   100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+/* Same draw, but the highlight holds at 0.42 rather than 1 - 28px of slate
+ * at full strength would out-shout the copper pin it leads to. */
+@keyframes cwa-route-draw-line {
+  0%,
+  25% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  25.1% {
+    opacity: 0.42;
+  }
+  30.55%,
+  94.4% {
+    stroke-dashoffset: 0;
+    opacity: 0.42;
+  }
+  100% {
+    stroke-dashoffset: 0;
     opacity: 0;
   }
 }
 
-/* The drive. offset-path carries the same d as the corridor in
- * RouteToCharge.tsx - edit one and you must edit the other. */
+/* The drive. offset-path carries the same d as #cwaRoutePath in
+ * RouteToCharge.tsx - edit one and you must edit the other.
+ *
+ * The reference computed this frame by frame: constant speed for three
+ * quarters of the run, then a matched-velocity ease to a stop at 93.5%.
+ * Two keyframe segments and a per-keyframe timing function reproduce it
+ * with no script and no layout work on the main thread. */
 .cwa-car {
   offset-path: path(
-    "M 30 566 C 172 566 232 502 302 466 C 382 424 430 376 500 338 C 566 302 622 250 700 232"
+    "M -35 568 C 120 562 205 520 244 448 C 288 367 356 402 451 354 C 540 309 539 235 640 205 C 735 177 850 206 932 127"
   );
   offset-rotate: auto;
   offset-distance: 0%;
-  animation: cwa-drive 11s cubic-bezier(0.32, 0, 0.28, 1) infinite;
+  opacity: 0;
+  animation: cwa-drive 18s linear infinite;
 }
 @keyframes cwa-drive {
   0%,
-  42% {
+  30.5% {
     offset-distance: 0%;
     opacity: 0;
   }
-  45% {
-    offset-distance: 3%;
+  31.5% {
     opacity: 1;
   }
-  64%,
-  93% {
-    offset-distance: 100%;
+  59.7% {
+    offset-distance: 70.1%;
+    animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  }
+  69.44%,
+  94.4% {
+    offset-distance: 93.5%;
     opacity: 1;
   }
-  99%,
   100% {
-    offset-distance: 100%;
+    offset-distance: 93.5%;
     opacity: 0;
   }
 }
 
-.cwa-beam {
+/* Arrival. The halo is the car reaching the site, so it blooms once and
+ * stays - a pulse here would read as a beacon, which is a different claim. */
+.cwa-halo {
   opacity: 0;
-  animation: cwa-beam 11s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cwa-halo 18s var(--cw-ease) infinite;
 }
-@keyframes cwa-beam {
+@keyframes cwa-halo {
   0%,
-  44% {
+  68.8% {
     opacity: 0;
+    transform: scale(0.62);
   }
-  48%,
-  60% {
-    opacity: 0.5;
+  74%,
+  94.4% {
+    opacity: 0.92;
+    transform: scale(1);
   }
-  64%,
   100% {
     opacity: 0;
+    transform: scale(1);
   }
 }
 
-.cwa-cable {
-  stroke-dasharray: 80;
-  stroke-dashoffset: 80;
-  animation: cwa-cable 11s var(--cw-ease) infinite;
-}
-@keyframes cwa-cable {
-  0%,
-  64% {
-    stroke-dashoffset: 80;
-  }
-  70%,
-  93% {
-    stroke-dashoffset: 0;
-  }
-  99%,
-  100% {
-    stroke-dashoffset: 80;
-  }
-}
-
-.cwa-pulse {
-  stroke-dasharray: 10 70;
-  stroke-dashoffset: 80;
-  opacity: 0;
-  animation: cwa-pulse 11s linear infinite;
-}
-@keyframes cwa-pulse {
-  0%,
-  70% {
-    stroke-dashoffset: 80;
-    opacity: 0;
-  }
-  71% {
-    opacity: 1;
-  }
-  81% {
-    stroke-dashoffset: -80;
-    opacity: 1;
-  }
-  81.01% {
-    stroke-dashoffset: 80;
-  }
-  91% {
-    stroke-dashoffset: -80;
-    opacity: 1;
-  }
-  93%,
-  100% {
-    opacity: 0;
-  }
-}
-
-/* The unit's LED strip IS the charge meter - one element, one meaning,
- * rather than a status ring floating off the pedestal. */
-.cwa-meter {
-  stroke-dasharray: 48;
-  stroke-dashoffset: 48;
-  animation: cwa-meter 11s var(--cw-ease) infinite;
-}
-@keyframes cwa-meter {
-  0%,
-  68% {
-    stroke-dashoffset: 48;
-  }
-  90%,
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-/* 3 / 5 / 10 km, expanding only once the vehicle is charging - the catchment
+/* Catchment. It expands only once the vehicle has arrived - the catchment
  * is the consequence of the choice, never the opening claim. */
 .cwa-catch {
   opacity: 0;
   transform-box: fill-box;
   transform-origin: center;
-  animation: cwa-catch 11s var(--cw-ease) infinite;
+  animation: cwa-catch 18s var(--cw-ease) infinite;
 }
 .cwa-catch--2 {
-  animation-delay: -10.78s;
-}
-.cwa-catch--3 {
-  animation-delay: -10.56s;
+  animation-name: cwa-catch-2;
 }
 @keyframes cwa-catch {
   0%,
-  70% {
+  69.4% {
     opacity: 0;
-    transform: scale(0.72);
+    transform: scale(0.62);
   }
-  80% {
-    opacity: 0.85;
+  76% {
+    opacity: 0.55;
+  }
+  87%,
+  94.4% {
+    opacity: 0.3;
     transform: scale(1);
   }
-  93% {
-    opacity: 0.4;
+  100% {
+    opacity: 0;
     transform: scale(1);
   }
-  99%,
+}
+@keyframes cwa-catch-2 {
+  0%,
+  71.5% {
+    opacity: 0;
+    transform: scale(0.62);
+  }
+  78% {
+    opacity: 0.42;
+  }
+  89%,
+  94.4% {
+    opacity: 0.22;
+    transform: scale(1);
+  }
   100% {
     opacity: 0;
     transform: scale(1);
   }
 }
 
-/* @property animates an integer counter with no script. */
-@property --cwa-pct {
+.cwa-card {
+  opacity: 0;
+  animation: cwa-card 18s var(--cw-ease) infinite;
+}
+@keyframes cwa-card {
+  0%,
+  69.4% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  74%,
+  94.4% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+/* @property animates an integer with no script. The reference counted to a
+ * 92/100 site-fit score; this counts the 34 checks in, which is a number
+ * the product actually produces. */
+@property --cwa-count {
   syntax: "<integer>";
   initial-value: 0;
   inherits: false;
 }
-.cwa-readout {
-  opacity: 0;
-  animation: cwa-readout 11s var(--cw-ease) infinite;
+.cwa-count {
+  --cwa-count: 0;
+  counter-reset: cwa-count var(--cwa-count);
+  animation: cwa-count 18s linear infinite;
 }
-@keyframes cwa-readout {
-  0%,
-  66% {
-    opacity: 0;
-  }
-  72%,
-  93% {
-    opacity: 1;
-  }
-  99%,
-  100% {
-    opacity: 0;
-  }
-}
-.cwa-pct {
-  --cwa-pct: 0;
-  counter-reset: cwa-pct var(--cwa-pct);
-  animation: cwa-count 11s linear infinite;
-}
-.cwa-pct::after {
-  content: counter(cwa-pct) "%";
+.cwa-count::after {
+  content: counter(cwa-count);
 }
 @keyframes cwa-count {
   0%,
-  68% {
-    --cwa-pct: 0;
+  72% {
+    --cwa-count: 0;
   }
-  90%,
+  86%,
   100% {
-    --cwa-pct: 100;
+    --cwa-count: 34;
   }
 }
 
@@ -357,7 +376,7 @@
 /* The plan's layers lift as their category is read, so the drawing and the
  * ledger are one assessment rather than a picture beside a list. */
 .cwa-layer {
-  opacity: 0.34;
+  opacity: 0.24;
   transition: opacity var(--cw-enter) var(--cw-ease);
 }
 .cwa-assess[data-stage="access"] .cwa-layer[data-layer="access"],
@@ -368,14 +387,14 @@
   opacity: 1;
 }
 .cwa-assess[data-stage="summary"] .cwa-layer {
-  opacity: 0.75;
+  opacity: 0.78;
 }
 
 /* One-shot on mount: the parcel is the frame, not part of the loop. */
 .cwa-parcel {
-  stroke-dasharray: 1400;
-  stroke-dashoffset: 1400;
-  animation: cwa-parcel 1400ms var(--cw-ease) both;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: cwa-parcel 1500ms var(--cw-ease) both;
 }
 @keyframes cwa-parcel {
   to {
@@ -386,7 +405,7 @@
 /* The survey sweep - the assessment happening, not a sci-fi flourish. It
  * runs only while a category is actually being read. */
 .cwa-survey {
-  animation: cwa-survey 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: cwa-survey 3.3s linear infinite;
 }
 .cwa-assess[data-stage="intro"] .cwa-survey,
 .cwa-assess[data-stage="summary"] .cwa-survey {
@@ -396,42 +415,66 @@
 @keyframes cwa-survey {
   0% {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(-72px);
   }
-  15%,
-  80% {
-    opacity: 1;
+  8% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.9;
+    transform: translateY(430px);
   }
   100% {
     opacity: 0;
-    transform: translateY(450px);
+    transform: translateY(430px);
+  }
+}
+
+/* The status line over the plan. It names the source being read, which is
+ * the one thing a viewer cannot get from the drawing. */
+.cwa-tag {
+  animation: cwa-arrive 320ms var(--cw-ease) both;
+}
+
+/* The intro beat. A bar that sweeps rather than a spinner: the panel is
+ * connecting to sources, and there is no percentage to report. */
+.cwa-initialise {
+  background: linear-gradient(90deg, transparent, var(--cw-slate), transparent);
+  animation: cwa-initialise 1.2s ease-in-out infinite;
+}
+@keyframes cwa-initialise {
+  0%,
+  100% {
+    transform: scaleX(0.2);
+    opacity: 0.25;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 1;
   }
 }
 
 .cwa-cat {
-  opacity: 0.4;
-  border-top: 2px solid transparent;
+  border: 1px solid var(--cw-line);
   transition:
-    opacity var(--cw-state) var(--cw-ease),
-    border-color var(--cw-state) var(--cw-ease);
+    border-color var(--cw-state) var(--cw-ease),
+    background-color var(--cw-state) var(--cw-ease);
 }
 .cwa-cat[data-state="active"] {
-  opacity: 1;
-  border-top-color: var(--cw-slate);
+  border-color: var(--cw-slate);
+  background-color: color-mix(in srgb, var(--cw-slate) 12%, transparent);
 }
 .cwa-cat[data-state="done"] {
-  opacity: 0.75;
-  border-top-color: var(--cw-line);
+  border-color: color-mix(in srgb, var(--cw-slate) 45%, var(--cw-line));
 }
 
 /* Rows arrive already correct, one after another. They never flicker
- * through alternatives first: this product's claim is that nothing is
- * assumed, and a slot-machine would animate the opposite. */
-.cwa-check {
-  animation: cwa-arrive 420ms var(--cw-ease) both;
-}
+ * through alternatives first: the reference ran a slot-machine here, and
+ * under a headline reading "Nothing here is assumed" that animates the
+ * system guessing. */
+.cwa-check,
 .cwa-fade {
-  animation: cwa-arrive 420ms var(--cw-ease) both;
+  animation: cwa-arrive 380ms var(--cw-ease) both;
 }
 @keyframes cwa-arrive {
   from {
@@ -446,76 +489,150 @@
 
 .cwa-band {
   width: 0;
-  animation: cwa-band 800ms var(--cw-ease) 400ms both;
+  animation: cwa-band 900ms var(--cw-ease) 220ms both;
 }
 @keyframes cwa-band {
   to {
-    width: 30%;
+    width: 53%;
   }
 }
 
 .cwa-threshold {
-  animation: cwa-arrive 420ms var(--cw-ease) 900ms both;
+  animation: cwa-arrive 500ms var(--cw-ease) 780ms both;
 }
 
 /* The verdict lands LAST. Never first. */
 .cwa-verdict {
-  animation: cwa-arrive 520ms var(--cw-ease) 1250ms both;
+  animation: cwa-arrive 600ms var(--cw-ease) 1250ms both;
 }
 
 /* =========================================================================
  * C - Sources in, report out. <SourcesToReport />.
  * ========================================================================= */
 
+.cwa-flow {
+  --cwa-gap: clamp(24px, 3.4vw, 48px);
+}
+
 /* Each element carries its own stagger in an inline animation-delay, so one
  * keyframe serves the whole band. */
 .cwa-source {
+  position: relative;
   animation: cwa-arrive 420ms var(--cw-ease) both;
+  transition: border-color var(--cw-state) var(--cw-ease);
+}
+.cwa-source[data-state="feeding"] {
+  border-color: color-mix(in srgb, var(--cw-slate) 55%, var(--cw-line));
 }
 
-.cwa-source__dot {
-  opacity: 0.35;
+/* The output node and the wire to the matrix. The wire is the claim the
+ * band makes - that every figure on the sheet came from a plate here - so
+ * it is drawn, not implied by proximity. */
+.cwa-source::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -5px;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--cw-slate);
+  border-radius: 50%;
+  background: var(--cw-ground);
+  transform: translateY(-50%);
 }
-.cwa-source[data-state="feeding"] .cwa-source__dot {
-  animation: cwa-feed 1.4s ease-in-out infinite;
+.cwa-source::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: var(--cwa-gap);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0 35%,
+    var(--cw-slate) 45% 55%,
+    transparent 65% 100%
+  );
+  background-size: 240% 100%;
+  opacity: 0;
+  transform: translateY(-50%);
 }
-@keyframes cwa-feed {
-  0%,
-  100% {
-    opacity: 0.35;
+.cwa-source[data-state="feeding"]::after {
+  opacity: 0.78;
+  animation: cwa-signal 1.15s linear infinite;
+}
+@keyframes cwa-signal {
+  from {
+    background-position: 100% 0;
   }
-  50% {
-    opacity: 1;
+  to {
+    background-position: -140% 0;
+  }
+}
+
+.cwa-matrix-out {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--cwa-gap) * -1);
+  width: var(--cwa-gap);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0 35%,
+    var(--cw-slate) 45% 55%,
+    transparent 65% 100%
+  );
+  background-size: 240% 100%;
+  opacity: 0;
+}
+.cwa-matrix[data-state="feeding"] .cwa-matrix-out {
+  opacity: 0.78;
+  animation: cwa-signal 1.15s linear infinite;
+}
+
+/* Stacked, the wires would run off the side of a column into nothing. */
+@media (max-width: 1099px) {
+  .cwa-source::after,
+  .cwa-source::before,
+  .cwa-matrix-out {
+    display: none;
   }
 }
 
 .cwa-group {
-  transition: opacity var(--cw-state) var(--cw-ease);
+  border: 1px solid var(--cw-line);
+  transition:
+    border-color var(--cw-state) var(--cw-ease),
+    background-color var(--cw-state) var(--cw-ease),
+    opacity var(--cw-state) var(--cw-ease);
 }
 .cwa-group[data-state="waiting"] {
-  opacity: 0.55;
+  opacity: 0.62;
+}
+.cwa-group[data-state="live"] {
+  border-color: var(--cw-slate);
+  background-color: color-mix(in srgb, var(--cw-slate) 12%, transparent);
+}
+.cwa-group[data-state="done"] {
+  border-color: color-mix(in srgb, var(--cw-slate) 45%, var(--cw-line));
 }
 
 .cwa-node {
-  background: var(--cw-line);
+  border: 1px solid var(--cw-line);
+  background: var(--cw-ground);
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
 }
-.cwa-group[data-state="live"] .cwa-node {
-  animation: cwa-node-fill 300ms var(--cw-ease) both;
+.cwa-group[data-state="live"] .cwa-node,
+.cwa-group[data-state="done"] .cwa-node {
+  border-color: color-mix(in srgb, var(--cw-slate) 70%, transparent);
+  background: var(--cw-slate);
 }
 .cwa-group[data-state="live"] .cwa-node[data-unverified],
 .cwa-group[data-state="done"] .cwa-node[data-unverified] {
+  border-color: var(--cw-accent);
   background: var(--cw-accent);
-}
-.cwa-group[data-state="done"] .cwa-node {
-  background: var(--cw-slate);
-}
-@keyframes cwa-node-fill {
-  from {
-    background: var(--cw-line);
-  }
-  to {
-    background: var(--cw-slate);
-  }
 }
 
 .cwa-line,
@@ -528,13 +645,30 @@
 }
 
 /* The sheet is the output tray: it sits there blank and waiting rather than
-   leaving a third of the composition empty for most of the loop. */
+ * leaving a third of the composition empty for most of the loop. */
 .cwa-paper {
-  opacity: 0.24;
-  transition: opacity var(--cw-enter) var(--cw-ease);
+  position: relative;
+  opacity: 0.16;
+  transform: translateX(10px);
+  box-shadow: 0 18px 38px color-mix(in srgb, var(--cw-ground) 55%, transparent);
+  transition:
+    opacity var(--cw-enter) var(--cw-ease),
+    transform var(--cw-enter) var(--cw-ease);
 }
 .cwa-paper[data-state="in"] {
   opacity: 1;
+  transform: translateX(0);
+}
+/* The masthead rule. On the real report this is where the document type
+ * sits, so the preview carries it too. */
+.cwa-paper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 22px;
+  width: 56px;
+  height: 3px;
+  background: var(--cw-paper-slate);
 }
 
 /* =========================================================================
@@ -543,28 +677,28 @@
  * pure CSS, so its final frame is spelled out here.
  * ========================================================================= */
 @media (prefers-reduced-motion: reduce) {
-  .cwa-road,
-  .cwa-centre,
-  .cwa-candidate,
-  .cwa-chosen,
-  .cwa-site,
+  .cwa-candidates,
+  .cwa-shortlist,
+  .cwa-best,
+  .cwa-route-edge,
+  .cwa-route-line,
   .cwa-car,
-  .cwa-beam,
-  .cwa-cable,
-  .cwa-pulse,
-  .cwa-meter,
+  .cwa-halo,
   .cwa-catch,
-  .cwa-readout,
-  .cwa-pct,
+  .cwa-card,
+  .cwa-count,
   .cwa-parcel,
   .cwa-survey,
+  .cwa-initialise,
+  .cwa-tag,
   .cwa-check,
   .cwa-fade,
   .cwa-band,
   .cwa-threshold,
   .cwa-verdict,
   .cwa-source,
-  .cwa-source__dot,
+  .cwa-source::after,
+  .cwa-matrix-out,
   .cwa-node,
   .cwa-paper,
   .cwa-line,
@@ -572,16 +706,15 @@
     animation: none !important;
   }
 
-  .cwa-road,
-  .cwa-cable,
-  .cwa-meter,
+  .cwa-route-edge,
+  .cwa-route-line,
   .cwa-parcel {
     stroke-dashoffset: 0 !important;
   }
-  .cwa-site,
+  .cwa-best,
   .cwa-car,
-  .cwa-chosen,
-  .cwa-readout,
+  .cwa-card,
+  .cwa-tag,
   .cwa-check,
   .cwa-fade,
   .cwa-threshold,
@@ -593,37 +726,44 @@
     opacity: 1 !important;
     transform: none !important;
   }
-  .cwa-centre {
-    opacity: 0.5 !important;
+  .cwa-route-edge {
+    opacity: 1 !important;
   }
-  .cwa-candidate {
-    opacity: 0.22 !important;
+  .cwa-route-line {
+    opacity: 0.42 !important;
   }
-  .cwa-car {
-    offset-distance: 100% !important;
-  }
-  .cwa-catch {
-    opacity: 0.5 !important;
+  .cwa-candidates {
+    opacity: 0.38 !important;
     transform: none !important;
   }
-  .cwa-beam,
-  .cwa-pulse,
+  .cwa-shortlist {
+    opacity: 0 !important;
+  }
+  .cwa-car {
+    offset-distance: 93.5% !important;
+  }
+  .cwa-halo {
+    opacity: 0.92 !important;
+    transform: none !important;
+  }
+  .cwa-catch {
+    opacity: 0.28 !important;
+    transform: none !important;
+  }
   .cwa-survey {
     opacity: 0 !important;
   }
-  .cwa-pct {
-    --cwa-pct: 100 !important;
+  .cwa-source::after,
+  .cwa-matrix-out {
+    opacity: 0 !important;
+  }
+  .cwa-count {
+    --cwa-count: 34 !important;
   }
   .cwa-band {
-    width: 30% !important;
-  }
-  .cwa-source__dot {
-    opacity: 0.35 !important;
+    width: 53% !important;
   }
   .cwa-layer {
-    opacity: 0.75 !important;
-  }
-  .cwa-paper {
-    opacity: 1 !important;
+    opacity: 0.78 !important;
   }
 }

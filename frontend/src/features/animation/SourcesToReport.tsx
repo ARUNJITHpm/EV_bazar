@@ -2,19 +2,24 @@ import { COVERAGE, GROUPS, SITE_LABEL, SOURCES, TOTAL_CHECKS, VERDICT } from "./
 import { useLoopClock } from "./useLoopClock";
 
 /**
- * C - Sources in, report out. Three bands, left to right, 14s loop.
+ * C - Sources in, report out. Three bands, left to right.
  *
- * Public sources connect; the 34 checks resolve against them, category by
- * category; a report comes out on paper. It is the product's whole shape in
- * one frame, and the only claim it makes is a claim about traceability -
- * every figure in the sheet on the right came from a plate on the left.
+ * Ported from Designv3/sources-to-assessment-report.html: the framed sheet,
+ * the source plates wired into the matrix, the matrix shell with its
+ * per-group nodes, and the paper sliding in on the right. Public sources
+ * connect; the 34 checks resolve against them, group by group; a report
+ * comes out. It is the product's whole shape in one frame, and the only
+ * claim it makes is a claim about traceability - every figure in the sheet
+ * on the right came from a plate on the left.
  *
- * The middle band is a ledger, not a neural network. A network lattice was
- * specified for this slot and is still open - it would sit here, between the
- * source plates and the paper, without disturbing either. It is not built
- * yet because a decorative topology and a real audit trail want the same
- * piece of screen, and the ledger is the one that survives a customer
- * asking "where did that number come from?".
+ * The wires are the argument, which is why they are drawn rather than
+ * implied by proximity. They are also the first thing to go when the bands
+ * stack, because a wire that runs off the side of a column into nothing
+ * asserts a connection that is not on screen.
+ *
+ * The plates are derived from GROUPS, not typed out. The reference listed
+ * FIELD SURVEY and LAND · POLICY among its sources; the pipeline fetches
+ * neither, and a source plate is a claim about capability, not decoration.
  *
  * The paper band uses the report's own palette (--cw-paper / --cw-ink), so
  * what the animation promises and what /report/:id actually renders are the
@@ -22,7 +27,7 @@ import { useLoopClock } from "./useLoopClock";
  * one line only: the outage history nobody could source.
  */
 
-/** sources, then one step per category, then the sheet, then the verdict. */
+/** sources, then one step per group, then the sheet, then the verdict. */
 const DURATIONS = [1600, 1900, 1100, 1600, 1500, 1000, 2600, 3200] as const;
 const FIRST_GROUP = 1;
 const PAPER = 6;
@@ -34,122 +39,185 @@ export function SourcesToReport() {
   const feeding = step >= FIRST_GROUP && step < PAPER;
 
   return (
-    <div ref={ref}>
+    <div ref={ref} className="cwa-flow cwa-frame p-[clamp(22px,3.2vw,52px)]">
       <div
-        className="grid items-start gap-[clamp(24px,3vw,44px)]"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))" }}
+        className="grid grid-cols-1 items-center min-[1100px]:grid-cols-[minmax(190px,225px)_minmax(0,1fr)_minmax(300px,350px)]"
+        style={{ gap: "var(--cwa-gap)" }}
       >
         {/* 01 - where the factors come from. */}
-        <section>
-          <BandLabel n="01" text="Sources" />
-          <ul className="mt-4 flex flex-col gap-px bg-cw-line">
+        <section className="min-w-0">
+          <BandLabel n="01" text="Source layer" />
+          <ul className="mt-4 grid grid-cols-2 gap-2.5 min-[1100px]:grid-cols-1">
             {SOURCES.map((s, i) => (
               <li
                 key={s.name}
                 data-state={feeding ? "feeding" : "idle"}
-                className="cwa-source flex items-center gap-3 bg-cw-ground px-3.5 py-3"
+                className="cwa-source min-h-[78px] border border-cw-line bg-cw-surface/88 py-3 pr-[30px] pl-3.5"
                 style={{ animationDelay: `${i * 110}ms` }}
               >
-                <span className="cwa-source__dot h-1.5 w-1.5 shrink-0 bg-cw-slate" />
-                <span className="min-w-0 flex-auto">
-                  <span className="block truncate font-cw-mono text-[12px] tracking-[0.08em] uppercase">
-                    {s.name}
-                  </span>
-                  <span className="mt-0.5 block truncate text-[13px] text-cw-muted">{s.stamp}</span>
+                {/* The reference's plates were two-word brands (VAHAN ·
+                    PARIVAHAN) and could truncate. These name the actual
+                    fetch - "VAHAN registrations, this district" - and a
+                    plate reading "VAHAN REGISTRATIONS, TH..." claims less
+                    than the pipeline does, so the name wraps instead. */}
+                <span className="block font-cw-mono text-[11px] leading-tight font-semibold tracking-[0.07em] text-cw-text uppercase">
+                  {s.name}
                 </span>
+                <span className="mt-1.5 block truncate font-cw-mono text-[9px] leading-tight tracking-[0.08em] text-cw-muted uppercase">
+                  {s.stamp}
+                </span>
+                <span
+                  className={`absolute top-[11px] right-2.5 h-1.5 w-1.5 rounded-full ${
+                    feeding ? "bg-cw-slate" : "bg-cw-line"
+                  }`}
+                />
               </li>
             ))}
           </ul>
         </section>
 
         {/* 02 - the 34, grouped as the assessment groups them. */}
-        <section>
-          <BandLabel n="02" text={`${TOTAL_CHECKS} checks`} />
-          <ul className="mt-4 flex flex-col gap-px bg-cw-line">
-            {GROUPS.map((g, i) => {
-              const state =
-                step > i + FIRST_GROUP || step >= PAPER
-                  ? "done"
-                  : i === active
-                    ? "live"
-                    : "waiting";
-              const unresolved = g.checks.filter((c) => c.unverified).length;
-              return (
-                <li key={g.key} data-state={state} className="cwa-group bg-cw-ground px-3.5 py-3">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="min-w-0 truncate font-cw-mono text-[12px] tracking-[0.08em] uppercase">
-                      {g.short}
-                    </span>
-                    {/* Mid-flight the numerator is deliberately unreadable
-                        rather than wrong: the dots below carry the progress,
-                        and "08 / 08 · Measuring…" would contradict itself. */}
-                    <span className="shrink-0 font-cw-mono text-[12px] text-cw-muted tabular-nums">
-                      {state === "done"
-                        ? String(g.checks.length).padStart(2, "0")
-                        : state === "live"
-                          ? "··"
-                          : "00"}{" "}
-                      / {String(g.checks.length).padStart(2, "0")}
-                    </span>
-                  </div>
-                  {/* One mark per real check. The count is the taxonomy, not a
-                    decoration - 9 / 7 / 8 / 6 / 4 across the five groups. */}
-                  <div className="mt-2.5 flex flex-wrap gap-1">
-                    {g.checks.map((c, j) => (
+        <section className="min-w-0">
+          <BandLabel n="02" text="Assessment matrix" />
+          <div
+            data-state={feeding ? "feeding" : "idle"}
+            className="cwa-matrix relative mt-4 border border-cw-line bg-cw-ground/90 p-[17px]"
+          >
+            <div className="mb-3.5 flex items-baseline justify-between gap-4 border-b border-cw-line pb-3">
+              <span className="min-w-0 truncate text-[clamp(16px,1.9vw,23px)] leading-tight font-medium tracking-[-0.02em]">
+                Full-site assessment
+              </span>
+              <span className="shrink-0 font-cw-mono text-[11px] tracking-[0.1em] text-cw-slate uppercase">
+                {TOTAL_CHECKS} factors
+              </span>
+            </div>
+
+            <ul className="flex flex-col gap-[7px]">
+              {GROUPS.map((g, i) => {
+                const state =
+                  step > i + FIRST_GROUP || step >= PAPER
+                    ? "done"
+                    : i === active
+                      ? "live"
+                      : "waiting";
+                const unresolved = g.checks.filter((c) => c.unverified).length;
+                return (
+                  <li
+                    key={g.key}
+                    data-state={state}
+                    className="cwa-group min-h-[81px] bg-cw-surface/72 px-3 py-2.5"
+                  >
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2.5">
+                      <span className="truncate font-cw-mono text-[10px] font-semibold tracking-[0.08em] text-cw-muted uppercase">
+                        {g.name}
+                      </span>
+                      {/* Mid-flight the numerator is deliberately unreadable
+                          rather than wrong: the nodes below carry the
+                          progress, and "08 / 08 · Measuring" would
+                          contradict itself. */}
+                      <span className="font-cw-mono text-[10px] text-cw-text tabular-nums">
+                        {state === "done"
+                          ? String(g.checks.length).padStart(2, "0")
+                          : state === "live"
+                            ? "··"
+                            : "00"}{" "}
+                        / {String(g.checks.length).padStart(2, "0")}
+                      </span>
                       <span
-                        key={c.label}
-                        title={c.label}
-                        data-unverified={c.unverified ? "" : undefined}
-                        className="cwa-node h-[7px] w-[7px]"
-                        style={{ animationDelay: `${j * 55}ms` }}
-                      />
-                    ))}
-                  </div>
-                  <div className="mt-2 font-cw-mono text-[11px] tracking-[0.08em] text-cw-muted">
-                    {state === "waiting"
-                      ? "Awaiting source data"
-                      : state === "live"
-                        ? "Measuring…"
-                        : unresolved
-                          ? `${unresolved} unresolved input surfaced`
-                          : "All checks resolved"}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+                        className={`min-w-[62px] text-right font-cw-mono text-[10px] tracking-[0.06em] uppercase ${
+                          state === "live"
+                            ? "text-cw-slate"
+                            : state === "done"
+                              ? "text-cw-text"
+                              : "text-cw-muted"
+                        }`}
+                      >
+                        {state === "waiting"
+                          ? "Waiting"
+                          : state === "live"
+                            ? "Measuring"
+                            : unresolved
+                              ? "Review"
+                              : "Complete"}
+                      </span>
+                    </div>
+
+                    {/* One mark per real check. The count is the taxonomy,
+                        not a decoration - 12 / 4 / 8 / 7 / 3 across the
+                        five groups. */}
+                    <div className="mt-2.5 flex flex-wrap gap-[5px]">
+                      {g.checks.map((c) => (
+                        <span
+                          key={c.label}
+                          title={c.label}
+                          data-unverified={c.unverified ? "" : undefined}
+                          className="cwa-node h-[9px] w-[9px]"
+                        />
+                      ))}
+                    </div>
+
+                    <div
+                      className={`mt-2 truncate font-cw-mono text-[9px] tracking-[0.06em] ${
+                        state === "live" ? "text-cw-slate" : "text-cw-muted"
+                      }`}
+                    >
+                      {state === "waiting"
+                        ? "Awaiting source data"
+                        : state === "live"
+                          ? `Reading ${g.source}`
+                          : unresolved
+                            ? `${unresolved} unresolved input surfaced`
+                            : "All checks resolved"}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <span className="cwa-matrix-out" aria-hidden="true" />
+          </div>
         </section>
 
         {/* 03 - the document, on the report's own paper. */}
-        <section>
-          <BandLabel n="03" text="Report" />
+        <section className="min-w-0">
+          <BandLabel n="03" text="Report output" />
           <article
             data-state={step >= PAPER ? "in" : "out"}
-            className="cwa-paper mt-4 bg-cw-paper px-[clamp(16px,2vw,24px)] py-[clamp(18px,2.2vw,26px)] text-cw-ink"
+            className="cwa-paper mt-4 min-h-[560px] bg-cw-paper px-[25px] pt-[26px] pb-[24px] text-cw-ink"
           >
-            <div className="font-cw-mono text-[10px] tracking-[0.16em] text-cw-paper-muted uppercase">
-              Site assessment · Illustrative
+            <div className="font-cw-mono text-[9px] font-semibold tracking-[0.14em] text-cw-paper-slate uppercase">
+              EV charging · site intelligence
             </div>
-            <div className="mt-3 border-b border-cw-rule pb-2.5 font-cw-serif text-[19px] leading-tight">
-              {SITE_LABEL}, assessed
+            <h4 className="mt-2 mb-1 font-cw-serif text-[25px] leading-tight font-semibold tracking-[-0.02em]">
+              Site assessment
+            </h4>
+            <div className="mb-5 flex justify-between gap-3 font-cw-mono text-[9px] tracking-[0.07em] text-cw-paper-muted uppercase">
+              <span>{SITE_LABEL}</span>
+              <span>Illustrative</span>
             </div>
 
-            <dl className="m-0">
+            <dl className="m-0 border-t border-cw-rule">
               {reportLines().map((line, i) => (
                 <div
                   key={line.label}
                   data-state={step >= PAPER ? "in" : "out"}
-                  className="cwa-line flex items-baseline gap-3 border-b border-cw-rule py-[7px]"
+                  className="cwa-line grid min-h-[38px] grid-cols-[24px_minmax(0,1fr)_auto] items-center gap-2 border-b border-cw-rule"
                   style={{ animationDelay: `${i * 130}ms` }}
                 >
-                  <dt className="min-w-0 flex-auto truncate font-cw-serif text-[14px]">
-                    {line.label}
+                  <dt className="font-cw-mono text-[9px] text-cw-paper-muted tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
                   </dt>
+                  <dd className="m-0 min-w-0 truncate font-cw-serif text-[12px] text-cw-paper-muted">
+                    {line.label}
+                  </dd>
                   <dd
-                    className={`m-0 shrink-0 font-cw-mono text-[12px] tabular-nums ${
-                      line.caution ? "text-cw-caution" : "text-cw-paper-muted"
+                    className={`m-0 flex shrink-0 items-center gap-1.5 font-cw-mono text-[10px] font-semibold whitespace-nowrap tabular-nums ${
+                      line.caution ? "text-cw-caution" : "text-cw-ink"
                     }`}
                   >
+                    {line.caution && (
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-cw-caution" />
+                    )}
                     {line.value}
                   </dd>
                 </div>
@@ -158,33 +226,40 @@ export function SourcesToReport() {
 
             <div
               data-state={step >= VERDICT_STEP ? "in" : "out"}
-              className="cwa-summary mt-4 flex gap-5"
+              className="cwa-summary mt-4 grid grid-cols-3 gap-1.5"
             >
-              {COVERAGE.map((c) => (
-                <div key={c.label}>
-                  <div
-                    className={`font-cw-mono text-[19px] leading-none font-medium tabular-nums ${
-                      "unverified" in c && c.unverified ? "text-cw-caution" : "text-cw-ink"
-                    }`}
-                  >
-                    {String(c.count).padStart(2, "0")}
+              {COVERAGE.map((c) => {
+                const open = "unverified" in c && c.unverified;
+                return (
+                  <div key={c.label} className="border border-cw-rule px-[7px] py-2.5">
+                    <div
+                      className={`font-cw-mono text-[17px] leading-none font-medium tabular-nums ${
+                        open ? "text-cw-caution" : "text-cw-ink"
+                      }`}
+                    >
+                      {String(c.count).padStart(2, "0")}
+                    </div>
+                    <div
+                      className={`mt-1 font-cw-mono text-[8px] tracking-[0.08em] uppercase ${
+                        open ? "text-cw-caution" : "text-cw-paper-muted"
+                      }`}
+                    >
+                      {c.label}
+                    </div>
                   </div>
-                  <div className="mt-1 font-cw-mono text-[9px] tracking-[0.12em] text-cw-paper-muted uppercase">
-                    {c.label}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Last, always. */}
             <div
               data-state={step >= VERDICT_STEP ? "in" : "out"}
-              className="cwa-summary mt-4 border-t-2 border-cw-ink pt-3"
+              className="cwa-summary mt-4 border-t-2 border-cw-paper-slate pt-3.5"
             >
-              <div className="font-cw-mono text-[clamp(15px,1.6vw,19px)] font-medium tracking-[0.04em] text-cw-verdict-positive uppercase">
+              <div className="font-cw-mono text-[clamp(15px,1.6vw,20px)] leading-none font-bold tracking-[0.025em] text-cw-verdict-positive uppercase">
                 {VERDICT.word}
               </div>
-              <p className="mt-1.5 font-cw-serif text-[13px] leading-snug text-cw-paper-muted">
+              <p className="mt-2 font-cw-serif text-[11px] leading-snug text-cw-paper-muted">
                 {VERDICT.copy}
               </p>
             </div>
@@ -192,8 +267,8 @@ export function SourcesToReport() {
         </section>
       </div>
 
-      <p className="mt-7 border-t border-cw-line pt-4 font-cw-mono text-[12px] tracking-[0.08em] text-cw-muted">
-        Sources stay traceable. Missing evidence stays visible.
+      <p className="mt-7 font-cw-mono text-[10px] tracking-[0.1em] text-cw-muted uppercase">
+        Sources stay traceable · missing evidence stays visible
       </p>
     </div>
   );
@@ -225,9 +300,9 @@ function reportLines() {
 
 function BandLabel({ n, text }: { n: string; text: string }) {
   return (
-    <div className="flex items-baseline gap-2.5 border-b border-cw-line pb-2">
-      <span className="font-cw-mono text-[11px] text-cw-slate tabular-nums">{n}</span>
-      <span className="font-cw-mono text-[11px] tracking-[0.16em] text-cw-muted uppercase">
+    <div className="flex items-baseline gap-2.5">
+      <span className="font-cw-mono text-[11px] font-semibold text-cw-slate tabular-nums">{n}</span>
+      <span className="font-cw-mono text-[11px] font-semibold tracking-[0.15em] text-cw-slate uppercase">
         {text}
       </span>
     </div>

@@ -17,9 +17,10 @@ import { COVERAGE, TOTAL_CHECKS } from "./data";
  * also the better ending: the sheet fills, the last line lands, and the
  * page cuts to the document it was assembling.
  *
- * Grouping comes from the caller - Working.tsx groups the 34 by source
- * (12/4/8/7/3), which is not how data.ts groups them (9/7/8/6/4 by
- * subject). This takes what it is given.
+ * Grouping comes from the caller. Working.tsx passes data.ts's GROUPS - the
+ * 34 by source, 12/4/8/7/3 - which is the product's only grouping; this
+ * takes what it is given rather than reaching for the module itself, so a
+ * caller with a real report's own groups can use it unchanged.
  */
 export function AssemblingReport({
   groups,

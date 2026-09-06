@@ -182,3 +182,29 @@ export const VERDICT = {
  * illustrative, so the site it describes has to be illustrative too.
  */
 export const SITE_LABEL = "Candidate site";
+
+/** Find a check by its exact label. Undefined means FACTORS moved under the
+ *  caller, which is its cue to render nothing rather than a stale number. */
+export function checkByLabel(label: string): Check | undefined {
+  for (const group of GROUPS) {
+    const hit = group.checks.find((c) => c.label === label);
+    if (hit) return hit;
+  }
+  return undefined;
+}
+
+/**
+ * The three figures on the hero card, named by the check they are read from
+ * rather than typed out. The card cannot carry a number that is not one of
+ * the 34, and if a factor is renamed the row disappears instead of lying.
+ */
+export const HERO_METRICS: readonly { readonly label: string; readonly value: string }[] = (
+  [
+    { label: "Traffic", from: "AADT traffic count" },
+    { label: "Grid distance", from: "Transformer distance" },
+    { label: "Competition", from: "Competitor density at 3 / 5 / 10 km" },
+  ] as const
+).flatMap((m) => {
+  const check = checkByLabel(m.from);
+  return check ? [{ label: m.label, value: check.value }] : [];
+});
