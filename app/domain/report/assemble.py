@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import datetime as dt
 from dataclasses import dataclass, field
+from typing import Literal
 
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
@@ -414,6 +415,8 @@ def assemble_report(
     cpo_rows.sort(key=lambda r: r.irr_p50_pct, reverse=True)
 
     # --- verdict: from P10, stated as an argument -------------------------
+    verdict_value: Literal["build", "conditional", "dont"]
+    verdict_reason: str
     if margin_pp >= 0:
         verdict_value, verdict_reason = (
             "build",

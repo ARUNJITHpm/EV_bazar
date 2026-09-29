@@ -137,7 +137,8 @@ def parse_pois(payload: Any, lat: float, lng: float) -> PoiGravity | None:
             continue
         seen.add(key)
 
-        tags = el.get("tags") if isinstance(el.get("tags"), dict) else {}
+        raw_tags = el.get("tags")
+        tags: dict[str, Any] = raw_tags if isinstance(raw_tags, dict) else {}
         category = _element_category(tags)
         point = _element_point(el)
         if category is None or point is None:
