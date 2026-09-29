@@ -182,12 +182,23 @@ function Header() {
       <span className="font-cw-mono text-[clamp(20px,1.8vw,24px)] font-medium tracking-[0.08em] uppercase">
         Chargeworthy
       </span>
-      <Link
-        to={`/report/${DEMO_REPORT_ID}`}
-        className="inline-flex min-h-[44px] items-center text-cw-muted transition-colors duration-200 hover:text-cw-text"
-      >
-        Sample report
-      </Link>
+      <nav className="flex flex-wrap items-center justify-end gap-x-[clamp(16px,3vw,32px)]">
+        {/* A station that already runs has its own way in: /owner is a
+            different question (how does mine compare?) from the site
+            assessment the rest of this page sells. */}
+        <Link
+          to="/owner"
+          className="inline-flex min-h-[44px] items-center text-cw-muted transition-colors duration-200 hover:text-cw-text"
+        >
+          Station owners
+        </Link>
+        <Link
+          to={`/report/${DEMO_REPORT_ID}`}
+          className="inline-flex min-h-[44px] items-center text-cw-muted transition-colors duration-200 hover:text-cw-text"
+        >
+          Sample report
+        </Link>
+      </nav>
     </header>
   );
 }
@@ -218,8 +229,17 @@ function Hero() {
             Charging stations are built and run by operators. We are not one of them, and we hold no
             stake in any of them.
           </p>
-          <div data-reveal="4">
+          <div data-reveal="4" className="flex flex-col gap-4">
             <LocationCta id="hero-location" />
+            <p className="text-[16px] text-cw-muted">
+              Already run a charging station?{" "}
+              <Link
+                to="/owner"
+                className="underline underline-offset-4 transition-colors duration-200 hover:text-cw-text"
+              >
+                See how it compares →
+              </Link>
+            </p>
           </div>
         </div>
 
@@ -613,6 +633,12 @@ function Close() {
           </p>
         </div>
         <nav className="flex gap-8">
+          <Link
+            to="/owner"
+            className="inline-flex min-h-[44px] items-center text-[16px] text-cw-muted transition-colors duration-200 hover:text-cw-text"
+          >
+            Station owners
+          </Link>
           <Link
             to={`/report/${DEMO_REPORT_ID}`}
             className="inline-flex min-h-[44px] items-center text-[16px] text-cw-muted transition-colors duration-200 hover:text-cw-text"
