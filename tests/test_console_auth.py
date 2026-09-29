@@ -277,7 +277,23 @@ def test_production_will_not_boot_without_a_console_password() -> None:
 
 def test_the_dev_bypass_opens_the_console_without_a_session() -> None:
     """CONSOLE_AUTH_DISABLED=true: no login, every request is the operator."""
+    # An in-memory session, like the ``client`` fixture: /sources reads
+    # poll_runs, and CI has no Postgres to answer.
+    engine = create_engine(
+        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+    )
+    Base.metadata.create_all(engine, tables=[PollRun.__table__])
+    make_session = sessionmaker(bind=engine)
+
+    def override_session() -> Iterator[Session]:
+        s = make_session()
+        try:
+            yield s
+        finally:
+            s.close()
+
     app = create_app()
+    app.dependency_overrides[get_session] = override_session
     app.dependency_overrides[get_settings] = lambda: Settings(
         env="dev", console_auth_disabled=True, _env_file=None
     )
