@@ -247,3 +247,34 @@ def test_the_owner_cap_fires_on_the_route_and_search_does_not_spend_it(
     assert first.status_code != 429
     assert second.status_code == 429
     assert second.headers["retry-after"] == "3600"
+
+
+# --- the client key behind the Space's front proxy -----------------------------
+
+
+def test_client_key_uses_the_end_of_the_chain_the_front_proxy_wrote() -> None:
+    # The caller wrote "4.4.4.4" (spoofed); the front proxy appended the real one.
+    req = _request(
+        {"x-client-chain": "4.4.4.4, 8.8.8.8", "x-forwarded-for": "10.20.0.5"},
+        ("127.0.0.1", 8001),
+    )
+    assert client_key(req) == "8.8.8.8"
+
+
+def test_client_key_skips_private_hops_at_the_end_of_the_chain() -> None:
+    req = _request({"x-client-chain": "8.8.8.8, 10.1.2.3, 127.0.0.1"}, ("127.0.0.1", 8001))
+    assert client_key(req) == "8.8.8.8"
+
+
+def test_a_spoofed_leftmost_entry_does_not_change_the_key() -> None:
+    a = _request({"x-client-chain": "5.5.5.5, 8.8.8.8"}, ("127.0.0.1", 8001))
+    b = _request({"x-client-chain": "6.6.6.6, 8.8.8.8"}, ("127.0.0.1", 8001))
+    assert client_key(a) == client_key(b) == "8.8.8.8"
+
+
+def test_client_key_falls_back_when_the_chain_is_empty_or_all_private() -> None:
+    # Caddy sets the header to "" when the front proxy sent no X-Forwarded-For.
+    empty = _request({"x-client-chain": "", "x-forwarded-for": "8.8.4.4"}, ("127.0.0.1", 1))
+    assert client_key(empty) == "8.8.4.4"
+    private = _request({"x-client-chain": "10.0.0.1, garbage"}, ("192.0.2.7", 1))
+    assert client_key(private) == "192.0.2.7"

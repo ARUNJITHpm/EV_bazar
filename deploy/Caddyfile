@@ -10,7 +10,16 @@
 	encode gzip
 
 	handle /api/* {
-		reverse_proxy 127.0.0.1:8001
+		reverse_proxy 127.0.0.1:8001 {
+			# Caddy does not trust the Space's front proxy, so it discards the
+			# incoming X-Forwarded-For and writes its own (the front proxy's
+			# address). Every visitor then looks like one of a handful of
+			# proxy IPs to the per-IP throttle (api/internal/ratelimit.py).
+			# Keep the chain the front proxy sent in a header only Caddy sets;
+			# header_up REPLACES any value a caller supplies, so it cannot be
+			# forged from outside.
+			header_up X-Client-Chain {http.request.header.X-Forwarded-For}
+		}
 	}
 
 	handle {

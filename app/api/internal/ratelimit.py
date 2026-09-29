@@ -21,6 +21,7 @@ limit that loosens under scale, never one that wrongly rejects.
 
 from __future__ import annotations
 
+import ipaddress
 import math
 import threading
 import time
@@ -98,16 +99,42 @@ class SlidingWindowLimiter:
 _limiter = SlidingWindowLimiter()
 
 
+def _chain_client(chain: str) -> str | None:
+    """The last public address in a proxy chain, or None if there is none.
+
+    Each proxy appends the address it received the request from, so the RIGHT
+    end was written by infrastructure and the left end by whoever made the
+    request. Walking in from the right, past our own private hops, lands on the
+    address the outermost proxy actually saw - which a caller cannot choose.
+    """
+    for part in reversed(chain.split(",")):
+        try:
+            ip = ipaddress.ip_address(part.strip())
+        except ValueError:
+            continue
+        if ip.is_global:
+            return str(ip)
+    return None
+
+
 def client_key(request: Request) -> str:
     """The caller's IP, seen through the proxy chain.
 
-    Behind Caddy (prod) and HF's own front proxy, ``request.client`` is the
-    loopback proxy, not the caller - every request would share one window. The
-    chain is in ``X-Forwarded-For``, left-to-right from the original client, so
-    the leftmost entry is the closest thing to the real caller we can see. It
-    is client-supplied and so spoofable (see the module docstring); it is still
-    the right key for the failure modes this guards.
+    On the HF Space, Caddy does not trust the Space's front proxy and rewrites
+    ``X-Forwarded-For`` to that proxy's own address, so every visitor would
+    share a handful of windows. The Caddyfile therefore copies the chain the
+    front proxy sent into ``X-Client-Chain`` before it is lost, and that is
+    preferred here: it is only ever set by Caddy (``header_up`` replaces a
+    caller's value), and we read the end the proxy wrote, not the end the
+    caller can write. Without it (compose, a local run) the leftmost
+    ``X-Forwarded-For`` is used - client-supplied and so spoofable (see the
+    module docstring), still the right key for the failure modes this guards.
     """
+    chain = request.headers.get("x-client-chain")
+    if chain:
+        found = _chain_client(chain)
+        if found:
+            return found
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
         first = forwarded.split(",", 1)[0].strip()
