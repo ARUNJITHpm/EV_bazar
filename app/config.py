@@ -154,6 +154,12 @@ class Settings(BaseSettings):
     # guard, not an edge WAF - the module says what it does and does not defend.
     assess_rate_limit_per_minute: int = 60
 
+    # Owner submissions (POST /owner/submissions) are permanent rows - the tables
+    # are append-only - so they get their own, hourly, per-IP cap on top of the
+    # shared per-minute one. An owner uploading a few stations, or several people
+    # behind one mobile carrier's address, stay well under it. 0 disables it.
+    owner_submit_limit_per_hour: int = 20
+
     # --- Operations console (PLAN C.0) -------------------------------------
     # One operator, one password, a signed httpOnly cookie. The console
     # exposes CPO commercial terms and our own spend, so it is the most

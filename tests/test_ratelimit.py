@@ -16,7 +16,12 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from starlette.requests import Request
 
-from app.api.internal.ratelimit import SlidingWindowLimiter, client_key, rate_limit
+from app.api.internal.ratelimit import (
+    SlidingWindowLimiter,
+    client_key,
+    owner_submit_limit,
+    rate_limit,
+)
 from app.config import Settings, get_settings
 from app.db import get_session
 from app.main import create_app
@@ -155,3 +160,90 @@ def test_the_throttle_actually_fires_on_the_assess_route(monkeypatch: pytest.Mon
     assert first.status_code != 429  # the guard let the first through
     assert second.status_code == 429
     assert second.headers["retry-after"] == "60"
+
+
+# --- the owner submission cap -------------------------------------------------
+
+
+def test_the_owner_cap_is_hourly_and_refuses_past_the_ceiling(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    clock = FakeClock()
+    monkeypatch.setattr(
+        "app.api.internal.ratelimit._submit_limiter", _limiter(clock, window=3600.0)
+    )
+    settings = Settings(env="test", owner_submit_limit_per_hour=2, _env_file=None)
+    req = _request({"x-forwarded-for": "203.0.113.9"}, ("127.0.0.1", 8001))
+
+    owner_submit_limit(req, settings)
+    owner_submit_limit(req, settings)
+    with pytest.raises(HTTPException) as caught:
+        owner_submit_limit(req, settings)
+    assert caught.value.status_code == 429
+    assert caught.value.headers["Retry-After"] == "3600"
+
+    # The slot frees once the first hit is an hour old, not a minute.
+    clock.advance(60)
+    with pytest.raises(HTTPException):
+        owner_submit_limit(req, settings)
+    clock.advance(3600)
+    owner_submit_limit(req, settings)
+
+
+def test_the_owner_cap_is_per_caller_and_can_be_switched_off(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "app.api.internal.ratelimit._submit_limiter", _limiter(FakeClock(), window=3600.0)
+    )
+    one = Settings(env="test", owner_submit_limit_per_hour=1, _env_file=None)
+    a = _request({"x-forwarded-for": "203.0.113.1"}, ("127.0.0.1", 8001))
+    b = _request({"x-forwarded-for": "203.0.113.2"}, ("127.0.0.1", 8001))
+    owner_submit_limit(a, one)
+    owner_submit_limit(b, one)  # another caller has an allowance of its own
+    with pytest.raises(HTTPException):
+        owner_submit_limit(a, one)
+
+    off = Settings(env="test", owner_submit_limit_per_hour=0, _env_file=None)
+    for _ in range(50):
+        owner_submit_limit(a, off)
+
+
+def test_the_owner_cap_fires_on_the_route_and_search_does_not_spend_it(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Through the real routing stack, so dropping the dependency from the POST fails here.
+
+    The session is a mock: the POST body errors once the guard lets a call
+    through (the first call's status is not what is under test). The SECOND
+    POST, with the hourly cap at 1, must be refused with a 429 - and the station
+    searches between them must not have used the allowance up first.
+    """
+    monkeypatch.setattr("app.api.internal.ratelimit._limiter", _limiter(FakeClock()))
+    monkeypatch.setattr(
+        "app.api.internal.ratelimit._submit_limiter", _limiter(FakeClock(), window=3600.0)
+    )
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: Settings(
+        env="test", owner_submit_limit_per_hour=1, _env_file=None
+    )
+    app.dependency_overrides[get_session] = lambda: (yield MagicMock())
+
+    body = {
+        "station_id": 1,
+        "connector_indices": [0],
+        "install_month": "2025-01",
+        "meter_type": "separate",
+        "readings": [{"month": "2025-06", "kwh": 500}],
+        "consent_aggregate": True,
+        "consent_public": False,
+    }
+    with TestClient(app, raise_server_exceptions=False) as c:
+        for _ in range(5):
+            assert c.get("/api/internal/owner/stations?q=kochi").status_code != 429
+        first = c.post("/api/internal/owner/submissions", json=body)
+        second = c.post("/api/internal/owner/submissions", json=body)
+
+    assert first.status_code != 429
+    assert second.status_code == 429
+    assert second.headers["retry-after"] == "3600"

@@ -6,7 +6,8 @@
 ``POST /owner/submissions`` - store what the owner tells us and return the peer
 comparison and next-month energy band. The maths lives in
 ``app.domain.owner``; the browser never computes it. Both are open (the owner
-holds no login) and throttled, like ``/assess``.
+holds no login) and throttled like ``/assess``; the POST also has its own
+hourly per-IP cap, because a submission is a row that can never be deleted.
 """
 
 from __future__ import annotations
@@ -21,6 +22,7 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
+from app.api.internal.ratelimit import owner_submit_limit
 from app.db import get_session
 from app.domain.owner import ForecastBand, expand_connectors, forecast, valid_readings
 from app.models.competitors import CompetitorStation
@@ -160,7 +162,12 @@ def _band(b: ForecastBand) -> BandOut:
     return BandOut(p10_kwh=round(b.p10, 1), p50_kwh=round(b.p50, 1), p90_kwh=round(b.p90, 1))
 
 
-@router.post("/submissions", response_model=SubmissionOut, status_code=201)
+@router.post(
+    "/submissions",
+    response_model=SubmissionOut,
+    status_code=201,
+    dependencies=[Depends(owner_submit_limit)],
+)
 def submit(body: SubmissionIn, session: Session = Depends(get_session)) -> SubmissionOut:
     if not body.consent_aggregate:
         raise HTTPException(422, "Consent to anonymous averaging is required.")

@@ -116,6 +116,14 @@ def client_key(request: Request) -> str:
     return request.client.host if request.client else "unknown"
 
 
+def _refuse(decision: RateDecision, detail: str) -> HTTPException:
+    return HTTPException(
+        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+        detail=detail,
+        headers={"Retry-After": str(max(1, math.ceil(decision.retry_after)))},
+    )
+
+
 def rate_limit(request: Request, settings: Settings = Depends(get_settings)) -> None:
     """FastAPI dependency: refuse a caller past the /assess ceiling.
 
@@ -127,11 +135,33 @@ def rate_limit(request: Request, settings: Settings = Depends(get_settings)) -> 
         return
     decision = _limiter.check(client_key(request), limit)
     if not decision.allowed:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail=(
-                "Too many site checks from this address in a short span. "
-                "Wait a moment and try again."
-            ),
-            headers={"Retry-After": str(max(1, math.ceil(decision.retry_after)))},
+        raise _refuse(
+            decision,
+            "Too many site checks from this address in a short span. Wait a moment and try again.",
+        )
+
+
+#: Owner submissions, an hour wide and a bucket of their own. A submission is a
+#: permanent row (the tables are append-only, so a bad one cannot be deleted),
+#: which makes a per-minute ceiling the wrong shape: it lets a slow trickle
+#: fill the table all day. Kept apart from ``_limiter`` so searching for a
+#: station, or running /assess, never spends the submission allowance.
+_submit_limiter = SlidingWindowLimiter(window_seconds=3600.0)
+
+
+def owner_submit_limit(request: Request, settings: Settings = Depends(get_settings)) -> None:
+    """FastAPI dependency for ``POST /owner/submissions``: a per-IP hourly cap.
+
+    Counts every attempt, refused-for-validation ones included - a caller
+    probing the endpoint spends the allowance the same as one filling it.
+    Non-positive disables it, like ``rate_limit``.
+    """
+    limit = settings.owner_submit_limit_per_hour
+    if limit <= 0:
+        return
+    decision = _submit_limiter.check(client_key(request), limit)
+    if not decision.allowed:
+        raise _refuse(
+            decision,
+            "You have sent a lot of submissions from this address. Please try again in a while.",
         )
