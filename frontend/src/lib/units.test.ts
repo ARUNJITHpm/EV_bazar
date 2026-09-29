@@ -3,10 +3,12 @@ import { describe, expect, it } from "vitest";
 import {
   formatKva,
   formatKw,
+  formatKwhBound,
   formatPercentagePoints,
   formatUtilisation,
   kva,
   kw,
+  kwh,
   kwToKva,
 } from "./units";
 
@@ -39,5 +41,21 @@ describe("utilisation", () => {
   it("signs percentage points, because margin of safety is a difference", () => {
     expect(formatPercentagePoints(-7.4)).toBe("-7.4 pp");
     expect(formatPercentagePoints(3.1)).toBe("+3.1 pp");
+  });
+});
+
+describe("formatKwhBound", () => {
+  it("rounds a range outward, so rounding only ever widens it", () => {
+    expect(formatKwhBound(kwh(1210.4), "low")).toBe("1,210 kWh");
+    expect(formatKwhBound(kwh(2064.1), "high")).toBe("2,065 kWh");
+  });
+
+  it("groups digits the Indian way", () => {
+    expect(formatKwhBound(kwh(123456.2), "high")).toBe("1,23,457 kWh");
+  });
+
+  it("leaves a whole number alone at either end", () => {
+    expect(formatKwhBound(kwh(900), "low")).toBe("900 kWh");
+    expect(formatKwhBound(kwh(900), "high")).toBe("900 kWh");
   });
 });

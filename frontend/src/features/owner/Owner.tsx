@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { api } from "../../api/client";
-import { formatKw, formatKwh, kw, kwh } from "../../lib/units";
+import { formatKw, formatKwhBound, kw, kwh } from "../../lib/units";
 import { Answer, Answers, Screen } from "../public/flow/Question";
 import {
   billMonths,
@@ -392,13 +392,9 @@ function ResultStep({ draft, onRestart }: { draft: OwnerDraft; onRestart: () => 
       <div className="flex flex-col gap-3 border border-cw-line bg-cw-surface p-8">
         <span className="text-cw-muted">Your station, next month</span>
         <span className="font-cw-mono text-[clamp(30px,5.5vw,52px)] font-medium tabular-nums text-cw-accent">
-          {formatKwh(kwh(f.p10_kwh))} to {formatKwh(kwh(f.p90_kwh))}
+          {formatKwhBound(kwh(f.p10_kwh), "low")} to {formatKwhBound(kwh(f.p90_kwh), "high")}
         </span>
-        <span className="text-cw-muted">
-          Most likely about{" "}
-          <span className="font-cw-mono tabular-nums">{formatKwh(kwh(f.p50_kwh))}</span>. Nine times
-          in ten it lands inside the range.
-        </span>
+        <span className="text-cw-muted">Nine times in ten it lands inside this range.</span>
       </div>
       <div className="flex flex-col gap-3 border border-cw-line bg-cw-surface p-8">
         <span className="text-cw-muted">Against stations of the same age and power</span>
@@ -408,8 +404,8 @@ function ResultStep({ draft, onRestart }: { draft: OwnerDraft; onRestart: () => 
           comparable stations.
         </p>
         <span className="text-cw-muted">
-          Comparable stations deliver {formatKwh(kwh(r.peer.p10_kwh))} to{" "}
-          {formatKwh(kwh(r.peer.p90_kwh))} in {monthLabel(r.next_month)}.
+          Comparable stations deliver {formatKwhBound(kwh(r.peer.p10_kwh), "low")} to{" "}
+          {formatKwhBound(kwh(r.peer.p90_kwh), "high")} in {monthLabel(r.next_month)}.
         </span>
       </div>
       <p className="max-w-[680px] text-[14px] text-cw-muted">

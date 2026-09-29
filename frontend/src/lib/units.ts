@@ -42,6 +42,16 @@ export const formatKw = (v: Kw): string => `${trim(v)} kW`;
 export const formatKva = (v: Kva): string => `${trim(v)} kVA`;
 export const formatKwh = (v: Kwh): string => `${trim(v)} kWh`;
 
+const WHOLE = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 });
+
+/**
+ * Whole kWh with Indian digit grouping, for a range bound shown to an owner.
+ * A range is rounded outward - the low end down, the high end up - so the
+ * rounding can only widen it, never narrow what the model said.
+ */
+export const formatKwhBound = (v: Kwh, end: "low" | "high"): string =>
+  `${WHOLE.format(end === "low" ? Math.floor(v) : Math.ceil(v))} kWh`;
+
 /** Utilisation as a percentage. Always a range in user-facing output (Rule 4). */
 export function formatUtilisation(fraction: number): string {
   return `${(fraction * 100).toFixed(1)}%`;
