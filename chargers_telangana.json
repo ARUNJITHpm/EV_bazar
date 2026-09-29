@@ -1,0 +1,7602 @@
+{
+ "captured_at": "2026-09-29T15:51:28+00:00",
+ "sources": {
+  "pulse": "POST pulseenergy.io/api/charging-stations/nearby (aggregator; brand = CPO)",
+  "goec": "goecworld.com/api/stations/locations",
+  "zeon": "zeoncharging.com/api/stations"
+ },
+ "notes": [
+  "state and district come from point-in-polygon on the repo's districts layer (read-only); region is that state. Rows in another state (Goa, Puducherry, Andhra...) are dropped.",
+  "listed_in = every app that shows this physical charger; charger_id is ours, app_id is the app's.",
+  "possible_duplicates = unmerged rows within 150 m from another app; review before treating as separate.",
+  "Pulse connector counts are per-type totals; live availability is not stored here."
+ ],
+ "counts": {
+  "chargers": 267,
+  "listed_in_more_than_one_app": 7,
+  "with_possible_duplicates": 6
+ },
+ "chargers": [
+  {
+   "charger_id": "C-000617",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Pullur | Lepakshi Multicuisine Restaurant",
+   "address": "Pullur Toll Plaza, Pullur, Telangana 509128",
+   "lat": 15.8864069,
+   "lng": 78.01609615,
+   "cpo": "ChargeZone",
+   "power": "60 - 240 kW",
+   "connectors": {
+    "CCS2": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "51881",
+     "name_in_app": "TS | Pullur | Lepakshi Multicuisine Restaurant",
+     "operator_in_app": "ChargeZone",
+     "price": "₹22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Jogulamba Gadwal"
+  },
+  {
+   "charger_id": "C-000624",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Priya Darshini Family Restaurant",
+   "address": "Priya Darshini Family Restaurant, NH 44, Towards, Bangalore - Hyderabad Hwy, Beside IOCL Fuel Station, Vemula, Telangana 509128",
+   "lat": 16.0494928,
+   "lng": 77.9164129,
+   "cpo": "Adani Total Energies Limited",
+   "power": "3.3 - 60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "68129",
+     "name_in_app": "Priya Darshini Family Restaurant",
+     "operator_in_app": "Adani Total Energies Limited",
+     "price": "₹20/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Jogulamba Gadwal"
+  },
+  {
+   "charger_id": "C-000627",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "VOLTRAN Beechupalli",
+   "address": "Adj Udupi Sri Vihar Restaurant, Near to Beechupalli Temple, NH44, Beechupalli, Telangana 509133, India",
+   "lat": 16.156767,
+   "lng": 77.9247954,
+   "cpo": "Voltran",
+   "power": "7 - 120 kW",
+   "connectors": {
+    "CCS2": 5
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "63478",
+     "name_in_app": "VOLTRAN Beechupalli",
+     "operator_in_app": "Voltran",
+     "price": "₹21/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Jogulamba Gadwal"
+  },
+  {
+   "charger_id": "C-000630",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "HARITA COTTON INDUSTRIES",
+   "address": "Sy No.220/KHA 223/GA Kondapally Road Mellach",
+   "lat": 16.205785,
+   "lng": 77.792182,
+   "cpo": "goEgo",
+   "power": "3.3 kW",
+   "connectors": {
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "86304",
+     "name_in_app": "HARITA COTTON INDUSTRIES",
+     "operator_in_app": "goEgo",
+     "price": "Free",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Jogulamba Gadwal"
+  },
+  {
+   "charger_id": "C-000640",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "chargeMOD | Samisti Aranya Resorts | BPN EVCS | Hyderabad",
+   "address": "Amarabad, Mannanur, Hyderabad,Telangana",
+   "lat": 16.35038,
+   "lng": 78.750759,
+   "cpo": "ChargeMOD",
+   "power": "7.4 - 60 kW",
+   "connectors": {
+    "CCS2": 2,
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "64676",
+     "name_in_app": "chargeMOD | Samisti Aranya Resorts | BPN EVCS | Hyderabad",
+     "operator_in_app": "ChargeMOD",
+     "price": "₹20.88-23/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nagarkurnool"
+  },
+  {
+   "charger_id": "C-000644",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "chargeMOD | BPN EV Charging Hub | Brahmanapally",
+   "address": "Brahmanapally, Hyd to Srisailam Road",
+   "lat": 16.41795,
+   "lng": 78.73663,
+   "cpo": "ChargeMOD",
+   "power": "7.4 - 120 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "64677",
+     "name_in_app": "chargeMOD | BPN EV Charging Hub | Brahmanapally",
+     "operator_in_app": "ChargeMOD",
+     "price": "₹23/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nagarkurnool"
+  },
+  {
+   "charger_id": "C-000662",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "JK EV Charging Station Marikal",
+   "address": "Marikal Near Kanaka Mahalakshmi Kitchen",
+   "lat": 16.592422,
+   "lng": 77.696084,
+   "cpo": "Yocharge",
+   "power": "60 - 120 kW",
+   "connectors": {
+    "CCS2": 4
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "83616",
+     "name_in_app": "JK EV Charging Station Marikal",
+     "operator_in_app": "Yocharge",
+     "price": "₹21.99/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Narayanpet"
+  },
+  {
+   "charger_id": "C-000668",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "JK EV Charging Station - kalwakurthy",
+   "address": "JP Nagar Thandra",
+   "lat": 16.664368,
+   "lng": 78.545371,
+   "cpo": "Yocharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "83617",
+     "name_in_app": "JK EV Charging Station - kalwakurthy",
+     "operator_in_app": "Yocharge",
+     "price": "₹21.99/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nagarkurnool"
+  },
+  {
+   "charger_id": "C-000677",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(4mkghv)SUDHA FUEL STATION",
+   "address": "Bhageeratha Colony, BalajiNagar Colony, Mahbubnagar, Mahabubnagar, Telangana, India, 509001",
+   "lat": 16.7312232,
+   "lng": 78.0031176,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84987",
+     "name_in_app": "ID(4mkghv)SUDHA FUEL STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mahabubnagar"
+  },
+  {
+   "charger_id": "C-000689",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Drift nation (Charge_iN by Mahindra)",
+   "address": "Driftnation Food Court, Macharam, Polepalle, Gollapalle, Jadcherla, Telangana 509302",
+   "lat": 16.814609,
+   "lng": 78.148638,
+   "cpo": "Charge IN by Mahindra",
+   "power": "180 kW",
+   "connectors": {
+    "CCS2": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "82717",
+     "name_in_app": "Drift nation (Charge_iN by Mahindra)",
+     "operator_in_app": "Charge IN by Mahindra",
+     "price": "₹20/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mahabubnagar"
+  },
+  {
+   "charger_id": "C-000690",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Jadcherla | BlueFox",
+   "address": "Kumbakonam degree coffee, Driftnation,",
+   "lat": 16.8150173,
+   "lng": 78.14827416,
+   "cpo": "ChargeZone",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55180",
+     "name_in_app": "TS | Jadcherla | BlueFox",
+     "operator_in_app": "ChargeZone",
+     "price": "₹21-22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mahabubnagar"
+  },
+  {
+   "charger_id": "C-000694",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "ThunderPlus EV Charge Hub, ThunderPlus Factory, Jadcherla",
+   "address": "Trinity Factory, Jadcherla",
+   "lat": 16.83394,
+   "lng": 78.14934,
+   "cpo": "Thunder Plus",
+   "power": "3.3 - 30 kW",
+   "connectors": {
+    "Type6": 6,
+    "CCS2": 2,
+    "Type2": 1,
+    "IEC-60309": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "34176",
+     "name_in_app": "ThunderPlus EV Charge Hub, ThunderPlus Factory, Jadcherla",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹0-24/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mahabubnagar"
+  },
+  {
+   "charger_id": "C-000696",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(kdfwvk) R.K.Petro Mart",
+   "address": "Amangal, Rangareddy, Telangana, India, 509321",
+   "lat": 16.8566741,
+   "lng": 78.52942029,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84735",
+     "name_in_app": "ID(kdfwvk) R.K.Petro Mart",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000697",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "VOLTRAN Miryalaguda",
+   "address": "Miryalaguda Bypass Rd, Miryalaguda, Telangana 508207, India",
+   "lat": 16.8589682,
+   "lng": 79.5845583,
+   "cpo": "Voltran",
+   "power": "60 - 120 kW",
+   "connectors": {
+    "CCS2": 6
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "63477",
+     "name_in_app": "VOLTRAN Miryalaguda",
+     "operator_in_app": "Voltran",
+     "price": "₹21/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000701",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "JK EV Charging Station- Amangal",
+   "address": "Main Road Amangal",
+   "lat": 16.868261,
+   "lng": 78.529211,
+   "cpo": "Yocharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "83618",
+     "name_in_app": "JK EV Charging Station- Amangal",
+     "operator_in_app": "Yocharge",
+     "price": "₹21.99/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000706",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "chargeMOD | RANGER EV CHARGING STATION | Amangal",
+   "address": "NH765, Ayyasagar, Ramnunthala, Amangal",
+   "lat": 16.908318,
+   "lng": 78.528389,
+   "cpo": "ChargeMOD",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "78963",
+     "name_in_app": "chargeMOD | RANGER EV CHARGING STATION | Amangal",
+     "operator_in_app": "ChargeMOD",
+     "price": "₹21/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000708",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(ddi61i)MSHSD MADURAI RATHOD FILLING STATION",
+   "address": "Nh-44, Balanagar, barath petrolbunk, Balanagar, Mahabubnagar, Telangana, India, 509202",
+   "lat": 16.9595538,
+   "lng": 78.1857505,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85195",
+     "name_in_app": "ID(ddi61i)MSHSD MADURAI RATHOD FILLING STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mahabubnagar"
+  },
+  {
+   "charger_id": "C-000712",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(wvn6u4)M/S.Janani Filling Station",
+   "address": "National Highway 365A, Tammara, Kodad, Suryapet, Telangana, India, 508206",
+   "lat": 17.0124851,
+   "lng": 79.9894311,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66909",
+     "name_in_app": "ID(wvn6u4)M/S.Janani Filling Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Suryapet"
+  },
+  {
+   "charger_id": "C-000717",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(4d9442)KANAKADURGA FILLING STATION",
+   "address": "Mohammadnagar, Rangareddy, Telangana, India, 501359",
+   "lat": 17.0647667,
+   "lng": 78.47323463,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66404",
+     "name_in_app": "ID(4d9442)KANAKADURGA FILLING STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000719",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ThunderPlus EV Charge Hub, Hotel Logili, Suryapet",
+   "address": "Hotel Tanu's Logili , NH65, Suryapet, Undrugonda, Telangana 508214",
+   "lat": 17.111610466382352,
+   "lng": 79.69389813797109,
+   "cpo": "Thunder Plus",
+   "power": "120 - 320 kW",
+   "connectors": {
+    "CCS2": 14
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "63796",
+     "name_in_app": "ThunderPlus EV Charge Hub, Hotel Logili, Suryapet",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹11-22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Suryapet"
+  },
+  {
+   "charger_id": "C-000720",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "VOLTRAN Suryapet",
+   "address": "Opp 7 Food Court NH - 65, Rayangudem, Suryapet, Pillala Marri Rural, Telangana 508213, India",
+   "lat": 17.1502578,
+   "lng": 79.5759456,
+   "cpo": "Voltran",
+   "power": "7 - 240 kW",
+   "connectors": {
+    "CCS2": 13
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "63469",
+     "name_in_app": "VOLTRAN Suryapet",
+     "operator_in_app": "Voltran",
+     "price": "₹21-25/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [
+    "C-001977"
+   ],
+   "state": "TELANGANA",
+   "district": "Suryapet"
+  },
+  {
+   "charger_id": "C-000721",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "chargeMOD | AVANTHIKA EV Charging Hub | Suryapet",
+   "address": "GANDHI NAGAR, PILLALAMARRI REVENUE",
+   "lat": 17.152633,
+   "lng": 79.607988,
+   "cpo": "ChargeMOD",
+   "power": "120 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "77087",
+     "name_in_app": "chargeMOD | AVANTHIKA EV Charging Hub | Suryapet",
+     "operator_in_app": "ChargeMOD",
+     "price": "₹21.99/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Suryapet"
+  },
+  {
+   "charger_id": "C-000722",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Suryapet | Rajugari Thota Hotel",
+   "address": "Near Suryapet, NH-65, Vijayawada - Hyderabad",
+   "lat": 17.153697,
+   "lng": 79.55985659,
+   "cpo": "ChargeZone",
+   "power": "180 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "36899",
+     "name_in_app": "TS | Suryapet | Rajugari Thota Hotel",
+     "operator_in_app": "ChargeZone",
+     "price": "₹22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    },
+    {
+     "app": "tata_power",
+     "app_id": "Highway_Hospitality_Rajugari_Thota_Rayangudem_Charging_Station",
+     "name_in_app": "Highway Hospitality Rajugari Thota Rayangudem Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 51.6
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Suryapet"
+  },
+  {
+   "charger_id": "C-000723",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "chargeMOD | Sri EV Park EVCS | Uppalapadu",
+   "address": "Near Hotel Godavari, Uppalapadu Road",
+   "lat": 17.159797,
+   "lng": 79.535623,
+   "cpo": "ChargeMOD",
+   "power": "3.3 - 120 kW",
+   "connectors": {
+    "15A": 1,
+    "CCS2": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "77086",
+     "name_in_app": "chargeMOD | Sri EV Park EVCS | Uppalapadu",
+     "operator_in_app": "ChargeMOD",
+     "price": "₹20.88-21.99/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000724",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(x8o7yf)Sundaraiah son's filling station",
+   "address": "Mallaram, Nalgonda, Telangana, India, 508205",
+   "lat": 17.1625102,
+   "lng": 79.3266179,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66912",
+     "name_in_app": "ID(x8o7yf)Sundaraiah son's filling station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000725",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(x2zlf8)M/S.Highway Filling Station",
+   "address": "Tekumatlla, Nalgonda, Telangana, India, 508376",
+   "lat": 17.1657817,
+   "lng": 79.5223433,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66911",
+     "name_in_app": "ID(x2zlf8)M/S.Highway Filling Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000726",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Indra Flash",
+   "address": "Nakrekal, Nalgonda, Telangana, India, 508211",
+   "lat": 17.168861,
+   "lng": 79.397417,
+   "cpo": "The Sustainer",
+   "power": "240 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84670",
+     "name_in_app": "Indra Flash",
+     "operator_in_app": "The Sustainer",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000727",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "chargeMOD |  Indras Flash  EVCS | Nakrekal",
+   "address": "Survey no: 65/2 NH65, beside warangal highway flyover",
+   "lat": 17.168877,
+   "lng": 79.396597,
+   "cpo": "ChargeMOD",
+   "power": "22 - 480.01 kW",
+   "connectors": {
+    "CCS2": 12
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84054",
+     "name_in_app": "chargeMOD |  Indras Flash  EVCS | Nakrekal",
+     "operator_in_app": "ChargeMOD",
+     "price": "₹11/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    },
+    {
+     "app": "tata_power",
+     "app_id": "TPC_CP_Indras_Flash_Charging",
+     "name_in_app": "Indras Flash Charging",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 48.8
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000728",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, Nakrekal",
+   "address": "599W+HGX Nakrekal, Telangana",
+   "lat": 17.169030670938234,
+   "lng": 79.39641308619184,
+   "cpo": "Thunder Plus",
+   "power": "120 - 480 kW",
+   "connectors": {
+    "CCS2": 8,
+    "null": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "82465",
+     "name_in_app": "EV Charge Hub, Nakrekal",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹0-14/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000729",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "SVABAG_FLEXTRON",
+   "address": "Service Road, Aiti Pamula, Telangana 508205",
+   "lat": 17.169849,
+   "lng": 79.35373,
+   "cpo": "Flextron",
+   "power": "3.3 - 7.2 kW",
+   "connectors": {
+    "15A": 2,
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "71931",
+     "name_in_app": "SVABAG_FLEXTRON",
+     "operator_in_app": "Flextron",
+     "price": "₹15/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000730",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Gopalayapalli | Hotel Vivera",
+   "address": "NH 65, Hyderabad - Vijayawada Hwy,",
+   "lat": 17.2114871,
+   "lng": 79.16669553,
+   "cpo": "ChargeZone",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "34710",
+     "name_in_app": "TS | Gopalayapalli | Hotel Vivera",
+     "operator_in_app": "ChargeZone",
+     "price": "₹22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000731",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Narketpalle | Hotel Vivera",
+   "address": "NH 65, Hyderabad - Vijayawada Hwy,",
+   "lat": 17.212216,
+   "lng": 79.166799,
+   "cpo": "Hyundai",
+   "power": "60 - 180 kW",
+   "connectors": {
+    "CCS2": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "38830",
+     "name_in_app": "TS | Narketpalle | Hotel Vivera",
+     "operator_in_app": "Hyundai",
+     "price": "₹21-24/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    },
+    {
+     "app": "tata_power",
+     "app_id": "Vivera_Hotels_and_Resorts_Loc_1_Narketpally_Charging_Station",
+     "name_in_app": "TATA Power x TATA.EV Hotel Vivera Narketpalle",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 17.6
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000732",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Narketpalle | Chennapatnam Filter Coffee",
+   "address": "NH 65, Hyderabad, to, Hyderabad - Vijayawada",
+   "lat": 17.2140068,
+   "lng": 79.1590087,
+   "cpo": "ChargeZone",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55244",
+     "name_in_app": "TS | Narketpalle | Chennapatnam Filter Coffee",
+     "operator_in_app": "ChargeZone",
+     "price": "₹22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000733",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "chargeMOD | VIVES EV HUB | VENKATAGIRI X ROAD",
+   "address": "Gudimalla, Mutharam",
+   "lat": 17.21964,
+   "lng": 80.120474,
+   "cpo": "ChargeMOD",
+   "power": "3.3 - 60 kW",
+   "connectors": {
+    "15A": 3,
+    "CCS2": 2,
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "64683",
+     "name_in_app": "chargeMOD | VIVES EV HUB | VENKATAGIRI X ROAD",
+     "operator_in_app": "ChargeMOD",
+     "price": "₹13-20.88/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Khammam"
+  },
+  {
+   "charger_id": "C-000734",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(a3ujbc)SANTOSH RAGHAVENDRA SERVICE STATION",
+   "address": "Chityala, Nalgonda, Telangana, India, 508114",
+   "lat": 17.2261554,
+   "lng": 79.13876625,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84676",
+     "name_in_app": "ID(a3ujbc)SANTOSH RAGHAVENDRA SERVICE STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000735",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(7wqwpd)Sree venkateshwara fuel point",
+   "address": "Gundrampally, Nalgonda, Telangana, India, 508114",
+   "lat": 17.23248,
+   "lng": 78.98083,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85387",
+     "name_in_app": "ID(7wqwpd)Sree venkateshwara fuel point",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-000736",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "chargeMOD | VIVES EV HUB | KODAD X ROAD",
+   "address": "Maddulapalli, Near Kodada X Road",
+   "lat": 17.239445,
+   "lng": 80.091325,
+   "cpo": "ChargeMOD",
+   "power": "3.3 - 120 kW",
+   "connectors": {
+    "15A": 2,
+    "CCS2": 2,
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "64684",
+     "name_in_app": "chargeMOD | VIVES EV HUB | KODAD X ROAD",
+     "operator_in_app": "ChargeMOD",
+     "price": "₹13-20.88/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Khammam"
+  },
+  {
+   "charger_id": "C-000739",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Spider_Choutuppal",
+   "address": "Kohara Fuel Services",
+   "lat": 17.265005,
+   "lng": 78.833867,
+   "cpo": "Yocharge",
+   "power": "60 - 120 kW",
+   "connectors": {
+    "CCS2": 4
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "67526",
+     "name_in_app": "Spider_Choutuppal",
+     "operator_in_app": "Yocharge",
+     "price": "₹19.99/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Yadadri Bhuvanagiri"
+  },
+  {
+   "charger_id": "C-000740",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(ju3m6q)M/s sri rama swamy service station",
+   "address": "Pargi - Manneguda Road, Vikarabad, Telangana, India, 501102",
+   "lat": 17.28406,
+   "lng": 77.98235,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84782",
+     "name_in_app": "ID(ju3m6q)M/s sri rama swamy service station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Vikarabad"
+  },
+  {
+   "charger_id": "C-000742",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(jdhyvt)Sri Sai Baba Service station CC",
+   "address": "Neeladri Nagar, Hyderabad, Rangareddy, Telangana, India, 501510",
+   "lat": 17.2979809,
+   "lng": 78.5843158,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85197",
+     "name_in_app": "ID(jdhyvt)Sri Sai Baba Service station CC",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000744",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "chargeMOD | KS EV CHARGING STATION | KESARAM",
+   "address": "Chevella Rd, Gemini Colony",
+   "lat": 17.310064,
+   "lng": 78.168669,
+   "cpo": "ChargeMOD",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "77083",
+     "name_in_app": "chargeMOD | KS EV CHARGING STATION | KESARAM",
+     "operator_in_app": "ChargeMOD",
+     "price": "₹20.88/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000745",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(bd1j9r) Sri Mahalakshmi Service Station",
+   "address": "Aloor I, Rangareddy, Telangana, India, 501503",
+   "lat": 17.3133662,
+   "lng": 78.0942909,
+   "cpo": "HPCL eCharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85336",
+     "name_in_app": "ID(bd1j9r) Sri Mahalakshmi Service Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000746",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ThunderPlus EV Park & Charge Hub, Aramghar, Hyderabad",
+   "address": "Vattepally, Hyderabad, Telangana",
+   "lat": 17.31597,
+   "lng": 78.45896,
+   "cpo": "Thunder Plus",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 9
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "36726",
+     "name_in_app": "ThunderPlus EV Park & Charge Hub, Aramghar, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹12-24/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-000747",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(44p5zy)LAXMI NARASIMHA FILLING STATION",
+   "address": "Outer Ring Road, Hyderabad - Vijayawada Highway, Rangareddy, Telangana, India, 501513",
+   "lat": 17.317994,
+   "lng": 78.6640984,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84884",
+     "name_in_app": "ID(44p5zy)LAXMI NARASIMHA FILLING STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000748",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EFL ARAMGARH",
+   "address": "Udamgadda, Vattepally, Hyderabad, Telangana",
+   "lat": 17.318151,
+   "lng": 78.45951,
+   "cpo": "Electric Fuel",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 13
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "36906",
+     "name_in_app": "EFL ARAMGARH",
+     "operator_in_app": "Electric Fuel",
+     "price": "₹0-25/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-000750",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "HSR Arc 10-3-92, 1, Saroor Nagar Rd, Manipuri Colony, Bhagya Nagar, Saroornagar",
+   "address": "10-3-92, 1, Saroor Nagar Rd, Manipuri Colony,",
+   "lat": 17.3304963,
+   "lng": 78.553513,
+   "cpo": "Yocharge",
+   "power": "3 - 22 kW",
+   "connectors": {
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "62242",
+     "name_in_app": "HSR Arc 10-3-92, 1, Saroor Nagar Rd, Manipuri Colony, Bhagya Nagar, Saroornagar",
+     "operator_in_app": "Yocharge",
+     "price": "₹14/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000752",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ThunderPlus EV Park & Charge Hub, LB Nagar, Hyderabad",
+   "address": "LB Nagar, Hyderabad",
+   "lat": 17.35708,
+   "lng": 78.52301,
+   "cpo": "Thunder Plus",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 12
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "52238",
+     "name_in_app": "ThunderPlus EV Park & Charge Hub, LB Nagar, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹12-24/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-000753",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "EFL LB NAGAR",
+   "address": "Plot No-453,Sy.No:12,Ward No:3,Block No: 12,Opposite to Rock Town Community Hall, Sai Nagar,L.B.Nagar,500068",
+   "lat": 17.358056,
+   "lng": 78.560737,
+   "cpo": "Electric Fuel",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 10
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "38490",
+     "name_in_app": "EFL LB NAGAR",
+     "operator_in_app": "Electric Fuel",
+     "price": "₹0-25/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000754",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(yj9f5i)Y V Krishna Rao and Son",
+   "address": "Gandipet Main Road, Kokapet, Narsingi, Hyderabad, Rangareddy, Telangana, India, 500075",
+   "lat": 17.3874939,
+   "lng": 78.3414741,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85061",
+     "name_in_app": "ID(yj9f5i)Y V Krishna Rao and Son",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000755",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EIPL Tamarind (Privarte Residential Chargers)",
+   "address": "99VG+286, Alkapur Township, Alkapur Twp, Neknampur, Hyderabad, Telangana 500089",
+   "lat": 17.392767,
+   "lng": 78.375755,
+   "cpo": "EVRE",
+   "power": "3 - 60 kW",
+   "connectors": {
+    "AC-001": 3,
+    "15A": 2,
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "68634",
+     "name_in_app": "EIPL Tamarind (Privarte Residential Chargers)",
+     "operator_in_app": "EVRE",
+     "price": "₹9.8/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000756",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Power Welfare Society",
+   "address": "Kokapet, Hyderabad, Telangana 500075",
+   "lat": 17.39367884,
+   "lng": 78.34735902,
+   "cpo": "Belectriq",
+   "power": "3.3 kW",
+   "connectors": {
+    "AC-001": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55610",
+     "name_in_app": "Power Welfare Society",
+     "operator_in_app": "Belectriq",
+     "price": "₹10/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000757",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Rajapushpa Provincia(Private Residential Charging)",
+   "address": "99V3+57, Sy.No: 206, Nanakramguda Service Road, Puppalaguda, beside Avatar, Narsingi, Hyderabad, Telangana 500075",
+   "lat": 17.395739815701003,
+   "lng": 78.35500968465745,
+   "cpo": "EVRE",
+   "power": "3 - 7.4 kW",
+   "connectors": {
+    "15A": 6,
+    "Type2": 6,
+    "null": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55776",
+     "name_in_app": "Rajapushpa Provincia(Private Residential Charging)",
+     "operator_in_app": "EVRE",
+     "price": "₹11.8/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000758",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "PPMS Prestige Tranquil",
+   "address": "Golden Mile Rd, Kokapet, Hyderabad, Telangana 500075",
+   "lat": 17.396845976130034,
+   "lng": 78.3403034288358,
+   "cpo": "Belectriq",
+   "power": "3.3 - 7.7 kW",
+   "connectors": {
+    "AC-001": 4,
+    "Type2": 27,
+    "IEC-60309": 18
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55611",
+     "name_in_app": "PPMS Prestige Tranquil",
+     "operator_in_app": "Belectriq",
+     "price": "₹0-14/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000759",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Serenity Park Apts (Private Residential Charging)",
+   "address": "4-53, Kokapet, Hyderabad, Telangana 500075",
+   "lat": 17.397088,
+   "lng": 78.335793,
+   "cpo": "EVRE",
+   "power": "7 kW",
+   "connectors": {
+    "Type2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "65344",
+     "name_in_app": "Serenity Park Apts (Private Residential Charging)",
+     "operator_in_app": "EVRE",
+     "price": "₹16/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000760",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Vertex Panache Fommecs AC3 Board (Private Residential Charging)",
+   "address": "Survey No, Post & Village, VERTEX PANACHE, Kokapet, 180 to 183 and 184, ORR Service Rd, near Akshya Patra, Narsingi, Hyderabad, Telangana 500075.",
+   "lat": 17.39963,
+   "lng": 78.342523,
+   "cpo": "EVRE",
+   "power": "3.3 - 7.4 kW",
+   "connectors": {
+    "15A": 1,
+    "Type2": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "62438",
+     "name_in_app": "Vertex Panache Fommecs AC3 Board (Private Residential Charging)",
+     "operator_in_app": "EVRE",
+     "price": "₹11.01/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000761",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EIPL HYDERABAD Cornerstone (Private Residential Charging)",
+   "address": "EIPL cornerstone apartment, Puppalaguda, Hyderabad, Telangana-500089",
+   "lat": 17.399966,
+   "lng": 78.370367,
+   "cpo": "EVRE",
+   "power": "3.3 - 30 kW",
+   "connectors": {
+    "AC-001": 2,
+    "15A": 3,
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "52066",
+     "name_in_app": "EIPL HYDERABAD Cornerstone (Private Residential Charging)",
+     "operator_in_app": "EVRE",
+     "price": "₹8.26/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000762",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, Manikonda",
+   "address": "Sai Gautham colony, main road, Narsingi, Hyderabad, Telangana 500089",
+   "lat": 17.401035,
+   "lng": 78.364425,
+   "cpo": "Thunder Plus",
+   "power": null,
+   "connectors": {
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "73436",
+     "name_in_app": "EV Charge Hub, Manikonda",
+     "operator_in_app": "Thunder Plus",
+     "price": "Free",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000763",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Peerzadiguda | Dwarka Hyundai S5239",
+   "address": "59, Warangal Highway, near decathlon, Indira",
+   "lat": 17.4034987,
+   "lng": 78.5847162,
+   "cpo": "ChargeZone",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55445",
+     "name_in_app": "TS | Peerzadiguda | Dwarka Hyundai S5239",
+     "operator_in_app": "ChargeZone",
+     "price": "₹22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000764",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Bharat Charge | The District",
+   "address": "Myscape Rd",
+   "lat": 17.4128827,
+   "lng": 78.33511659999999,
+   "cpo": "Bharat Charge",
+   "power": "3.36 - 120 kW",
+   "connectors": {
+    "15A": 1,
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85594",
+     "name_in_app": "Bharat Charge | The District",
+     "operator_in_app": "Bharat Charge",
+     "price": "₹20-22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000765",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, Micron- Nanakramguda",
+   "address": "Financial District, Nanakramguda, Telangana 500032",
+   "lat": 17.415916,
+   "lng": 78.339734,
+   "cpo": "Thunder Plus",
+   "power": "7.4 kW",
+   "connectors": {
+    "Type2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "76924",
+     "name_in_app": "EV Charge Hub, Micron- Nanakramguda",
+     "operator_in_app": "Thunder Plus",
+     "price": "Free",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000766",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Trendset Winz (EVRE-TS0005) Private Residential Charging",
+   "address": "Trendset Winz, Financial District, Nanakaramguda, Telangana 500032, India",
+   "lat": 17.42183,
+   "lng": 78.346911,
+   "cpo": "EVRE",
+   "power": "3.3 - 7.4 kW",
+   "connectors": {
+    "15A": 2,
+    "Type2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "38416",
+     "name_in_app": "Trendset Winz (EVRE-TS0005) Private Residential Charging",
+     "operator_in_app": "EVRE",
+     "price": "₹12.2/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000767",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Hyderabad | Sheraton Hyderabad Hotel",
+   "address": "115/1, Nanakramguda Rd, Financial District,",
+   "lat": 17.421897,
+   "lng": 78.337324,
+   "cpo": "ChargeZone",
+   "power": "30 - 60 kW",
+   "connectors": {
+    "CCS2": 4
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "33042",
+     "name_in_app": "TS | Hyderabad | Sheraton Hyderabad Hotel",
+     "operator_in_app": "ChargeZone",
+     "price": "₹22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000768",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Sohini Tech park",
+   "address": "Near TRENDSET APARTMENTS, Nanakramguda Rd, Financial District, Gachibowli, Nanakramguda, Telangana 500032",
+   "lat": 17.4225738,
+   "lng": 78.3474722,
+   "cpo": "Lion Charge",
+   "power": "22 - 120 kW",
+   "connectors": {
+    "CCS2": 1,
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "43458",
+     "name_in_app": "Sohini Tech park",
+     "operator_in_app": "Lion Charge",
+     "price": "₹25/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [
+    "C-002005"
+   ],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000769",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Hyderabad  | BMW - Kun Motoren Pvt Ltd",
+   "address": "Syn No 224, Vattinagulapally , Gandipet,",
+   "lat": 17.422975,
+   "lng": 78.327502,
+   "cpo": "ChargeZone",
+   "power": "50 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "73816",
+     "name_in_app": "TS | Hyderabad  | BMW - Kun Motoren Pvt Ltd",
+     "operator_in_app": "ChargeZone",
+     "price": "₹21.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000770",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Lemon Tree Hotel Gachibowli DC60kW",
+   "address": "Survey No. 115/1, Lemon Tree Hotel, near by",
+   "lat": 17.423245,
+   "lng": 78.33087271,
+   "cpo": "EV Dock",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84070",
+     "name_in_app": "Lemon Tree Hotel Gachibowli DC60kW",
+     "operator_in_app": "EV Dock",
+     "price": "₹22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000771",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, Ace Aalaya",
+   "address": "762/A, Jodimetla, Pocharam, Hyderabad, Telangana 500088",
+   "lat": 17.423478598966508,
+   "lng": 78.64242861413432,
+   "cpo": "Thunder Plus",
+   "power": "3 - 7.4 kW",
+   "connectors": {
+    "Type2": 2,
+    "IEC-60309": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85690",
+     "name_in_app": "EV Charge Hub, Ace Aalaya",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹10.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000772",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Mantri Celestia",
+   "address": "8-266/7, ISB Rd, Financial District,",
+   "lat": 17.423488,
+   "lng": 78.341373,
+   "cpo": "Yocharge",
+   "power": "3 - 22 kW",
+   "connectors": {
+    "Type2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "62269",
+     "name_in_app": "Mantri Celestia",
+     "operator_in_app": "Yocharge",
+     "price": "₹18/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000773",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(zxzmji)M/S.Adarsh Filling Station",
+   "address": "Yadav Nagar, Pocharam, Hyderabad, Medchal-Malkajgiri, Telangana, India, 500088",
+   "lat": 17.4277342,
+   "lng": 78.6487575,
+   "cpo": "HPCL eCharge",
+   "power": "15 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84865",
+     "name_in_app": "ID(zxzmji)M/S.Adarsh Filling Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000774",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Mokila | Kun hyundai",
+   "address": "Kun hyundai, Mokila, Telangana, 501203",
+   "lat": 17.429856,
+   "lng": 78.1941315,
+   "cpo": "ChargeZone",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "63458",
+     "name_in_app": "TS | Mokila | Kun hyundai",
+     "operator_in_app": "ChargeZone",
+     "price": "₹21/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000775",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EFL NACHARAM",
+   "address": "PLOT NO. 67, Savarkar Nagar, Ram Reddy Colony, Nacharam, Secunderabad, Telangana 500076",
+   "lat": 17.431393,
+   "lng": 78.552254,
+   "cpo": "Electric Fuel",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 9
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "38461",
+     "name_in_app": "EFL NACHARAM",
+     "operator_in_app": "Electric Fuel",
+     "price": "₹0-25/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000776",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "EFL GACHIBOWLI 2",
+   "address": "Beside Panchatantra Park,Journalist Colony,Phase-3, Gowlidoddi, Gachibowli -500032",
+   "lat": 17.4325651,
+   "lng": 78.3184195,
+   "cpo": "Electric Fuel",
+   "power": "3.3 - 30 kW",
+   "connectors": {
+    "CCS2": 1,
+    "GBT": 2,
+    "IEC-60309": 15
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "34759",
+     "name_in_app": "EFL GACHIBOWLI 2",
+     "operator_in_app": "Electric Fuel",
+     "price": "₹0-25/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000777",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, Alekya Earth Song, Hyderabad",
+   "address": "C8M7+R2R, Journalists Colony Phase 3, Phase 3, Gopanapalli Thanda, Hyderabad, Telangana 500032",
+   "lat": 17.434295,
+   "lng": 78.312427,
+   "cpo": "Thunder Plus",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "52239",
+     "name_in_app": "EV Charge Hub, Alekya Earth Song, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹15-17/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000779",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ThunderPlus EV Park & Charge Hub, Nacharam, Hyderabad",
+   "address": "Vivekananda Nagar, Mallapur, Secunderabad, Telangana 500076",
+   "lat": 17.446508,
+   "lng": 78.572428,
+   "cpo": "Thunder Plus",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 6
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "38430",
+     "name_in_app": "ThunderPlus EV Park & Charge Hub, Nacharam, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹12-24/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000780",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ThunderPlus EV Charge Hub, Nacharam, Hyderabad",
+   "address": "Vivekananda Nagar, Mallapur, Secunderabad, Telangana 500076",
+   "lat": 17.446508,
+   "lng": 78.572428,
+   "cpo": "Thunder Plus",
+   "power": "7.4 kW",
+   "connectors": {
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "51670",
+     "name_in_app": "ThunderPlus EV Charge Hub, Nacharam, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹17-24/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000781",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "RAJAPUSHPA_IMPERIA (Private Residential Charging)",
+   "address": "kolluru, sangareddy dist, hydrabad",
+   "lat": 17.454825,
+   "lng": 78.273074,
+   "cpo": "EVRE",
+   "power": "3 - 7 kW",
+   "connectors": {
+    "15A": 3,
+    "Type2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "78699",
+     "name_in_app": "RAJAPUSHPA_IMPERIA (Private Residential Charging)",
+     "operator_in_app": "EVRE",
+     "price": "₹11.8/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000782",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(e69gp6)Model filling station",
+   "address": "HYDERABAD, Medchal-Malkajgiri, Telangana, India, 501301",
+   "lat": 17.4566917,
+   "lng": 78.7106567,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85263",
+     "name_in_app": "ID(e69gp6)Model filling station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000783",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Ramky One Kosmos (Private Residential Charging)",
+   "address": "Ramky One Kosmos Block-C, RAMKY ONE KOSMOS, Tellapur, Nalagandla, Telangana 500019, India",
+   "lat": 17.461949,
+   "lng": 78.304514,
+   "cpo": "EVRE",
+   "power": "3.3 - 7.4 kW",
+   "connectors": {
+    "AC-001": 3,
+    "15A": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "38395",
+     "name_in_app": "Ramky One Kosmos (Private Residential Charging)",
+     "operator_in_app": "EVRE",
+     "price": "₹9.99/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000784",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, Tejaswi Green Energy Pvt Ltd, Hyderabad",
+   "address": "B N Reddy Nagar, Cherlapalli, Secunderabad, Telangana 501301",
+   "lat": 17.471069,
+   "lng": 78.591679,
+   "cpo": "Thunder Plus",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "43217",
+     "name_in_app": "EV Charge Hub, Tejaswi Green Energy Pvt Ltd, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹17-24/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000785",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, My Home Mangala, Hyderabad",
+   "address": "My Home Managala, Shilpa Valley, Serilingampalle, Hyderabad.",
+   "lat": 17.476041,
+   "lng": 78.346123,
+   "cpo": "Thunder Plus",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 4
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "42477",
+     "name_in_app": "EV Charge Hub, My Home Mangala, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹12.5-17/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000786",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(wro50a)Jashodha Filling station",
+   "address": "Gudur, Yadadri Bhuvanagiri, Telangana, India, 508126",
+   "lat": 17.484635,
+   "lng": 78.8171617,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66906",
+     "name_in_app": "ID(wro50a)Jashodha Filling station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Yadadri Bhuvanagiri"
+  },
+  {
+   "charger_id": "C-000787",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, Niharika Landmark, Hyderabad",
+   "address": "Huda Park E Rd, Lingampally, Serilingampalle (M), Telangana 500019",
+   "lat": 17.4866025,
+   "lng": 78.3148136,
+   "cpo": "Thunder Plus",
+   "power": "3.3 - 22 kW",
+   "connectors": {
+    "Type2": 1,
+    "IEC-60309": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "38492",
+     "name_in_app": "EV Charge Hub, Niharika Landmark, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹10.17/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000788",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ThunderPlus EV Park & Charge Hub, Miyapur, Hyderabad",
+   "address": "Nadigada Tanda, Hyderabad, Miyapur, Telangana 500049",
+   "lat": 17.497468,
+   "lng": 78.375312,
+   "cpo": "Thunder Plus",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 19
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "33527",
+     "name_in_app": "ThunderPlus EV Park & Charge Hub, Miyapur, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹12-24/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000789",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "chargeMOD | Sri Ram Gardens",
+   "address": "Medchal Rd, nearby Suchitra Road, Green Park, Jeedimetla.",
+   "lat": 17.500846,
+   "lng": 78.476623,
+   "cpo": "ChargeMOD",
+   "power": "3.3 kW",
+   "connectors": {
+    "15A": 4
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "68597",
+     "name_in_app": "chargeMOD | Sri Ram Gardens",
+     "operator_in_app": "ChargeMOD",
+     "price": "₹13/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000790",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "T N R Estates Private Limited",
+   "address": "T N R Estates Private Limited Sy No.85&89, Nh-44(7), Suchitra Centre,Near Suchitra Academy, Jeedimetla, Hyderabad -500067",
+   "lat": 17.5032131,
+   "lng": 78.4777171,
+   "cpo": "Adani Total Energies Limited",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "68561",
+     "name_in_app": "T N R Estates Private Limited",
+     "operator_in_app": "Adani Total Energies Limited",
+     "price": "₹20/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000791",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ThunderPlus EV Park & Charge Hub, Yapral-2, Hyderabad",
+   "address": "Yapral-2 , Hyderabad",
+   "lat": 17.51003,
+   "lng": 78.54856,
+   "cpo": "Thunder Plus",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 9
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "52234",
+     "name_in_app": "ThunderPlus EV Park & Charge Hub, Yapral-2, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹12-24/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000792",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Greater Infra Projects",
+   "address": "G87Q+HQQ, Suvarna Valley, RTC Colony,",
+   "lat": 17.5134967,
+   "lng": 78.3396961,
+   "cpo": "Yocharge",
+   "power": "3 kW",
+   "connectors": {
+    "AC-001": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "62272",
+     "name_in_app": "Greater Infra Projects",
+     "operator_in_app": "Yocharge",
+     "price": "₹14/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000793",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Bharat Charge | Minerva Bluefox Bhongiri",
+   "address": "Miveva Bluefox",
+   "lat": 17.5135153,
+   "lng": 78.9043011,
+   "cpo": "Bharat Charge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85871",
+     "name_in_app": "Bharat Charge | Minerva Bluefox Bhongiri",
+     "operator_in_app": "Bharat Charge",
+     "price": "₹20/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Yadadri Bhuvanagiri"
+  },
+  {
+   "charger_id": "C-000794",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Avantika The Espino (Private Residential Charging)",
+   "address": "G889+343, Ameenpur, Hyderabad, Ramachandrapuram (BHEL Township), Telangana 502033",
+   "lat": 17.515363,
+   "lng": 78.317798,
+   "cpo": "EVRE",
+   "power": "3.3 - 22 kW",
+   "connectors": {
+    "AC-001": 9,
+    "Type2": 4
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "62558",
+     "name_in_app": "Avantika The Espino (Private Residential Charging)",
+     "operator_in_app": "EVRE",
+     "price": "₹12/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000795",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(yjzqd6)VINAYAK FILLING STATION",
+   "address": "Ameenpur, Hyderabad, Sangareddy, Telangana, India, 502033",
+   "lat": 17.5157772,
+   "lng": 78.31870755,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84812",
+     "name_in_app": "ID(yjzqd6)VINAYAK FILLING STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000796",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EFL BACHUPALLY",
+   "address": "Lane Number 5, Prajay Shelters, Miyapur, Telangana 500049",
+   "lat": 17.518644,
+   "lng": 78.353968,
+   "cpo": "Electric Fuel",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 11
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "38453",
+     "name_in_app": "EFL BACHUPALLY",
+     "operator_in_app": "Electric Fuel",
+     "price": "₹0-25/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-000797",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Bharat Charge | Bheeramguda Srivi",
+   "address": "Malla Reddy Nagar Colony, Beeramguda",
+   "lat": 17.519549816554633,
+   "lng": 78.29770777794457,
+   "cpo": "Bharat Charge",
+   "power": "120 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85883",
+     "name_in_app": "Bharat Charge | Bheeramguda Srivi",
+     "operator_in_app": "Bharat Charge",
+     "price": "₹15.99/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000798",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Bright View Apartments, Secunderabad (EVRE-TS0011) Private Residential Charging",
+   "address": "Block-C, Sri Kamathenu, Hislop Rd, Prakruthik Vihar, Balaji Nagar, Secunderabad, Telangana 500078, India",
+   "lat": 17.520143,
+   "lng": 78.541286,
+   "cpo": "EVRE",
+   "power": "7.4 kW",
+   "connectors": {
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "38414",
+     "name_in_app": "Bright View Apartments, Secunderabad (EVRE-TS0011) Private Residential Charging",
+     "operator_in_app": "EVRE",
+     "price": "₹10.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000799",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Bhuvanagiri | Hotel Vivera",
+   "address": "NH 163, Ragari, near IT College, Bhuvanagiri,",
+   "lat": 17.5224542,
+   "lng": 78.924304,
+   "cpo": "ChargeZone",
+   "power": "60 - 120 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "34709",
+     "name_in_app": "TS | Bhuvanagiri | Hotel Vivera",
+     "operator_in_app": "ChargeZone",
+     "price": "₹21-22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    },
+    {
+     "app": "tata_power",
+     "app_id": "Vivera_Hotels_and_Resorts_Bhuvanagiri_Charging_Station",
+     "name_in_app": "Vivera Hotels and Resorts",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 6.9
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Yadadri Bhuvanagiri"
+  },
+  {
+   "charger_id": "C-000800",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(q8kmkt) Samriddhi energy",
+   "address": "Bandalguda, Sreeram Nagar Colony, Hyderabad, Sangareddy, Telangana, India, 502319",
+   "lat": 17.5233692,
+   "lng": 78.2748559,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66416",
+     "name_in_app": "ID(q8kmkt) Samriddhi energy",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000801",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(w8nl6x)M/S. Slns Filling Station",
+   "address": "Rayagiri Rural, Yadadri Bhuvanagiri, Telangana, India, 508286",
+   "lat": 17.5269733,
+   "lng": 78.92698,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66905",
+     "name_in_app": "ID(w8nl6x)M/S. Slns Filling Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Yadadri Bhuvanagiri"
+  },
+  {
+   "charger_id": "C-000802",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(9vqdxt)M/S Sree Rama Petrol Service Station",
+   "address": "Samskruthi Avenues Road, Mahadevpur Colony, Hyderabad, Medchal-Malkajgiri, Telangana, India, 500117",
+   "lat": 17.5271249,
+   "lng": 78.417049,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84802",
+     "name_in_app": "ID(9vqdxt)M/S Sree Rama Petrol Service Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000803",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Kusuma Nilayam, Hyderabad",
+   "address": "Plot No.14 Vasavi Enclave Third Phase Kakati",
+   "lat": 17.528622,
+   "lng": 78.391564,
+   "cpo": "goEgo",
+   "power": "3.3 kW",
+   "connectors": {
+    "15A": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "86021",
+     "name_in_app": "Kusuma Nilayam, Hyderabad",
+     "operator_in_app": "goEgo",
+     "price": "₹17/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000804",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Bharat Charge | Pragathi Nagar 240 kW BHCZ",
+   "address": "Vasanth Nagar Colony, Pragathi Nagar,",
+   "lat": 17.5365355768275,
+   "lng": 78.39310402883604,
+   "cpo": "Bharat Charge",
+   "power": "3.3 - 240 kW",
+   "connectors": {
+    "CCS2": 4,
+    "Type2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85879",
+     "name_in_app": "Bharat Charge | Pragathi Nagar 240 kW BHCZ",
+     "operator_in_app": "Bharat Charge",
+     "price": "₹13.99-17.99/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000805",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, Akruthi Stavya",
+   "address": "Akruthi Stavya, Bachupally, Hyderabad, Telangana 500118",
+   "lat": 17.53796,
+   "lng": 78.366504,
+   "cpo": "Thunder Plus",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 45
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "62175",
+     "name_in_app": "EV Charge Hub, Akruthi Stavya",
+     "operator_in_app": "Thunder Plus",
+     "price": "Free",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000806",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "St Martin's Engineering Collage ADMISSION BLOCK, ST. MARTINS ENGINEERING COLLEGE OF TECHNOLOGY, Kompally,",
+   "address": "ADMISSION BLOCK, ST. MARTINS ENGINEERING COLL",
+   "lat": 17.541465,
+   "lng": 78.474495,
+   "cpo": "Yocharge",
+   "power": "3 kW",
+   "connectors": {
+    "AC-001": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "62245",
+     "name_in_app": "St Martin's Engineering Collage ADMISSION BLOCK, ST. MARTINS ENGINEERING COLLEGE OF TECHNOLOGY, Kompally,",
+     "operator_in_app": "Yocharge",
+     "price": "₹16-18/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000807",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, GMR - Patancheru, Hyderabad",
+   "address": "Sy No 50A, Patancheru Industrial Area, Patancheruvu, Hyderabad, Telangana 502319",
+   "lat": 17.54355,
+   "lng": 78.261582,
+   "cpo": "Thunder Plus",
+   "power": "3.3 - 30 kW",
+   "connectors": {
+    "CCS2": 2,
+    "Type2": 1,
+    "IEC-60309": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "63946",
+     "name_in_app": "EV Charge Hub, GMR - Patancheru, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹0-22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000808",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Bharat Charge | Bachupally VNEV Hub",
+   "address": "SIMHAPURI COLONY , BOWRAMPET",
+   "lat": 17.546328475476628,
+   "lng": 78.38789811349183,
+   "cpo": "Electrik Mobility",
+   "power": "7.4 - 180 kW",
+   "connectors": {
+    "CCS2": 2,
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "82925",
+     "name_in_app": "Bharat Charge | Bachupally VNEV Hub",
+     "operator_in_app": "Electrik Mobility",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000809",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Bharat Charge | Bachupally VNEV Hub",
+   "address": "SIMHAPURI COLONY , BOWRAMPET",
+   "lat": 17.546328475476628,
+   "lng": 78.38789811349183,
+   "cpo": "Bharat Charge",
+   "power": "7.4 - 180 kW",
+   "connectors": {
+    "CCS2": 1,
+    "Type2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85877",
+     "name_in_app": "Bharat Charge | Bachupally VNEV Hub",
+     "operator_in_app": "Bharat Charge",
+     "price": "₹15.99-19/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000810",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, Bachupally, Hyderabad",
+   "address": "Bachupally, Hyderabad, Telangana 500118",
+   "lat": 17.54636,
+   "lng": 78.38794,
+   "cpo": "Thunder Plus",
+   "power": "3.3 - 30 kW",
+   "connectors": {
+    "CCS2": 2,
+    "IEC-60309": 4
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "63139",
+     "name_in_app": "EV Charge Hub, Bachupally, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹11-22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000811",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "EFL KOMPALLY",
+   "address": "Sy.NO.35/AA,Aparna Palmgrove,Kompally Village and Muncipality,Hyderabd-500014",
+   "lat": 17.552359,
+   "lng": 78.489904,
+   "cpo": "Electric Fuel",
+   "power": "3.3 - 15 kW",
+   "connectors": {
+    "GBT": 1,
+    "IEC-60309": 18
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "38448",
+     "name_in_app": "EFL KOMPALLY",
+     "operator_in_app": "Electric Fuel",
+     "price": "₹0-25/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000812",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(7n63gr)M/S SREEKAR PETRO MART",
+   "address": "Isnapur, Hyderabad, Sangareddy, Telangana, India, 502307",
+   "lat": 17.554714,
+   "lng": 78.1927925,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84988",
+     "name_in_app": "ID(7n63gr)M/S SREEKAR PETRO MART",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000813",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Primark DeStature Sy No: 188 and 189, Sundar Rao Nagar, Suraram,",
+   "address": "Sy No: 188 and 189, Sundar Rao Nagar, Suraram",
+   "lat": 17.5595102,
+   "lng": 78.43417,
+   "cpo": "Yocharge",
+   "power": "3 - 22 kW",
+   "connectors": {
+    "AC-001": 3,
+    "Type2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "62270",
+     "name_in_app": "Primark DeStature Sy No: 188 and 189, Sundar Rao Nagar, Suraram,",
+     "operator_in_app": "Yocharge",
+     "price": "₹15/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000814",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(05e69f) Rudra filling station",
+   "address": "Gandi Maisamma, Medchal-Malkajgiri, Telangana, India, 500043",
+   "lat": 17.5641951,
+   "lng": 78.4288935,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66410",
+     "name_in_app": "ID(05e69f) Rudra filling station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000815",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ThunderPlus EV Park & Charge Hub, Gundla Pochampally, Hyderabad",
+   "address": "HF9P+M9F,Near sai Baba kaman, Hyderabad, Telangana 500014",
+   "lat": 17.569269,
+   "lng": 78.485945,
+   "cpo": "Thunder Plus",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "44164",
+     "name_in_app": "ThunderPlus EV Park & Charge Hub, Gundla Pochampally, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹12-24/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000816",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ThunderPlus EV Charge Hub, Gundla Pochampally, Hyderabad",
+   "address": "HF9P+M9F,Near sai Baba kaman, Hyderabad, Telangana 500014",
+   "lat": 17.569269,
+   "lng": 78.485945,
+   "cpo": "Thunder Plus",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55453",
+     "name_in_app": "ThunderPlus EV Charge Hub, Gundla Pochampally, Hyderabad",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹13-22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000817",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Celebrity resorts",
+   "address": "1254",
+   "lat": 17.581629,
+   "lng": 78.568399,
+   "cpo": "Electrik Mobility",
+   "power": "7.2 - 7.4 kW",
+   "connectors": {
+    "Type2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "62789",
+     "name_in_app": "Celebrity resorts",
+     "operator_in_app": "Electrik Mobility",
+     "price": "₹18/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000818",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "chargeMOD | CEV CHARGING STATION | Kompally",
+   "address": "Kompally, Medchal",
+   "lat": 17.583098,
+   "lng": 78.490861,
+   "cpo": "ChargeMOD",
+   "power": "3.3 - 60 kW",
+   "connectors": {
+    "15A": 3,
+    "CCS2": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "78962",
+     "name_in_app": "chargeMOD | CEV CHARGING STATION | Kompally",
+     "operator_in_app": "ChargeMOD",
+     "price": "₹23/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000819",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(nwurnb)SUNIL SERVICE STATION",
+   "address": "Mumbai Highway Road, Hyderabad, Sangareddy, Telangana, India, 502285",
+   "lat": 17.5855728,
+   "lng": 78.09562951,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "67058",
+     "name_in_app": "ID(nwurnb)SUNIL SERVICE STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000820",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Sangareddy | MILESTONE - Mood For Food",
+   "address": "SY No 771, AA, NH 65, opposite Balaji",
+   "lat": 17.5860629,
+   "lng": 78.09318884,
+   "cpo": "ChargeZone",
+   "power": "60 - 180 kW",
+   "connectors": {
+    "CCS2": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55222",
+     "name_in_app": "TS | Sangareddy | MILESTONE - Mood For Food",
+     "operator_in_app": "ChargeZone",
+     "price": "₹22-23/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000823",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Hotel 9 Food Court (Charge IN by Mahindra)",
+   "address": "Hotel 9 Food Court, Peddapur, Telangana, 502306",
+   "lat": 17.6066286,
+   "lng": 78.01520237,
+   "cpo": "Charge IN by Mahindra",
+   "power": "180 kW",
+   "connectors": {
+    "CCS2": 3
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "75418",
+     "name_in_app": "Hotel 9 Food Court (Charge IN by Mahindra)",
+     "operator_in_app": "Charge IN by Mahindra",
+     "price": "₹20/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    },
+    {
+     "app": "tata_power",
+     "app_id": "Hotels_Planet_9_The_Food_Court_NH_65",
+     "name_in_app": "Planet 9 The Food Court NH 65 Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 14.6
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000824",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EFL SHAMEERPET",
+   "address": "Survey No. 583,C/o HBL concrete Division Aliabad, Telangana 500101",
+   "lat": 17.6226808,
+   "lng": 78.5822801,
+   "cpo": "Electric Fuel",
+   "power": "3.3 kW",
+   "connectors": {
+    "IEC-60309": 27,
+    "null": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "63927",
+     "name_in_app": "EFL SHAMEERPET",
+     "operator_in_app": "Electric Fuel",
+     "price": "₹0-25/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000825",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Medchal | Fusion Hyundai S5819",
+   "address": "SURVEY NO : 330, beside AGS DEVELOPERS,",
+   "lat": 17.6238099,
+   "lng": 78.48626619,
+   "cpo": "ChargeZone",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55167",
+     "name_in_app": "TS | Medchal | Fusion Hyundai S5819",
+     "operator_in_app": "ChargeZone",
+     "price": "₹22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000826",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Spider_Alair",
+   "address": "Near Bahadurpet Bypass Road Alair",
+   "lat": 17.627978,
+   "lng": 79.022833,
+   "cpo": "Yocharge",
+   "power": "3.3 - 120 kW",
+   "connectors": {
+    "AC-001": 1,
+    "CCS2": 2,
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "78718",
+     "name_in_app": "Spider_Alair",
+     "operator_in_app": "Yocharge",
+     "price": "₹19.99/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Yadadri Bhuvanagiri"
+  },
+  {
+   "charger_id": "C-000829",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(8oohmp)SriLaxmiVenkateswaraFillingCentre",
+   "address": "Medchal Court Road, Uma Nagar Colony, Medchal, Secunderabad, Medchal-Malkajgiri, Telangana, India, 501401",
+   "lat": 17.6427545,
+   "lng": 78.4858032,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85259",
+     "name_in_app": "ID(8oohmp)SriLaxmiVenkateswaraFillingCentre",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000832",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Innopolis(Genome Valley)",
+   "address": "Genome Valley, Thurkapally",
+   "lat": 17.6612326,
+   "lng": 78.6220372,
+   "cpo": "Lion Charge",
+   "power": "24 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "42776",
+     "name_in_app": "Innopolis(Genome Valley)",
+     "operator_in_app": "Lion Charge",
+     "price": "₹25/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000833",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, Sai Life Sciences, Turkaplly",
+   "address": "MJ77+VQC Urban Forest Park, Turkapally Village Rd, Turkapally, Telangana 500078",
+   "lat": 17.664679,
+   "lng": 78.614404,
+   "cpo": "Thunder Plus",
+   "power": "3.3 - 22 kW",
+   "connectors": {
+    "Type2": 2,
+    "IEC-60309": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55388",
+     "name_in_app": "EV Charge Hub, Sai Life Sciences, Turkaplly",
+     "operator_in_app": "Thunder Plus",
+     "price": "₹0-17/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-000834",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "EV Charge Hub, Honour Labs Limited",
+   "address": "M98H+P55 Bonthapalle, Telangana",
+   "lat": 17.666758,
+   "lng": 78.377979,
+   "cpo": "Thunder Plus",
+   "power": "22 kW",
+   "connectors": {
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "67519",
+     "name_in_app": "EV Charge Hub, Honour Labs Limited",
+     "operator_in_app": "Thunder Plus",
+     "price": "Free",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000836",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(mp8ew5)Madhava madanananda filling station",
+   "address": "Mumbai Highway, Digwal, Sangareddy, Telangana, India, 502318",
+   "lat": 17.6737858,
+   "lng": 77.6717489,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84825",
+     "name_in_app": "ID(mp8ew5)Madhava madanananda filling station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-000843",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(589no5)Laxmi Narayana Fuel Point",
+   "address": "Laxmakkapally, Siddipet, Telangana, India, 502279",
+   "lat": 17.7141689,
+   "lng": 78.62183885,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "67198",
+     "name_in_app": "ID(589no5)Laxmi Narayana Fuel Point",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Siddipet"
+  },
+  {
+   "charger_id": "C-000846",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(6qx9wb) LAXMI FILLING STATION",
+   "address": "Medak, Telangana, India, 502336",
+   "lat": 17.7303829,
+   "lng": 78.4728513,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66198",
+     "name_in_app": "ID(6qx9wb) LAXMI FILLING STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medak"
+  },
+  {
+   "charger_id": "C-000848",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(62pz8b)Sri Sai Filling Station",
+   "address": "753/2, Sangareddy-Narsapur Road, Narsapur, Medak, Telangana, India, 502313",
+   "lat": 17.74173,
+   "lng": 78.27981,
+   "cpo": "HPCL eCharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85239",
+     "name_in_app": "ID(62pz8b)Sri Sai Filling Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medak"
+  },
+  {
+   "charger_id": "C-000851",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(wt9g63)M/s. R J Filling Station",
+   "address": "Ibrahimpur, Jangaon, Telangana, India",
+   "lat": 17.7537375,
+   "lng": 79.2503403,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66907",
+     "name_in_app": "ID(wt9g63)M/s. R J Filling Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Jangoan"
+  },
+  {
+   "charger_id": "C-000852",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "ID(4e1d98) TEJAS FILLING STATION",
+   "address": "Medak, India, 502336",
+   "lat": 17.7733413,
+   "lng": 78.471265,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66407",
+     "name_in_app": "ID(4e1d98) TEJAS FILLING STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medak"
+  },
+  {
+   "charger_id": "C-000854",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "SRI VENKATESWARA EV CHARGING STATION",
+   "address": "Hyderabad-Warangal Highway",
+   "lat": 17.7812,
+   "lng": 79.291302,
+   "cpo": "Yocharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 4
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "83615",
+     "name_in_app": "SRI VENKATESWARA EV CHARGING STATION",
+     "operator_in_app": "Yocharge",
+     "price": "₹19.99/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Jangoan"
+  },
+  {
+   "charger_id": "C-000857",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "RGN EV CHARGING STATION-002",
+   "address": "Sy52 ,shabhaspally,Shivampet,Medak",
+   "lat": 17.818586,
+   "lng": 78.436555,
+   "cpo": "Tecell",
+   "power": "3.3 - 7.5 kW",
+   "connectors": {
+    "15A": 2,
+    "Type2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85731",
+     "name_in_app": "RGN EV CHARGING STATION-002",
+     "operator_in_app": "Tecell",
+     "price": "₹16.71/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medak"
+  },
+  {
+   "charger_id": "C-000858",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "RGN EV CHARGING STATION-001",
+   "address": "Sy52 ,shabhaspally,Shivampet,Medak",
+   "lat": 17.818649,
+   "lng": 78.436601,
+   "cpo": "Tecell",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85727",
+     "name_in_app": "RGN EV CHARGING STATION-001",
+     "operator_in_app": "Tecell",
+     "price": "₹16.71/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medak"
+  },
+  {
+   "charger_id": "C-000861",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(h94cv2) Balaji fuels gajwel",
+   "address": "Apgvb Bank, Toopran Road, Gajwel, Siddipet, Telangana, India, 502278",
+   "lat": 17.846202,
+   "lng": 78.673377,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "67521",
+     "name_in_app": "ID(h94cv2) Balaji fuels gajwel",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Siddipet"
+  },
+  {
+   "charger_id": "C-000864",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(vhzs2o)Rajireddy Filling station",
+   "address": "Bharath Petrol Pump, Ramyampet - Doultabad - Raipol - Gajwel Road, Tupran, Hyderabad, Medak, Telangana, India, 502334",
+   "lat": 17.8492517,
+   "lng": 78.47729,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66396",
+     "name_in_app": "ID(vhzs2o)Rajireddy Filling station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medak"
+  },
+  {
+   "charger_id": "C-000865",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(5e3c4d) METRO SERVICE STATION",
+   "address": "Masaipet, Medak, Telangana, India, 502335",
+   "lat": 17.8763603,
+   "lng": 78.4694896,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66415",
+     "name_in_app": "ID(5e3c4d) METRO SERVICE STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medak"
+  },
+  {
+   "charger_id": "C-000871",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "La Mclean Hotels And Resorts Private Limited",
+   "address": "The Hidden Castle State highway no.1 Mathpally Village, kondapaka mandal, Siddipet District, Telangana-502301",
+   "lat": 17.92539,
+   "lng": 78.8156213,
+   "cpo": "Adani Total Energies Limited",
+   "power": "10 - 60 kW",
+   "connectors": {
+    "AC-001": 3,
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "68514",
+     "name_in_app": "La Mclean Hotels And Resorts Private Limited",
+     "operator_in_app": "Adani Total Energies Limited",
+     "price": "₹20/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Siddipet"
+  },
+  {
+   "charger_id": "C-000874",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Hotel Haritha Minerva",
+   "address": "Nacharpalle",
+   "lat": 18.0405025,
+   "lng": 78.8740998,
+   "cpo": "Electrik Mobility",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "62787",
+     "name_in_app": "Hotel Haritha Minerva",
+     "operator_in_app": "Electrik Mobility",
+     "price": "₹23/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Siddipet"
+  },
+  {
+   "charger_id": "C-000875",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(sdt90h) SRI VANI FUEL STATION",
+   "address": "Siddipet, Telangana, India, 502375",
+   "lat": 18.0675019,
+   "lng": 78.8631608,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66380",
+     "name_in_app": "ID(sdt90h) SRI VANI FUEL STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [
+    "C-002063"
+   ],
+   "state": "TELANGANA",
+   "district": "Siddipet"
+  },
+  {
+   "charger_id": "C-000882",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Baswapur | Shiva’s Dining",
+   "address": "S.Y, no:- 87&88, NH 44, Baswapur, Bhiknoor,",
+   "lat": 18.1580738,
+   "lng": 78.40815241,
+   "cpo": "ChargeZone",
+   "power": "60 - 120 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "43670",
+     "name_in_app": "TS | Baswapur | Shiva’s Dining",
+     "operator_in_app": "ChargeZone",
+     "price": "₹21-22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Kamareddy"
+  },
+  {
+   "charger_id": "C-000885",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Pariwar Green Park Guest Home",
+   "address": "The Malgudi Restaurant, Anthampally Village Road, Bhiknoor Mandal, Kamareddy District, Telangana – 503102",
+   "lat": 18.2147122,
+   "lng": 78.3944939,
+   "cpo": "Adani Total Energies Limited",
+   "power": "3.3 - 60 kW",
+   "connectors": {
+    "15A": 3,
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "67847",
+     "name_in_app": "Pariwar Green Park Guest Home",
+     "operator_in_app": "Adani Total Energies Limited",
+     "price": "₹20/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Kamareddy"
+  },
+  {
+   "charger_id": "C-000890",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "HOTEL PARNIKA PALACE",
+   "address": "NH-44, Tekriyal",
+   "lat": 18.3454555,
+   "lng": 78.311343,
+   "cpo": "Lion Charge",
+   "power": "24 kW",
+   "connectors": {
+    "CCS2": 1
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "42774",
+     "name_in_app": "HOTEL PARNIKA PALACE",
+     "operator_in_app": "Lion Charge",
+     "price": "₹25/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Kamareddy"
+  },
+  {
+   "charger_id": "C-000892",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(m5l7eo) MEHER FILLING STATION",
+   "address": "National Highway 44, Adloor Yellareddy, Kamareddy, Telangana, India, 503145",
+   "lat": 18.3640327,
+   "lng": 78.3027582,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66358",
+     "name_in_app": "ID(m5l7eo) MEHER FILLING STATION",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Kamareddy"
+  },
+  {
+   "charger_id": "C-000903",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(w5q848)Sree chakra filling station",
+   "address": "NH 44, Hyderabad Nagpur Road, Gannaram, Nizamabad, Nizamabad, Telangana, India, 503164",
+   "lat": 18.5202647,
+   "lng": 78.2338431,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66195",
+     "name_in_app": "ID(w5q848)Sree chakra filling station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nizamabad"
+  },
+  {
+   "charger_id": "C-000905",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Amruthapur | Sri Sai Family",
+   "address": "Shop No 1, NH 44, Suddapally, Amruthapur,",
+   "lat": 18.6318691,
+   "lng": 78.20798881,
+   "cpo": "ChargeZone",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55169",
+     "name_in_app": "TS | Amruthapur | Sri Sai Family",
+     "operator_in_app": "ChargeZone",
+     "price": "₹22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    },
+    {
+     "app": "tata_power",
+     "app_id": "Hotels_Sri_Sai_Family_and_Kanchetty_Restaurant_NH44",
+     "name_in_app": "Sri Sai Family and Kanchetty Restaurant NH44 Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 37.4
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nizamabad"
+  },
+  {
+   "charger_id": "C-000906",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(d3n7he) Ali HP Filling Station",
+   "address": "Dichpally, Nizamabad, Telangana, India, 503175",
+   "lat": 18.653925,
+   "lng": 78.21689,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66709",
+     "name_in_app": "ID(d3n7he) Ali HP Filling Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nizamabad"
+  },
+  {
+   "charger_id": "C-000907",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(82irjw)Adhoc anhaa petro mart",
+   "address": "Kundanpalli, Ramagundam, Peddapalli, Telangana, India, 505208",
+   "lat": 18.7465151,
+   "lng": 79.4344947,
+   "cpo": "HPCL eCharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66846",
+     "name_in_app": "ID(82irjw)Adhoc anhaa petro mart",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Peddapalli"
+  },
+  {
+   "charger_id": "C-000908",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(8iwryq)M/S Sai Service station",
+   "address": "Mancherial Road, Indaram, Mancherial, Telangana, India, 504216",
+   "lat": 18.8171033,
+   "lng": 79.5275317,
+   "cpo": "HPCL eCharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66848",
+     "name_in_app": "ID(8iwryq)M/S Sai Service station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mancherial"
+  },
+  {
+   "charger_id": "C-000910",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(1yheuo)Mj filling station",
+   "address": "HP petrol pump, National Highway 63, Mortad, Nizamabad, Telangana, India, 503225",
+   "lat": 18.8308762,
+   "lng": 78.45888054,
+   "cpo": "HPCL eCharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85000",
+     "name_in_app": "ID(1yheuo)Mj filling station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nizamabad"
+  },
+  {
+   "charger_id": "C-000911",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(jfou12)Goutham fuel enterprises",
+   "address": "Metpally Main Road, Venkatraopet, Jagtial, Telangana, India, 505325",
+   "lat": 18.8491101,
+   "lng": 78.608547,
+   "cpo": "HPCL eCharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85226",
+     "name_in_app": "ID(jfou12)Goutham fuel enterprises",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Jagitial"
+  },
+  {
+   "charger_id": "C-000912",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(8gjm2v)Yashwanth Sai Filling Station",
+   "address": "Naspur, Mancherial, Telangana, India, 504302",
+   "lat": 18.8576743,
+   "lng": 79.4818115,
+   "cpo": "HPCL eCharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66847",
+     "name_in_app": "ID(8gjm2v)Yashwanth Sai Filling Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mancherial"
+  },
+  {
+   "charger_id": "C-000913",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(ebuurb)Sri vaeshnavi petro hub",
+   "address": "Gudipet, Mancherial, Telangana, India, 504207",
+   "lat": 18.8693782,
+   "lng": 79.3706547,
+   "cpo": "HPCL eCharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85330",
+     "name_in_app": "ID(ebuurb)Sri vaeshnavi petro hub",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mancherial"
+  },
+  {
+   "charger_id": "C-000914",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(d6na7b) Sri Srinivasa Filling Station",
+   "address": "Dharmapuri, Jagtial, Telangana, India, 505425",
+   "lat": 18.93414,
+   "lng": 79.10512,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66710",
+     "name_in_app": "ID(d6na7b) Sri Srinivasa Filling Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Jagitial"
+  },
+  {
+   "charger_id": "C-000915",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(3kvnu7) Adhoc Durga Fuel Point",
+   "address": "vill&mdl:Mamada, Nirmal, Nirmal, Telangana, India, 504310",
+   "lat": 19.0755506,
+   "lng": 78.530925,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "84693",
+     "name_in_app": "ID(3kvnu7) Adhoc Durga Fuel Point",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nirmal"
+  },
+  {
+   "charger_id": "C-000916",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TS | Nirmal | Prakash Hyundai",
+   "address": "Sy. No. 457, 1 to 3, NH 44, Shivar,",
+   "lat": 19.0911096,
+   "lng": 78.37672399,
+   "cpo": "ChargeZone",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "55449",
+     "name_in_app": "TS | Nirmal | Prakash Hyundai",
+     "operator_in_app": "ChargeZone",
+     "price": "₹22/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nirmal"
+  },
+  {
+   "charger_id": "C-000917",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(jtctzq) GEETA FUEL POINT",
+   "address": "National Highway 61, Bhainsa, Nirmal, Telangana, India, 504103",
+   "lat": 19.1021001,
+   "lng": 77.9739106,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "66712",
+     "name_in_app": "ID(jtctzq) GEETA FUEL POINT",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nirmal"
+  },
+  {
+   "charger_id": "C-000921",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(4vozqs)Ganesh high way filling station",
+   "address": "National Highway 44, Gayadpalle, Nirmal, Telangana, India, 504310",
+   "lat": 19.1580026,
+   "lng": 78.4639724,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "67458",
+     "name_in_app": "ID(4vozqs)Ganesh high way filling station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nirmal"
+  },
+  {
+   "charger_id": "C-000924",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(bian2d)Sri sai balaji filling station",
+   "address": "Rajura, Kumuram Bheem Asifabad, Telangana, India, 504293",
+   "lat": 19.336649,
+   "lng": 79.3382782,
+   "cpo": "HPCL eCharge",
+   "power": "60 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85100",
+     "name_in_app": "ID(bian2d)Sri sai balaji filling station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Kumuram Bheem Asifabad"
+  },
+  {
+   "charger_id": "C-000925",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "ID(vrzf6h)Sri Sai Venkateswara Filling Station",
+   "address": "E Ichoda, Adegaon Buzurg, Adilabad, Telangana, India, 504307",
+   "lat": 19.413431,
+   "lng": 78.4504882,
+   "cpo": "HPCL eCharge",
+   "power": "30 kW",
+   "connectors": {
+    "CCS2": 2
+   },
+   "listed_in": [
+    {
+     "app": "pulse",
+     "app_id": "85266",
+     "name_in_app": "ID(vrzf6h)Sri Sai Venkateswara Filling Station",
+     "operator_in_app": "HPCL eCharge",
+     "price": "₹15.5/kWh",
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Adilabad"
+  },
+  {
+   "charger_id": "C-001953",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Raghu Vamsi Fs Mahabubnagar",
+   "address": "GADWAL, Telangana",
+   "lat": 15.884119,
+   "lng": 78.016228,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Raghu_Vamsi_Fs_Mahabubnagar",
+     "name_in_app": "IOCL Raghu Vamsi Fs Mahabubnagar",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Jogulamba Gadwal"
+  },
+  {
+   "charger_id": "C-001955",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL UNI TRADERS Itikyal Mandal",
+   "address": "GADWAL, Telangana",
+   "lat": 16.0865015,
+   "lng": 77.8980968,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_UNI_TRADERS_Itikyal_Mandal",
+     "name_in_app": "IOCL UNI TRADERS Itikyal Mandal",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Jogulamba Gadwal"
+  },
+  {
+   "charger_id": "C-001959",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Zeon x TATA.ev | Kothakota | Food Pyramid ",
+   "address": "Kanimetta, 509381",
+   "lat": 16.42646484546101,
+   "lng": 77.93883964486713,
+   "cpo": "Zeon",
+   "power": "180 kW",
+   "connectors": {},
+   "listed_in": [
+    {
+     "app": "zeon",
+     "app_id": "652",
+     "name_in_app": "Zeon x TATA.ev | Kothakota | Food Pyramid ",
+     "operator_in_app": "Zeon",
+     "price": null,
+     "reports_live_status": false,
+     "distance_m": 0.0
+    },
+    {
+     "app": "tata_power",
+     "app_id": "Hotels_OPDSS_Hotels_And_Resorts_Kanimetta",
+     "name_in_app": "Food Pyramid (OPDSS) NH44 Kanimetta",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 36.8
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Wanaparthy"
+  },
+  {
+   "charger_id": "C-001964",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL RAJYALAXMI FP Mahaboob Nagar",
+   "address": "MAHABUB NAGAR, Telangana",
+   "lat": 16.737569,
+   "lng": 78.155407,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_RAJYALAXMI_FP_Mahaboob_Nagar",
+     "name_in_app": "IOCL RAJYALAXMI FP Mahaboob Nagar",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mahabubnagar"
+  },
+  {
+   "charger_id": "C-001965",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Coco Malleboinapally Mahabubnagar",
+   "address": "GADWAL, Telangana",
+   "lat": 16.744792,
+   "lng": 78.101692,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Coco_Malleboinapally_Mahabubnagar",
+     "name_in_app": "IOCL Coco Malleboinapally Mahabubnagar",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mahabubnagar"
+  },
+  {
+   "charger_id": "C-001966",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Hitech Fp Mahabubnagar",
+   "address": "MAHABUB NAGAR, Telangana",
+   "lat": 16.752904,
+   "lng": 78.026364,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Hitech_Fp_Mahabubnagar",
+     "name_in_app": "IOCL Hitech Fp Mahabubnagar",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mahabubnagar"
+  },
+  {
+   "charger_id": "C-001967",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL 7 Hills H Fs Jadcherla",
+   "address": "MAHABUB NAGAR, Telangana",
+   "lat": 16.793063,
+   "lng": 78.140951,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_7_Hills_H_Fs_Jadcherla",
+     "name_in_app": "IOCL 7 Hills H Fs Jadcherla",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mahabubnagar"
+  },
+  {
+   "charger_id": "C-001973",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Sri Balaji Fs Huzurnagar",
+   "address": "SURYAPET, Telangana",
+   "lat": 16.913657,
+   "lng": 79.853848,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Sri_Balaji_Fs_Huzurnagar",
+     "name_in_app": "IOCL Sri Balaji Fs Huzurnagar",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Suryapet"
+  },
+  {
+   "charger_id": "C-001974",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Garine Koteswara Rao & Co, Kodada",
+   "address": "SURYAPET, Telangana",
+   "lat": 16.994091,
+   "lng": 79.975967,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Garine_Koteswara_Rao_and_Co_Kodada",
+     "name_in_app": "IOCL Garine Koteswara Rao & Co, Kodada",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Suryapet"
+  },
+  {
+   "charger_id": "C-001975",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL SRI DURGA MATA, Nalgonda Mandal",
+   "address": "NALGONDA, Telangana",
+   "lat": 17.0128052,
+   "lng": 79.2455475,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_SRI_DURGA_MATA_Nalgonda_Mandal",
+     "name_in_app": "IOCL SRI DURGA MATA, Nalgonda Mandal",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-001976",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL SAI RATNA RO,DVK ROAD",
+   "address": "NALGONDA, Telangana",
+   "lat": 17.041645,
+   "lng": 79.265196,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_SAI_RATNA_RO_DVK_ROAD",
+     "name_in_app": "IOCL SAI RATNA RO,DVK ROAD",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-001977",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TATA Power x TATA.EV 7 Midway Plaza â€“ Suryapet",
+   "address": "SURYAPET, Telangana",
+   "lat": 17.15091,
+   "lng": 79.576915,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 4
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Hotels_7_Midway_Plaza_Suryapet",
+     "name_in_app": "TATA Power x TATA.EV 7 Midway Plaza â€“ Suryapet",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [
+    "C-000720"
+   ],
+   "state": "TELANGANA",
+   "district": "Suryapet"
+  },
+  {
+   "charger_id": "C-001978",
+   "region": "telangana",
+   "state_hint": null,
+   "name": "Suryapet| Little Village",
+   "address": "Suryapet, 508376",
+   "lat": 17.1627375,
+   "lng": 79.53285939999999,
+   "cpo": "Zeon",
+   "power": "180 kW",
+   "connectors": {},
+   "listed_in": [
+    {
+     "app": "zeon",
+     "app_id": "507",
+     "name_in_app": "Suryapet| Little Village",
+     "operator_in_app": "Zeon",
+     "price": null,
+     "reports_live_status": false,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-001979",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Hotel AVM Charging Station",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.188079,
+   "lng": 78.474496,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Hotels_Hotel_AVM",
+     "name_in_app": "Hotel AVM Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-001981",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "7 Midway Plaza -Chityala",
+   "address": "NALGONDA, Telangana",
+   "lat": 17.2316983,
+   "lng": 79.1000216,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 4
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Hotels_7_Midway_Plaza_Chityala",
+     "name_in_app": "7 Midway Plaza -Chityala",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nalgonda"
+  },
+  {
+   "charger_id": "C-001982",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "NIRVI EV Charging Station",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.234858,
+   "lng": 78.56016,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TPC_CP_NIRVI_EV_Station",
+     "name_in_app": "NIRVI EV Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-001983",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Balaji Service Station, Khammam",
+   "address": "KHAMMAM, Telangana",
+   "lat": 17.2506442,
+   "lng": 80.1448395,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Balaji_Service_Station_Khammam",
+     "name_in_app": "IOCL Balaji Service Station, Khammam",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Khammam"
+  },
+  {
+   "charger_id": "C-001986",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "VAIBHAV EV CHARGING STATION",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.309118,
+   "lng": 78.167179,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TPC_CP_Vaibhav_EV_Charging_Station",
+     "name_in_app": "VAIBHAV EV CHARGING STATION",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-001987",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Hyderabad | APR crysal avenue",
+   "address": "Hyderabad, 500070",
+   "lat": 17.3095125,
+   "lng": 78.5831406,
+   "cpo": "Zeon",
+   "power": "7.4 kW",
+   "connectors": {},
+   "listed_in": [
+    {
+     "app": "zeon",
+     "app_id": "317",
+     "name_in_app": "Hyderabad | APR crysal avenue",
+     "operator_in_app": "Zeon",
+     "price": null,
+     "reports_live_status": false,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-001988",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Taj Falaknuma Palace (Private Charger)",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.331927,
+   "lng": 78.463528,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IHCL_Taj_Taj_Falaknuma_Palace",
+     "name_in_app": "Taj Falaknuma Palace (Private Charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-001989",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Ayana Resorts",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.3452929,
+   "lng": 78.3330498,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Hotels_Ayana_Resorts_Convention",
+     "name_in_app": "Ayana Resorts",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-001990",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Lakshmi Hyundai Charging Station",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.347444,
+   "lng": 78.552051,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Hyundai_Lakshmi_Hyundai",
+     "name_in_app": "Lakshmi Hyundai Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-001991",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Croma, L.B. Nagar",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.352657,
+   "lng": 78.546636,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Croma_LB_Nagar",
+     "name_in_app": "Croma, L.B. Nagar",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-001992",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Croma, Attapur",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.359176,
+   "lng": 78.426285,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Croma_Attapur",
+     "name_in_app": "Croma, Attapur",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-001993",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Tata Motor_Select Car_Alkapuri_Hyderabad",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.364873,
+   "lng": 78.5573,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "SelectCar_Hyd_Alkapuri",
+     "name_in_app": "Tata Motor_Select Car_Alkapuri_Hyderabad",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-001994",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Hyderabad | MCube Mall",
+   "address": "Hyderabad, 500048",
+   "lat": 17.3717625,
+   "lng": 78.43017189999999,
+   "cpo": "Zeon",
+   "power": "120 kW",
+   "connectors": {},
+   "listed_in": [
+    {
+     "app": "zeon",
+     "app_id": "493",
+     "name_in_app": "Hyderabad | MCube Mall",
+     "operator_in_app": "Zeon",
+     "price": null,
+     "reports_live_status": false,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-001996",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "State bank of india, Koti (Private Charger)",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.3868695,
+   "lng": 78.481858,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Banks_SBI_SBI_Koti",
+     "name_in_app": "State bank of india, Koti (Private Charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-001997",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Hyderabad | Golf Club",
+   "address": "Hyderabad, 500008",
+   "lat": 17.3936875,
+   "lng": 78.4037656,
+   "cpo": "Zeon",
+   "power": "22 kW",
+   "connectors": {},
+   "listed_in": [
+    {
+     "app": "zeon",
+     "app_id": "670",
+     "name_in_app": "Hyderabad | Golf Club",
+     "operator_in_app": "Zeon",
+     "price": null,
+     "reports_live_status": false,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-001998",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "State bank of India, Abids (Private Charger)",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.394132,
+   "lng": 78.475429,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Banks_SBI_SBI_Abids",
+     "name_in_app": "State bank of India, Abids (Private Charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-001999",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Croma, Ramanthapur",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.400393,
+   "lng": 78.541871,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Croma_Ramanthapur",
+     "name_in_app": "Croma, Ramanthapur",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002000",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Kun Hyundai Charging Station",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.402909,
+   "lng": 78.460068,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Hyundai_Kun_Hyundai_Hyderabad",
+     "name_in_app": "Kun Hyundai Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-002001",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Trendset Grande RWA, Block A (Private Charger)",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.418239,
+   "lng": 78.451807,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 8
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Residential_Trendset_Grande_RWA_Block_A",
+     "name_in_app": "Trendset Grande RWA, Block A (Private Charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-002002",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Kapil Towers Gachibowli",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.42147,
+   "lng": 78.33883,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 3
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Commercial_Kapil_Towers_Gachibowli",
+     "name_in_app": "Kapil Towers Gachibowli",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002003",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "SLNS FS Rangareddy Nanakramguda Charging Station",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.4226571,
+   "lng": 78.3492105,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Nayara_SLNS_FS_Rangareddy_Nanakramguda",
+     "name_in_app": "SLNS FS Rangareddy Nanakramguda Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002004",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Hotel The Park, Rajbhavan Road",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.4235621,
+   "lng": 78.4622339,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "The_Park_Hotels_The_Park_Rajbhavan_Road",
+     "name_in_app": "Hotel The Park, Rajbhavan Road",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-002005",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Fairfield by Marriott, Gachibowli",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.423858,
+   "lng": 78.347334,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Others_Fairfield_by_Marriott_Gachibowli_Hyderabad",
+     "name_in_app": "Fairfield by Marriott, Gachibowli",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [
+    "C-000768"
+   ],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002006",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TSG Heights Commercial Complex",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.4253066,
+   "lng": 78.4350938,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Commercial_TSG_Heights_Commercial_Complex",
+     "name_in_app": "TSG Heights Commercial Complex",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-002007",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Hyderabad | MPM Times Square Mall",
+   "address": "Hyderabad, 500082",
+   "lat": 17.425356356166013,
+   "lng": 78.44824570080434,
+   "cpo": "Zeon",
+   "power": "180 kW",
+   "connectors": {},
+   "listed_in": [
+    {
+     "app": "zeon",
+     "app_id": "597",
+     "name_in_app": "Hyderabad | MPM Times Square Mall",
+     "operator_in_app": "Zeon",
+     "price": null,
+     "reports_live_status": false,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-002008",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "KMC Mall, Somajiguda",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.429712,
+   "lng": 78.456189,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "KMC_Mall_HYD_Somajiguda",
+     "name_in_app": "KMC Mall, Somajiguda",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-002009",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Automotive Kia",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.430379,
+   "lng": 78.559267,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "KIA_Automotive_Kia",
+     "name_in_app": "Automotive Kia",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002010",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Serene County Gachibowli (Private Charger)",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.432036,
+   "lng": 78.3632747,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 14
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Residential_Serene_County_Gachibowli",
+     "name_in_app": "Serene County Gachibowli (Private Charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002011",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TATA Power x TATA.EV ILabs",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.432996,
+   "lng": 78.386588,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 6
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "commercials_ILABS_HYDERABAD_TECHNOLOGY_CENTRE_PVT_LTD",
+     "name_in_app": "TATA Power x TATA.EV ILabs",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002012",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Arrival Hotels Charging Station",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.4343059,
+   "lng": 78.3879511,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Hotels_Arrival_Hotels",
+     "name_in_app": "Arrival Hotels Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002013",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Daspalla Hotels, Jubilee Hills",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.4368304,
+   "lng": 78.3983261,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Hotels_Daspalla_Hotels_Jubilee_Hills",
+     "name_in_app": "Daspalla Hotels, Jubilee Hills",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002014",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Safa Logistics Raheja Mindspace (Private Charger)",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.4379463,
+   "lng": 78.3848495,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 3
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Fleet_Safa_Logistics_Safa_Logistics_Raheja_Mindspace",
+     "name_in_app": "Safa Logistics Raheja Mindspace (Private Charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002015",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Tata Communication, Madhapur (Private Charger)",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.441226,
+   "lng": 78.378531,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Tata_Communication_Tata_Communication_Madhapur",
+     "name_in_app": "Tata Communication, Madhapur (Private Charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002016",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Trident HITEC City Charging Station",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.449383,
+   "lng": 78.378638,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Oberoi_Hotels_Trident_HITEC_City",
+     "name_in_app": "Trident HITEC City Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002017",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Tata Motors (Orange Auto)",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.454398,
+   "lng": 78.434575,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Orange_Auto_Erragadda_Hyderabad",
+     "name_in_app": "Tata Motors (Orange Auto)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002018",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Sarath City Capital Mall",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.457774,
+   "lng": 78.36396,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 3
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Highway_Sarath_City_Capital_Mall_Whitefields_Hyderabad",
+     "name_in_app": "Sarath City Capital Mall",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002019",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "RV Panchajanya Kondapur Charging Station",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.4609,
+   "lng": 78.345108,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 4
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TPC_CP_RV_Panchajanya_Kondapur",
+     "name_in_app": "RV Panchajanya Kondapur Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002020",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Kala Jyothi IT Building",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.4622302,
+   "lng": 78.3426167,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 6
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TPC_CP_Kala_Jyothi_IT_Building",
+     "name_in_app": "Kala Jyothi IT Building",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002021",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Aparna Cyber Life Residency RWA B  Block Basement 1 (Private Charger)",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.4694761,
+   "lng": 78.3113851,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 4
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Residential_Aparna_Cyber_Life_Residency_RWA_B_BLOCK_Basement_1",
+     "name_in_app": "Aparna Cyber Life Residency RWA B  Block Basement 1 (Private Charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002022",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Aparna Cyber Life Residency RWA B Block basement 2 (Private Charger)",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.4695237,
+   "lng": 78.310071,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 3
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Residential_Aparna_Cyber_Life_Residency_RWA_B_block_basement_2",
+     "name_in_app": "Aparna Cyber Life Residency RWA B Block basement 2 (Private Charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002023",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Aparna Cyber Life Residency RWA F block Buffer. Zone (Private Charger)",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.4697743,
+   "lng": 78.3126623,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 7
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Residential_Aparna_Cyber_Life_Residency_RWA_F_block_Buffer_zone",
+     "name_in_app": "Aparna Cyber Life Residency RWA F block Buffer. Zone (Private Charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002024",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Aparna Cyber Life Residency RWA J block Basement 2 (Private Charger)",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.4698877,
+   "lng": 78.310071,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 6
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Residential_Aparna_Cyber_Life_Residency_RWA_J_block_Basement_2",
+     "name_in_app": "Aparna Cyber Life Residency RWA J block Basement 2 (Private Charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002025",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Lakeshore Mall, Kukatpally Hyderabad",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.476998,
+   "lng": 78.422721,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 7
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Mall_Lakeshore_Mall_Kukatpally_Hyderabad",
+     "name_in_app": "Lakeshore Mall, Kukatpally Hyderabad",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002026",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Tata Motors (Malik Cars)",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.478362,
+   "lng": 78.4737723,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Malik_Cars_Old_Bowenpally_Secunderabad",
+     "name_in_app": "Tata Motors (Malik Cars)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hyderabad"
+  },
+  {
+   "charger_id": "C-002027",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Hyderabad | Ashoka One Mall",
+   "address": "Hyderabad, 500072",
+   "lat": 17.4794375,
+   "lng": 78.4178125,
+   "cpo": "Zeon",
+   "power": "120 kW",
+   "connectors": {},
+   "listed_in": [
+    {
+     "app": "zeon",
+     "app_id": "488",
+     "name_in_app": "Hyderabad | Ashoka One Mall",
+     "operator_in_app": "Zeon",
+     "price": null,
+     "reports_live_status": false,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002028",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Tata Motors (Venkataramana Motors), ECIL",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.48081,
+   "lng": 78.57715,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Hyd_Venkataramana_ECIL",
+     "name_in_app": "Tata Motors (Venkataramana Motors), ECIL",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002029",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "GO EC Hyderabad LuLu Mall",
+   "address": "",
+   "lat": 17.490196,
+   "lng": 78.392964,
+   "cpo": "GO EC",
+   "power": "60 kW",
+   "connectors": {},
+   "listed_in": [
+    {
+     "app": "goec",
+     "app_id": "goec-73bd3f9379e85d23f0bebf08",
+     "name_in_app": "GO EC Hyderabad LuLu Mall",
+     "operator_in_app": "GO EC",
+     "price": null,
+     "reports_live_status": false,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002030",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Tata Motors (Orange Auto)",
+   "address": "TRIMULGHERRY, Telangana",
+   "lat": 17.490308,
+   "lng": 78.354536,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Orange_Auto_Hafeezpet_Hyderabad",
+     "name_in_app": "Tata Motors (Orange Auto)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Ranga Reddy"
+  },
+  {
+   "charger_id": "C-002031",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Srinidhi Service Station, Nizampet",
+   "address": "Trimulgherry, Telangana",
+   "lat": 17.517565,
+   "lng": 78.380926,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Nayara_Srinidhi_Service_Station_Nizampet",
+     "name_in_app": "Srinidhi Service Station, Nizampet",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002032",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Om Sree Prithvi EV Charging Station (private charger)",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.5216885,
+   "lng": 78.5415018,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TPC_CP_Om_Sree_Prithvi_EV_Charging_Station",
+     "name_in_app": "Om Sree Prithvi EV Charging Station (private charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002033",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Croma, Kompally",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.532082,
+   "lng": 78.487277,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Croma_Kompally",
+     "name_in_app": "Croma, Kompally",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002034",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TML Jasper Industries Kompally",
+   "address": "NALGONDA, Telangana",
+   "lat": 17.5375594,
+   "lng": 78.4905328,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Jasper_Industries_Kompally",
+     "name_in_app": "TML Jasper Industries Kompally",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002035",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Sri Sai Venkateshwara Fs, Tekulpally",
+   "address": "KHAMMAM, Telangana",
+   "lat": 17.5596014,
+   "lng": 80.4814159,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Sri_Sai_Venkateshwara_Fs_Tekulpally",
+     "name_in_app": "IOCL Sri Sai Venkateshwara Fs, Tekulpally",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Bhadradri Kothagudem"
+  },
+  {
+   "charger_id": "C-002036",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Heart Cup Coffee Charging Station",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.560199,
+   "lng": 78.489015,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Hotels_Heart_Cup_Coffee",
+     "name_in_app": "Heart Cup Coffee Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002037",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Kona Vijay Shankar Filling Bahadurpally Charging Station",
+   "address": "HYDERABAD, Telangana",
+   "lat": 17.561621,
+   "lng": 78.4303171,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Nayara_Kona_Vijay_Shankar_Filling_Bahadurpally",
+     "name_in_app": "Kona Vijay Shankar Filling Bahadurpally Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002038",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Om Sree Galaxy EV Charging Station (private charger)",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.5616451,
+   "lng": 78.4886279,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 4
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TPC_CP_Om_Sree_Galaxy_EV_Charging_Station",
+     "name_in_app": "Om Sree Galaxy EV Charging Station (private charger)",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002039",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Janapriya Filling Station Yellandu",
+   "address": "KHAMMAM, Telangana",
+   "lat": 17.584326,
+   "lng": 80.329608,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Janapriya_Filling_Station_Yellandu",
+     "name_in_app": "IOCL Janapriya Filling Station Yellandu",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Bhadradri Kothagudem"
+  },
+  {
+   "charger_id": "C-002040",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL DURGA INDHAN, Kandi NH-9",
+   "address": "SANGAREDDY, Telangana",
+   "lat": 17.586371,
+   "lng": 78.097625,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_DURGA_INDHAN_Kandi_NH_9",
+     "name_in_app": "IOCL DURGA INDHAN, Kandi NH-9",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-002041",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL EXPRESS WAY FS, MALKAPUR",
+   "address": "SANGAREDDY, Telangana",
+   "lat": 17.5976421,
+   "lng": 78.0561976,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_EXPRESS_WAY_FS_MALKAPUR",
+     "name_in_app": "IOCL EXPRESS WAY FS, MALKAPUR",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-002042",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Sri Ravi Fs, Palwancha",
+   "address": "KOTHAGUDEM, Telangana",
+   "lat": 17.59886,
+   "lng": 80.722775,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Sri_Ravi_Fs_Palwancha",
+     "name_in_app": "IOCL Sri Ravi Fs, Palwancha",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Bhadradri Kothagudem"
+  },
+  {
+   "charger_id": "C-002043",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Bhargavi Fs Mahabubabad",
+   "address": "WARANGAL, Telangana",
+   "lat": 17.601796,
+   "lng": 80.009957,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Bhargavi_Fs_Mahabubabad",
+     "name_in_app": "IOCL Bhargavi Fs Mahabubabad",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mahabubabad"
+  },
+  {
+   "charger_id": "C-002044",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "RS Green Energy Charging Station",
+   "address": "SANGAREDDY, Telangana",
+   "lat": 17.6254496,
+   "lng": 77.9150301,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 4
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TPC_CP_RS_Green_Energy",
+     "name_in_app": "RS Green Energy Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-002045",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL SRI SAI RAGHAVA, Sangareddy Charging Station",
+   "address": "SANGAREDDY, Telangana",
+   "lat": 17.626188,
+   "lng": 78.102382,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_SRI_SAI_RAGHAVA_Sangareddy",
+     "name_in_app": "IOCL SRI SAI RAGHAVA, Sangareddy Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-002046",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Laxmi Narasimha Sadasivapet",
+   "address": "SANGAREDDY, Telangana",
+   "lat": 17.627842,
+   "lng": 77.905789,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_LAXMI_NARASIMHA_Sadasivapet",
+     "name_in_app": "IOCL Laxmi Narasimha Sadasivapet",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-002047",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL COCO L&T, Kamakole",
+   "address": "SANGAREDDY, Telangana",
+   "lat": 17.64506,
+   "lng": 77.826314,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 2
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_COCO_L_And_T_Kamakole",
+     "name_in_app": "IOCL COCO L&T, Kamakole",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-002048",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TML Orange Auto, Medchal",
+   "address": "RANGAREDDY, Telangana",
+   "lat": 17.646226,
+   "lng": 78.486257,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Orange_Auto_Medchal",
+     "name_in_app": "TML Orange Auto, Medchal",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Medchal Malkajgiri"
+  },
+  {
+   "charger_id": "C-002049",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Sainath Fs, Medak",
+   "address": "SANGAREDDY, Telangana",
+   "lat": 17.660854,
+   "lng": 77.724737,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Sainath_Fs_Medak",
+     "name_in_app": "IOCL Sainath Fs, Medak",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-002050",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL K Krishnarjuna Rao",
+   "address": "KOTHAGUDEM COLLS, Telangana",
+   "lat": 17.665123,
+   "lng": 80.812518,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_K_Krishnarjuna_Rao",
+     "name_in_app": "IOCL K Krishnarjuna Rao",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Bhadradri Kothagudem"
+  },
+  {
+   "charger_id": "C-002051",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Raja Rajeswari Fs, Jogipet",
+   "address": "SANGAREDDY, Telangana",
+   "lat": 17.8207082,
+   "lng": 78.0743402,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Raja_Rajeswari_Fs_Jogipet",
+     "name_in_app": "IOCL Raja Rajeswari Fs, Jogipet",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-002052",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Kandhulapullaiah Oil Fs Charging station",
+   "address": "KOTHAGUDEM, Telangana",
+   "lat": 17.847129,
+   "lng": 80.830397,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Kandhulapullaiah_Oil_Fs",
+     "name_in_app": "IOCL Kandhulapullaiah Oil Fs Charging station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Bhadradri Kothagudem"
+  },
+  {
+   "charger_id": "C-002053",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "Hotel S4 Food Court Gajwel Mandal",
+   "address": "SIDDIPET, Telangana",
+   "lat": 17.862936,
+   "lng": 78.744131,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "Hotels_S4_Food_Court_Gajwel_Mandal",
+     "name_in_app": "Hotel S4 Food Court Gajwel Mandal",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Siddipet"
+  },
+  {
+   "charger_id": "C-002055",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Adhoc AP Prison",
+   "address": "WARANGAL, Telangana",
+   "lat": 17.980505,
+   "lng": 79.579956,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Adhoc_AP_Prison",
+     "name_in_app": "IOCL Adhoc AP Prison",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hanumakonda"
+  },
+  {
+   "charger_id": "C-002056",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Orugallu Fs",
+   "address": "WARANGAL, Telangana",
+   "lat": 17.985489,
+   "lng": 79.573782,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Orugallu_Fs",
+     "name_in_app": "IOCL Orugallu Fs",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hanumakonda"
+  },
+  {
+   "charger_id": "C-002057",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Shiva Sai Fp Hanamkonda",
+   "address": "HANAMKONDA, Telangana",
+   "lat": 17.991266,
+   "lng": 79.535464,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Shiva_Sai_Fp_Hanamkonda",
+     "name_in_app": "IOCL Shiva Sai Fp Hanamkonda",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hanumakonda"
+  },
+  {
+   "charger_id": "C-002058",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Ap Prisons Department",
+   "address": "WARANGAL, Telangana",
+   "lat": 17.9940333,
+   "lng": 79.5916533,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Ap_Prisons_Department",
+     "name_in_app": "IOCL Ap Prisons Department",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Warangal"
+  },
+  {
+   "charger_id": "C-002059",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TML Select Cars SVP Road Charging Station",
+   "address": "Warangal, Telangana",
+   "lat": 17.999273,
+   "lng": 79.585443,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Select_Cars_SVP_Road_Charging_Station",
+     "name_in_app": "TML Select Cars SVP Road Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hanumakonda"
+  },
+  {
+   "charger_id": "C-002060",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Yadadri Fs Oglapur",
+   "address": "WARANGAL, Telangana",
+   "lat": 18.013301,
+   "lng": 79.6750422,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Yadadri_Fs_Oglapur",
+     "name_in_app": "IOCL Yadadri Fs Oglapur",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Warangal"
+  },
+  {
+   "charger_id": "C-002061",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL SRI SANGAMESWARA FS, NARAYANKHED",
+   "address": "SANGAREDDY, Telangana",
+   "lat": 18.0362267,
+   "lng": 77.7785209,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_SRI_SANGAMESWARA_FS_NARAYANKHED",
+     "name_in_app": "IOCL SRI SANGAMESWARA FS, NARAYANKHED",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Sangareddy"
+  },
+  {
+   "charger_id": "C-002062",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Kalyani Fs",
+   "address": "WARANGAL, Telangana",
+   "lat": 18.048893,
+   "lng": 79.661366,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Kalyani_Fs",
+     "name_in_app": "IOCL Kalyani Fs",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hanumakonda"
+  },
+  {
+   "charger_id": "C-002063",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TML Tejaswi Automobiles Siddipet Charging Station",
+   "address": "SIDDIPET, Telangana",
+   "lat": 18.0677933,
+   "lng": 78.862961,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Tejaswi_Automobiles_Siddipet",
+     "name_in_app": "TML Tejaswi Automobiles Siddipet Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [
+    "C-000875"
+   ],
+   "state": "TELANGANA",
+   "district": "Siddipet"
+  },
+  {
+   "charger_id": "C-002064",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Balaji Fs Yellapur Charging Station",
+   "address": "WARANGAL, Telangana",
+   "lat": 18.087979,
+   "lng": 79.492938,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Balaji_Fs_Yellapur",
+     "name_in_app": "IOCL Balaji Fs Yellapur Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hanumakonda"
+  },
+  {
+   "charger_id": "C-002065",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Sai Service Station Elkaturthy",
+   "address": "WARANGAL, Telangana",
+   "lat": 18.094591,
+   "lng": 79.449921,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Sai_Service_Station_Elkaturthy",
+     "name_in_app": "IOCL Sai Service Station Elkaturthy",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hanumakonda"
+  },
+  {
+   "charger_id": "C-002066",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL SRI RENUKA YELLAMMA FS, Lingareddypally",
+   "address": "SIDDIPET, Telangana",
+   "lat": 18.11532,
+   "lng": 78.852163,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_SRI_RENUKA_YELLAMMA_FS_Lingareddypally",
+     "name_in_app": "IOCL SRI RENUKA YELLAMMA FS, Lingareddypally",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Siddipet"
+  },
+  {
+   "charger_id": "C-002067",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL  Vishwambhara",
+   "address": "WARANGAL, Telangana",
+   "lat": 18.198788,
+   "lng": 79.698056,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Vishwambhara_FS",
+     "name_in_app": "IOCL  Vishwambhara",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Hanumakonda"
+  },
+  {
+   "charger_id": "C-002068",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Sudhakar SS Huzurabad",
+   "address": "KARIM NAGAR, Telangana",
+   "lat": 18.198936,
+   "lng": 79.397736,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Sudhakar_SS_Huzurabad",
+     "name_in_app": "IOCL Sudhakar SS Huzurabad",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Karimnagar"
+  },
+  {
+   "charger_id": "C-002069",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TML Sree Venkateswara Motors, Hyderabad Road",
+   "address": "KAMAREDDY, Telangana",
+   "lat": 18.29187,
+   "lng": 78.346882,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Sree_Venkateswara_Motors_Hyderabad_Road_2",
+     "name_in_app": "TML Sree Venkateswara Motors, Hyderabad Road",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Kamareddy"
+  },
+  {
+   "charger_id": "C-002070",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TML Select Cars Kothirampur Karimnagar Charging Station",
+   "address": "KARIM NAGAR, Telangana",
+   "lat": 18.417928,
+   "lng": 79.13639,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Select_Cars_Kothirampur_Karimnagar",
+     "name_in_app": "TML Select Cars Kothirampur Karimnagar Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Karimnagar"
+  },
+  {
+   "charger_id": "C-002071",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOC  Raja Rajeshwara F/P, Gangadhara",
+   "address": "KARIM NAGAR, Telangana",
+   "lat": 18.4319023,
+   "lng": 79.0092394,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Raja_Rajeshwara_F_P_Gangadhara",
+     "name_in_app": "IOC  Raja Rajeshwara F/P, Gangadhara",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Karimnagar"
+  },
+  {
+   "charger_id": "C-002072",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Sai Baba Filling Point, Varni",
+   "address": "NIZAMABAD, Telangana",
+   "lat": 18.532897,
+   "lng": 77.89655,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Sai_Baba_Filling_Point_Varni",
+     "name_in_app": "IOCL Sai Baba Filling Point, Varni",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nizamabad"
+  },
+  {
+   "charger_id": "C-002073",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TML Sree Venkateswara Motors Hyderabad Road Charging Station",
+   "address": "NIZAMABAD, Telangana",
+   "lat": 18.6563755,
+   "lng": 78.1238645,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Sree_Venkateswara_Motors_Hyderabad_Road",
+     "name_in_app": "TML Sree Venkateswara Motors Hyderabad Road Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nizamabad"
+  },
+  {
+   "charger_id": "C-002074",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Onkar Roadlines FP, Andagullapally",
+   "address": "PEDDAPALLI, Telangana",
+   "lat": 18.6780644,
+   "lng": 79.4073625,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Onkar_Roadlines_FP_Andagullapally",
+     "name_in_app": "IOCL Onkar Roadlines FP, Andagullapally",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Peddapalli"
+  },
+  {
+   "charger_id": "C-002075",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Sai Leela  As, Kundanpally",
+   "address": "PEDDAPALLI, Telangana",
+   "lat": 18.7483281,
+   "lng": 79.4358893,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Sai_Leela_As_Kundanpally",
+     "name_in_app": "IOCL Sai Leela  As, Kundanpally",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Peddapalli"
+  },
+  {
+   "charger_id": "C-002076",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Ganapathy Fs Jaipur",
+   "address": "MANCHERIAL, Telangana",
+   "lat": 18.84559,
+   "lng": 79.576517,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Ganapathy_Fs_Jaipur",
+     "name_in_app": "IOCL Ganapathy Fs Jaipur",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Mancherial"
+  },
+  {
+   "charger_id": "C-002077",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TML Sree Venkateswara Motors Divyanagar Charging Station",
+   "address": "NIRMAL, Telangana",
+   "lat": 19.082489,
+   "lng": 78.3602041,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Sree_Venkateswara_Motors_Divyanagar",
+     "name_in_app": "TML Sree Venkateswara Motors Divyanagar Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Nirmal"
+  },
+  {
+   "charger_id": "C-002078",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Sri Sainath Filling Station, Mavala",
+   "address": "ADILABAD, Telangana",
+   "lat": 19.6466636,
+   "lng": 78.5154663,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_Sri_Sainath_Filling_Station_Mavala",
+     "name_in_app": "IOCL Sri Sainath Filling Station, Mavala",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Adilabad"
+  },
+  {
+   "charger_id": "C-002079",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "TML Sree Venkateswara Motors Dasnapur Charging Station",
+   "address": "ADILABAD, Telangana",
+   "lat": 19.6560251,
+   "lng": 78.52951,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "TML_Sree_Venkateswara_Motors_Dasnapur",
+     "name_in_app": "TML Sree Venkateswara Motors Dasnapur Charging Station",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Adilabad"
+  },
+  {
+   "charger_id": "C-002080",
+   "region": "telangana",
+   "state_hint": "telangana",
+   "name": "IOCL Police Petrol Pump",
+   "address": "ADILABAD, Telangana",
+   "lat": 19.669815,
+   "lng": 78.52186,
+   "cpo": "Tata Power",
+   "power": null,
+   "connectors": {
+    "total": 1
+   },
+   "listed_in": [
+    {
+     "app": "tata_power",
+     "app_id": "IOCL_IOCL_Police_Petrol_Pump",
+     "name_in_app": "IOCL Police Petrol Pump",
+     "operator_in_app": "Tata Power",
+     "price": null,
+     "reports_live_status": true,
+     "distance_m": 0.0
+    }
+   ],
+   "possible_duplicates": [],
+   "state": "TELANGANA",
+   "district": "Adilabad"
+  }
+ ]
+}

@@ -1,0 +1,8111 @@
+[
+ {
+  "app": "tata_power",
+  "app_id": "AAI_Calicut_Airport",
+  "lat": 11.140241,
+  "lng": 75.948362,
+  "name": "Calicut Airport Charging Station",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Apollo_Tyres_AM_Tyres_Malappuram",
+  "lat": 11.060582,
+  "lng": 76.080841,
+  "name": "AM Tyres Malappuram",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Apollo_Tyres_Aparna_Tyres_Padianallur",
+  "lat": 13.1904,
+  "lng": 80.191129,
+  "name": "Aparna Tyres Padianallur",
+  "address": "TIRUVALLUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Apollo_Tyres_Guna_Tyres_Krishnagiri_Orappam",
+  "lat": 12.534916,
+  "lng": 78.266056,
+  "name": "Apollo Guna Tyres Krishnagiri",
+  "address": "KRISHNAGIRI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Apollo_Tyres_InFour_Wheel_Care_Tyres_Perinthalmanna",
+  "lat": 10.960457,
+  "lng": 76.23488,
+  "name": "InFour Wheel Care And Tyres Perinthalmanna",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Apollo_Tyres_Perumbavoor_Tyres_Malamuri",
+  "lat": 10.094095,
+  "lng": 76.494036,
+  "name": "Perumbavoor Tyres Malamuri",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Apollo_Tyres_SAMY_Auto_Centre_Sattur",
+  "lat": 9.400578,
+  "lng": 77.916966,
+  "name": "Samy Auto Centre Sattur",
+  "address": "VIRUDHUNAGAR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "App_Only_TML_TATA_EV_STORE_Malappuram",
+  "lat": 11.052174,
+  "lng": 76.077293,
+  "name": "Tata.ev store Malappuram",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "App_Only_TML_TATA_Tata_ev_KVR_MOTOR",
+  "lat": 11.860908,
+  "lng": 75.411918,
+  "name": "Tata.ev KVR Dreams Kannur",
+  "address": "KANNUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "App_Only_TML_TATA_ev_Luxon_Motior_STORE_EDAPPALLY",
+  "lat": 10.0114356,
+  "lng": 76.3112836,
+  "name": "TATA.ev Luxon Motors",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "App_Only_TML_TATA_ev_Sree_Gokulam_Motors_and_Services",
+  "lat": 10.0814427,
+  "lng": 76.3394431,
+  "name": "TATA.ev Gokulam Motors",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "App_Only_TML_TATA_ev_Thrissur",
+  "lat": 10.496808,
+  "lng": 76.258299,
+  "name": "Tata.ev Hyson motors Thrissur",
+  "address": "THRISSUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Banks_SBI_College_Lane",
+  "lat": 13.06699,
+  "lng": 80.251975,
+  "name": "SBI, College Lane (private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Banks_SBI_SBI_Abids",
+  "lat": 17.394132,
+  "lng": 78.475429,
+  "name": "State bank of India, Abids (Private Charger)",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Banks_SBI_SBI_Koti",
+  "lat": 17.3868695,
+  "lng": 78.481858,
+  "name": "State bank of india, Koti (Private Charger)",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Banks_SBI_SBI_Poojapura",
+  "lat": 8.496189,
+  "lng": 76.981446,
+  "name": "State bank of India Poojapura (Private Charger)",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Banks_SBI_State_bank_of_india_St_Marks_Road",
+  "lat": 12.971184,
+  "lng": 77.601541,
+  "name": "State bank of India St Mark's Road, Aneex Building (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Cochin_Taj_Airport_Hotel_Cochin",
+  "lat": 10.159892,
+  "lng": 76.390156,
+  "name": "TAJ COCHIN INTERNATIONAL AIRPORT, KERALA",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_5K_Car_Care_Avinashi",
+  "lat": 11.175269,
+  "lng": 77.262823,
+  "name": "5K Car Care Avinashi Charging Station",
+  "address": "TIRUPPUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_BEES_Be_Energy_Efficient",
+  "lat": 11.301875,
+  "lng": 77.601095,
+  "name": "BEES - Be Energy Efficient Charging Station",
+  "address": "ERODE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_Cauvery_Motors_Shimoga_MG_motors",
+  "lat": 13.934605,
+  "lng": 75.585375,
+  "name": "Cauvery Motors, Shimoga (MG motors)",
+  "address": "SHIVAMOGGA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_Centro_Mall_Kodungallur",
+  "lat": 10.2326972,
+  "lng": 76.1957944,
+  "name": "Centro Mall Kodungallur Charging Station",
+  "address": "THRISSUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_Daily_Angadi_Supermarket",
+  "lat": 10.027254,
+  "lng": 76.35955,
+  "name": "Daily Angadi Supermarket",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_Embassy_Golf_Link",
+  "lat": 12.947754,
+  "lng": 77.645675,
+  "name": "Embassy Golf Link (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_Embassy_Golf_Link_Sunnigdale",
+  "lat": 12.948159,
+  "lng": 77.643908,
+  "name": "Embassy Golf Link Sunnigdale (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_Gogte_Plaza_Belgaum",
+  "lat": 15.92869,
+  "lng": 74.52913,
+  "name": "Gogte Plaza Belgaum Charging Station",
+  "address": "BELAGAVI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 9
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_Kapil_Towers_Gachibowli",
+  "lat": 17.42147,
+  "lng": 78.33883,
+  "name": "Kapil Towers Gachibowli",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_Karle_Infra_Pvt_Ltd",
+  "lat": 13.044106,
+  "lng": 77.616691,
+  "name": "Karle Infra Pvt. Ltd.",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_One_Stop_Automotive",
+  "lat": 11.202809,
+  "lng": 76.136602,
+  "name": "One Stop Automotive Charging Station",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_PMJ_Group_Vezhapareambu_Road",
+  "lat": 9.900436,
+  "lng": 76.382882,
+  "name": "PMJ Group Vezhapareambu Road Charging Station",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_Shilpa_Ananya_Tech_park",
+  "lat": 12.848161,
+  "lng": 77.66293,
+  "name": "Shilpa Ananya Tech park (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_Shri_Annanmalaiyar_5K_car_care",
+  "lat": 9.47451,
+  "lng": 77.80718,
+  "name": "Shri Annanmalaiyar 5K car care",
+  "address": "VIRUDHUNAGAR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_Skyline_Foundatio_Kodimatha",
+  "lat": 9.571481,
+  "lng": 76.521497,
+  "name": "Skyline Foundation Kodimatha (Private Charger)",
+  "address": "KOTTAYAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_TSG_Heights_Commercial_Complex",
+  "lat": 17.4253066,
+  "lng": 78.4350938,
+  "name": "TSG Heights Commercial Complex",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_TSS_Super_Market_Mundgod",
+  "lat": 14.979069,
+  "lng": 75.043948,
+  "name": "TSS Super Market, Mundgod",
+  "address": "UTTARA KANNADA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_TSS_Super_Market_Sirsi",
+  "lat": 14.62459,
+  "lng": 74.84142,
+  "name": "TSS Super Market, Sirsi",
+  "address": "UTTARA KANNADA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_TSS_Super_Market_Yellapur",
+  "lat": 14.958673,
+  "lng": 74.718102,
+  "name": "TSS Super Market Yellapur",
+  "address": "UTTARA KANNADA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercial_VERGHESE_AND_COMPANY",
+  "lat": 17.308455,
+  "lng": 76.815353,
+  "name": "VERGHESE AND COMPANY",
+  "address": "KALABURAGI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercials_Embassy_Tech_Village",
+  "lat": 12.931799,
+  "lng": 77.689111,
+  "name": "Embassy Tech Village (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercials_PCK_Centenary",
+  "lat": 10.522975,
+  "lng": 76.206158,
+  "name": "PCK Centenary",
+  "address": "THRISSUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Commercials_V_NET_Shopping_Complex",
+  "lat": 12.175149,
+  "lng": 75.1935186,
+  "name": "V-NET Shopping Complex",
+  "address": "KANNUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Croma_Attapur",
+  "lat": 17.359176,
+  "lng": 78.426285,
+  "name": "Croma, Attapur",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Croma_JP_Nagar_Marenahalli",
+  "lat": 12.9167541,
+  "lng": 77.5911295,
+  "name": "Croma, Marenahalli J. P. Nagar",
+  "address": "Bangalore, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Croma_Kompally",
+  "lat": 17.532082,
+  "lng": 78.487277,
+  "name": "Croma, Kompally",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Croma_LB_Nagar",
+  "lat": 17.352657,
+  "lng": 78.546636,
+  "name": "Croma, L.B. Nagar",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Croma_Ramanthapur",
+  "lat": 17.400393,
+  "lng": 78.541871,
+  "name": "Croma, Ramanthapur",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "DLF_DLF_New_Town_Heights",
+  "lat": 10.010987,
+  "lng": 76.34683,
+  "name": "DLF New Town Heights (Private charger)",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Educational_Gokulam_Group_Sree_Gokulam_Medical_College_Venjarammoodu",
+  "lat": 8.691115,
+  "lng": 76.913712,
+  "name": "Sree Gokulam Medical College, Venjarammoodu",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Fleet_Movein_Sync_Move_in_Sync_Technology_Center_Point_II",
+  "lat": 13.014826,
+  "lng": 80.200865,
+  "name": "Move in Sync Technology Center Point II (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Fleet_Safa_Logistics_Safa_Logistics_Raheja_Mindspace",
+  "lat": 17.4379463,
+  "lng": 78.3848495,
+  "name": "Safa Logistics Raheja Mindspace (Private Charger)",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Fujitsu_Fujitsu_Consulting_Navallur",
+  "lat": 12.85199,
+  "lng": 80.223645,
+  "name": "Fujitsu Consulting, Navallur (Private Charger)",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "GAIL_Gas_GAIL_Software_Park",
+  "lat": 13.152909,
+  "lng": 77.728291,
+  "name": "GAIL Software Park Charging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Ginger_Bglr_Koramangala",
+  "lat": 12.95234,
+  "lng": 77.63997,
+  "name": "Ginger Hotel, Koramangala",
+  "address": "Bangalore, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Ginger_Vadapalani",
+  "lat": 13.05647,
+  "lng": 80.21116,
+  "name": "Ginger Hotel, Vadapalani",
+  "address": "Chennai, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Gokulam_Park_Munnar",
+  "lat": 10.0297934,
+  "lng": 77.0458592,
+  "name": "Gokulam Park Munnar Charging Station",
+  "address": "IDUKKI, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "HPCL_ADHOC_BKLOA",
+  "lat": 11.431665,
+  "lng": 77.680073,
+  "name": "HPCL ADHOC BKLOA",
+  "address": "NAMAKKAL, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "HPCL_SRI_SABARI_FUELS",
+  "lat": 11.19477,
+  "lng": 77.294228,
+  "name": "Sri Sabari Fuels Charging Station",
+  "address": "ERODE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Highway_Hospitality_Rajugari_Thota_Rayangudem_Charging_Station",
+  "lat": 17.1537727,
+  "lng": 79.559378,
+  "name": "Highway Hospitality Rajugari Thota Rayangudem Charging Station",
+  "address": "SURYAPET, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Highway_Sarath_City_Capital_Mall_Whitefields_Hyderabad",
+  "lat": 17.457774,
+  "lng": 78.36396,
+  "name": "Sarath City Capital Mall",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotel_Arpanaa_Hotel",
+  "lat": 12.247382,
+  "lng": 79.071379,
+  "name": "Arpanaa Hotel",
+  "address": "TIRUVANNAMALAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotel_Mayas_Kings_Kourt_Hotel",
+  "lat": 12.31149,
+  "lng": 76.64489,
+  "name": "Mayaâ€™s Kings Kourt Hotel",
+  "address": "MYSURU, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotel_Nagarjuna_Hotel",
+  "lat": 13.132387,
+  "lng": 78.169332,
+  "name": "Nagarjuna Hotel Charging Station",
+  "address": "KOLAR, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotel_Rathna_Residency_Town_Hall",
+  "lat": 10.998471,
+  "lng": 76.964447,
+  "name": "Hotel Rathna Residency Town Hall",
+  "address": "COIMBATORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_7_Midway_Plaza_Chityala",
+  "lat": 17.2316983,
+  "lng": 79.1000216,
+  "name": "7 Midway Plaza -Chityala",
+  "address": "NALGONDA, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_7_Midway_Plaza_Suryapet",
+  "lat": 17.15091,
+  "lng": 79.576915,
+  "name": "TATA Power x TATA.EV 7 Midway Plaza â€“ Suryapet",
+  "address": "SURYAPET, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Akshara_Pure_Veg",
+  "lat": 14.086087,
+  "lng": 76.540036,
+  "name": "Akshara Pure Veg Charging Station",
+  "address": "CHITRADURGA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Amber_dale_Hotel",
+  "lat": 10.051785,
+  "lng": 77.046207,
+  "name": "Amber dale Hotel",
+  "address": "IDUKKI, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Anand_vihar_Veg_NH_50",
+  "lat": 14.621474,
+  "lng": 76.459491,
+  "name": "Anand Vihar Veg NH 50 Charging Station",
+  "address": "BELLARY, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Arrival_Hotels",
+  "lat": 17.4343059,
+  "lng": 78.3879511,
+  "name": "Arrival Hotels Charging Station",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Ayana_Resorts_Convention",
+  "lat": 17.3452929,
+  "lng": 78.3330498,
+  "name": "Ayana Resorts",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Birwa_Hotel_Nelyadi",
+  "lat": 12.832128,
+  "lng": 75.413124,
+  "name": "Birwa Hotel Nelyadi Charging Station",
+  "address": "DAKSHINA KANNADA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Clarion_Hotel_Bangalore",
+  "lat": 13.108952,
+  "lng": 77.560449,
+  "name": "Clarion Hotel Bangalore",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Coastal_Grand_Hotels_and_Resorts",
+  "lat": 12.84711,
+  "lng": 80.214737,
+  "name": "Coastal Grand Hotels and Resorts",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Coastal_Grand_Nallipalayam",
+  "lat": 11.239894,
+  "lng": 78.141772,
+  "name": "Coastal Grand Nallipalayam",
+  "address": "NAMAKKAL, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Coastal_Paradise",
+  "lat": 13.46653,
+  "lng": 74.71472,
+  "name": "Coastal Paradise Charging station",
+  "address": "UDUPI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Dadwi_Cafe",
+  "lat": 10.0380337,
+  "lng": 76.4067416,
+  "name": "Dadwi Cafe Charging Station",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Daspalla_Hotels_Jubilee_Hills",
+  "lat": 17.4368304,
+  "lng": 78.3983261,
+  "name": "Daspalla Hotels, Jubilee Hills",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Eden_Garden_Restaurant",
+  "lat": 10.112216,
+  "lng": 77.937821,
+  "name": "Eden Garden Restaurant Charging Station",
+  "address": "MADURAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Ginger_Hotel_Mangalore",
+  "lat": 12.9091347,
+  "lng": 74.8359781,
+  "name": "Ginger Hotel Mangalore",
+  "address": "DAKSHINA KANNADA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Gokulam_Grand_Bangalore",
+  "lat": 13.0421373,
+  "lng": 77.554803,
+  "name": "Hotels Gokulam Grand Bangalore",
+  "address": "Bangalore, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Gokulam_Grand_Kovalam",
+  "lat": 8.390198,
+  "lng": 76.976356,
+  "name": "Hotel Gokulam Grand Kovalam",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Gokulam_Group_Gokulam_Grand_Kumarakom",
+  "lat": 9.595687,
+  "lng": 76.426574,
+  "name": "Gokulam Grand Kumarakom Charging Station",
+  "address": "KOTTAYAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Gokulam_Group_Gokulam_Grand_Trivandrum",
+  "lat": 8.5230964,
+  "lng": 76.8928683,
+  "name": "Hotel Gokulam Grand Trivandrum",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Gokulam_Group_Gokulam_Park_Kochi_Kaloor",
+  "lat": 9.993921,
+  "lng": 76.290353,
+  "name": "Gokulam Park Kochi, Kaloor Charging Station",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Gokulam_Group_Gokulam_Residency_Amballur",
+  "lat": 10.43621,
+  "lng": 76.265203,
+  "name": "Gokulam Residency, Amballur",
+  "address": "THRISSUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Gokulam_Group_Gokulam_Towers_RO_Junction",
+  "lat": 8.929499,
+  "lng": 76.913254,
+  "name": "Gokulam Towers RO Junction",
+  "address": "KOLLAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Gokulam_Park_Sabari_OMR_IT_Expressway",
+  "lat": 12.8421542,
+  "lng": 80.227527,
+  "name": "Hotel Gokulam Park Sabari OMR IT Expressway",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Gokulam_Relax_Park_Karuvambram",
+  "lat": 11.1188737,
+  "lng": 76.1185446,
+  "name": "Hotel Gokulam Relax Park, Karuvambram",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Gokulam_Sabari_Guruvayur",
+  "lat": 10.596516,
+  "lng": 76.04243,
+  "name": "Hotel Gokulam Sabari Guruvayur",
+  "address": "THRISSUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Grand_Bay_Resort_and_SPA_East_Coast_Road",
+  "lat": 12.6271997,
+  "lng": 80.1958454,
+  "name": "Hotel Grand Bay Resort & SPA",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Growers_Cafe_Belur",
+  "lat": 13.108581,
+  "lng": 75.741021,
+  "name": "Growers Cafe Belur Charging Station",
+  "address": "HASSAN, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_HOTEL_AMRUTHA",
+  "lat": 12.418748,
+  "lng": 75.740741,
+  "name": "Hotel Church Side Madikeri 60 KW Charging Station",
+  "address": "ATHANI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_HOTEL_HI_WAY_KURINJI",
+  "lat": 10.605891,
+  "lng": 78.408612,
+  "name": "HOTEL HI-WAY KURINJI Charging Station",
+  "address": "TIRUCHIRAPPALLI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_HOTEL_NEW_SARAVANA_BAVAN",
+  "lat": 12.256778,
+  "lng": 78.575664,
+  "name": "HOTEL NEW SARAVANA BAVAN Charging Station",
+  "address": "KRISHNAGIRI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_HOTEL_SARAVANA_BHAVAN",
+  "lat": 12.872522,
+  "lng": 79.735625,
+  "name": "HOTEL SARAVANA BHAVAN",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Handpicked_By_Tata_Coffee",
+  "lat": 12.225116,
+  "lng": 76.011683,
+  "name": "Handpicked By Tata Coffee Charging Station",
+  "address": "KODAGU, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Heart_Cup_Coffee",
+  "lat": 17.560199,
+  "lng": 78.489015,
+  "name": "Heart Cup Coffee Charging Station",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Hotel_AVM",
+  "lat": 17.188079,
+  "lng": 78.474496,
+  "name": "Hotel AVM Charging Station",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Hotel_Hills_Athanavur",
+  "lat": 12.590699,
+  "lng": 78.631818,
+  "name": "Hotel Hills, Athanavur",
+  "address": "VELLORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Hotel_Hills_Krishnagiri_Road",
+  "lat": 12.486021,
+  "lng": 78.561525,
+  "name": "Hotel Hills, Krishnagiri Road",
+  "address": "VELLORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Hotel_Hills_Phase_I_Mookondapalli",
+  "lat": 12.75287,
+  "lng": 77.804001,
+  "name": "Hotel Hills, Phase I Mookondapalli",
+  "address": "KRISHNAGIRI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Hotel_Mamalla_Heritage_Fisherman_Colony_Mahabalipuram",
+  "lat": 12.6186058,
+  "lng": 80.194006,
+  "name": "Hotel Mamalla Heritage",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Hotel_Meridian_by_Daan",
+  "lat": 8.42691,
+  "lng": 77.044684,
+  "name": "Hotel Meridian by Daan Charging Station",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Hotel_New_Church_Side_Stuart_Hill",
+  "lat": 12.4187915,
+  "lng": 75.7405899,
+  "name": "Hotel New Church Side, Stuart Hill",
+  "address": "ATHANI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Hotel_Pranav_Veg",
+  "lat": 13.516622,
+  "lng": 77.764161,
+  "name": "Hotel Pranav Veg Charging Station",
+  "address": "CHIKKABALLAPUR, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Hotel_Udupi_Grand_Veg",
+  "lat": 13.06464,
+  "lng": 77.257092,
+  "name": "Sri Krishna Naivedya Pure Veg Charging Station",
+  "address": "RAMANAGAR, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Hotel_Udupi_Utsav_Sundahalli",
+  "lat": 12.504946,
+  "lng": 76.832044,
+  "name": "Hotel Udupi Utsav Sundahalli Charging Station",
+  "address": "MANDYA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Impertiv_Bloom_Hotels_Indiranagar",
+  "lat": 12.966599,
+  "lng": 77.641246,
+  "name": "Bloom Hotels, Indiranagar",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_KAMATH_VILLAGE_RESORTZ",
+  "lat": 11.78026,
+  "lng": 76.611,
+  "name": "Bandipur Heritage Village Resort",
+  "address": "CHAMRAJNAGAR, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Misty_Mountain_Teyla_Mundakayam",
+  "lat": 9.5447482,
+  "lng": 76.877561,
+  "name": "Misty Mountain Teyla, Mundakayam Charging Station",
+  "address": "KOTTAYAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Misty_Mountain_Teyla_Peermade",
+  "lat": 9.5802797,
+  "lng": 76.9701859,
+  "name": "Misty Mountain Teyla Peermade Charging Station",
+  "address": "IDUKKI, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Muthoot_leisure_Cardamom_County_Thekkady",
+  "lat": 9.60359,
+  "lng": 77.1689016,
+  "name": "Cardamom County by Xandari",
+  "address": "IDUKKI, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_OPDSS_Hotels_And_Resorts_Kanimetta",
+  "lat": 16.426687,
+  "lng": 77.939095,
+  "name": "Food Pyramid (OPDSS) NH44 Kanimetta",
+  "address": "NAGAR KURNOOL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Pagoda_resort_Alappuzha",
+  "lat": 9.494332,
+  "lng": 76.346764,
+  "name": "Pagoda resort Alappuzha Charging Station",
+  "address": "ALAPPUZHA, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Pattukottai_Mess",
+  "lat": 12.021972,
+  "lng": 79.536255,
+  "name": "Pattukottai Mess",
+  "address": "VILLUPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Planet_9_The_Food_Court_NH_65",
+  "lat": 17.606498,
+  "lng": 78.015216,
+  "name": "Planet 9 The Food Court NH 65 Charging Station",
+  "address": "SANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Prannam_Veg_Restaurant",
+  "lat": 9.995729,
+  "lng": 78.252227,
+  "name": "Prannam Veg Restaurant",
+  "address": "MADURAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_RAS_Residency_Auto_Nagar",
+  "lat": 10.972083,
+  "lng": 79.380481,
+  "name": "RAS Residency Auto Nagar Charging Station",
+  "address": "THANJAVUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Ram_Inn",
+  "lat": 10.776256,
+  "lng": 79.126108,
+  "name": "Ram Inn Charging Station",
+  "address": "THANJAVUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Royal_Bakers_Kolanchery",
+  "lat": 9.979135,
+  "lng": 76.476749,
+  "name": "Royal Bakers, Kolanchery",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_S4_Food_Court_Gajwel_Mandal",
+  "lat": 17.862936,
+  "lng": 78.744131,
+  "name": "Hotel S4 Food Court Gajwel Mandal",
+  "address": "SIDDIPET, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_SAJ_Earth_Resort_Near_Airport",
+  "lat": 10.1623326,
+  "lng": 76.3848678,
+  "name": "SAJ Earth Resort, Near Airport",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_SRI_KRISHNA_CAFE",
+  "lat": 12.326903,
+  "lng": 76.361162,
+  "name": "SRI KRISHNA CAFE",
+  "address": "MYSURU, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Savera_Hotel_Mylapore",
+  "lat": 13.04643,
+  "lng": 80.261411,
+  "name": "Savera Hotel Mylapore",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Shiva_Hotel",
+  "lat": 14.537556,
+  "lng": 75.759508,
+  "name": "Shiva Hotel Charging Station",
+  "address": "HAVERI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Southern_Star_Bangalore",
+  "lat": 12.974583,
+  "lng": 77.599532,
+  "name": "Southern Star Bangalore",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Southern_Star_Mysore",
+  "lat": 12.31167,
+  "lng": 76.643316,
+  "name": "Southern Star Mysore Charging Station",
+  "address": "MYSURU, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Spark_by_Hilton",
+  "lat": 12.938938,
+  "lng": 77.696101,
+  "name": "Spark by Hilton Charging station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Square_INN_Rooms",
+  "lat": 13.221438,
+  "lng": 77.682776,
+  "name": "Square INN Rooms",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Sri_Kamadhenu_Veg",
+  "lat": 13.612149,
+  "lng": 76.953458,
+  "name": "Sri Kamadhenu Veg",
+  "address": "TUMAKURU, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Sri_Lakshmi_Bhavan",
+  "lat": 12.2724656,
+  "lng": 78.7215996,
+  "name": "Sri Lakshmi Bhavan Charging Station",
+  "address": "TIRUVANNAMALAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Sri_Sai_Family_and_Kanchetty_Restaurant_NH44",
+  "lat": 18.632133,
+  "lng": 78.208208,
+  "name": "Sri Sai Family and Kanchetty Restaurant NH44 Charging Station",
+  "address": "NIZAMABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Sterling_Ooty_Fern_Hill",
+  "lat": 11.3910834,
+  "lng": 76.6984763,
+  "name": "Sterling Ooty Fern Hill Charging Station",
+  "address": "NILGIRIS, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Suba_Click_Hotel_Sadahalli",
+  "lat": 13.192134,
+  "lng": 77.646586,
+  "name": "Click Hotel Sadahalli",
+  "address": "Bangalore, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Surabhis_Delicacy_BM_Road",
+  "lat": 12.9559,
+  "lng": 75.850308,
+  "name": "Surabhis Delicacy BM Road",
+  "address": "HASSAN, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Taj_Hotels_Chikmagalur_KM_Road",
+  "lat": 13.3366283,
+  "lng": 75.8178783,
+  "name": "Taj Hotels Chikmagalur KM Road Charging Station",
+  "address": "CHICKMAGALUR, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_The_Park_The_Park_MG_Road",
+  "lat": 12.973731,
+  "lng": 77.619337,
+  "name": "Hotel The Park, MG Road",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_The_Park_Zone_Connect_Avinashi_Rd",
+  "lat": 11.042965,
+  "lng": 77.0379167,
+  "name": "The Park Zone Connect, Avinashi Rd",
+  "address": "COIMBATORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_The_Park_Zone_by_The_Park_Avinashi_Rd",
+  "lat": 11.011361,
+  "lng": 76.984473,
+  "name": "Zone by The Park, Avinashi Rd",
+  "address": "COIMBATORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Thekkady_Food_Court",
+  "lat": 9.602807,
+  "lng": 77.138524,
+  "name": "Thekkady Food Court",
+  "address": "IDUKKI, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Vana_Vihar_Resort",
+  "lat": 11.706084,
+  "lng": 76.641571,
+  "name": "Vana Vihar Resort Charging Station",
+  "address": "CHAMRAJNAGAR, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hotels_Xandari_Pearl_beach_Mararikulam",
+  "lat": 9.6060539,
+  "lng": 76.301828,
+  "name": "Hotel Xandari Pearl beach, Mararikulam",
+  "address": "ALAPPUZHA, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hyson_Heritage",
+  "lat": 11.2592882,
+  "lng": 75.7803429,
+  "name": "Hyson Heritage",
+  "address": "KOZHIKODE, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hyundai_HMP_Hyundai_Motor_Plaza_Ekkaduthangal",
+  "lat": 13.018368,
+  "lng": 80.2063,
+  "name": "HMP Hyundai Motor Plaza Ekkaduthangal",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hyundai_Kun_Hyundai_Hyderabad",
+  "lat": 17.402909,
+  "lng": 78.460068,
+  "name": "Kun Hyundai Charging Station",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Hyundai_Lakshmi_Hyundai",
+  "lat": 17.347444,
+  "lng": 78.552051,
+  "name": "Lakshmi Hyundai Charging Station",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Ama_Stays_Ambika_Vilas_Jagaty",
+  "lat": 8.496799,
+  "lng": 76.960731,
+  "name": "Ambika Vilas, Jagaty (Private Charger)",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Ama_Stays_Thaneerhulla_Bungalow_Pollibetta",
+  "lat": 12.2460678,
+  "lng": 75.9472394,
+  "name": "Ama Stays Thaneerhulla Bungalow Pollibetta (Private Charger)",
+  "address": "Kodagu, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Ama_Stays_Thaneerhulla_Cottage_Pollibetta",
+  "lat": 12.246645,
+  "lng": 75.9476972,
+  "name": "Ama Stays Thaneerhulla Cottage Pollibetta(Private Charger)",
+  "address": "Kodagu, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Gateway_Coonoor_IHCL_SeleQtions_Coonoor",
+  "lat": 11.3459974,
+  "lng": 76.801575,
+  "name": "Gateway Coonoor - IHCL SeleQtions, Coonoor",
+  "address": "NILGIRIS, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Ginger_Ginger_Hotel_Kazakuttom",
+  "lat": 8.5615919,
+  "lng": 76.8763933,
+  "name": "Ginger Hotel Kazakuttom",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Ginger_Ginger_Hotel_Near_Kottara_Chowki_Junction",
+  "lat": 12.9090266,
+  "lng": 74.8359697,
+  "name": "Ginger Hotel, Near Kottara Chowki Junction",
+  "address": "Dakshina Kannada, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Ginger_Ginger_Tirupur",
+  "lat": 11.101084,
+  "lng": 77.372054,
+  "name": "Ginger Tirupur",
+  "address": "TIRUPPUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Savoy_Ooty_IHCL_SeleQtions_Monterosa_Colony",
+  "lat": 11.414804,
+  "lng": 76.6928363,
+  "name": "Savoy Ooty IHCL SeleQtions, Monterosa Colony",
+  "address": "NILGIRIS, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_SeleQtions_Munnar",
+  "lat": 10.010938,
+  "lng": 77.05167,
+  "name": "SeleQtions Munnar Charging Station",
+  "address": "IDUKKI, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_GATEWAY_VARKALA_IHCL_Seleqtions",
+  "lat": 8.734892,
+  "lng": 76.708168,
+  "name": "Gateway Varkala IHCL Seleqtions (Private Charger)",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Gateway_Mangaluru_Old_Port_Rd",
+  "lat": 12.861786,
+  "lng": 74.835408,
+  "name": "Gateway Mangaluru, Old Port Rd",
+  "address": "DAKSHINA KANNADA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Gateway_Marine_Drive_Shanmugham_Rd",
+  "lat": 9.9760963,
+  "lng": 76.277377,
+  "name": "Gateway Marine Drive, Shanmugham Rd Charging Station",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Greencove_Resort_And_Spa",
+  "lat": 8.40346,
+  "lng": 76.97388,
+  "name": "Taj Greencove Resort And Spa (Private Charger)",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_TAJ_MALABAR_RESORT_SPA_Willingdon_Island",
+  "lat": 9.969072,
+  "lng": 76.258325,
+  "name": "TAJ MALABAR RESORT & SPA, Willingdon Island",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Bangalore",
+  "lat": 13.1975842,
+  "lng": 77.7053231,
+  "name": "Taj Bangalore",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Bekal_Thekkekara",
+  "lat": 12.423968,
+  "lng": 75.014405,
+  "name": "Taj Bekal, Thekkekara (Private Charger)",
+  "address": "KASARAGOD, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Club_House_Chennai",
+  "lat": 13.061346,
+  "lng": 80.2636188,
+  "name": "Taj Club House Chennai",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Club_House_Chennai_Private",
+  "lat": 13.0611333,
+  "lng": 80.263873,
+  "name": "Taj Club House Chennai (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Connemara_Anna_Salai",
+  "lat": 13.0633603,
+  "lng": 80.2612755,
+  "name": "Taj Connemara, Anna Salai",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Coromandel_Private",
+  "lat": 13.0584599,
+  "lng": 80.2483233,
+  "name": "Taj Coromandel (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Coromandel_Public",
+  "lat": 13.0581566,
+  "lng": 80.247995,
+  "name": "Taj Coromandel Chennai",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Falaknuma_Palace",
+  "lat": 17.331927,
+  "lng": 78.463528,
+  "name": "Taj Falaknuma Palace (Private Charger)",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Fisherman_Cove_Resort_and_Spa_Chengalpattu",
+  "lat": 12.797333,
+  "lng": 80.2475971,
+  "name": "Taj Fishermanâ€™s Cove Resort & Spa, Chengalpattu",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Fishermans_Cove_Resort_and_Spa_Chengalpattu_Private",
+  "lat": 12.79764,
+  "lng": 80.248113,
+  "name": "Taj Fishermanâ€™s Cove Resort & Spa, Chengalpattu (Private Charger)",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Kumarakom_Resort_Spa_Public",
+  "lat": 9.626346,
+  "lng": 76.428798,
+  "name": "Taj Kumarakom Resort & Spa",
+  "address": "KOTTAYAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_MG_Road_Sivanchetti_Garden",
+  "lat": 12.973208,
+  "lng": 77.6199445,
+  "name": "Taj MG Road, Sivanchetti Gardens Front Gate",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_MG_Road_Sivanchetti_Gardens",
+  "lat": 12.973754,
+  "lng": 77.619693,
+  "name": "Taj MG Road, Sivanchetti Gardens Back Gate",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Madikeri_Resort_And_Spa_Madikeri_Private",
+  "lat": 12.445058,
+  "lng": 75.685914,
+  "name": "Taj Madikeri Resort & Spa, Madikeri (Private Charger)",
+  "address": "ATHANI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Madikeri_Resort_And_Spa_Madikeri_Public",
+  "lat": 12.445114,
+  "lng": 75.685939,
+  "name": "Taj Madikeri Resort & Spa, Madikeri",
+  "address": "ATHANI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Wayanad_Resort_and_Spa_Padinjarathara",
+  "lat": 11.6576322,
+  "lng": 75.9604251,
+  "name": "Taj Wayanad Resort and Spa Padinjarathara",
+  "address": "WAYANAD, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Wellington_Mews_Public",
+  "lat": 12.9907763,
+  "lng": 80.2501413,
+  "name": "Taj Wellington Mews",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_West_end_Race_course_Rd_Private",
+  "lat": 12.9841369,
+  "lng": 77.5823016,
+  "name": "Taj West end, Race course Rd (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Yeshwantpur",
+  "lat": 13.02875,
+  "lng": 77.54117,
+  "name": "Taj Yeshwantpur (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Taj_Yeshwantpur_Public",
+  "lat": 13.029411,
+  "lng": 77.54055,
+  "name": "Taj Yeshwantpur",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_The_Gateway_Hotel_Pasumalai_Private_1",
+  "lat": 9.8970366,
+  "lng": 78.087488,
+  "name": "Taj The Gateway Hotel Pasumalai Entry Side  (Private Charger) ",
+  "address": "MADURAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_The_Gateway_Hotel_Pasumalai_Private_2",
+  "lat": 9.8998217,
+  "lng": 78.084135,
+  "name": "Taj The Gateway Hotel Pasumalai Main Building  (Private Charger)",
+  "address": "MADURAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_The_Gateway_Hotel_Pasumalai_Public_1",
+  "lat": 9.8970217,
+  "lng": 78.08761,
+  "name": "Taj The Gateway Hotel Pasumalai Entry Side",
+  "address": "MADURAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_The_Gateway_Hotel_Pasumalai_public_2",
+  "lat": 9.9001033,
+  "lng": 78.083481,
+  "name": "Taj The Gateway Hotel Pasumalai Main Building",
+  "address": "MADURAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Vivanta_Bengaluru_Private",
+  "lat": 12.972452,
+  "lng": 77.608735,
+  "name": "Taj Vivanta Bengaluru (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Vivanta_Bengaluru_Public",
+  "lat": 12.972659,
+  "lng": 77.608692,
+  "name": "Taj Vivanta Bengaluru",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Vivanta_Bengaluru_Whitefield",
+  "lat": 12.986582,
+  "lng": 77.73771,
+  "name": "Taj Vivanta Bengaluru Whitefield (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Vivanta_Bengaluru_Whitefield_Public",
+  "lat": 12.987338,
+  "lng": 77.737767,
+  "name": "Taj Vivanta Bengaluru Whitefield",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Vivanta_Chennai",
+  "lat": 12.90546,
+  "lng": 80.22792,
+  "name": "Taj Vivanta Chennai",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Vivanta_Chennai_Private",
+  "lat": 12.9059393,
+  "lng": 80.2271798,
+  "name": "Taj Vivanta Chennai (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Vivanta_Coimbatore",
+  "lat": 11.002236,
+  "lng": 76.973416,
+  "name": "Taj Vivanta Coimbatore",
+  "address": "COIMBATORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Vivanta_Ernakulam",
+  "lat": 10.1167688,
+  "lng": 76.3445658,
+  "name": "Taj Vivanta Ernakulam",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHCL_Taj_Vivanta_Thiruvananthapuram_Extra_Police_Rd",
+  "lat": 8.504584,
+  "lng": 76.953047,
+  "name": "Vivanta Thiruvananthapuram Extra Police Rd (Private Charger)",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IHC_Taj_Taj_Wellington_Mews_Private",
+  "lat": 12.9907984,
+  "lng": 80.2504277,
+  "name": "Taj Wellington Mews (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_7_Hills_H_Fs_Jadcherla",
+  "lat": 16.793063,
+  "lng": 78.140951,
+  "name": "IOCL 7 Hills H Fs Jadcherla",
+  "address": "MAHABUB NAGAR, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Aaaditya_Petroleum_SH73_Naduvath",
+  "lat": 11.2110997,
+  "lng": 76.2247334,
+  "name": "IOCL Aaaditya Petroleum SH73 Naduvath Charging Station",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Balaji_Fs_Yellapur",
+  "lat": 18.087979,
+  "lng": 79.492938,
+  "name": "IOCL Balaji Fs Yellapur Charging Station",
+  "address": "WARANGAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Bhargavi_Fs_Mahabubabad",
+  "lat": 17.601796,
+  "lng": 80.009957,
+  "name": "IOCL Bhargavi Fs Mahabubabad",
+  "address": "WARANGAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_COCO_Chengampalli_Salem_Kochi_Highway",
+  "lat": 11.213022,
+  "lng": 77.441968,
+  "name": "IOCL Chengampalli",
+  "address": "SIVAGANGA, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_COCO_Maradu",
+  "lat": 9.938694,
+  "lng": 76.32564,
+  "name": "IOCL COCO Maradu Charging Station",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_COCO_Palayamputhur_Palyampudur",
+  "lat": 12.0243727,
+  "lng": 78.0979115,
+  "name": "IOCL COCO Palayamputhur Palyampudur Charging Station",
+  "address": "DHARMAPURI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Chandra_Fuels_Kottankulangara_Alappuzha",
+  "lat": 9.510698,
+  "lng": 76.339209,
+  "name": "IOCL Chandra Fuels Alappuzha",
+  "address": "ALAPPUZHA, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Coco_Malleboinapally_Mahabubnagar",
+  "lat": 16.744792,
+  "lng": 78.101692,
+  "name": "IOCL Coco Malleboinapally Mahabubnagar",
+  "address": "GADWAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_EXPRESS_WAY_FS_MALKAPUR",
+  "lat": 17.5976421,
+  "lng": 78.0561976,
+  "name": "IOCL EXPRESS WAY FS, MALKAPUR",
+  "address": "SANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Engapuzha_Fuels_SH_29",
+  "lat": 11.465313,
+  "lng": 75.970126,
+  "name": "IOCL Engapuzha Fuels SH 29",
+  "address": "KOZHIKODE, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Freedom_Filling_Station_Poojapura",
+  "lat": 8.4886931,
+  "lng": 76.9723907,
+  "name": "IOCL Freedom Poojapura Charging Station",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Ganapathy_Fs_Jaipur",
+  "lat": 18.84559,
+  "lng": 79.576517,
+  "name": "IOCL Ganapathy Fs Jaipur",
+  "address": "MANCHERIAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Garine_Koteswara_Rao_and_Co_Kodada",
+  "lat": 16.994091,
+  "lng": 79.975967,
+  "name": "IOCL Garine Koteswara Rao & Co, Kodada",
+  "address": "SURYAPET, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Hitech_Fp_Mahabubnagar",
+  "lat": 16.752904,
+  "lng": 78.026364,
+  "name": "IOCL Hitech Fp Mahabubnagar",
+  "address": "MAHABUB NAGAR, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Adhoc_AP_Prison",
+  "lat": 17.980505,
+  "lng": 79.579956,
+  "name": "IOCL Adhoc AP Prison",
+  "address": "WARANGAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Ap_Prisons_Department",
+  "lat": 17.9940333,
+  "lng": 79.5916533,
+  "name": "IOCL Ap Prisons Department",
+  "address": "WARANGAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Balaji_Petroleum_Kozhikode_Mysuru_Highway",
+  "lat": 11.660967,
+  "lng": 76.240121,
+  "name": "IOCL Balaji Petroleum Kozhikode Mysuru Highway",
+  "address": "WAYANAD, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Balaji_Service_Station_Khammam",
+  "lat": 17.2506442,
+  "lng": 80.1448395,
+  "name": "IOCL Balaji Service Station, Khammam",
+  "address": "KHAMMAM, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_COCO_L_And_T_Kamakole",
+  "lat": 17.64506,
+  "lng": 77.826314,
+  "name": "IOCL COCO L&T, Kamakole",
+  "address": "SANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_DURGA_INDHAN_Kandi_NH_9",
+  "lat": 17.586371,
+  "lng": 78.097625,
+  "name": "IOCL DURGA INDHAN, Kandi NH-9",
+  "address": "SANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Lakshmi_Sales_Services_Mankav",
+  "lat": 11.2335916,
+  "lng": 75.803242,
+  "name": "IOCL Lakshmi Sales & Services, Mankav",
+  "address": "KOZHIKODE, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Onkar_Roadlines_FP_Andagullapally",
+  "lat": 18.6780644,
+  "lng": 79.4073625,
+  "name": "IOCL Onkar Roadlines FP, Andagullapally",
+  "address": "PEDDAPALLI, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Orugallu_Fs",
+  "lat": 17.985489,
+  "lng": 79.573782,
+  "name": "IOCL Orugallu Fs",
+  "address": "WARANGAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Police_Petrol_Pump",
+  "lat": 19.669815,
+  "lng": 78.52186,
+  "name": "IOCL Police Petrol Pump",
+  "address": "ADILABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Raja_Rajeshwara_F_P_Gangadhara",
+  "lat": 18.4319023,
+  "lng": 79.0092394,
+  "name": "IOC  Raja Rajeshwara F/P, Gangadhara",
+  "address": "KARIM NAGAR, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Raja_Rajeswari_Fs_Jogipet",
+  "lat": 17.8207082,
+  "lng": 78.0743402,
+  "name": "IOCL Raja Rajeswari Fs, Jogipet",
+  "address": "SANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_SRI_DURGA_MATA_Nalgonda_Mandal",
+  "lat": 17.0128052,
+  "lng": 79.2455475,
+  "name": "IOCL SRI DURGA MATA, Nalgonda Mandal",
+  "address": "NALGONDA, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_SRI_RENUKA_YELLAMMA_FS_Lingareddypally",
+  "lat": 18.11532,
+  "lng": 78.852163,
+  "name": "IOCL SRI RENUKA YELLAMMA FS, Lingareddypally",
+  "address": "SIDDIPET, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Sai_Leela_As_Kundanpally",
+  "lat": 18.7483281,
+  "lng": 79.4358893,
+  "name": "IOCL Sai Leela  As, Kundanpally",
+  "address": "PEDDAPALLI, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Sainath_Fs_Medak",
+  "lat": 17.660854,
+  "lng": 77.724737,
+  "name": "IOCL Sainath Fs, Medak",
+  "address": "SANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Sri_Sai_Venkateshwara_Fs_Tekulpally",
+  "lat": 17.5596014,
+  "lng": 80.4814159,
+  "name": "IOCL Sri Sai Venkateshwara Fs, Tekulpally",
+  "address": "KHAMMAM, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_IOCL_Vishwambhara_FS",
+  "lat": 18.198788,
+  "lng": 79.698056,
+  "name": "IOCL  Vishwambhara",
+  "address": "WARANGAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_JRO_Pongam_Cochin_DO_Thrissur_Charging_Station",
+  "lat": 10.245487,
+  "lng": 76.369859,
+  "name": "IOCL JRO Pongam Cochin DO Thrissur Charging Station",
+  "address": "THRISSUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Janapriya_Filling_Station_Yellandu",
+  "lat": 17.584326,
+  "lng": 80.329608,
+  "name": "IOCL Janapriya Filling Station Yellandu",
+  "address": "KHAMMAM, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_K_Krishnarjuna_Rao",
+  "lat": 17.665123,
+  "lng": 80.812518,
+  "name": "IOCL K Krishnarjuna Rao",
+  "address": "KOTHAGUDEM COLLS, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Kalyani_Fs",
+  "lat": 18.048893,
+  "lng": 79.661366,
+  "name": "IOCL Kalyani Fs",
+  "address": "WARANGAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Kandhulapullaiah_Oil_Fs",
+  "lat": 17.847129,
+  "lng": 80.830397,
+  "name": "IOCL Kandhulapullaiah Oil Fs Charging station",
+  "address": "KOTHAGUDEM, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Kayson_Fuels_Pathanamthitta",
+  "lat": 9.264289,
+  "lng": 76.778471,
+  "name": "IOCL Kayson Fuels Pathanamthitta Charging Station",
+  "address": "PATHANAMTHITTA, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_LAXMI_NARASIMHA_Sadasivapet",
+  "lat": 17.627842,
+  "lng": 77.905789,
+  "name": "IOCL Laxmi Narasimha Sadasivapet",
+  "address": "SANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_MK_Petroleum_Thazhe_Chovva",
+  "lat": 11.860265,
+  "lng": 75.414409,
+  "name": "IOCL MK Petroleum",
+  "address": "KANNUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Murali_Agencies_Egmore",
+  "lat": 13.0759032,
+  "lng": 80.2641442,
+  "name": "IOCL Murali Agencies Egmore",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Pattathuvila_Fuels_Kadappakada_kollam",
+  "lat": 8.894639,
+  "lng": 76.606423,
+  "name": "IOCL Pattathuvila Fuels Kadappakada kollam Charging Station",
+  "address": "KOLLAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Ponmankal_Petroleum_Ettumanoor",
+  "lat": 9.6698571,
+  "lng": 76.571943,
+  "name": "IOCL Ponmankal Petroleum Ettumanoor Charging Station",
+  "address": "KOTTAYAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_RAJYALAXMI_FP_Mahaboob_Nagar",
+  "lat": 16.737569,
+  "lng": 78.155407,
+  "name": "IOCL RAJYALAXMI FP Mahaboob Nagar",
+  "address": "MAHABUB NAGAR, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Raghu_Vamsi_Fs_Mahabubnagar",
+  "lat": 15.884119,
+  "lng": 78.016228,
+  "name": "IOCL Raghu Vamsi Fs Mahabubnagar",
+  "address": "GADWAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_SAI_RATNA_RO_DVK_ROAD",
+  "lat": 17.041645,
+  "lng": 79.265196,
+  "name": "IOCL SAI RATNA RO,DVK ROAD",
+  "address": "NALGONDA, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_SRI_SAI_RAGHAVA_Sangareddy",
+  "lat": 17.626188,
+  "lng": 78.102382,
+  "name": "IOCL SRI SAI RAGHAVA, Sangareddy Charging Station",
+  "address": "SANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_SRI_SANGAMESWARA_FS_NARAYANKHED",
+  "lat": 18.0362267,
+  "lng": 77.7785209,
+  "name": "IOCL SRI SANGAMESWARA FS, NARAYANKHED",
+  "address": "SANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_SR_Adhoc_COCO_Vytilla",
+  "lat": 9.9685,
+  "lng": 76.312879,
+  "name": "IOCL SR Adhoc COCO Vytilla Charging Station",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Sai_Baba_Filling_Point_Varni",
+  "lat": 18.532897,
+  "lng": 77.89655,
+  "name": "IOCL Sai Baba Filling Point, Varni",
+  "address": "NIZAMABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Sai_Service_Station_Elkaturthy",
+  "lat": 18.094591,
+  "lng": 79.449921,
+  "name": "IOCL Sai Service Station Elkaturthy",
+  "address": "WARANGAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Shanthi_Social_Services_Singanallur_Coimbatore",
+  "lat": 11.002669,
+  "lng": 77.038743,
+  "name": "IOCL Shanthi Social Services Singanallur  Charging Station",
+  "address": "COIMBATORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Shiva_Sai_Fp_Hanamkonda",
+  "lat": 17.991266,
+  "lng": 79.535464,
+  "name": "IOCL Shiva Sai Fp Hanamkonda",
+  "address": "HANAMKONDA, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Sigma_enterprises_Kavumpuram_Valanchery",
+  "lat": 10.898129,
+  "lng": 76.061036,
+  "name": "IOCL Sigma enterprises Kavumpuram Valanchery Charging Station",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Sri_Balaji_Fs_Huzurnagar",
+  "lat": 16.913657,
+  "lng": 79.853848,
+  "name": "IOCL Sri Balaji Fs Huzurnagar",
+  "address": "SURYAPET, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Sri_Ravi_Fs_Palwancha",
+  "lat": 17.59886,
+  "lng": 80.722775,
+  "name": "IOCL Sri Ravi Fs, Palwancha",
+  "address": "KOTHAGUDEM, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Sri_Sainath_Filling_Station_Mavala",
+  "lat": 19.6466636,
+  "lng": 78.5154663,
+  "name": "IOCL Sri Sainath Filling Station, Mavala",
+  "address": "ADILABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Sudhakar_SS_Huzurabad",
+  "lat": 18.198936,
+  "lng": 79.397736,
+  "name": "IOCL Sudhakar SS Huzurabad",
+  "address": "KARIM NAGAR, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Swarnam_Agencies_Coimbatore_Trichy_Highway",
+  "lat": 10.979905,
+  "lng": 77.333896,
+  "name": "IOCL Swarnam Agencies Coimbatore Trichy Highway",
+  "address": "TIRUPPUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Thiruvonam_fuels_Kalvakulam_Mankavu_Palakkad",
+  "lat": 10.7698818,
+  "lng": 76.6680435,
+  "name": "IOCL Thiruvonam fuels, Kunnathurmedu, Palakkad charging Station",
+  "address": "PALAKKAD, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Top_Fuels_Karanthakkad",
+  "lat": 12.509436,
+  "lng": 74.986061,
+  "name": "IOCL Top Fuels Karanthakkad Charging station",
+  "address": "KASARAGOD, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_UNI_TRADERS_Itikyal_Mandal",
+  "lat": 16.0865015,
+  "lng": 77.8980968,
+  "name": "IOCL UNI TRADERS Itikyal Mandal",
+  "address": "GADWAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "IOCL_Yadadri_Fs_Oglapur",
+  "lat": 18.013301,
+  "lng": 79.6750422,
+  "name": "IOCL Yadadri Fs Oglapur",
+  "address": "WARANGAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Incheon_Kia",
+  "lat": 9.9214852,
+  "lng": 76.3167165,
+  "name": "Incheon Kia Cochin",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "JLR_Marqland_Popular_Auto_Works_Venkatala",
+  "lat": 13.117414,
+  "lng": 77.609069,
+  "name": "Marqland Popular Auto Works,Venkatala Charging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "KIA_ARAS_KIA",
+  "lat": 10.0122627,
+  "lng": 78.017356,
+  "name": "ARAS KIA",
+  "address": "MADURAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "KIA_Aadarsh_Kia",
+  "lat": 12.3046144,
+  "lng": 76.7068095,
+  "name": "Aadarsh Kia",
+  "address": "MYSURU, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "KIA_Automotive_Kia",
+  "lat": 17.430379,
+  "lng": 78.559267,
+  "name": "Automotive Kia",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "KIA_JSP_KIA",
+  "lat": 12.865131,
+  "lng": 77.667034,
+  "name": "JSP KIA Charging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "KIA_Kumar_Kia",
+  "lat": 17.3742527,
+  "lng": 76.8547609,
+  "name": "Kumar Kia",
+  "address": "KALABURAGI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "KIA_Miraculum_Motors_Belagavi",
+  "lat": 15.805628,
+  "lng": 74.485407,
+  "name": "KIA Miraculum Motors Belagavi",
+  "address": "BELAGAVI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "KMC_Mall_HYD_Somajiguda",
+  "lat": 17.429712,
+  "lng": 78.456189,
+  "name": "KMC Mall, Somajiguda",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "MG_Bellad_Enterprises_PB_Road",
+  "lat": 15.40816,
+  "lng": 75.06128,
+  "name": "MG Bellad Enterprises, PB Road",
+  "address": "Dharwad, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "MG_Dyuthi_Automobiles_Hunsur_Road_Charging_Station",
+  "lat": 12.3255681,
+  "lng": 76.6102634,
+  "name": "MG Dyuthi Automobiles Hunsur Road Charging Station",
+  "address": "Mysuru, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "MG_Jubilant_Autoworks_Kuloor_Padukodi_Charging_Station",
+  "lat": 12.923728,
+  "lng": 74.831066,
+  "name": "MG Jubilant Autoworks  Kuloor Padukodi Charging Station",
+  "address": "Dakshina Kannada, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "MG_PPS_Motors_Coimbatore",
+  "lat": 11.04991,
+  "lng": 77.05765,
+  "name": "MG PPS Motors",
+  "address": "COIMBATORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "MG_PPS_Motors_Punganur",
+  "lat": 10.7822828,
+  "lng": 78.6401634,
+  "name": "PPS Motors Punganur",
+  "address": "TIRUCHIRAPPALLI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Mall_Lakeshore_Mall_Kukatpally_Hyderabad",
+  "lat": 17.476998,
+  "lng": 78.422721,
+  "name": "Lakeshore Mall, Kukatpally Hyderabad",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 7
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Malls_AAK_Mall_Naduvilangadi",
+  "lat": 10.918799,
+  "lng": 75.91787,
+  "name": "AAK Mall Naduvilangadi Charging Station",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Malls_Gokulam_Group_Gokulam_Galleria_Mall_Arayidathupalam",
+  "lat": 11.258326,
+  "lng": 75.793273,
+  "name": "Gokulam Galleria Mall, Arayidathupalam (Parking Fee Applicable)\n",
+  "address": "KOZHIKODE, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Malls_Shriya_Stellar_Mall_Vidya_Nagar",
+  "lat": 15.359091,
+  "lng": 75.127211,
+  "name": "Shriya Stellar Mall Vidya Nagar Charging Station",
+  "address": "DHARWAD, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Nayara_Kona_Vijay_Shankar_Filling_Bahadurpally",
+  "lat": 17.561621,
+  "lng": 78.4303171,
+  "name": "Kona Vijay Shankar Filling Bahadurpally Charging Station",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Nayara_SLNS_FS_Rangareddy_Nanakramguda",
+  "lat": 17.4226571,
+  "lng": 78.3492105,
+  "name": "SLNS FS Rangareddy Nanakramguda Charging Station",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Nayara_Sowmya_Fuel_Station_Anekal",
+  "lat": 12.7836158,
+  "lng": 77.7543062,
+  "name": "Sowmya Fuel Station, Anekal",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Nayara_Srinidhi_Service_Station_Nizampet",
+  "lat": 17.517565,
+  "lng": 78.380926,
+  "name": "Srinidhi Service Station, Nizampet",
+  "address": "Trimulgherry, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Oberoi_Hotels_The_Oberoi_Bengaluru",
+  "lat": 12.9735943,
+  "lng": 77.6184776,
+  "name": "The Oberoi Bengaluru Charging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Oberoi_Hotels_Trident_Chennai",
+  "lat": 12.994013,
+  "lng": 80.186596,
+  "name": "Trident Chennai Charging Station",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Oberoi_Hotels_Trident_HITEC_City",
+  "lat": 17.449383,
+  "lng": 78.378638,
+  "name": "Trident HITEC City Charging Station",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Others_Fairfield_by_Marriott_Gachibowli_Hyderabad",
+  "lat": 17.423858,
+  "lng": 78.347334,
+  "name": "Fairfield by Marriott, Gachibowli",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Others_Fairfield_by_Marriott_Mahindra_World_City_Chennai",
+  "lat": 12.738037,
+  "lng": 80.002599,
+  "name": "Fairfield by Marriott, Maraimalai Nagar",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Adarsh_Garden_Apartment",
+  "lat": 12.916499,
+  "lng": 77.577095,
+  "name": "Adarsh Garden Apartment (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Aparna_Cyber_Life_Residency_RWA_B_BLOCK_Basement_1",
+  "lat": 17.4694761,
+  "lng": 78.3113851,
+  "name": "Aparna Cyber Life Residency RWA B  Block Basement 1 (Private Charger)",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Aparna_Cyber_Life_Residency_RWA_B_block_basement_2",
+  "lat": 17.4695237,
+  "lng": 78.310071,
+  "name": "Aparna Cyber Life Residency RWA B Block basement 2 (Private Charger)",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Aparna_Cyber_Life_Residency_RWA_F_block_Buffer_zone",
+  "lat": 17.4697743,
+  "lng": 78.3126623,
+  "name": "Aparna Cyber Life Residency RWA F block Buffer. Zone (Private Charger)",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 7
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Aparna_Cyber_Life_Residency_RWA_J_block_Basement_2",
+  "lat": 17.4698877,
+  "lng": 78.310071,
+  "name": "Aparna Cyber Life Residency RWA J block Basement 2 (Private Charger)",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 6
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Brigade_Gardenia_JP_Nagar",
+  "lat": 12.8870439,
+  "lng": 77.578739,
+  "name": "Brigade Gardenia JP Nagar Block A (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Brigade_Gardenia_JP_Nagar_Block_B_Carinata",
+  "lat": 12.886836,
+  "lng": 77.57829,
+  "name": "Brigade Gardenia JP Nagar Block B Carinata (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Brigade_Gardenia_JP_Nagar_Block_C_Magnificia",
+  "lat": 12.886229,
+  "lng": 77.578142,
+  "name": "Brigade Gardenia JP Nagar Block C Magnificia (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Brigade_Gardenia_JP_Nagar_Block_D_Jardine",
+  "lat": 12.886287,
+  "lng": 77.579134,
+  "name": "Brigade Gardenia JP Nagar Block D Jardine  (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Brigade_Gardenia_JP_Nagar_Block_E_Golden_magic",
+  "lat": 12.887304,
+  "lng": 77.5786572,
+  "name": "Brigade Gardenia JP Nagar Block E Golden magic (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Brigade_Gardenia_JP_Nagar_Block_F",
+  "lat": 12.887207,
+  "lng": 77.578694,
+  "name": "Brigade Gardenia JP Nagar Block F (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Divyashree_Elan_Homes_Bellandur",
+  "lat": 12.917455,
+  "lng": 77.674103,
+  "name": "Divyashree Elan Homes Bellandur (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Fomra_Hues",
+  "lat": 13.0513998,
+  "lng": 80.1498258,
+  "name": "Fomra Hues (Private Charger)",
+  "address": "TIRUVALLUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Ganga_Vertica_Apartment",
+  "lat": 12.84178,
+  "lng": 77.649073,
+  "name": "Ganga Vertica Apartment (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Karnataka_Golf_Association",
+  "lat": 12.9564094,
+  "lng": 77.6449198,
+  "name": "Karnataka Golf Association (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Klassik_Benchmark",
+  "lat": 12.871739,
+  "lng": 77.59609,
+  "name": "Klassik Benchmark (Private charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Kochar_Panchsheel",
+  "lat": 13.100434,
+  "lng": 80.167058,
+  "name": "Kochar Panchsheel (Private charger)",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Mapleton_Apartments",
+  "lat": 12.936474,
+  "lng": 80.205596,
+  "name": "Mapleton Apartments (Private Charger)",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Orchid_Whitefield_Apartments",
+  "lat": 12.963094,
+  "lng": 77.757793,
+  "name": "Orchid Whitefield Apartments (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Pavani_Sarovar_Residents_Welfare_Association",
+  "lat": 12.972453,
+  "lng": 77.732644,
+  "name": "Pavani Sarovar Residents Welfare Association (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Prestige_Shantiniketan_Near_Tower_12",
+  "lat": 12.995622,
+  "lng": 77.728847,
+  "name": "Prestige Shantiniketan Near Tower 12 Charging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Prestige_Shantiniketan_Near_Tower_21",
+  "lat": 12.992342,
+  "lng": 77.729835,
+  "name": "Prestige Shantiniketan Near Tower 21 Charging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Prestige_Shantiniketan_Near_Tower_5",
+  "lat": 12.992703,
+  "lng": 77.726803,
+  "name": "Prestige Shantiniketan Near Tower 5 Charging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Serene_County_Gachibowli",
+  "lat": 17.432036,
+  "lng": 78.3632747,
+  "name": "Serene County Gachibowli (Private Charger)",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 14
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Sobha_Sapphire_Residents_Association",
+  "lat": 13.069457,
+  "lng": 77.600162,
+  "name": "Sobha Sapphire Residents Association (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Spectra_Palmwoods",
+  "lat": 12.961565,
+  "lng": 77.73268,
+  "name": "Spectra Palmwoods (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Srinivasa_Residency",
+  "lat": 12.945127,
+  "lng": 75.794424,
+  "name": "Srinivasa Residency Charging station",
+  "address": "HASSAN, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_The_Metrozone_Anna_Nagar",
+  "lat": 13.081771,
+  "lng": 80.193655,
+  "name": "The Metrozone Anna Nagar (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Trendset_Grande_RWA_Block_A",
+  "lat": 17.418239,
+  "lng": 78.451807,
+  "name": "Trendset Grande RWA, Block A (Private Charger)",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 8
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Turquoise_HM_World_City_Apex_Association",
+  "lat": 12.872058,
+  "lng": 77.571995,
+  "name": "HM World City Apex Association (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Residential_Vaishnavi_Terrace",
+  "lat": 12.903638,
+  "lng": 77.60002,
+  "name": "Vaishnavi Terrace (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "SelectCar_Hyd_Alkapuri",
+  "lat": 17.364873,
+  "lng": 78.5573,
+  "name": "Tata Motor_Select Car_Alkapuri_Hyderabad ",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TCS_TCS_Electronic_City_Bangalore",
+  "lat": 12.847158,
+  "lng": 77.678685,
+  "name": "TCS Electronic City, Bangalore (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 10
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Adisakti_Motors_Davangere_Charging_Station",
+  "lat": 14.441962,
+  "lng": 75.952124,
+  "name": "TML Adisakti Motors Davangere Charging Station",
+  "address": "DAVANGERE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Automatrix_Hassan_Bangalore_Mangalore_Highway",
+  "lat": 12.9952076,
+  "lng": 76.0794674,
+  "name": "TML Automatrix Hassan Bangalore Mangalore Highway",
+  "address": "HASSAN, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Basava_and_Basava_Motors",
+  "lat": 16.140265,
+  "lng": 76.562829,
+  "name": "Basava and Basava Motors",
+  "address": "RAICHUR, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Bellad_Enterprises_Sarjapur",
+  "lat": 12.863943,
+  "lng": 77.770172,
+  "name": "Bellad Enterprises Sarjapur Charging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Bellad_enterprises_Periyakulathupalayam",
+  "lat": 15.1624696,
+  "lng": 76.8686715,
+  "name": "Bellad enterprises Periyakulathupalayam",
+  "address": "BELLARY, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Bglr_KeyMotors_Kanakapura",
+  "lat": 12.90392,
+  "lng": 77.57349,
+  "name": "Key Motors, JP Nagar",
+  "address": "Bangalore, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Bijarg_Motors_Bijapur",
+  "lat": 16.849532,
+  "lng": 75.735392,
+  "name": "TML Bijargi Motors, Bijapur",
+  "address": "BIJAPUR(KAR), Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Bijjargi_Motors",
+  "lat": 16.512226,
+  "lng": 75.266945,
+  "name": "Bijjargi Motors Charging Station",
+  "address": "BAGALKOT, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Cauvery_Motors_Kundapur",
+  "lat": 13.59998,
+  "lng": 74.69511,
+  "name": "Cauvery Motors, Kundapur",
+  "address": "UDUPI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Cauvery_Motors_Mangalore",
+  "lat": 12.867065,
+  "lng": 74.904466,
+  "name": "TML Cauvery Motors, Mangalore",
+  "address": "DAKSHINA KANNADA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Cauvery_Motors_Padil",
+  "lat": 12.872001,
+  "lng": 74.890668,
+  "name": "Cauvery Motors Padil",
+  "address": "DAKSHINA KANNADA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Chima_Cars_Kappalur",
+  "lat": 9.867041,
+  "lng": 78.02345,
+  "name": "TML Chima Cars Kappalur",
+  "address": "MADURAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Chima_Cars_Kooriyur",
+  "lat": 9.367043,
+  "lng": 78.809864,
+  "name": "TML Chima Cars, Kooriyur",
+  "address": "RAMANATHAPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Chima_Cars_Periyakulam_road",
+  "lat": 10.040189,
+  "lng": 77.491995,
+  "name": "TML Chima Cars Periyakulam road",
+  "address": "THENI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Chima_Cars_Subramaniapuram",
+  "lat": 10.070256,
+  "lng": 78.727516,
+  "name": "TML Chima Cars, Subramaniapuram",
+  "address": "SIVAGANGA, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Chima_Cars_Thirupathur_road",
+  "lat": 9.863222,
+  "lng": 78.487794,
+  "name": "Chima Cars Thirupathur road",
+  "address": "SIVAGANGA, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Chima_Cars_Thiruthangal",
+  "lat": 9.468305,
+  "lng": 77.802838,
+  "name": "TML Chima Cars Thiruthangal",
+  "address": "VIRUDHUNAGAR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Chima_Cars_Uthangudi",
+  "lat": 9.9474839,
+  "lng": 78.1637793,
+  "name": "TML Chima Cars Uthangudi",
+  "address": "MADURAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Dakshin_Motors_NH_4_Hiriyur",
+  "lat": 13.9241147,
+  "lng": 76.6400077,
+  "name": "TML Hiriyur Charging Station",
+  "address": "CHITRADURGA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Derik_Motors_Thoothukudi",
+  "lat": 8.824374,
+  "lng": 78.130373,
+  "name": "TML Derik Motors, Thoothukudi",
+  "address": "TUTICORIN, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Derik_Motors_Trivandrum_Road",
+  "lat": 8.165294,
+  "lng": 77.433457,
+  "name": "TML Derik Motors, Trivandrum Road",
+  "address": "KANYAKUMARI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Derik_Motors_Vannarapettai",
+  "lat": 8.731906,
+  "lng": 77.722603,
+  "name": "Derik Motors Vannarapettai",
+  "address": "TIRUNELVELI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_FPL_e_Auto",
+  "lat": 13.14191,
+  "lng": 80.218565,
+  "name": "FPL e-Auto Charging Station",
+  "address": "TIRUVALLUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Hyd_Venkataramana_ECIL",
+  "lat": 17.48081,
+  "lng": 78.57715,
+  "name": "Tata Motors (Venkataramana Motors), ECIL",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Hyson_Motors_Puzhakkal",
+  "lat": 10.540817,
+  "lng": 76.189489,
+  "name": "TML Hyson Motors Puzhakkal Charging Station",
+  "address": "THRISSUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Jasper_Industries_Kompally",
+  "lat": 17.5375594,
+  "lng": 78.4905328,
+  "name": "TML Jasper Industries Kompally",
+  "address": "NALGONDA, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_KUN_Cars_Tirupur",
+  "lat": 11.051554,
+  "lng": 77.32479,
+  "name": "TML Kun Cars Tirupur",
+  "address": "TIRUPPUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_KVR_Automotive_Naduvilangadi",
+  "lat": 10.877086,
+  "lng": 75.932212,
+  "name": "KVR Automotive, Naduvilangadi",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_KVR_Automotive_Perinthalmanna",
+  "lat": 10.9845416,
+  "lng": 76.1880116,
+  "name": "TML KVR Automotive Perinthalmanna",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_KVR_Automotive_Pvt_Ltd_Koppam_Junction",
+  "lat": 10.782369,
+  "lng": 76.658289,
+  "name": "KVR Automotive, Koppam Charging Station",
+  "address": "PALAKKAD, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_KVR_Dream_Vehicles_Koothuparamba",
+  "lat": 11.840378,
+  "lng": 75.56893,
+  "name": "KVR Dream Vehicles Koothuparamba Charging Station",
+  "address": "KANNUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_KVR_Dream_Vehicles_Service_Center_Iritty",
+  "lat": 11.990832,
+  "lng": 75.658225,
+  "name": "KVR Dream Vehicles Service Center Iritty",
+  "address": "KANNUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_KVR_Dream_Vehicles_Service_Center_Payyannur",
+  "lat": 12.121109,
+  "lng": 75.217676,
+  "name": "KVR Dream Vehicles Service Center, Payyannur",
+  "address": "KANNUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_KVR_Dream_vehicles",
+  "lat": 11.83301,
+  "lng": 75.42643,
+  "name": "Tata Motors (KVR Dream vehicles)",
+  "address": "KANNUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_KVR_Dream_vehicles_Vidya_Nagar_Kasargod",
+  "lat": 12.513823,
+  "lng": 75.027131,
+  "name": "TML KVR Dream vehicles Vidya Nagar Kasargod Charging Station",
+  "address": "KASARAGOD, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Kaveri_Auto_Garage_Paravai_Madurai",
+  "lat": 9.9642326,
+  "lng": 78.0650107,
+  "name": "Tata Motors (Kaveri Auto Garage)",
+  "address": "MADURAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Key_Motors_Bannerghatta_Road",
+  "lat": 12.8891291,
+  "lng": 77.5972958,
+  "name": "TML Key Motors Bannerghatta Road Charging Station",
+  "address": "Bangalore, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Key_Motors_Kanakpura",
+  "lat": 12.57305,
+  "lng": 77.428967,
+  "name": "TML Key Motors, Kanakpura",
+  "address": "RAMANAGAR, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Kropex_Auto_Hosur_Main_Road",
+  "lat": 12.871579,
+  "lng": 77.651652,
+  "name": "Kropex Auto, Hosur Main Road",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Kropex_SingaSandra_Charging_Station",
+  "lat": 12.872053,
+  "lng": 77.651174,
+  "name": "Tata Motors (Kropex)",
+  "address": "Bangalore, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Kun_cars_Mettupalaya_road",
+  "lat": 11.058208,
+  "lng": 76.945049,
+  "name": "TML Kun cars Mettupalayam road",
+  "address": "COIMBATORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Lakshmi_Motors_Ambattur_Chennai",
+  "lat": 13.0883447,
+  "lng": 80.1704698,
+  "name": "Tata Motors (Lakshmi Motors)",
+  "address": "TIRUVALLUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Lakshmi_Motors_Velachery_Guindy",
+  "lat": 13.0080236,
+  "lng": 80.22165,
+  "name": "Tata Motors (Lakshmi Motors)",
+  "address": "Chennai, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Luxon_Motors_Service_Center_Nettoor",
+  "lat": 9.925815,
+  "lng": 76.316991,
+  "name": "Luxon Motors Service Center Nettoor",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Malayalam_Service_Center_Kariyad",
+  "lat": 10.162094,
+  "lng": 76.367435,
+  "name": "Luxon Motors, Kariyad",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Malayalam_Vehicles_Muvattupuzha",
+  "lat": 9.993005,
+  "lng": 76.587181,
+  "name": "Luxon Motors, Muvattupuzha",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Malayalam_Vehicles_Vytila",
+  "lat": 9.9644928,
+  "lng": 76.3180233,
+  "name": "TML Malayalam Vehicles Vytila Charging Station",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Malik_Cars_Old_Bowenpally_Secunderabad",
+  "lat": 17.478362,
+  "lng": 78.4737723,
+  "name": "Tata Motors (Malik Cars)",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Manickbag_Automobiles_Udyambag_Belgaum",
+  "lat": 15.8183651,
+  "lng": 74.4921365,
+  "name": "TML Manickbag Automobiles Udyambag Belgaum Charging Station",
+  "address": "BELAGAVI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Manickbag_Automobiles_Vidya_Nagar_Hubli",
+  "lat": 15.369541,
+  "lng": 75.119095,
+  "name": "TML Manickbag Automobiles Vidya Nagar Hubli Charging Station",
+  "address": "Dharwad, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Marina_Motors_Pantheerankavu",
+  "lat": 11.2171012,
+  "lng": 75.8582741,
+  "name": "TML Marina Motors Pantheerankavu Charging Station",
+  "address": "KOZHIKODE, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Marina_Motors_Pvt_Ltd_Kalpetta",
+  "lat": 11.6374316,
+  "lng": 76.0946983,
+  "name": "TML Marina Motors Pvt Ltd, Kalpetta",
+  "address": "WAYANAD, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Muthoot_Automobile_Solutions_Kilikollur",
+  "lat": 8.901854,
+  "lng": 76.618536,
+  "name": "Muthoot Automobile Solutions Kilikollur",
+  "address": "KOLLAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Muthoot_Automotive_Nilamel",
+  "lat": 8.860383,
+  "lng": 76.873802,
+  "name": "Muthoot Automotive Nilamel",
+  "address": "KOLLAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Muthoot_Automotive_Punalur",
+  "lat": 9.029407,
+  "lng": 76.925764,
+  "name": "Muthoot Automotive Punalur",
+  "address": "KOLLAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Orange_Auto_Erragadda_Hyderabad",
+  "lat": 17.454398,
+  "lng": 78.434575,
+  "name": "Tata Motors (Orange Auto)",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Orange_Auto_Hafeezpet_Hyderabad",
+  "lat": 17.490308,
+  "lng": 78.354536,
+  "name": "Tata Motors (Orange Auto)",
+  "address": "TRIMULGHERRY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Orange_Auto_Medchal",
+  "lat": 17.646226,
+  "lng": 78.486257,
+  "name": "TML Orange Auto, Medchal",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Prerna_Motors_Kudlugate",
+  "lat": 12.8908629,
+  "lng": 77.638425,
+  "name": "Tata Motors (Prerna Motors), Kudlugate",
+  "address": "Bangalore, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Rotana_Motors_Kuttiadi",
+  "lat": 11.662741,
+  "lng": 75.750973,
+  "name": "Rotana Motors Kuttiadi Charging station",
+  "address": "KOZHIKODE, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Rotana_Motors_Meenchanda",
+  "lat": 11.213866,
+  "lng": 75.802945,
+  "name": "Rotana Motors Meenchanda",
+  "address": "KOZHIKODE, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sayar_Aautomotive",
+  "lat": 12.944269,
+  "lng": 79.196472,
+  "name": "TML Sayar Aautomotive",
+  "address": "VELLORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Select_Cars_Kothirampur_Karimnagar",
+  "lat": 18.417928,
+  "lng": 79.13639,
+  "name": "TML Select Cars Kothirampur Karimnagar Charging Station",
+  "address": "KARIM NAGAR, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Select_Cars_SVP_Road_Charging_Station",
+  "lat": 17.999273,
+  "lng": 79.585443,
+  "name": "TML Select Cars SVP Road Charging Station",
+  "address": "Warangal, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Auto_BH_Road_Tumakuru",
+  "lat": 13.345359,
+  "lng": 77.080241,
+  "name": "Sree Auto, BH Road Tumakuru Charging Station",
+  "address": "TUMAKURU, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Autos_Tiptur",
+  "lat": 13.2624332,
+  "lng": 76.4932047,
+  "name": "Sree Autos Tiptur Charging Station",
+  "address": "TUMAKURU, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Gokulam_Motors_Angamaly",
+  "lat": 10.221115,
+  "lng": 76.376746,
+  "name": "Sree Gokulam Motors Angamaly",
+  "address": "IDUKKI, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Gokulam_Motors_Edapally",
+  "lat": 9.9261126,
+  "lng": 76.317879,
+  "name": "TML Sree Gokulam Motors Nettor",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Gokulam_Motors_Kattappana",
+  "lat": 9.762824,
+  "lng": 77.109551,
+  "name": "TML Sree Gokulam Motors Kattappana Charging Station",
+  "address": "IDUKKI, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Gokulam_Motors_Kolancherry",
+  "lat": 9.97685,
+  "lng": 76.4576885,
+  "name": "TML Sree Gokulam Motors Kolancherry",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Gokulam_Motors_Perumbavur",
+  "lat": 10.0968853,
+  "lng": 76.4923161,
+  "name": "TML Sree Gokulam Motors Perumbavur Charging Station",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Gokulam_Motors_SC_Ayanampakkam",
+  "lat": 13.081199,
+  "lng": 80.155712,
+  "name": "Sree Gokulam Motors SC Ayanampakkam",
+  "address": "TIRUVALLUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Gokulam_Motors_hodupuzha",
+  "lat": 9.906781,
+  "lng": 76.720753,
+  "name": "TML Sree Gokulam Motors Thodupuzha",
+  "address": "IDUKKI, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Venkateswara_Motors_Dasnapur",
+  "lat": 19.6560251,
+  "lng": 78.52951,
+  "name": "TML Sree Venkateswara Motors Dasnapur Charging Station",
+  "address": "ADILABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Venkateswara_Motors_Divyanagar",
+  "lat": 19.082489,
+  "lng": 78.3602041,
+  "name": "TML Sree Venkateswara Motors Divyanagar Charging Station",
+  "address": "NIRMAL, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Venkateswara_Motors_Hyderabad_Road",
+  "lat": 18.6563755,
+  "lng": 78.1238645,
+  "name": "TML Sree Venkateswara Motors Hyderabad Road Charging Station",
+  "address": "NIZAMABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sree_Venkateswara_Motors_Hyderabad_Road_2",
+  "lat": 18.29187,
+  "lng": 78.346882,
+  "name": "TML Sree Venkateswara Motors, Hyderabad Road",
+  "address": "KAMAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Sri_Nisty_Automotives",
+  "lat": 17.275221,
+  "lng": 76.874667,
+  "name": "Sri Nisty Automotives",
+  "address": "KALABURAGI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Tejaswi_Automobiles_Siddipet",
+  "lat": 18.0677933,
+  "lng": 78.862961,
+  "name": "TML Tejaswi Automobiles Siddipet Charging Station",
+  "address": "SIDDIPET, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_Trivandrum_Motors_Pvt_Ltd_Poonthura_Charging_Station",
+  "lat": 8.49967,
+  "lng": 76.914973,
+  "name": "Trivandrum Motors Pvt Ltd Poonthura Charging Station",
+  "address": "THIRUVANANTHAPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_True_Sai_Agraharam_Hosur",
+  "lat": 12.7170751,
+  "lng": 77.876026,
+  "name": "Tata Motors (True Sai Motors)",
+  "address": "KRISHNAGIRI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_True_Sai_Motors_Krishnagiri",
+  "lat": 12.5306064,
+  "lng": 78.2375165,
+  "name": "TML True Sai Motors",
+  "address": "KRISHNAGIRI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_True_Sai_Motors_Salem_Charging_Station",
+  "lat": 11.682985,
+  "lng": 78.1260402,
+  "name": "Tata Motors (True Sai Motors)",
+  "address": "ERODE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_True_Sai_Works_Tata_Motors_Karur",
+  "lat": 10.9785969,
+  "lng": 78.0642098,
+  "name": "True Sai Works Tata Motors Karur",
+  "address": "KARUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TML_URS_KAR_Motors_New_Kantharaj",
+  "lat": 12.295147,
+  "lng": 76.641508,
+  "name": "TML URS KAR Motors Charging station",
+  "address": "Mysuru, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_4S_Arcade",
+  "lat": 10.4415948,
+  "lng": 76.0942815,
+  "name": "4S Arcade",
+  "address": "THRISSUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_ANTARVANAM_HOSPITALITIES_RESORTS_FARMS",
+  "lat": 13.8283687,
+  "lng": 74.8051109,
+  "name": "ANTARVANAM HOSPITALITIES RESORTS & FARMS",
+  "address": "UDUPI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Anglo_French_Drug_Industries_Limited",
+  "lat": 13.03098,
+  "lng": 77.51857,
+  "name": "Anglo French Drug & Industries Limited charging station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Anjilimoottil_TATA_Power_EV_Charging_Station",
+  "lat": 9.3367885,
+  "lng": 76.6028656,
+  "name": "Anjilimoottil TATA Power EV Charging Station",
+  "address": "ALAPPUZHA, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_CHRIST",
+  "lat": 12.93648,
+  "lng": 77.605709,
+  "name": "CHRIST (Deemed to be University-Private charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Casa_Grand_Aristo",
+  "lat": 12.994795,
+  "lng": 80.189178,
+  "name": "Casa Grand Aristo Charging Point",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Charge_Zone_EV_Charging_Station",
+  "lat": 11.888014,
+  "lng": 75.386706,
+  "name": "Bhanus EV Charging Station",
+  "address": "KANNUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_City_Parking_Center",
+  "lat": 11.594622,
+  "lng": 75.588414,
+  "name": "City Parking Center",
+  "address": "KOZHIKODE, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Clearway_Colossal",
+  "lat": 9.995193,
+  "lng": 76.321732,
+  "name": "Clearway Colossal Charging Station",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_DPIL_EV_CHARGING_STATION",
+  "lat": 12.820423,
+  "lng": 80.217023,
+  "name": "DPIL EV CHARGING STATION",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_EMBASSY_RESIDENCY_APARTMENT_OWNERS_ASSOCIATION",
+  "lat": 12.896944,
+  "lng": 80.205056,
+  "name": "EMBASSY RESIDENCY APARTMENT OWNERS ASSOCIATION (Private Charger)",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_GCONE_EV_Charging_Station",
+  "lat": 12.8705829,
+  "lng": 80.2056299,
+  "name": "GCONE EV Charging Station (Private Charger)",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_GEE_KAY_RESIDENCY",
+  "lat": 12.9470523,
+  "lng": 79.3202142,
+  "name": "GEE KAY RESIDENCY Charging Station",
+  "address": "VELLORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Hotel_Mas_EV_Charging_Station",
+  "lat": 9.761108,
+  "lng": 77.111873,
+  "name": "Hotel Mas EV Charging Station",
+  "address": "IDUKKI, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Indras_Flash_Charging",
+  "lat": 17.1688311,
+  "lng": 79.3961404,
+  "name": "Indras Flash Charging",
+  "address": "NALGONDA, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_JJ_EV_CHARGING_STATION",
+  "lat": 12.9693492,
+  "lng": 80.0209617,
+  "name": "JJ EV CHARGING STATION Charging Station",
+  "address": "TIRUVALLUR, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Kala_Jyothi_IT_Building",
+  "lat": 17.4622302,
+  "lng": 78.3426167,
+  "name": "Kala Jyothi IT Building",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 6
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Kaynes_Hotel_Mysore",
+  "lat": 12.3460625,
+  "lng": 76.5796408,
+  "name": "Kaynes Hotel Mysore (Private Charger)",
+  "address": "MYSURU, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_LOTUS_CHARGING_STATION",
+  "lat": 15.8404984,
+  "lng": 74.5023548,
+  "name": "LOTUS CHARGING STATION",
+  "address": "BELAGAVI, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_NIRVI_EV_Station",
+  "lat": 17.234858,
+  "lng": 78.56016,
+  "name": "NIRVI EV Charging Station",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Navodaya_Education_Trust_NET",
+  "lat": 16.18495,
+  "lng": 77.367475,
+  "name": "Navodaya Education Trust (NET)",
+  "address": "RAICHUR, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 6
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Officers_Club",
+  "lat": 14.451242,
+  "lng": 75.901829,
+  "name": "Officers Club charging station",
+  "address": "DAVANGERE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Om_Sree_Galaxy_EV_Charging_Station",
+  "lat": 17.5616451,
+  "lng": 78.4886279,
+  "name": "Om Sree Galaxy EV Charging Station (private charger)",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Om_Sree_Prithvi_EV_Charging_Station",
+  "lat": 17.5216885,
+  "lng": 78.5415018,
+  "name": "Om Sree Prithvi EV Charging Station (private charger)",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_One_Energy_EV_Charging_Station",
+  "lat": 11.666805,
+  "lng": 75.729501,
+  "name": "One Energy EV Charging Station",
+  "address": "KOZHIKODE, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_PES_University",
+  "lat": 12.93436,
+  "lng": 77.53524,
+  "name": "PES University (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_PES_University_Car_Parking",
+  "lat": 12.93488,
+  "lng": 77.53413,
+  "name": "PES University Car Parking (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_PRAGNYA_EDEN_PARK",
+  "lat": 12.8253679,
+  "lng": 80.2035048,
+  "name": "PRAGNYA EDEN PARK",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 8
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_P_J_EV_Charging_Station",
+  "lat": 9.849566,
+  "lng": 77.146586,
+  "name": "P J EV Charging Station",
+  "address": "IDUKKI, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Pravara_EV_Charging_Station_Anekal",
+  "lat": 12.71613,
+  "lng": 77.70743,
+  "name": "Pravara EV Charging Station Anekal",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_RS_Green_Energy",
+  "lat": 17.6254496,
+  "lng": 77.9150301,
+  "name": "RS Green Energy Charging Station",
+  "address": "SANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_RV_Panchajanya_Kondapur",
+  "lat": 17.4609,
+  "lng": 78.345108,
+  "name": "RV Panchajanya Kondapur Charging Station",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Riya_EV_Charging_Station",
+  "lat": 11.925489,
+  "lng": 75.49693,
+  "name": "Riya EV Charging Station",
+  "address": "KANNUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_SHANMUGAM_EV_CHARGING_STATION",
+  "lat": 10.557681,
+  "lng": 77.382644,
+  "name": "SHANMUGAM EV CHARGING STATION",
+  "address": "DINDIGUL, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Sanvel_EV_Charging_Station",
+  "lat": 11.956723,
+  "lng": 75.481363,
+  "name": "Sanvel EV Charging Station",
+  "address": "KANNUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Shakthi_EV",
+  "lat": 12.8789684,
+  "lng": 75.0467132,
+  "name": "Shakthi EV Charging Station",
+  "address": "DAKSHINA KANNADA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Shine_Energy_EV_Charging_Station",
+  "lat": 11.422694,
+  "lng": 75.711028,
+  "name": "Shine Energy EV Charging Station",
+  "address": "KOZHIKODE, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Supreme_EV_charging_station",
+  "lat": 10.340645,
+  "lng": 76.137186,
+  "name": "Supreme EV charging station",
+  "address": "THRISSUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_TVH_OURANYA_BAY_CHARGING_STATION",
+  "lat": 12.812134,
+  "lng": 80.229834,
+  "name": "TVH OURANYA BAY CHARGING STATION",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_The_Residency_Towers_Madurai",
+  "lat": 9.852211,
+  "lng": 78.100171,
+  "name": "The Residency Towers Madurai",
+  "address": "MADURAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Thumbayil_EV_Charging_Station",
+  "lat": 10.1869799,
+  "lng": 76.481342,
+  "name": "Thumbayil EV Charging Station",
+  "address": "ERNAKULAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_VEL_EV_HUB",
+  "lat": 10.0635022,
+  "lng": 77.5158122,
+  "name": "VEL EV HUB",
+  "address": "THENI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_VERTEX_WORK_SPACE",
+  "lat": 12.8959495,
+  "lng": 74.842001,
+  "name": "VERTEX WORK SPACE",
+  "address": "DAKSHINA KANNADA, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Vaibhav_EV_Charging_Station",
+  "lat": 17.309118,
+  "lng": 78.167179,
+  "name": "VAIBHAV EV CHARGING STATION",
+  "address": "RANGAREDDY, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Vijaya_Aquagreen_Owners_Association",
+  "lat": 13.08558,
+  "lng": 77.51229,
+  "name": "Vijaya Aquagreen Owners Association Charging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_WattsUp_EV_Charging_Station",
+  "lat": 10.41487,
+  "lng": 76.1252784,
+  "name": "Watt'sUp EV Charging Station",
+  "address": "THRISSUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_CP_Zoy_Prestige_EV_Charging_Station",
+  "lat": 12.891273,
+  "lng": 77.649072,
+  "name": "Zoy Prestige EV\nCharging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_Ford_Motors",
+  "lat": 12.912404,
+  "lng": 80.222081,
+  "name": "FORD CHARGING STATION (PRIVATE)",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 11
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TPC_Reena_Enterprises",
+  "lat": 12.002697,
+  "lng": 75.668842,
+  "name": "Reena Enterprises Charging Station",
+  "address": "KANNUR, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TP_Solar_Bglr_ElectronicCityPh2_Plant",
+  "lat": 12.847951,
+  "lng": 77.675615,
+  "name": "Tata Power Solar Electronics City Phase 2 Charging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "TSC_TCS_Whitefield_Bangalore",
+  "lat": 12.977714,
+  "lng": 77.728441,
+  "name": "TCS Whitefield, Bangalore (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 9
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Tanishq_Cathedral_Road_Gopalapuram",
+  "lat": 13.0470424,
+  "lng": 80.2553375,
+  "name": "Tanishq, Gopalapuram",
+  "address": "Chennai, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Tata_Communication_Tata_Communication_Madhapur",
+  "lat": 17.441226,
+  "lng": 78.378531,
+  "name": "Tata Communication, Madhapur (Private Charger)",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Tata_Communication_Workplace_Whitefield",
+  "lat": 12.98088,
+  "lng": 77.725043,
+  "name": "Tata Communication Whitefield (private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Tata_Realty_Workplace_Ramanujan_IT_Park_Taramani",
+  "lat": 12.990693,
+  "lng": 80.24764,
+  "name": "Ramanujan IT Park Taramani Block C LS 115 (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "CHARGING",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Tata_Realty_Workplace_Ramanujan_IT_Park_Taramani_Block_A",
+  "lat": 12.991832,
+  "lng": 80.245625,
+  "name": "Ramanujan IT Park, Taramani Block A (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Tata_Realty_Workplace_Ramanujan_IT_Park_Taramani_Block_B",
+  "lat": 12.991026,
+  "lng": 80.247358,
+  "name": "Ramanujan IT Park, Taramani Block B (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Tata_Realty_Workplace_Ramanujan_IT_Park_Taramani_Block_D",
+  "lat": 12.991623,
+  "lng": 80.246424,
+  "name": "Ramanujan IT Park, Taramani Block D (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 3
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Tata_Realty_Workplace_Ramanujan_IT_Park_Taramani_Block_E",
+  "lat": 12.990576,
+  "lng": 80.245852,
+  "name": "Ramanujan IT Park, Taramani Block E (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Tata_Realty_Workplace_Ramanujan_IT_Park_Taramani_Block_F",
+  "lat": 12.991329,
+  "lng": 80.248864,
+  "name": "Ramanujan IT Park, Taramani Block F (Private Charger)",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "The_Park_Hotels_The_Park_Anna_Salai",
+  "lat": 13.053186,
+  "lng": 80.249806,
+  "name": "The Park, Anna Salai",
+  "address": "CHENNAI, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "The_Park_Hotels_The_Park_Rajbhavan_Road",
+  "lat": 17.4235621,
+  "lng": 78.4622339,
+  "name": "Hotel The Park, Rajbhavan Road",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Titan_Titan_Company_Limited_Veer_Sandra",
+  "lat": 12.841769,
+  "lng": 77.673152,
+  "name": "Titan Company Limited, Veer Sandra (Private Charger)",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 5
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": true
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Vivera_Hotels_and_Resorts_Bhuvanagiri_Charging_Station",
+  "lat": 17.522436,
+  "lng": 78.924366,
+  "name": "Vivera Hotels and Resorts",
+  "address": "BHONGIR, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Vivera_Hotels_and_Resorts_Loc_1_Narketpally_Charging_Station",
+  "lat": 17.21237,
+  "lng": 79.166762,
+  "name": "TATA Power x TATA.EV Hotel Vivera Narketpalle",
+  "address": "NALGONDA, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 4
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Workplace_Chennai_One_Thoraipakkam",
+  "lat": 12.948798,
+  "lng": 80.2319,
+  "name": "Chennai One, Thoraipakkam",
+  "address": "KANCHIPURAM, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 13
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Workplace_MAL_ASSET_Management_Enterprises_Hebbal",
+  "lat": 13.056156,
+  "lng": 77.59481,
+  "name": "MAL ASSET Management Enterprises,  Hebbal",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Workplace_MAL_ASSET_Management_Enterprises_Kempapura",
+  "lat": 13.055038,
+  "lng": 77.598471,
+  "name": "MAL ASSET Management Enterprises Kempapura",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "Workplace_Moto_Town_Auto_Hub_Ootty_road",
+  "lat": 11.223268,
+  "lng": 76.216961,
+  "name": "Moto Town Auto Hub Ootty road",
+  "address": "MALAPPURAM, Kerala",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 1
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "commercial_Sri_Venu_Enterprises",
+  "lat": 13.1581867,
+  "lng": 78.3668444,
+  "name": "Sri Balaji Bhavan (Sri Venu Enterprises)",
+  "address": "KOLAR, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "commercials_ALAGU_CO",
+  "lat": 10.290271,
+  "lng": 78.05046,
+  "name": "ALAGU & CO Charging Station",
+  "address": "DINDIGUL, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "commercials_Electronic_City_Hub",
+  "lat": 12.835841,
+  "lng": 77.660992,
+  "name": "Electronic City Hub Charging Station",
+  "address": "BANGALORE, Karnataka",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 34
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "commercials_ILABS_HYDERABAD_TECHNOLOGY_CENTRE_PVT_LTD",
+  "lat": 17.432996,
+  "lng": 78.386588,
+  "name": "TATA Power x TATA.EV ILabs  \n",
+  "address": "HYDERABAD, Telangana",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 6
+  },
+  "reports_live_status": true,
+  "station_status": "AVAILABLE",
+  "limited_access": false
+ },
+ {
+  "app": "tata_power",
+  "app_id": "commercials_VU_REALTY_SOLUTIONS",
+  "lat": 10.96533,
+  "lng": 76.825285,
+  "name": "VU Recharge Station",
+  "address": "COIMBATORE, Tamil Nadu",
+  "cpo": "Tata Power",
+  "power": null,
+  "price": null,
+  "connectors": {
+   "total": 2
+  },
+  "reports_live_status": true,
+  "station_status": "OUTOFORDER",
+  "limited_access": false
+ }
+]

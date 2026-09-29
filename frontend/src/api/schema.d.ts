@@ -269,6 +269,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/internal/owner/stations": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Stations */
+    get: operations["stations_api_internal_owner_stations_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/owner/submissions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Submit */
+    post: operations["submit_api_internal_owner_submissions_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/poller/alive": {
     parameters: {
       query?: never;
@@ -490,6 +524,15 @@ export interface components {
       waitlist_reason: string | null;
       /** Waitlisted */
       waitlisted: boolean;
+    };
+    /** BandOut */
+    BandOut: {
+      /** P10 Kwh */
+      p10_kwh: number;
+      /** P50 Kwh */
+      p50_kwh: number;
+      /** P90 Kwh */
+      p90_kwh: number;
     };
     /** BreakevenPayload */
     BreakevenPayload: {
@@ -843,6 +886,40 @@ export interface components {
       /** Stations */
       stations: number;
     };
+    /** OwnerStation */
+    OwnerStation: {
+      /** Connector Kw */
+      connector_kw: number[];
+      /** Connectors */
+      connectors:
+        | {
+            [key: string]: unknown;
+          }[]
+        | null;
+      /** Id */
+      id: number;
+      /** Lat */
+      lat: number;
+      /** Lng */
+      lng: number;
+      /** Name */
+      name: string | null;
+      /** Number Of Points */
+      number_of_points: number | null;
+      /** Operator */
+      operator: string | null;
+      /** Source */
+      source: string;
+      /** Town */
+      town: string | null;
+    };
+    /** OwnerStationsOut */
+    OwnerStationsOut: {
+      /** Stations */
+      stations: components["schemas"]["OwnerStation"][];
+      /** Total */
+      total: number;
+    };
     /** PointOut */
     PointOut: {
       /** Boundary Ambiguous */
@@ -979,6 +1056,13 @@ export interface components {
       paid_providers_enabled: string[];
       /** Postgis */
       postgis: string;
+    };
+    /** ReadingIn */
+    ReadingIn: {
+      /** Kwh */
+      kwh: number;
+      /** Month */
+      month: string;
     };
     /** RejectIn */
     RejectIn: {
@@ -1185,6 +1269,53 @@ export interface components {
       question: string;
       /** Using */
       using: string;
+    };
+    /** SubmissionIn */
+    SubmissionIn: {
+      /** Connector Indices */
+      connector_indices: number[];
+      /** Consent Aggregate */
+      consent_aggregate: boolean;
+      /**
+       * Consent Public
+       * @default false
+       */
+      consent_public: boolean;
+      /** Install Month */
+      install_month: string;
+      /**
+       * Meter Type
+       * @enum {string}
+       */
+      meter_type: "separate" | "shared" | "unsure";
+      /** Readings */
+      readings: components["schemas"]["ReadingIn"][];
+      /** Station Id */
+      station_id: number;
+    };
+    /** SubmissionOut */
+    SubmissionOut: {
+      /** Age Months */
+      age_months: number;
+      forecast: components["schemas"]["BandOut"];
+      /** Model Version */
+      model_version: string;
+      /** Next Month */
+      next_month: string;
+      peer: components["schemas"]["BandOut"];
+      /** Peer Percentile */
+      peer_percentile: number;
+      /** Readings Ignored */
+      readings_ignored: number;
+      /** Readings Used */
+      readings_used: number;
+      /** Relative To Peers */
+      relative_to_peers: number;
+      /**
+       * Submission Id
+       * Format: uuid
+       */
+      submission_id: string;
     };
     /** TableOut */
     TableOut: {
@@ -1707,6 +1838,72 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["TablesOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  stations_api_internal_owner_stations_get: {
+    parameters: {
+      query?: {
+        q?: string;
+        state?: string;
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OwnerStationsOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  submit_api_internal_owner_submissions_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SubmissionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SubmissionOut"];
         };
       };
       /** @description Validation Error */

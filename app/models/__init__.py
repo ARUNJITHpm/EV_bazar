@@ -21,6 +21,7 @@ from app.models.charger_status import (
 from app.models.competitors import CompetitorStation
 from app.models.geocode import GeocodeCache
 from app.models.manual_queue import GeocodeManualQueue, QueueStatus
+from app.models.owner import OwnerReading, OwnerSubmission
 from app.models.predictions import Prediction
 from app.models.price_cards import ProviderPriceCard
 from app.models.reference import (
@@ -52,6 +53,8 @@ __all__ = [
     "Pincode",
     "PollOutcome",
     "PollRawPayload",
+    "OwnerReading",
+    "OwnerSubmission",
     "PollRun",
     "Prediction",
     "ProviderPriceCard",

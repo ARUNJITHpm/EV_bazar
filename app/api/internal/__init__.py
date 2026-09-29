@@ -27,6 +27,7 @@ from app.api.internal import (
     geocoding,
     health,
     lookup,
+    owner,
     poller,
     progress,
     reports,
@@ -53,6 +54,14 @@ router.include_router(reports.router, tags=["internal-reports"])
 router.include_router(
     assess.router,
     tags=["internal-assess"],
+    dependencies=[Depends(rate_limit)],
+)
+
+# The owner upload: station search and submissions. Public inventory in,
+# append-only rows out, throttled for the same reason /assess is.
+router.include_router(
+    owner.router,
+    tags=["internal-owner"],
     dependencies=[Depends(rate_limit)],
 )
 

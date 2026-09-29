@@ -53,6 +53,11 @@ PUBLIC_PATHS = {
     # customer dropping the pin holds no login. It writes one sites lead row
     # and prices from typed tariffs; nothing paid, nothing keyed.
     "/api/internal/assess",
+    # Open BY DECISION (api/internal/owner.py): a station owner holds no login.
+    # Search reads public inventory only; a submission writes append-only rows
+    # and returns an energy band. Both are throttled like /assess.
+    "/api/internal/owner/stations",
+    "/api/internal/owner/submissions",
 }
 
 

@@ -52,6 +52,9 @@ const Animations = lazy(() =>
   import("./features/animation/Animations").then((m) => ({ default: m.Animations })),
 );
 
+/** Station-owner upload: its own route, its own chunk. */
+const Owner = lazy(() => import("./features/owner/Owner").then((m) => ({ default: m.Owner })));
+
 function Deferred({ children }: { children: ReactNode }) {
   return <Suspense fallback={<div className="min-h-dvh bg-cw-ground" />}>{children}</Suspense>;
 }
@@ -70,6 +73,27 @@ export const router = createBrowserRouter([
    */
   { path: "/assess", element: flow },
   { path: "/assess/:step", element: flow },
+  /**
+   * Station-owner upload (api/internal/owner.py). Open, like /assess: an
+   * owner holds no login. Every step is a URL; answers live in sessionStorage.
+   */
+  {
+    path: "/owner",
+    element: (
+      <Deferred>
+        <Owner />
+      </Deferred>
+    ),
+  },
+  {
+    path: "/owner/:step",
+    element: (
+      <Deferred>
+        <Owner />
+      </Deferred>
+    ),
+  },
+
   /**
    * The stored JSONB payload, fetched by id and rendered verbatim (AGENTS.md
    * rule 9). The demo report is /report/KL-TVM-DEMO-001; customer ids are
