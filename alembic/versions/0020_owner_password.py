@@ -1,7 +1,7 @@
 """Owner accounts get a password.
 
-Revision ID: 0019
-Revises: 0018
+Revision ID: 0020
+Revises: 0019
 Create Date: 2026-09-30
 
 Owners sign up and log in with a mobile number and a password (a one-time-code
@@ -15,8 +15,8 @@ import sqlalchemy as sa
 
 from alembic import op
 
-revision: str = "0019"
-down_revision: str | None = "0018"
+revision: str = "0020"
+down_revision: str | None = "0019"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
@@ -26,11 +26,11 @@ def upgrade() -> None:
     op.execute(
         """
         INSERT INTO schema_version (version, note)
-        VALUES (19, 'Owner accounts: password_hash (mobile number + password sign-in)')
+        VALUES (20, 'Owner accounts: password_hash (mobile number + password sign-in)')
         """
     )
 
 
 def downgrade() -> None:
-    op.execute("DELETE FROM schema_version WHERE version = 19")
+    op.execute("DELETE FROM schema_version WHERE version = 20")
     op.drop_column("owner_accounts", "password_hash")
