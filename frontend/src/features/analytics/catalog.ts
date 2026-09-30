@@ -116,7 +116,10 @@ export function analyticsMetadata(pathname: string) {
       "Free public data on EV charging in India, explained with transparent sources and methods.",
     // Shells contain no published indicators yet. Remove only as real
     // datasets/content are published, including the district-specific gate.
-    noindex: path !== "/data",
+    noindex: district ? !hasDistrictIndicator(atlas, district) : path !== "/data",
   };
 }
 import publicCatalogue from "virtual:analytics-public-data";
+
+import atlas from "virtual:analytics-atlas";
+import { hasDistrictIndicator } from "./districts/model";

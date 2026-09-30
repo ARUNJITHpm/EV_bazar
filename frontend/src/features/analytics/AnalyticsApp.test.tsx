@@ -44,7 +44,10 @@ describe("public analytics shell", () => {
     at(`/data/${slug}`);
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(title);
     expect(screen.getByText("Being prepared")).toBeTruthy();
-    expect(screen.queryByRole("table")).toBeNull();
+    if (["vehicles", "charging-network", "usage"].includes(slug)) {
+      expect(screen.getByRole("table")).toBeTruthy();
+      expect(screen.getByText(/Verified district boundaries are not available yet/)).toBeTruthy();
+    } else expect(screen.queryByRole("table")).toBeNull();
   });
 
   it("handles unknown districts and invalid topics without inventing an indicator", () => {

@@ -1,6 +1,6 @@
 # Chargeworthy Data: specification
 
-Status: Parts 0, 1, 2 and 3 complete. Reviewed 2026-09-30.
+Status: Parts 0–3 complete; Part 4 implementation complete, live geographic indicators pending sources. Reviewed 2026-09-30.
 Implementation brief: `chargeworthy-data-section-antigravity.md`.
 Read this file before every subsequent analytics part, alongside `AGENTS.md`,
 `OVERVIEW.md`, `STACK.md`, `PLAN.md` and `FINDINGS.md`.
@@ -339,3 +339,10 @@ product roadmap numbering in `PLAN.md`.
 - Development demo requires both development mode and fixtures=1, visibly labels invented data and covers every chart family. Production excludes its module and fixture strings, including source maps. Save image is visibly deferred to Part 8. Integration guidance is in CHARTS.md. No source-dependent live chart or model prediction was created.
 - Acceptance: all 180 working-workspace frontend tests passed (17 new chart tests), strict typecheck, production build and 795 prerendered documents passed, changed-file Prettier and browser-script Ruff passed. Actual browser checks passed real selected/all downloads, filter reload/back, keyboard controls and 375/768/1440px layouts; production demo exclusion passed with JavaScript on/off. Existing shell acceptance passed 17 routes with JavaScript on/off. Inspected the rendered line chart. The broken-CSV build refusal and production fixture scan passed.
 - Fixed two existing CSV acceptance mutations to match both LF and CRLF, so Windows checkouts exercise the intended invalid values. Existing large-chunk warning remains a Part 9 item. No new data acquisition or publication blockers were introduced in this component part.
+
+## Part 4 checkpoint — 2026-09-30
+
+- Added validated build-time atlas and TopoJSON delta/reversed-arc decoding, five-step SVG choropleth, hatching for missing values, dotted wide-range estimates, tap/hover details, keyboard district list, sortable table and selected/all CSVs. Source licences, dates and version stamps accompany the map.
+- District documents render static key figures, class/month registration charts, known opening records, integer-paise tariffs, locator and shared-edge neighbours when sources exist. Twelve-month totals need explicit complete class/month coverage; absent inventory is unknown, not zero. No-indicator districts remain noindex.
+- Acceptance: 185 frontend tests passed including five new district tests; typecheck and production build passed with 795 documents. Browser checks passed development-fixture hatching, keyboard selection, observed counts, three widths, static empty district pages with JavaScript on/off, production demo exclusion and the existing 17-route shell. Build refusal/fixture scan passed. Changed-file formatting passed.
+- Live boundaries, monthly registrations, curated charger inventory and tariffs remain pending in DATA_SOURCES_TODO.md. Production renders honest absence and archived district names, not invented geography or coverage. Real source-dependent figures and wide-range estimates are not claimed as live verification. Next: Part 5 offline engine, gated on reviewed private inputs and public inventory.

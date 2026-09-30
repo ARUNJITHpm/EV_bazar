@@ -1,12 +1,16 @@
 import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
 import publicCatalogue from "virtual:analytics-public-data";
+import atlas from "virtual:analytics-atlas";
+import { DistrictMap } from "./districts/DistrictMap";
+import { DistrictDetails } from "./districts/DistrictDetails";
 import { developmentFixtures } from "./data/client";
 import { parseCsv } from "../../../scripts/csv";
 
 import { analyticsMetadata, searchPublicContent, verticals } from "./catalog";
 
 const ChartDemo = import.meta.env.DEV ? lazy(() => import("./chart/ChartDemo")) : null;
+const MapDemo = import.meta.env.DEV ? lazy(() => import("./districts/MapDemo")) : null;
 
 function Preparation({ children }: { children: ReactNode }) {
   return (
@@ -154,30 +158,19 @@ function DocumentPage({ title, children }: { title: string; children: ReactNode 
 function DistrictPage() {
   const { slug } = useParams();
   const district = publicCatalogue.districts.find((district) => district.slug === slug);
-  const reference = publicCatalogue.datasets.find((dataset) => dataset.id === "district_reference");
   return (
     <DocumentPage title={district?.district_name ?? "District data"}>
-      {district && (
+      {district ? (
+        <DistrictDetails district={district} />
+      ) : (
         <>
-          <p className="analytics-lead">{district.state_name}</p>
-          <p>
-            District name and LGD code <span className="analytics-number">{district.lgd_code}</span>{" "}
-            come from our archived reference, retrieved{" "}
-            <time>{reference?.metadata.retrieved_on}</time>. This is not a claim of current district
-            coverage. <Link to="/data/sources">See the source and vintage.</Link>
-          </p>
+          <Preparation>
+            No district indicators have been published here yet. Search for a district in our
+            archived reference.
+          </Preparation>
+          <Search districtsOnly />
         </>
       )}
-      <Preparation>
-        District indicators are being prepared. Registrations, public charging coverage and
-        electricity tariffs will appear after their source datasets are verified. Usage estimates
-        will appear only when privacy and validation checks pass.
-      </Preparation>
-      <h2>What we don’t know yet</h2>
-      <p>
-        No district indicators have been published here yet. Missing data will always be labelled,
-        never shown as zero.
-      </p>
     </DocumentPage>
   );
 }
@@ -396,6 +389,16 @@ export function AnalyticsApp() {
           </aside>
         )}
         <Routes>
+          {MapDemo && new URLSearchParams(search).get("fixtures") === "1" && (
+            <Route
+              path="map-demo"
+              element={
+                <Suspense fallback={<p>Loading map…</p>}>
+                  <MapDemo />
+                </Suspense>
+              }
+            />
+          )}
           {ChartDemo && new URLSearchParams(search).get("fixtures") === "1" && (
             <Route
               path="chart-demo"
@@ -415,6 +418,19 @@ export function AnalyticsApp() {
                 <DocumentPage title={vertical.title}>
                   <p className="analytics-lead">{vertical.description}</p>
                   <Preparation>{vertical.preparation}</Preparation>
+                  {["vehicles", "charging-network", "usage"].includes(vertical.slug) && (
+                    <DistrictMap
+                      atlas={atlas}
+                      districts={publicCatalogue.districts}
+                      initialIndicator={
+                        vertical.slug === "vehicles"
+                          ? "registrations"
+                          : vertical.slug === "usage"
+                            ? "usage"
+                            : "chargers"
+                      }
+                    />
+                  )}
                   {vertical.slug === "method" && (
                     <Link className="analytics-text-link" to="/data/methodology">
                       Read the methodology →
