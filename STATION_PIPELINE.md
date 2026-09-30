@@ -34,7 +34,7 @@ the complete compressed ZIP of each attempt's raw responses, exports, manifest
 and log. These survive HF's temporary disk being cleared. Local temporary files
 are removed only after the archive is committed. No new paid provider is used.
 
-`.github/workflows/wake-data-refresh.yml` wakes the existing HF Space weekly with
+The prepared `.github/workflows/wake-data-refresh.yml` wakes the existing HF Space weekly with
 its public health endpoint. This is needed because CPU Basic sleeps when idle;
 a timer inside a sleeping container cannot run. GitHub's scheduled workflow may
 run late; the durable due-week check handles that. An HTTP 200 means the app is
@@ -44,6 +44,11 @@ Set `STATION_REFRESH_ENABLED=false` on the Space to disable the worker. Keep
 `OPEN_CHARGE_MAP__API_KEY` as a Space secret; never put it in the workflow YAML.
 Turning off this weekly inventory worker is separate from `SCRAPER_ENABLED`,
 which gates five-minute live availability polling.
+
+The wake-up workflow is saved locally but is not yet published: GitHub rejected
+the workflow push because the current OAuth login lacks `workflow` scope. Until
+that access is restored, due jobs run whenever the Space is awake, but a weekly
+wake-up is not guaranteed.
 
 ### VAHAN on the server
 
