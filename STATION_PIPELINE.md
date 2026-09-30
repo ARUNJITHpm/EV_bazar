@@ -297,9 +297,15 @@ dashboard after 120 seconds, before extracting any rows. Its failure archive is
 
 `data/server_refresh/4-vahan_smoke.zip`. The adapter now waits for the initial DOM
 
-rather than all page assets, bounds navigation at 60 seconds, and closes the
+rather than all page assets, requests a 60-second page-load timeout, and closes the
 
 browser if startup fails. `VAHAN_SERVER_SMOKE_REVISION` permits an explicit
 
 retest of a changed adapter within the same month. Full ingest remains disabled.
 
+
+The revised adapter also timed out in the local browser-driver navigation call
+after 120 seconds. No positive CSV exists from either HF test; this does not
+establish whether the cause is the dashboard, HF networking, or browser control.
+Both VAHAN flags are now false. The second failure archive is
+data/server_refresh/6-vahan_smoke.zip. Station refresh remains enabled.
