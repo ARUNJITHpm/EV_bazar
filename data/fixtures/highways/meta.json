@@ -1,0 +1,41 @@
+{
+  "id": "highways",
+  "title": "Test highways",
+  "description": "Complete with scope and definitions",
+  "source_name": "Test source",
+  "source_url": "https://example.invalid/test-source",
+  "retrieved_on": "2020-01-31",
+  "licence": "ODbL-1.0 (test only)",
+  "geography_level": "corridor",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Invented test data. Never publish.",
+  "columns": [
+    {
+      "name": "osm_id",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of osm_id"
+    },
+    {
+      "name": "ref",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of ref"
+    },
+    {
+      "name": "road_class",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of road_class"
+    },
+    {
+      "name": "geometry",
+      "type": "json",
+      "unit": "EPSG:4326",
+      "description": "Document the source definition of geometry"
+    }
+  ],
+  "attribution": "Test attribution only",
+  "fixture": true
+}

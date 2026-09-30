@@ -26,6 +26,26 @@ data/*
 !data/vahan/
 data/vahan/*
 !data/vahan/rto_reference.csv
+# Public analytics is a reviewed allowlist, not the raw data tree.
+!data/public/
+data/public/*
+!data/public/district_reference/
+!data/public/rto_to_district/
+!data/public/ev_registrations/
+!data/public/public_chargers/
+!data/public/ev_tariffs/
+!data/public/district_boundaries/
+!data/public/highways/
+data/public/*/*
+!data/public/*/.gitkeep
+!data/public/*/data.csv
+!data/public/*/data.topojson
+!data/public/*/data.geojson
+!data/public/*/meta.json
+!data/public/*/meta.template.json
+!data/public/*/data.template.csv
+!data/fixtures/
+!data/fixtures/**
 *.pbf
 *.shp
 *.shx

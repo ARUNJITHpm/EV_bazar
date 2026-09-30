@@ -1,0 +1,47 @@
+{
+  "id": "district_reference",
+  "title": "LGD district reference snapshot",
+  "description": "District identifiers and names from the existing public LGD snapshot",
+  "source_name": "Local Government Directory via india-geodata release",
+  "source_url": "https://github.com/yashveeeeeeer/india-geodata/releases/download/admin/districts/LGD_Districts.parquet",
+  "retrieved_on": "2026-08-12",
+  "licence": "CC0-1.0 (india-geodata release files)",
+  "licence_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "geography_level": "district",
+  "time_coverage": "Source catalogue describes 2024 coverage; retrieved 2026-08-12",
+  "update_frequency": "Refresh after reviewing a new LGD directory release",
+  "notes": "Historical snapshot, not a claim of current exhaustive district coverage. Two polygons without LGD codes are omitted. Former names are not inferred. Review renamed/split districts against the current official LGD directory. Release licence: https://github.com/yashveeeeeeer/india-geodata/blob/main/data/administrative/districts/README.md",
+  "columns": [
+    {
+      "name": "lgd_code",
+      "type": "integer",
+      "unit": "LGD district code",
+      "description": "Stable district join key in the source"
+    },
+    {
+      "name": "district_name",
+      "type": "string",
+      "unit": "name",
+      "description": "District name as published in the snapshot"
+    },
+    {
+      "name": "state_name",
+      "type": "string",
+      "unit": "name",
+      "description": "State name as published in the snapshot"
+    },
+    {
+      "name": "slug",
+      "type": "string",
+      "unit": "URL slug",
+      "description": "District name plus LGD code for unique URLs"
+    },
+    {
+      "name": "former_names",
+      "type": "json",
+      "unit": "names",
+      "description": "Verified aliases; empty until reviewed"
+    }
+  ],
+  "source_sha256": "c205da56ce0538b33b2f66838a4032cef79be7585543686892c8a85a5d21aebc"
+}

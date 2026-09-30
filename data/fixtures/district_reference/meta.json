@@ -1,0 +1,47 @@
+{
+  "id": "district_reference",
+  "title": "Test district_reference",
+  "description": "Complete with scope and definitions",
+  "source_name": "Test source",
+  "source_url": "https://example.invalid/test-source",
+  "retrieved_on": "2020-01-31",
+  "licence": "CC0-1.0 (test only)",
+  "geography_level": "district",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Invented test data. Never publish.",
+  "columns": [
+    {
+      "name": "lgd_code",
+      "type": "integer",
+      "unit": "LGD district code",
+      "description": "Document the source definition of lgd_code"
+    },
+    {
+      "name": "district_name",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of district_name"
+    },
+    {
+      "name": "state_name",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of state_name"
+    },
+    {
+      "name": "slug",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of slug"
+    },
+    {
+      "name": "former_names",
+      "type": "json",
+      "unit": "not applicable",
+      "description": "Document the source definition of former_names"
+    }
+  ],
+  "attribution": "Test attribution only",
+  "fixture": true
+}

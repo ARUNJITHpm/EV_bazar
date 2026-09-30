@@ -1,0 +1,78 @@
+{
+  "id": "ev_tariffs",
+  "title": "Test ev_tariffs",
+  "description": "Complete with scope and definitions",
+  "source_name": "Test source",
+  "source_url": "https://example.invalid/test-source",
+  "retrieved_on": "2020-01-31",
+  "licence": "CC0-1.0 (test only)",
+  "geography_level": "state",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Invented test data. Never publish.",
+  "columns": [
+    {
+      "name": "state",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of state"
+    },
+    {
+      "name": "discom",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of discom"
+    },
+    {
+      "name": "tariff_order_ref",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of tariff_order_ref"
+    },
+    {
+      "name": "effective_from",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of effective_from"
+    },
+    {
+      "name": "category",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of category"
+    },
+    {
+      "name": "energy_charge_paise_per_kwh",
+      "type": "integer",
+      "unit": "paise/kWh",
+      "description": "Document the source definition of energy_charge_paise_per_kwh"
+    },
+    {
+      "name": "demand_or_fixed_charge_paise",
+      "type": "integer",
+      "unit": "paise (basis in unit)",
+      "description": "Document the source definition of demand_or_fixed_charge_paise",
+      "nullable": true
+    },
+    {
+      "name": "unit",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of unit"
+    },
+    {
+      "name": "tod_rules",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of tod_rules"
+    },
+    {
+      "name": "notes",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of notes"
+    }
+  ],
+  "attribution": "Test attribution only",
+  "fixture": true
+}

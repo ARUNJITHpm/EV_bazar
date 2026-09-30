@@ -1,0 +1,59 @@
+{
+  "id": "ev_registrations",
+  "title": "Test ev_registrations",
+  "description": "Complete with scope and definitions",
+  "source_name": "Test source",
+  "source_url": "https://example.invalid/test-source",
+  "retrieved_on": "2020-01-31",
+  "licence": "CC0-1.0 (test only)",
+  "geography_level": "district",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Invented test data. Never publish.",
+  "columns": [
+    {
+      "name": "month",
+      "type": "month",
+      "unit": "not applicable",
+      "description": "Document the source definition of month"
+    },
+    {
+      "name": "state",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of state"
+    },
+    {
+      "name": "rto_code",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of rto_code"
+    },
+    {
+      "name": "lgd_code",
+      "type": "integer",
+      "unit": "LGD district code",
+      "description": "Document the source definition of lgd_code"
+    },
+    {
+      "name": "vehicle_class",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of vehicle_class"
+    },
+    {
+      "name": "fuel",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of fuel"
+    },
+    {
+      "name": "count",
+      "type": "integer",
+      "unit": "vehicles",
+      "description": "Document the source definition of count"
+    }
+  ],
+  "attribution": "Test attribution only",
+  "fixture": true
+}

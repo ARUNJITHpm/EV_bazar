@@ -1,5 +1,6 @@
 import { lazy, Suspense, type ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
+import { AnalyticsApp } from "./features/analytics/AnalyticsApp";
 
 import { Concept } from "./features/console/Concept";
 import { ConsoleLayout } from "./features/console/ConsoleLayout";
@@ -75,6 +76,7 @@ const flow = (
 
 export const router = createBrowserRouter([
   { path: "/", element: <Landing /> },
+  { path: "/data/*", element: <AnalyticsApp /> },
   /**
    * Every step is a real URL, which is what makes the browser back button
    * work through the flow without a history shim.
