@@ -30,6 +30,7 @@ from app.models.charging import (
     StationListing,
 )
 from app.models.competitors import CompetitorStation
+from app.models.data_refresh import DataRefreshEvent
 from app.models.geocode import GeocodeCache
 from app.models.manual_queue import GeocodeManualQueue, QueueStatus
 from app.models.owner import (
@@ -71,6 +72,7 @@ __all__ = [
     "Cpo",
     "CpoAlias",
     "DataSource",
+    "DataRefreshEvent",
     "District",
     "DistrictNameCrosswalk",
     "ElectricityTariff",
