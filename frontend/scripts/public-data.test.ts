@@ -85,14 +85,18 @@ describe("public data gate", () => {
   });
   it("fails on a negative count at the correct CSV row and column", async () => {
     const root = await copy();
-    await change(root, "ev_registrations/data.csv", (source) => source.replace(",12\n", ",-12\n"));
+    await change(root, "ev_registrations/data.csv", (source) =>
+      source.replace(/,12(\r?\n)/, ",-12$1"),
+    );
     await expect(loadPublicData(root, true)).rejects.toThrow(
       /ev_registrations[/\\]data.csv: row 2, column count:/,
     );
   });
   it("does not accept empty required values as zero", async () => {
     const root = await copy();
-    await change(root, "ev_registrations/data.csv", (source) => source.replace(",12\n", ",\n"));
+    await change(root, "ev_registrations/data.csv", (source) =>
+      source.replace(/,12(\r?\n)/, ",$1"),
+    );
     await expect(loadPublicData(root, true)).rejects.toThrow(/column count:/);
   });
   it.each(["2020-02-30", "not-a-date"])("rejects invalid retrieval date %s", async (date) => {

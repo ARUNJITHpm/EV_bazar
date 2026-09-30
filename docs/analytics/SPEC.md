@@ -1,6 +1,6 @@
 # Chargeworthy Data: specification
 
-Status: Parts 0, 1 and 2 complete. Reviewed 2026-09-30.
+Status: Parts 0, 1, 2 and 3 complete. Reviewed 2026-09-30.
 Implementation brief: `chargeworthy-data-section-antigravity.md`.
 Read this file before every subsequent analytics part, alongside `AGENTS.md`,
 `OVERVIEW.md`, `STACK.md`, `PLAN.md` and `FINDINGS.md`.
@@ -331,3 +331,11 @@ product roadmap numbering in `PLAN.md`.
 - Next: Part 3, the shared SVG chart component, table view, URL filters,
   source citations and matching CSV downloads. Live chart publication still
   requires validated source data.
+
+## Part 3 checkpoint — 2026-09-30
+
+- Added shared deterministic SVG charts: line, vertical/horizontal bars, dot/range and small multiples with a common numeric scale. Explicit missing rows break paths; estimates require ordered P10/P50/P90; suppressed rows refuse values and sample sizes. Shapes and line styles distinguish up to three series; larger comparisons use small multiples.
+- Added sortable semantic tables, en-IN numeric formatting, chart-specific URL filters/view, selected/all CSVs carrying raw values, ranges, source licences and all versions, and citation copying with a manual fallback. Browser controls use the latest URL to preserve successive filters during concurrent router renders. Static HTML includes the SVG and a full noscript table.
+- Development demo requires both development mode and fixtures=1, visibly labels invented data and covers every chart family. Production excludes its module and fixture strings, including source maps. Save image is visibly deferred to Part 8. Integration guidance is in CHARTS.md. No source-dependent live chart or model prediction was created.
+- Acceptance: all 180 working-workspace frontend tests passed (17 new chart tests), strict typecheck, production build and 795 prerendered documents passed, changed-file Prettier and browser-script Ruff passed. Actual browser checks passed real selected/all downloads, filter reload/back, keyboard controls and 375/768/1440px layouts; production demo exclusion passed with JavaScript on/off. Existing shell acceptance passed 17 routes with JavaScript on/off. Inspected the rendered line chart. The broken-CSV build refusal and production fixture scan passed.
+- Fixed two existing CSV acceptance mutations to match both LF and CRLF, so Windows checkouts exercise the intended invalid values. Existing large-chunk warning remains a Part 9 item. No new data acquisition or publication blockers were introduced in this component part.

@@ -1,10 +1,12 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
 import publicCatalogue from "virtual:analytics-public-data";
 import { developmentFixtures } from "./data/client";
 import { parseCsv } from "../../../scripts/csv";
 
 import { analyticsMetadata, searchPublicContent, verticals } from "./catalog";
+
+const ChartDemo = import.meta.env.DEV ? lazy(() => import("./chart/ChartDemo")) : null;
 
 function Preparation({ children }: { children: ReactNode }) {
   return (
@@ -394,6 +396,16 @@ export function AnalyticsApp() {
           </aside>
         )}
         <Routes>
+          {ChartDemo && new URLSearchParams(search).get("fixtures") === "1" && (
+            <Route
+              path="chart-demo"
+              element={
+                <Suspense fallback={<p>Loading chart demo…</p>}>
+                  <ChartDemo />
+                </Suspense>
+              }
+            />
+          )}
           <Route path="/" element={<Landing />} />
           {verticals.map((vertical) => (
             <Route
