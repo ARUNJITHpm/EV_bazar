@@ -37,7 +37,7 @@ export function Competitors() {
     <>
       <PanelHeader
         title="Competitors"
-        note="Every charging station we know about that is not a customer's site — who runs it, where, how powerful. The denominator for 'how much competition is near this site'. Existence and specs only; how BUSY each one is comes from the poller, not here."
+        note="Every charging station we know about that is not a customer's site — who runs it, where, how powerful. The denominator for 'how much competition is near this site'. Existence and specs only; how BUSY each one is comes from the poller, not here. The station-by-station list, with chargers, connectors and filters, is on the Network panel."
       />
       <Glossary terms={["CPO", "Connector", "Occupancy", "LGD"]} />
 

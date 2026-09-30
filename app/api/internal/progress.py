@@ -22,7 +22,7 @@ from dataclasses import dataclass
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from sqlalchemy import text
+from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
 from app.config import Settings, get_settings
@@ -68,6 +68,44 @@ class Signals:
     tiered_sites: int
     sources_authorised: int
     sources_total: int
+    #: The charging-network tables (migration 0015). Defaults keep older
+    #: constructors valid.
+    network_stations: int = 0
+    network_chargers: int = 0
+    network_connectors: int = 0
+    network_operators: int = 0
+    network_unattributed: int = 0
+    network_unplaced: int = 0
+    network_no_power: int = 0
+
+
+def _network_signals(session: Session) -> dict[str, int]:
+    """Counts from the stations/chargers/connectors tables; zeros before migration 0015."""
+    if not inspect(session.connection()).has_table("stations"):
+        return {}
+    r = session.execute(
+        text("""
+            SELECT
+              (SELECT count(*) FROM stations WHERE merged_into_id IS NULL),
+              (SELECT count(*) FROM chargers),
+              (SELECT count(*) FROM connectors),
+              (SELECT count(*) FROM cpos),
+              (SELECT count(*) FROM stations WHERE merged_into_id IS NULL AND cpo_id IS NULL),
+              (SELECT count(*) FROM stations
+               WHERE merged_into_id IS NULL AND lgd_district_code IS NULL),
+              (SELECT count(*) FROM connectors WHERE max_power_kw IS NULL)
+        """)
+    ).one()
+    keys = (
+        "network_stations",
+        "network_chargers",
+        "network_connectors",
+        "network_operators",
+        "network_unattributed",
+        "network_unplaced",
+        "network_no_power",
+    )
+    return {k: int(v) for k, v in zip(keys, r, strict=True)}
 
 
 def read_signals(session: Session) -> Signals:
@@ -117,6 +155,7 @@ def read_signals(session: Session) -> Signals:
         tiered_sites=int(row[17]),
         sources_authorised=sum(1 for s in SOURCES if s.authorised),
         sources_total=len(SOURCES),
+        **_network_signals(session),
     )
 
 
@@ -408,6 +447,28 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         if competitors_live
         else "Get a free Open Charge Map key (openchargemap.org), put it in .env, then "
         "`python -m scripts.fetch_competitors --state kerala --write`.",
+    )
+    network_live = s.network_stations > 0
+    add(
+        "2.4",
+        "Charging network - stations, chargers, connectors",
+        Status.PARTIAL if network_live else Status.NEXT,
+        "The inventory as three levels (station, charger, connector) with the CPO who "
+        "runs each and the source that listed it, so 'who competes here' and the "
+        "station-owner upload read one set of tables. Each level carries created and "
+        "updated times; raw scrapes are kept insert-only.",
+        (
+            f"{s.network_stations:,} stations, {s.network_chargers:,} chargers, "
+            f"{s.network_connectors:,} connectors, {s.network_operators:,} operators "
+            f"(see the Network panel). Still open: {s.network_unattributed:,} stations "
+            f"with no operator, {s.network_unplaced:,} with no district, "
+            f"{s.network_no_power:,} connectors with no power rating."
+            if network_live
+            else "Tables not populated yet."
+        ),
+        None
+        if network_live
+        else "Apply migration 0015, then `python -m scripts.backfill_network --write`.",
     )
     vahan_live = s.vahan_rows > 0
     add(

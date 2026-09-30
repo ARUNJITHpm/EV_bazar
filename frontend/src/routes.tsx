@@ -7,6 +7,7 @@ import { Competitors } from "./features/console/Competitors";
 import { Cpo } from "./features/console/Cpo";
 import { Data } from "./features/console/Data";
 import { Lookup } from "./features/console/Lookup";
+import { Network } from "./features/console/Network";
 import { Overview } from "./features/console/Overview";
 import { Progress } from "./features/console/Progress";
 import { Reports } from "./features/console/Reports";
@@ -121,6 +122,7 @@ export const router = createBrowserRouter([
       { path: "progress", element: <Progress /> },
       { path: "lookup", element: <Lookup /> },
       { path: "cpo", element: <Cpo /> },
+      { path: "network", element: <Network /> },
       { path: "competitors", element: <Competitors /> },
       { path: "vahan", element: <Vahan /> },
       { path: "data", element: <Data /> },

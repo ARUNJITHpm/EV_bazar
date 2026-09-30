@@ -269,6 +269,57 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/internal/network/facets": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Facets */
+    get: operations["facets_api_internal_network_facets_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/network/stations": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Stations */
+    get: operations["list_stations_api_internal_network_stations_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/network/stations/{station_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Station Detail */
+    get: operations["station_detail_api_internal_network_stations__station_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/owner/stations": {
     parameters: {
       query?: never;
@@ -543,6 +594,23 @@ export interface components {
       /** Utilisation */
       utilisation: number;
     };
+    /** ChargerOut */
+    ChargerOut: {
+      /** Connectors */
+      connectors: components["schemas"]["ConnectorOut"][];
+      /** Current Type */
+      current_type: string | null;
+      /** Id */
+      id: number;
+      /** Inferred */
+      inferred: boolean;
+      /** Label */
+      label: string | null;
+      /** Rated Power Kw */
+      rated_power_kw: number | null;
+      /** Status */
+      status: string;
+    };
     /** ClassRow */
     ClassRow: {
       /** Ev Total */
@@ -589,6 +657,34 @@ export interface components {
       source: string;
       /** Within 3Km */
       within_3km: number;
+    };
+    /** ConnectorOut */
+    ConnectorOut: {
+      /** Format */
+      format: string | null;
+      /** Id */
+      id: number;
+      /** Max Power Kw */
+      max_power_kw: number | null;
+      /** Standard */
+      standard: string | null;
+    };
+    /** Counts */
+    Counts: {
+      /** Chargers */
+      chargers: number;
+      /** Connectors */
+      connectors: number;
+      /** Connectors Without Power */
+      connectors_without_power: number;
+      /** Operators */
+      operators: number;
+      /** Stations */
+      stations: number;
+      /** Unattributed */
+      unattributed: number;
+      /** Unplaced */
+      unplaced: number;
     };
     /** CoverageOut */
     CoverageOut: {
@@ -680,6 +776,17 @@ export interface components {
       /** Vahan Snapshot */
       vahan_snapshot: string;
     };
+    /** DistrictFacet */
+    DistrictFacet: {
+      /** District */
+      district: string;
+      /** Lgd District Code */
+      lgd_district_code: number;
+      /** Lgd State Code */
+      lgd_state_code: number;
+      /** Stations */
+      stations: number;
+    };
     /** DistrictVahanRow */
     DistrictVahanRow: {
       /** District */
@@ -692,6 +799,21 @@ export interface components {
       lgd_district_code: number | null;
       /** State */
       state: string;
+    };
+    /** FacetsOut */
+    FacetsOut: {
+      /**
+       * Checked At
+       * Format: date-time
+       */
+      checked_at: string;
+      counts: components["schemas"]["Counts"];
+      /** Districts */
+      districts: components["schemas"]["DistrictFacet"][];
+      /** Operators */
+      operators: components["schemas"]["OperatorFacet"][];
+      /** States */
+      states: components["schemas"]["StateFacet"][];
     };
     /**
      * FieldSource
@@ -840,6 +962,27 @@ export interface components {
       /** Unresolved */
       unresolved: number;
     };
+    /** ListingOut */
+    ListingOut: {
+      /**
+       * First Seen At
+       * Format: date-time
+       */
+      first_seen_at: string;
+      /**
+       * Last Seen At
+       * Format: date-time
+       */
+      last_seen_at: string;
+      /** Source */
+      source: string;
+      /** Source Key */
+      source_key: string;
+      /** Source Name */
+      source_name: string | null;
+      /** Source Operator */
+      source_operator: string | null;
+    };
     /** LoginIn */
     LoginIn: {
       /** Password */
@@ -876,6 +1019,15 @@ export interface components {
     Operator: {
       /** Operator */
       operator: string;
+    };
+    /** OperatorFacet */
+    OperatorFacet: {
+      /** Id */
+      id: number;
+      /** Name */
+      name: string;
+      /** Stations */
+      stations: number;
     };
     /** OperatorRow */
     OperatorRow: {
@@ -1221,6 +1373,15 @@ export interface components {
       /** Why */
       why: string;
     };
+    /** StateFacet */
+    StateFacet: {
+      /** Lgd State Code */
+      lgd_state_code: number;
+      /** State */
+      state: string;
+      /** Stations */
+      stations: number;
+    };
     /** StateRow */
     StateRow: {
       /** Lgd State Code */
@@ -1242,6 +1403,76 @@ export interface components {
       lgd_state_code: number;
       /** State */
       state: string;
+    };
+    /** StationDetail */
+    StationDetail: {
+      /** Access */
+      access: string | null;
+      /** Address */
+      address: string | null;
+      /** Chargers */
+      chargers: components["schemas"]["ChargerOut"][];
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Is Operational */
+      is_operational: boolean | null;
+      /** Listings */
+      listings: components["schemas"]["ListingOut"][];
+      /** Postcode */
+      postcode: string | null;
+      station: components["schemas"]["StationRow"];
+    };
+    /** StationRow */
+    StationRow: {
+      /** Chargers */
+      chargers: number;
+      /** Connectors */
+      connectors: number;
+      /** Dc Fast */
+      dc_fast: boolean;
+      /** District */
+      district: string | null;
+      /** Id */
+      id: number;
+      /** Lat */
+      lat: number;
+      /** Listings */
+      listings: number;
+      /** Lng */
+      lng: number;
+      /** Max Power Kw */
+      max_power_kw: number | null;
+      /** Name */
+      name: string | null;
+      /** Operator */
+      operator: string | null;
+      /** Operator Confirmed */
+      operator_confirmed: boolean;
+      /** State */
+      state: string | null;
+      /** Town */
+      town: string | null;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+    };
+    /** StationsOut */
+    StationsOut: {
+      /** Page */
+      page: number;
+      /** Page Size */
+      page_size: number;
+      /** Pages */
+      pages: number;
+      /** Stations */
+      stations: components["schemas"]["StationRow"][];
+      /** Total */
+      total: number;
     };
     /**
      * Status
@@ -1837,6 +2068,112 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["TablesOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  facets_api_internal_network_facets_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FacetsOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_stations_api_internal_network_stations_get: {
+    parameters: {
+      query?: {
+        /** @description LGD state code */
+        state?: number | null;
+        /** @description LGD district code */
+        district?: number | null;
+        /** @description CPO id; 0 = unattributed */
+        operator?: number | null;
+        q?: string;
+        sort?: "name" | "connectors" | "power" | "updated";
+        page?: number;
+        page_size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StationsOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  station_detail_api_internal_network_stations__station_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        station_id: number;
+      };
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StationDetail"];
         };
       };
       /** @description Validation Error */
