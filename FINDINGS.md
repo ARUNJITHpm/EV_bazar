@@ -8,7 +8,7 @@ poller waits on that later stage, not on a missing authorisation. The owner flow
 that replaces it is PLAN Part O. What that flow does **not** yet have, so a ticked
 box there is not read as more than it is:
 
-- **Owner sign-in is a mobile number and a password (migration 0019).** The number
+- **Owner sign-in is a mobile number and a password (migration 0020).** The number
   is **not verified** - nothing proves the person owns it - so it is only a login
   name, and anyone can register a number first. There is **no password reset and
   no forgot-password**: a forgotten password locks the owner out of their account
