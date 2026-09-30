@@ -424,6 +424,109 @@
   max-width: 100%;
   overflow-x: auto;
 }
+.analytics-map select,
+.analytics-map button {
+  background: var(--cw-paper);
+  color: var(--cw-ink);
+  font: inherit;
+  min-height: 44px;
+  border: 1px solid var(--cw-paper-muted);
+  padding: 8px 12px;
+}
+.analytics-map select {
+  max-width: 100%;
+}
+.analytics-map button {
+  cursor: pointer;
+}
+.analytics-map :is(select, [tabindex]):focus-visible {
+  outline: 3px solid var(--cw-paper-slate);
+  outline-offset: 4px;
+}
+.analytics-district-map {
+  width: 100%;
+  max-height: 520px;
+}
+.analytics-map-district {
+  stroke: var(--cw-paper-slate);
+  stroke-width: 1;
+  cursor: pointer;
+}
+.analytics-map-paper {
+  fill: var(--cw-paper);
+}
+.analytics-map-hatch {
+  stroke: var(--cw-paper-slate);
+  stroke-width: 2;
+}
+.analytics-map-step-0 {
+  fill: var(--cw-map-0);
+  background: var(--cw-map-0);
+}
+.analytics-map-step-1 {
+  fill: var(--cw-map-1);
+  background: var(--cw-map-1);
+}
+.analytics-map-step-2 {
+  fill: var(--cw-map-2);
+  background: var(--cw-map-2);
+}
+.analytics-map-step-3 {
+  fill: var(--cw-map-3);
+  background: var(--cw-map-3);
+}
+.analytics-map-step-4 {
+  fill: var(--cw-map-4);
+  background: var(--cw-map-4);
+}
+.analytics-map-wide {
+  fill-opacity: 0.4;
+  stroke-dasharray: 3 3;
+}
+.analytics-map-selected {
+  stroke: var(--cw-chart-selected, var(--cw-ink));
+  stroke-width: 3;
+}
+.analytics-map-swatch {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--cw-paper-slate);
+  vertical-align: middle;
+}
+.analytics-map-missing {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--cw-paper) 0 5px,
+    var(--cw-paper-slate) 5px 7px
+  );
+}
+.analytics-map-legend {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+.analytics-map-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 8px;
+}
+.analytics-map-list li a {
+  display: block;
+  padding: 8px;
+}
+.analytics-district-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+  gap: 24px;
+}
+.analytics-district-figures dd {
+  margin: 8px 0;
+}
 @media print {
   .analytics-chart-filters,
   .analytics-chart-controls {

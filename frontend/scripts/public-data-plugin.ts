@@ -1,6 +1,7 @@
 import { resolve } from "node:path";
 import type { Plugin } from "vite";
 import { loadPublicData } from "./public-data.ts";
+import { buildAtlas } from "./atlas.ts";
 
 export function publicDataPlugin(): Plugin {
   let root = "",
@@ -34,10 +35,20 @@ export function publicDataPlugin(): Plugin {
       });
     },
     resolveId(id) {
-      if (id === "virtual:analytics-public-data" || id === "virtual:analytics-fixtures")
+      if (
+        [
+          "virtual:analytics-public-data",
+          "virtual:analytics-fixtures",
+          "virtual:analytics-atlas",
+        ].includes(id)
+      )
         return `\0${id}`;
     },
     async load(id) {
+      if (id === "\0virtual:analytics-atlas") {
+        loaded ??= await loadPublicData(resolve(root, "public"));
+        return `export default ${JSON.stringify(buildAtlas(loaded))};`;
+      }
       if (id === "\0virtual:analytics-public-data") {
         loaded ??= await loadPublicData(resolve(root, "public"));
         return `export default ${JSON.stringify(loaded.catalogue)};`;
@@ -47,7 +58,7 @@ export function publicDataPlugin(): Plugin {
         if (!development) return "export default null;";
         const fixtures = await loadPublicData(resolve(root, "fixtures"), true);
         const csvs = fixtures.artifacts.filter(({ name }) => name.endsWith("data.csv"));
-        return `export default ${JSON.stringify({ catalogue: fixtures.catalogue, csvs })};`;
+        return `export default ${JSON.stringify({ catalogue: fixtures.catalogue, csvs, atlas: buildAtlas(fixtures) })};`;
       }
     },
     generateBundle() {

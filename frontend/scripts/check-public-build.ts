@@ -30,7 +30,7 @@ async function scan(directory: string): Promise<void> {
     else if (/\.(?:html|json|js|map|csv|txt)$/.test(entry.name)) {
       const source = await readFile(path, "utf8");
       if (
-        /Test Station 01|Test District 01|test-public-charger-01|test-district-999001|example\.invalid\/test-source|Test District North|Test District South|example\.invalid\/chart-fixture|Chart development demo/.test(
+        /Test Station 01|Test District 01|test-public-charger-01|test-district-999001|example\.invalid\/test-source|Test District North|Test District South|example\.invalid\/chart-fixture|Chart development demo|District map development demo/.test(
           source,
         )
       )
