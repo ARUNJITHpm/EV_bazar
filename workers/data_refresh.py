@@ -159,6 +159,9 @@ def run_due(job: str, now: dt.datetime) -> None:
     from app.db import SessionLocal, engine
 
     period = due_period(job, now)
+    if job == "vahan_smoke":
+        # A revised browser adapter may be explicitly retested in the same month.
+        period += "-" + os.getenv("VAHAN_SERVER_SMOKE_REVISION", "v1")[:8]
     # Dedicated connection holds the SESSION lock throughout the subprocess.
     # A crash drops the connection/lock; persistent events bound later retries.
     with engine.connect() as connection:

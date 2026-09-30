@@ -117,6 +117,8 @@ def start_driver() -> tuple[Any, Any]:
     socket.setdefaulttimeout(180)
 
     options = uc.ChromeOptions()
+    # Third-party dashboard assets may never finish loading on a server.
+    options.page_load_strategy = "eager"
     headless = os.getenv("VAHAN_HEADLESS", "false").lower() == "true"
     if headless:
         options.add_argument("--headless=new")
@@ -143,8 +145,14 @@ def start_driver() -> tuple[Any, Any]:
         major = int(match.group(1))
     driver = uc.Chrome(options=options, version_main=major, browser_executable_path=binary)
     wait = WebDriverWait(driver, 30)
-    driver.get(URL)
-    print("browser started")
+    driver.set_page_load_timeout(60)
+    try:
+        driver.get(URL)
+    except Exception:
+        # Startup happens before scrape() enters its cleanup block.
+        driver.quit()
+        raise
+    print("browser started", flush=True)
     return driver, wait
 
 
