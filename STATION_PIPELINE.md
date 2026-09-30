@@ -276,3 +276,17 @@ timed out. There is no claim of exhaustive physical-station or per-CPO coverage.
 The strategy is this document, linked from `CPO_SOURCES.md`. Raw archives and
 exports live under `data/station_inventory/`; the inventory cache is in the
 database. Individual CPO direct-feed gaps remain in the route register above.
+
+### HF execution verified — 2026-09-30
+
+HF CPU Basic ran the weekly worker in 68 seconds. OCM/GoEC/Zeon all succeeded;
+2,101 resolved source records were committed, two held for geography review.
+The 1,238,851-byte ZIP is persisted in `data_refresh_events` and downloaded to
+`data/server_refresh/2-stations_weekly.zip`; its SHA256 was verified.
+
+The first VAHAN test started Chromium but timed out navigating the government
+dashboard after 120 seconds, before extracting any rows. Its failure archive is
+`data/server_refresh/4-vahan_smoke.zip`. The adapter now waits for the initial DOM
+rather than all page assets, bounds navigation at 60 seconds, and closes the
+browser if startup fails. `VAHAN_SERVER_SMOKE_REVISION` permits an explicit
+retest of a changed adapter within the same month. Full ingest remains disabled.
