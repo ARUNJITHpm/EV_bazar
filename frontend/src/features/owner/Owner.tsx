@@ -119,8 +119,8 @@ function StationStep({
             <span className="text-[19px] font-medium">{s.name ?? "Unnamed station"}</span>
             <span className="text-cw-muted">
               {[s.operator, s.town].filter(Boolean).join(" · ")} ·{" "}
-              <span className="font-cw-mono tabular-nums">{s.connector_kw.length}</span> connector
-              {s.connector_kw.length === 1 ? "" : "s"}
+              <span className="font-cw-mono tabular-nums">{s.connectors.length}</span> connector
+              {s.connectors.length === 1 ? "" : "s"}
             </span>
           </button>
         ))}
@@ -143,12 +143,12 @@ function ConnectorsStep({
   set: (p: Partial<OwnerDraft>) => void;
   onNext: () => void;
 }) {
-  const conns = draft.station?.connector_kw ?? [];
-  const toggle = (i: number) =>
+  const conns = draft.station?.connectors ?? [];
+  const toggle = (id: number) =>
     set({
-      connectors: draft.connectors.includes(i)
-        ? draft.connectors.filter((x) => x !== i)
-        : [...draft.connectors, i].sort((a, b) => a - b),
+      connectors: draft.connectors.includes(id)
+        ? draft.connectors.filter((x) => x !== id)
+        : [...draft.connectors, id].sort((a, b) => a - b),
     });
   return (
     <Screen question="Which connectors do you own?">
@@ -156,18 +156,20 @@ function ConnectorsStep({
         Pick every connector billed on the electricity connection you will upload.
       </p>
       <Answers cols={3}>
-        {conns.map((p, i) => (
+        {conns.map((c, i) => (
           <button
-            key={i}
+            key={c.id}
             type="button"
-            aria-pressed={draft.connectors.includes(i)}
-            onClick={() => toggle(i)}
-            className={choiceCls(draft.connectors.includes(i))}
+            aria-pressed={draft.connectors.includes(c.id)}
+            onClick={() => toggle(c.id)}
+            className={choiceCls(draft.connectors.includes(c.id))}
           >
             <span className="font-cw-mono text-[22px] font-medium tabular-nums">
-              {formatKw(kw(p))}
+              {formatKw(kw(c.power_kw))}
             </span>
-            <span className="text-cw-muted">Connector {i + 1}</span>
+            <span className="text-cw-muted">
+              {c.standard ? `${c.standard} · ` : ""}Connector {i + 1}
+            </span>
           </button>
         ))}
       </Answers>
@@ -458,7 +460,7 @@ export function Owner() {
     const { data, error: err } = await api.POST("/api/internal/owner/submissions", {
       body: {
         station_id: draft.station.id,
-        connector_indices: draft.connectors,
+        connector_ids: draft.connectors,
         install_month: draft.installMonth,
         meter_type: draft.meter,
         readings: toReadings(draft),

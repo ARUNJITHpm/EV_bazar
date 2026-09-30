@@ -886,16 +886,19 @@ export interface components {
       /** Stations */
       stations: number;
     };
+    /** OwnerConnector */
+    OwnerConnector: {
+      /** Id */
+      id: number;
+      /** Power Kw */
+      power_kw: number;
+      /** Standard */
+      standard: string | null;
+    };
     /** OwnerStation */
     OwnerStation: {
-      /** Connector Kw */
-      connector_kw: number[];
       /** Connectors */
-      connectors:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
+      connectors: components["schemas"]["OwnerConnector"][];
       /** Id */
       id: number;
       /** Lat */
@@ -904,12 +907,8 @@ export interface components {
       lng: number;
       /** Name */
       name: string | null;
-      /** Number Of Points */
-      number_of_points: number | null;
       /** Operator */
       operator: string | null;
-      /** Source */
-      source: string;
       /** Town */
       town: string | null;
     };
@@ -1272,8 +1271,8 @@ export interface components {
     };
     /** SubmissionIn */
     SubmissionIn: {
-      /** Connector Indices */
-      connector_indices: number[];
+      /** Connector Ids */
+      connector_ids: number[];
       /** Consent Aggregate */
       consent_aggregate: boolean;
       /**

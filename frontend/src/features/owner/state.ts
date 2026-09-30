@@ -10,6 +10,7 @@ export type Month = string;
 
 export interface OwnerDraft {
   station: OwnerStation | null;
+  /** ``connectors.id`` of each connector the owner picked - real ids, not positions. */
   connectors: number[];
   installMonth: Month | null;
   meter: MeterType | null;
@@ -31,7 +32,9 @@ export const blankDraft = (): OwnerDraft => ({
   result: null,
 });
 
-const KEY = "cw-owner-draft";
+// Bumped when the draft stopped holding positions into a list and started holding
+// connector ids: an old draft would send ids that mean something else.
+const KEY = "cw-owner-draft-2";
 
 export function loadDraft(): OwnerDraft {
   try {

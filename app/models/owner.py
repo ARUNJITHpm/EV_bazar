@@ -5,6 +5,13 @@ A correction is a NEW submission; the earlier one stays as what was said.
 
 The stored ``forecast`` carries ``model_version`` (rule 4), so a submission can
 be re-scored later without losing what the owner was originally shown.
+
+**Two ways to say which station.** New submissions carry ``station_id`` and
+``connector_ids`` (the charging-network tables, migration 0015): real ids that
+stay valid when a station's connector list is re-ordered. Rows written before
+migration 0016 carry ``competitor_station_id`` and ``connector_indices`` instead,
+and stay that way - the table is append-only, so they cannot be rewritten.
+A check constraint requires one complete pair.
 """
 
 from __future__ import annotations
@@ -17,6 +24,7 @@ from sqlalchemy import (
     JSON,
     BigInteger,
     Boolean,
+    CheckConstraint,
     Date,
     DateTime,
     Float,
@@ -40,11 +48,16 @@ class OwnerSubmission(Base):
     __tablename__ = "owner_submissions"
 
     submission_id: Mapped[uuid.UUID] = mapped_column(Uuid(), primary_key=True, default=uuid.uuid4)
-    competitor_station_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("competitor_stations.id"), nullable=False
+    #: The station and the connectors the owner picked (``stations.id``,
+    #: ``connectors.id``). Set on every submission written since migration 0016.
+    station_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("stations.id"))
+    connector_ids: Mapped[list[int] | None] = mapped_column(JsonColumn)
+    #: Legacy pair, from before 0016: positions into a competitor row's expanded
+    #: connector list. NULL on new submissions.
+    competitor_station_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("competitor_stations.id")
     )
-    #: Positions into the station's expanded connector list, as the owner picked.
-    connector_indices: Mapped[list[int]] = mapped_column(JsonColumn, nullable=False)
+    connector_indices: Mapped[list[int] | None] = mapped_column(JsonColumn)
     #: First day of the month the station went live.
     install_month: Mapped[dt.date] = mapped_column(Date, nullable=False)
     #: separate | shared | unsure - whether the bill measures charging alone.
@@ -59,7 +72,15 @@ class OwnerSubmission(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
-    __table_args__ = (Index("ix_owner_submissions_station", "competitor_station_id"),)
+    __table_args__ = (
+        Index("ix_owner_submissions_station", "competitor_station_id"),
+        Index("ix_owner_submissions_network_station", "station_id"),
+        CheckConstraint(
+            "(station_id IS NOT NULL AND connector_ids IS NOT NULL) "
+            "OR (competitor_station_id IS NOT NULL AND connector_indices IS NOT NULL)",
+            name="ck_owner_station_ref",
+        ),
+    )
 
 
 class OwnerReading(Base):
