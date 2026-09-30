@@ -1,3 +1,4 @@
+import { loadAnalyticsContent } from "./analytics-content.ts";
 import { resolve } from "node:path";
 import type { Plugin } from "vite";
 import { loadPublicData } from "./public-data.ts";
@@ -37,6 +38,7 @@ export function publicDataPlugin(): Plugin {
     resolveId(id) {
       if (
         [
+          "virtual:analytics-content",
           "virtual:analytics-public-data",
           "virtual:analytics-fixtures",
           "virtual:analytics-atlas",
@@ -45,6 +47,10 @@ export function publicDataPlugin(): Plugin {
         return `\0${id}`;
     },
     async load(id) {
+      if (id === "\0virtual:analytics-content") {
+        loaded ??= await loadPublicData(resolve(root, "public"));
+        return `export default ${JSON.stringify(await loadAnalyticsContent(resolve(root, "../frontend/content/analytics"), loaded.catalogue))};`;
+      }
       if (id === "\0virtual:analytics-atlas") {
         loaded ??= await loadPublicData(resolve(root, "public"));
         return `export default ${JSON.stringify(buildAtlas(loaded))};`;

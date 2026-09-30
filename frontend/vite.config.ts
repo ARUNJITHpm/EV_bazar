@@ -26,7 +26,7 @@ export default defineConfig({
             request.url = `${document}${url.search}`;
           } catch {
             const group = path.split("/")[2];
-            const fallback = ["district", "insights", "weekly"].includes(group ?? "")
+            const fallback = group === "district"
               ? `/data/${group}/index.html`
               : "/data/fallback.html";
             request.url = `${fallback}${url.search}`;
