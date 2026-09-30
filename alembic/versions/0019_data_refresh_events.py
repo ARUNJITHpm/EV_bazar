@@ -1,7 +1,7 @@
 """Durable scheduler outcomes and zipped scraper artifacts.
 
-Revision ID: 0020
-Revises: 0019
+Revision ID: 0019
+Revises: 0018
 """
 
 from collections.abc import Sequence
@@ -11,24 +11,13 @@ from sqlalchemy.dialects import postgresql
 
 from alembic import op
 
-revision: str = "0020"
-down_revision: str | None = "0019"
+revision: str = "0019"
+down_revision: str | None = "0018"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
-    inspector = sa.inspect(op.get_bind())
-    # A parallel owner release used 0019 after the refresh table was applied.
-    # Repair that rollout without rewriting either historical schema row.
-    if "password_hash" not in {c["name"] for c in inspector.get_columns("owner_accounts")}:
-        op.add_column("owner_accounts", sa.Column("password_hash", sa.String(200)))
-    if inspector.has_table("data_refresh_events"):
-        op.execute(
-            "INSERT INTO schema_version (version, note) VALUES "
-            "(20, 'Refresh archives; reconciled concurrent owner-password rollout')"
-        )
-        return
     op.create_table(
         "data_refresh_events",
         sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
@@ -50,10 +39,10 @@ def upgrade() -> None:
         )
     op.execute(
         "INSERT INTO schema_version (version, note) VALUES "
-        "(20, 'Durable weekly inventory and server VAHAN refresh outcomes')"
+        "(19, 'Durable weekly inventory and server VAHAN refresh outcomes')"
     )
 
 
 def downgrade() -> None:
     op.drop_table("data_refresh_events")
-    op.execute("DELETE FROM schema_version WHERE version = 20")
+    op.execute("DELETE FROM schema_version WHERE version = 19")
