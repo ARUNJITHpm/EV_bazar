@@ -1,0 +1,29 @@
+{
+  "id": "district_boundaries",
+  "title": "Test district_boundaries",
+  "description": "Complete with scope and definitions",
+  "source_name": "Test source",
+  "source_url": "https://example.invalid/test-source",
+  "retrieved_on": "2020-01-31",
+  "licence": "CC0-1.0 (test only)",
+  "geography_level": "district",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Invented test data. Never publish.",
+  "columns": [
+    {
+      "name": "lgd_code",
+      "type": "integer",
+      "unit": "LGD district code",
+      "description": "Document the source definition of lgd_code"
+    },
+    {
+      "name": "geometry",
+      "type": "json",
+      "unit": "EPSG:4326",
+      "description": "Document the source definition of geometry"
+    }
+  ],
+  "attribution": "Test attribution only",
+  "fixture": true
+}

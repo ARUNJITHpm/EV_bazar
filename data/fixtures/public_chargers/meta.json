@@ -1,0 +1,96 @@
+{
+  "id": "public_chargers",
+  "title": "Test public_chargers",
+  "description": "Complete with scope and definitions",
+  "source_name": "Test source",
+  "source_url": "https://example.invalid/test-source",
+  "retrieved_on": "2020-01-31",
+  "licence": "CC0-1.0 (test only)",
+  "geography_level": "district",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Invented test data. Never publish.",
+  "columns": [
+    {
+      "name": "charger_id",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of charger_id"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of name"
+    },
+    {
+      "name": "lat",
+      "type": "number",
+      "unit": "EPSG:4326",
+      "description": "Document the source definition of lat"
+    },
+    {
+      "name": "lon",
+      "type": "number",
+      "unit": "EPSG:4326",
+      "description": "Document the source definition of lon"
+    },
+    {
+      "name": "lgd_code",
+      "type": "integer",
+      "unit": "LGD district code",
+      "description": "Document the source definition of lgd_code"
+    },
+    {
+      "name": "road_class",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of road_class"
+    },
+    {
+      "name": "connector_type",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of connector_type"
+    },
+    {
+      "name": "power_kw",
+      "type": "number",
+      "unit": "kW",
+      "description": "Document the source definition of power_kw"
+    },
+    {
+      "name": "ac_or_dc",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of ac_or_dc"
+    },
+    {
+      "name": "opened_month",
+      "type": "month",
+      "unit": "not applicable",
+      "description": "Document the source definition of opened_month",
+      "nullable": true
+    },
+    {
+      "name": "source_name",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of source_name"
+    },
+    {
+      "name": "source_url",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of source_url"
+    },
+    {
+      "name": "recorded_on",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of recorded_on"
+    }
+  ],
+  "attribution": "Test attribution only",
+  "fixture": true
+}

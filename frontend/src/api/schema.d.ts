@@ -378,6 +378,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/internal/owner/login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Login */
+    post: operations["login_api_internal_owner_login_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/owner/logout": {
     parameters: {
       query?: never;
@@ -433,7 +450,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/internal/owner/otp/request": {
+  "/api/internal/owner/signup": {
     parameters: {
       query?: never;
       header?: never;
@@ -442,25 +459,8 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Request Code */
-    post: operations["request_code_api_internal_owner_otp_request_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/internal/owner/otp/verify": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Verify Code */
-    post: operations["verify_code_api_internal_owner_otp_verify_post"];
+    /** Signup */
+    post: operations["signup_api_internal_owner_signup_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1015,6 +1015,13 @@ export interface components {
       /** Sources */
       sources: components["schemas"]["CpoSourceOut"][];
     };
+    /** CredentialsIn */
+    CredentialsIn: {
+      /** Password */
+      password: string;
+      /** Phone */
+      phone: string;
+    };
     /** DemandCard */
     DemandCard: {
       /** Contract */
@@ -1412,11 +1419,6 @@ export interface components {
       /** Reason */
       reason: string | null;
     };
-    /** PhoneIn */
-    PhoneIn: {
-      /** Phone */
-      phone: string;
-    };
     /** PointOut */
     PointOut: {
       /** Boundary Ambiguous */
@@ -1660,11 +1662,6 @@ export interface components {
       payback_years: number | null;
       /** Utilisation */
       utilisation: number;
-    };
-    /** SentOut */
-    SentOut: {
-      /** Sent */
-      sent: boolean;
     };
     /** SeriesPoint */
     SeriesPoint: {
@@ -2096,13 +2093,6 @@ export interface components {
        * @enum {string}
        */
       value: "build" | "conditional" | "dont";
-    };
-    /** VerifyIn */
-    VerifyIn: {
-      /** Code */
-      code: string;
-      /** Phone */
-      phone: string;
     };
   };
   responses: never;
@@ -2742,6 +2732,39 @@ export interface operations {
       };
     };
   };
+  login_api_internal_owner_login_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CredentialsIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MeOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   logout_api_internal_owner_logout_post: {
     parameters: {
       query?: never;
@@ -2855,7 +2878,7 @@ export interface operations {
       };
     };
   };
-  request_code_api_internal_owner_otp_request_post: {
+  signup_api_internal_owner_signup_post: {
     parameters: {
       query?: never;
       header?: never;
@@ -2864,45 +2887,12 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PhoneIn"];
+        "application/json": components["schemas"]["CredentialsIn"];
       };
     };
     responses: {
       /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["SentOut"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  verify_code_api_internal_owner_otp_verify_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["VerifyIn"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
+      201: {
         headers: {
           [name: string]: unknown;
         };

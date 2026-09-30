@@ -1,0 +1,58 @@
+import { resolve } from "node:path";
+import type { Plugin } from "vite";
+import { loadPublicData } from "./public-data.ts";
+
+export function publicDataPlugin(): Plugin {
+  let root = "",
+    development = false;
+  let loaded: Awaited<ReturnType<typeof loadPublicData>> | undefined;
+  return {
+    name: "validated-public-analytics-data",
+    config(_config, env) {
+      development = env.command === "serve" && !env.isPreview;
+    },
+    configResolved(config) {
+      root = resolve(config.root, "../data");
+    },
+    async buildStart() {
+      loaded = await loadPublicData(resolve(root, "public"));
+    },
+    configureServer(server) {
+      server.middlewares.use((request, response, next) => {
+        const pathname = new URL(request.url ?? "/", "http://localhost").pathname;
+        const artifact = loaded?.artifacts.find(({ name }) => pathname === `/${name}`);
+        if (!artifact) return next();
+        response.setHeader(
+          "Content-Type",
+          artifact.name.endsWith(".csv")
+            ? "text/csv; charset=utf-8"
+            : artifact.name.endsWith(".txt")
+              ? "text/plain; charset=utf-8"
+              : "application/json; charset=utf-8",
+        );
+        response.end(artifact.source);
+      });
+    },
+    resolveId(id) {
+      if (id === "virtual:analytics-public-data" || id === "virtual:analytics-fixtures")
+        return `\0${id}`;
+    },
+    async load(id) {
+      if (id === "\0virtual:analytics-public-data") {
+        loaded ??= await loadPublicData(resolve(root, "public"));
+        return `export default ${JSON.stringify(loaded.catalogue)};`;
+      }
+      if (id === "\0virtual:analytics-fixtures") {
+        // Production never reads the fixture tree, even if it is malformed.
+        if (!development) return "export default null;";
+        const fixtures = await loadPublicData(resolve(root, "fixtures"), true);
+        const csvs = fixtures.artifacts.filter(({ name }) => name.endsWith("data.csv"));
+        return `export default ${JSON.stringify({ catalogue: fixtures.catalogue, csvs })};`;
+      }
+    },
+    generateBundle() {
+      for (const artifact of loaded?.artifacts ?? [])
+        this.emitFile({ type: "asset", fileName: artifact.name, source: artifact.source });
+    },
+  };
+}

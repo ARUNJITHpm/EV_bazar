@@ -46,9 +46,8 @@ To store owners, bills and forecasts you need PostgreSQL. Native install, no Doc
    cd frontend; npm install; npm run dev
    ```
 
-   Then open `http://localhost:5173/owner` for the owner flow (in development the
-   sign-in code is `000000`; it is refused in production until a real SMS provider is
-   wired), or `http://localhost:5173/console` for the operations console.
+   Then open `http://localhost:5173/owner` for the owner flow (sign up with any
+   10-digit mobile number and a password of 8+ characters), or `http://localhost:5173/console` for the operations console.
 
 > **`uv run <name>` failing with "trampoline failed to canonicalize script
 > path"?** The console-script shims in `.venv/Scripts` record the absolute path

@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "osm_id": "test-osm-01",
+        "ref": "NH999",
+        "road_class": "national_highway"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            75,
+            10
+          ],
+          [
+            76,
+            10
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "id": "rto_to_district",
+  "title": "rto_to_district — complete with sourced title",
+  "description": "Complete with scope and definitions",
+  "source_name": "Complete with publisher",
+  "source_url": null,
+  "retrieved_on": null,
+  "licence": null,
+  "geography_level": "district",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Template only: not a retrieved or published dataset",
+  "columns": [
+    {
+      "name": "state",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of state"
+    },
+    {
+      "name": "rto_code",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of rto_code"
+    },
+    {
+      "name": "lgd_code",
+      "type": "integer",
+      "unit": "LGD district code",
+      "description": "Document the source definition of lgd_code"
+    },
+    {
+      "name": "covers_multiple_districts",
+      "type": "boolean",
+      "unit": "not applicable",
+      "description": "Document the source definition of covers_multiple_districts"
+    },
+    {
+      "name": "allocation_note",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of allocation_note"
+    }
+  ]
+}

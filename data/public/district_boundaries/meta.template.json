@@ -1,0 +1,27 @@
+{
+  "id": "district_boundaries",
+  "title": "district_boundaries — complete with sourced title",
+  "description": "Complete with scope and definitions",
+  "source_name": "Complete with publisher",
+  "source_url": null,
+  "retrieved_on": null,
+  "licence": null,
+  "geography_level": "district",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Template only: not a retrieved or published dataset",
+  "columns": [
+    {
+      "name": "lgd_code",
+      "type": "integer",
+      "unit": "LGD district code",
+      "description": "Document the source definition of lgd_code"
+    },
+    {
+      "name": "geometry",
+      "type": "json",
+      "unit": "EPSG:4326",
+      "description": "Document the source definition of geometry"
+    }
+  ]
+}

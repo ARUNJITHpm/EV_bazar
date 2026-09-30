@@ -22,6 +22,30 @@
 		}
 	}
 
+	# Analytics documents are generated at build time. Unpublished paths get
+	# an honest preparation page, never the empty JavaScript-only SPA shell.
+	handle /data/district/* {
+		root * /srv/frontend/dist
+		try_files {path}/index.html {path} /data/district/index.html
+		file_server
+	}
+	handle /data/insights/* {
+		root * /srv/frontend/dist
+		try_files {path}/index.html {path} /data/insights/index.html
+		file_server
+	}
+	handle /data/weekly/* {
+		root * /srv/frontend/dist
+		try_files {path}/index.html {path} /data/weekly/index.html
+		file_server
+	}
+	@analytics path /data /data/*
+	handle @analytics {
+		root * /srv/frontend/dist
+		try_files {path}/index.html {path} /data/fallback.html
+		file_server
+	}
+
 	handle {
 		root * /srv/frontend/dist
 		try_files {path} /index.html

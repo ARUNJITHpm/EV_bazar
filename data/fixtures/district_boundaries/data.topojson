@@ -1,0 +1,45 @@
+{
+  "type": "Topology",
+  "objects": {
+    "districts": {
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "type": "Polygon",
+          "properties": {
+            "lgd_code": 999001
+          },
+          "arcs": [
+            [
+              0
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "arcs": [
+    [
+      [
+        75,
+        10
+      ],
+      [
+        76,
+        10
+      ],
+      [
+        76,
+        11
+      ],
+      [
+        75,
+        11
+      ],
+      [
+        75,
+        10
+      ]
+    ]
+  ]
+}

@@ -122,6 +122,7 @@
   --cw-paper-slate: #1c3a4f;
   --cw-rule: #d6d2c8;
   --cw-paper-muted: #5c5852;
+  --cw-data-highlight: #b5651d; /* analytics: one discussed chart series */
   --cw-verdict-positive: #1f5e4a;
   --cw-verdict-negative: #8c2a20;
   --cw-caution: #a65b1f;

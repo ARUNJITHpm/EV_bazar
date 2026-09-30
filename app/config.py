@@ -160,17 +160,17 @@ class Settings(BaseSettings):
     # behind one mobile carrier's address, stay well under it. 0 disables it.
     owner_submit_limit_per_hour: int = 20
 
-    # --- Owner accounts (phone + OTP) --------------------------------------
-    # Owners sign in with a phone number and a one-time code, nothing else. The
-    # OTP provider sits behind an interface (domain/owner/otp.py); outside prod a
-    # development stub accepts 000000, and in prod NO provider is wired until one
-    # is configured, so sign-in refuses (503) rather than accepting the stub.
+    # --- Owner accounts (mobile number + password) -------------------------
+    # Owners sign up and log in with a mobile number and a password. There is no
+    # password reset yet: a one-time-code (OTP) method is planned, and the
+    # interface for it is kept in domain/owner/otp.py, unused until a provider is
+    # chosen. The number is NOT verified by a code, so it is only a login name.
     #: Signs the owner session cookie. Falls back to ``console_secret_key``; in
     #: prod one of the two must be set or owner sign-in refuses.
     owner_session_secret: str | None = None
     owner_session_max_age_seconds: int = 30 * 24 * 3600
-    #: OTP request/verify attempts per caller IP per hour. 0 disables it.
-    owner_otp_limit_per_hour: int = 30
+    #: Sign-up / login attempts per caller IP per hour. 0 disables it.
+    owner_auth_limit_per_hour: int = 30
     owner_bill_max_bytes: int = 8 * 1024 * 1024
     # Retention (DPDP storage limitation). A bill image is kept only so the owner
     # can check their figures against it: it is deleted after this many days and

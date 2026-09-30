@@ -240,20 +240,20 @@ def test_the_owner_cap_fires_on_the_route_and_other_owner_calls_do_not_spend_it(
     assert second.headers["retry-after"] == "3600"
 
 
-def test_the_code_endpoints_have_their_own_hourly_cap(monkeypatch: pytest.MonkeyPatch) -> None:
-    from app.api.internal.ratelimit import owner_otp_limit
+def test_signup_and_login_have_their_own_hourly_cap(monkeypatch: pytest.MonkeyPatch) -> None:
+    from app.api.internal.ratelimit import owner_auth_limit
 
     monkeypatch.setattr(
-        "app.api.internal.ratelimit._otp_limiter", _limiter(FakeClock(), window=3600.0)
+        "app.api.internal.ratelimit._auth_limiter", _limiter(FakeClock(), window=3600.0)
     )
-    settings = Settings(env="test", owner_otp_limit_per_hour=2, _env_file=None)
+    settings = Settings(env="test", owner_auth_limit_per_hour=2, _env_file=None)
     req = _request({"x-forwarded-for": "203.0.113.7"}, ("127.0.0.1", 8001))
-    owner_otp_limit(req, settings)
-    owner_otp_limit(req, settings)
+    owner_auth_limit(req, settings)
+    owner_auth_limit(req, settings)
     with pytest.raises(HTTPException) as caught:
-        owner_otp_limit(req, settings)
+        owner_auth_limit(req, settings)
     assert caught.value.status_code == 429
-    owner_otp_limit(req, Settings(env="test", owner_otp_limit_per_hour=0, _env_file=None))
+    owner_auth_limit(req, Settings(env="test", owner_auth_limit_per_hour=0, _env_file=None))
 
 
 # --- the client key behind the Space's front proxy -----------------------------

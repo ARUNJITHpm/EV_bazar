@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { HomeDataSection } from "../analytics/HomeDataSection";
 
 import { RouteToCharge } from "../animation/RouteToCharge";
 import { SiteAssessed } from "../animation/SiteAssessed";
@@ -183,6 +184,12 @@ function Header() {
         Chargeworthy
       </span>
       <nav className="flex flex-wrap items-center justify-end gap-x-[clamp(16px,3vw,32px)]">
+        <Link
+          to="/data"
+          className="inline-flex min-h-[44px] items-center text-cw-muted transition-colors duration-200 hover:text-cw-text"
+        >
+          Data
+        </Link>
         {/* A station that already runs has its own way in: /owner is a
             different question (how does mine compare?) from the site
             assessment the rest of this page sells. */}
@@ -619,6 +626,7 @@ function Close() {
         </div>
       </div>
 
+      <HomeDataSection />
       <footer
         className={`flex flex-wrap items-start justify-between gap-10 border-t border-cw-line ${PAD_X} pt-10 pb-12`}
       >

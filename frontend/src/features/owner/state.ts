@@ -26,6 +26,9 @@ export const PRESETS: { label: string; standard: Standard; power_kw: number }[] 
 ];
 
 export interface OwnerDraft {
+  /** Whether this visitor is creating an account or logging in. */
+  mode: "new" | "returning" | null;
+  /** Never the password: that lives only in the password screen's own state. */
   phone: string;
   /** Text as typed, so a half-typed number survives a reload. */
   bill: {
@@ -79,6 +82,7 @@ export const blankBill = (): OwnerDraft["bill"] => ({
 });
 
 export const blankDraft = (): OwnerDraft => ({
+  mode: null,
   phone: "",
   bill: blankBill(),
   name: "",

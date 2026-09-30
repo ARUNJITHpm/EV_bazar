@@ -20,6 +20,9 @@ ENV VITE_MAPBOX_TOKEN=$VITE_MAPBOX_TOKEN
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 COPY frontend/ ./
+# Only reviewed public analytics files enter the frontend build. Owner data,
+# raw reference downloads and test fixtures are never copied into this stage.
+COPY data/public/ /data/public/
 RUN npm run build
 
 FROM python:3.11-slim

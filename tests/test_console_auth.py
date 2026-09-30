@@ -53,12 +53,12 @@ PUBLIC_PATHS = {
     # customer dropping the pin holds no login. It writes one sites lead row
     # and prices from typed tariffs; nothing paid, nothing keyed.
     "/api/internal/assess",
-    # Open BY DECISION (api/internal/owner.py): owners sign in with a phone number
-    # and a one-time code, so these three cannot need a session. Every other
-    # /owner route needs the OWNER session and is checked by the walk below
-    # (no session -> 401), and the throttle covers the two code endpoints.
-    "/api/internal/owner/otp/request",
-    "/api/internal/owner/otp/verify",
+    # Open BY DECISION (api/internal/owner.py): owners sign up and log in with a
+    # mobile number and a password, so these three cannot need a session. Every
+    # other /owner route needs the OWNER session and is checked by the walk below
+    # (no session -> 401), and the throttle covers signup and login.
+    "/api/internal/owner/signup",
+    "/api/internal/owner/login",
     "/api/internal/owner/logout",
     # Which deferred features are on, so the SPA can hide the rest. Says nothing else.
     "/api/internal/features",

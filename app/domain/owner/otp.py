@@ -1,10 +1,13 @@
-"""Phone number + one-time code sign-in for station owners.
+"""Phone number helpers, and the one-time-code interface kept for later.
+
+Owners sign in with a mobile number and a password for now (``password.py``).
+Nothing calls ``OtpProvider`` yet; it stays so a code-based sign-in and password
+reset can be added without redesigning. ``normalise_phone`` and ``mask_phone`` are
+in use.
 
 The provider sits behind ``OtpProvider`` so a real SMS gateway can be dropped in
 without touching the endpoints. No provider name or API key lives in this repo.
-``DevStubOtp`` accepts ``000000`` and is only ever handed out outside prod
-(``app.api.internal.owner`` refuses sign-in in prod until a real provider is
-wired), so the stub cannot open a production account by accident.
+``DevStubOtp`` accepts ``000000``; whoever wires it up must refuse it in prod.
 """
 
 from __future__ import annotations
