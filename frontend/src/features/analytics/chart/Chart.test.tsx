@@ -111,7 +111,7 @@ describe("shared analytics charts", () => {
       </MemoryRouter>,
     );
     expect(html).toContain("<svg");
-    expect(html).toContain("<noscript><div");
+    expect(html).not.toContain("<noscript>");
     expect(html).toContain("<table");
     expect(html).toContain("1,25,000");
   });

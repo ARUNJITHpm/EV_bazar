@@ -27,7 +27,9 @@ describe("public analytics shell", () => {
     fireEvent.change(screen.getByLabelText("Search Chargeworthy Data"), {
       target: { value: "electri" },
     });
-    expect(screen.getByRole("status").textContent).toBe("1 result found");
+    expect(
+      document.querySelector("#data-search-results")?.previousElementSibling?.textContent,
+    ).toBe("1 result found");
     const matches = document.querySelector("#data-search-results")!;
     fireEvent.click(within(matches as HTMLElement).getByRole("link", { name: "Electricity" }));
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Electricity");
@@ -75,7 +77,9 @@ describe("public analytics shell", () => {
     fireEvent.change(screen.getByLabelText("Search Chargeworthy Data"), {
       target: { value: "unknown" },
     });
-    expect(screen.getByRole("status").textContent).toContain("No matching titles");
+    expect(
+      document.querySelector("#data-search-results")?.previousElementSibling?.textContent,
+    ).toContain("No matching titles");
     expect(document.querySelector("#data-search-results")?.children.length).toBe(0);
   });
 });

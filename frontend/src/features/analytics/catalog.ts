@@ -1,3 +1,5 @@
+import articles from "virtual:analytics-content";
+import { articleHref } from "./content/model";
 export const verticals = [
   {
     slug: "vehicles",
@@ -53,6 +55,12 @@ export interface SearchEntry {
 // Only registered public content belongs here. Districts and articles are
 // added when their verified catalogues exist, never from private owner data.
 export const searchEntries: readonly SearchEntry[] = [
+  ...articles.map((a): SearchEntry => ({
+    title: a.title,
+    description: a.summary,
+    href: articleHref(a),
+    kind: a.format === "insights" ? "Insight" : "Weekly chart",
+  })),
   ...verticals.map((vertical): SearchEntry => ({
     title: vertical.title,
     description: vertical.description,
@@ -83,6 +91,7 @@ export function searchPublicContent(
 }
 
 export const staticAnalyticsPaths = [
+  ...articles.map(articleHref),
   "/data",
   ...verticals.map(({ slug }) => `/data/${slug}`),
   "/data/district",
@@ -105,18 +114,32 @@ export function analyticsMetadata(pathname: string) {
     "/data/methodology": "Methodology",
     "/data/sources": "Sources",
   };
-  const title = district?.district_name ?? vertical?.title ?? titles[path] ?? "Data being prepared";
+  const article = articles.find((a) => articleHref(a) === path);
+  const title =
+    article?.title ??
+    district?.district_name ??
+    vertical?.title ??
+    titles[path] ??
+    "Data being prepared";
   return {
     title:
       title === "Chargeworthy Data"
         ? `${title} — EV charging in India`
         : `${title} — Chargeworthy Data`,
     description:
+      article?.summary ??
       vertical?.description ??
       "Free public data on EV charging in India, explained with transparent sources and methods.",
     // Shells contain no published indicators yet. Remove only as real
     // datasets/content are published, including the district-specific gate.
-    noindex: district ? !hasDistrictIndicator(atlas, district) : path !== "/data",
+    noindex:
+      article ||
+      ((path === "/data/insights" || path === "/data/weekly") &&
+        articles.some((a) => path === `/data/${a.format}`))
+        ? false
+        : district
+          ? !hasDistrictIndicator(atlas, district)
+          : path !== "/data",
   };
 }
 import publicCatalogue from "virtual:analytics-public-data";

@@ -31,12 +31,12 @@
 	}
 	handle /data/insights/* {
 		root * /srv/frontend/dist
-		try_files {path}/index.html {path} /data/insights/index.html
+		try_files {path}/index.html {path} /data/fallback.html
 		file_server
 	}
 	handle /data/weekly/* {
 		root * /srv/frontend/dist
-		try_files {path}/index.html {path} /data/weekly/index.html
+		try_files {path}/index.html {path} /data/fallback.html
 		file_server
 	}
 	@analytics path /data /data/*
