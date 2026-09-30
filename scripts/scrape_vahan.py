@@ -34,8 +34,11 @@ import argparse
 import contextlib
 import csv
 import datetime as dt
+import os
 import random
+import re
 import socket
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -114,9 +117,31 @@ def start_driver() -> tuple[Any, Any]:
     socket.setdefaulttimeout(180)
 
     options = uc.ChromeOptions()
-    options.add_argument("--start-maximized")
+    headless = os.getenv("VAHAN_HEADLESS", "false").lower() == "true"
+    if headless:
+        options.add_argument("--headless=new")
+        options.add_argument("--window-size=1440,1000")
+        options.add_argument("--disable-dev-shm-usage")
+    else:
+        options.add_argument("--start-maximized")
     options.add_argument("--disable-blink-features=AutomationControlled")
-    driver = uc.Chrome(options=options, version_main=_chrome_major_version())
+    binary = os.getenv("VAHAN_CHROME_BINARY")
+    major = _chrome_major_version()
+    if headless and sys.platform != "win32" and not binary:
+        # Reuse the report renderer's pinned Playwright Chromium installation.
+        from playwright.sync_api import sync_playwright
+
+        with sync_playwright() as playwright:
+            binary = playwright.chromium.executable_path
+    if binary:
+        version = subprocess.run(
+            [binary, "--version"], capture_output=True, text=True, timeout=15, check=True
+        ).stdout
+        match = re.search(r"(\d+)\.", version)
+        if not match:
+            raise RuntimeError("could not identify installed Chromium version")
+        major = int(match.group(1))
+    driver = uc.Chrome(options=options, version_main=major, browser_executable_path=binary)
     wait = WebDriverWait(driver, 30)
     driver.get(URL)
     print("browser started")

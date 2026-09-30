@@ -7,6 +7,26 @@
 > upload. The **inventory** sections (locations, connectors, specs) are unaffected
 > and still in use.
 
+> **Inventory update 2026-09-30:** the capture/export pipeline is now
+> `scripts/refresh_stations.py`; commands, live state counts, freshness rules,
+> and the refreshed per-CPO source register are in [STATION_PIPELINE.md](STATION_PIPELINE.md).
+> Live read-only OCM + GoEC + Zeon runs exported 2,103 source records (overlap
+> retained), with latitude/longitude and LGD state/district resolution; two
+> points need geography review. Delhi currently means UT, not all NCR.
+> A public e-AMRIT JSON feed was found, correcting the older “no public API”
+> blanket statement below, but conflicting labels and absent dates keep it a
+> review candidate. No new live status feed or private endpoint was enabled.
+>
+> **Saved combined refresh, 2026-09-30:**
+> `data/station_inventory/20260930T095820Z-07fbc1ad/` contains raw captures,
+> 2,103 exported source records, and CSVs split by state and CPO. **2,101
+> resolved records were committed and verified in `competitor_stations`**,
+> spanning 18 recognised CPOs. OSM was attempted but returned HTTP 406; a
+> public mirror timed out. The optional official NCR polygon service also
+> timed out, so this run covers the five target states plus Delhi UT.
+> `STATION_PIPELINE.md` is the saved strategy and runbook, including the
+> command used, per-target counts, remaining direct-feed gaps and NCR scope.
+
 Research notes for PLAN 0.1. **Verify every endpoint against a live capture before
 wiring it** — app APIs are private and change without notice. Nothing here is a
 committed integration; it is the map for the reverse-engineering evening.

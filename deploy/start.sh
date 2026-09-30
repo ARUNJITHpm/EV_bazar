@@ -19,6 +19,17 @@ python -m scripts.ensure_partitions || echo "[start] ensure_partitions failed; c
 # API on the loopback; Caddy proxies /api here.
 uvicorn app.main:app --host 127.0.0.1 --port 8001 &
 
+# Inventory is weekly, independent of the deferred five-minute status poller.
+# Durable outcomes/ZIPs are in Postgres; restarts catch up the current due week.
+if [ "${STATION_REFRESH_ENABLED:-true}" = "true" ]; then
+  (
+    while true; do
+      python -m workers.data_refresh || echo "[start] data refresh worker exited; restarting"
+      sleep 60
+    done
+  ) &
+fi
+
 # Owner-data retention (bill images, inactive accounts): daily, best-effort.
 (
   while true; do

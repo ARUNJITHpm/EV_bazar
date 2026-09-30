@@ -1,0 +1,22 @@
+name: Wake weekly station refresh
+
+on:
+  schedule:
+    # Sunday 03:00 Asia/Kolkata. Execution may be delayed by GitHub.
+    - cron: '30 21 * * 6'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  wake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Wake the current HF container
+        run: |
+          curl --fail --location --max-time 60 --retry 15 --retry-all-errors \
+            --retry-delay 30 https://talk-to-nitara.hf.space/api/internal/healthz
+      # The worker uses persistent due-week state; HTTP wake-up alone is not
+      # proof of a successful scrape. data_refresh_events is the outcome record.

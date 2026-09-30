@@ -37,7 +37,9 @@ COPY --from=caddy:2 /usr/bin/caddy /usr/local/bin/caddy
 WORKDIR /srv
 
 COPY pyproject.toml uv.lock ./
-RUN uv pip install --system --no-cache -r pyproject.toml
+RUN uv export --frozen --no-dev --extra scrape --no-emit-project \
+      --output-file /tmp/evsite-requirements.txt \
+    && uv pip install --system --no-cache --require-hashes -r /tmp/evsite-requirements.txt
 
 # Chromium renders the report to PDF, and that PDF is the archived artifact
 # behind Rule 1. Pin the revision: a Chromium bump changes rasterisation and
