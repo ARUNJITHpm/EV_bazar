@@ -123,6 +123,11 @@
   --cw-rule: #d6d2c8;
   --cw-paper-muted: #5c5852;
   --cw-data-highlight: #b5651d; /* analytics: one discussed chart series */
+  --cw-map-0: color-mix(in srgb, var(--cw-paper-slate) 15%, var(--cw-paper));
+  --cw-map-1: color-mix(in srgb, var(--cw-paper-slate) 35%, var(--cw-paper));
+  --cw-map-2: color-mix(in srgb, var(--cw-paper-slate) 55%, var(--cw-paper));
+  --cw-map-3: color-mix(in srgb, var(--cw-paper-slate) 75%, var(--cw-paper));
+  --cw-map-4: var(--cw-paper-slate);
   --cw-verdict-positive: #1f5e4a;
   --cw-verdict-negative: #8c2a20;
   --cw-caution: #a65b1f;
