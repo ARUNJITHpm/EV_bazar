@@ -194,17 +194,31 @@ def owner_submit_limit(request: Request, settings: Settings = Depends(get_settin
         )
 
 
-#: Sign-in code requests and checks, an hour wide and separate from the rest: a
-#: code guess is the abuse here, and it must not spend (or be spent by) the
+#: Owner sign-up and login attempts, an hour wide and separate from the rest: a
+#: password guess is the abuse here, and it must not spend (or be spent by) the
 #: submission allowance.
-_otp_limiter = SlidingWindowLimiter(window_seconds=3600.0)
+_auth_limiter = SlidingWindowLimiter(window_seconds=3600.0)
+
+#: Attempts on ONE mobile number, whichever address they come from: a guesser who
+#: rotates IPs still hits this. Every attempt counts, so a wrong guess is not free.
+_phone_limiter = SlidingWindowLimiter(window_seconds=900.0)
+PHONE_ATTEMPTS_PER_15_MIN = 10
 
 
-def owner_otp_limit(request: Request, settings: Settings = Depends(get_settings)) -> None:
-    """FastAPI dependency for ``/owner/otp/*``: a per-IP hourly cap. 0 disables it."""
-    limit = settings.owner_otp_limit_per_hour
+def owner_auth_limit(request: Request, settings: Settings = Depends(get_settings)) -> None:
+    """FastAPI dependency for ``/owner/signup`` and ``/owner/login``: a per-IP hourly cap."""
+    limit = settings.owner_auth_limit_per_hour
     if limit <= 0:
         return
-    decision = _otp_limiter.check(client_key(request), limit)
+    decision = _auth_limiter.check(client_key(request), limit)
     if not decision.allowed:
         raise _refuse(decision, "Too many sign-in attempts. Please try again in a while.")
+
+
+def check_phone_attempts(phone: str, settings: Settings) -> None:
+    """Refuse a login for a number that has been tried too often in the last 15 minutes."""
+    if settings.owner_auth_limit_per_hour <= 0:
+        return
+    decision = _phone_limiter.check(phone, PHONE_ATTEMPTS_PER_15_MIN)
+    if not decision.allowed:
+        raise _refuse(decision, "Too many attempts for this number. Please try again later.")

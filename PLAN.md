@@ -20,8 +20,8 @@
 > performing. We get real usage figures for the demand model. Consent is one
 > required checkbox; nothing is published below 10 stations.
 
-- [x] **Phone + OTP sign-in.** `OtpProvider` interface, development stub (`000000`, never in prod), signed httpOnly session, per-IP throttle. `app/domain/owner/otp.py`, `api/internal/owner.py`.
-- [ ] **A real OTP provider** behind `OtpProvider`. Needs a decision and a key; none is in the repo.
+- [x] **Mobile number + password sign-up and login.** scrypt-hashed password, signed httpOnly session, per-IP and per-number throttle. No forgot-password. `app/domain/owner/password.py`, `api/internal/owner.py`.
+- [ ] **OTP** (verify the number, and password reset) behind the `OtpProvider` interface kept in `app/domain/owner/otp.py`. Needs an SMS provider decision and a key; none is in the repo.
 - [x] **Bill upload and manual extraction.** Photo or PDF kept so the owner can check figures against it; `BillExtractor` interface with `ManualExtractor`; fields saved only after the owner confirms them.
 - [ ] **Automatic extraction** (an OCR or model behind `BillExtractor`). Any LLM-proposed value stays a proposal until the owner confirms it (AGENTS.md rule 11).
 - [x] **Bill fields.** Period and kWh required; history (12 months), tariff category, contract and recorded demand (kVA/kW as printed), power factor and penalty/incentive (paise), time-of-day units, board, consumer number (last 4 only).

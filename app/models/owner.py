@@ -115,6 +115,9 @@ class OwnerAccount(Base):
     id: Mapped[int] = mapped_column(Integer, Identity(), primary_key=True)
     #: Full E.164 number (``+91XXXXXXXXXX``). The browser only ever sees it masked.
     phone: Mapped[str] = mapped_column(String(16), nullable=False, unique=True)
+    #: ``scrypt$...`` (app.auth.hash_password). NULL only on an account made before
+    #: passwords existed; such an account cannot log in.
+    password_hash: Mapped[str | None] = mapped_column(String(200))
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )

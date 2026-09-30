@@ -4,10 +4,10 @@ The only station data source in the initial stage is what owners upload - an
 electricity bill (a photo or PDF, or units typed in by hand). Nothing here reads
 a scraped inventory.
 
-``/owner/otp/*`` - sign in with a phone number and a one-time code. No
-passwords, no email, no account form. The provider is an interface
-(``domain/owner/otp.py``); outside prod a stub accepts ``000000``, in prod
-sign-in refuses (503) until a real provider is wired.
+``/owner/signup`` and ``/owner/login`` - a mobile number and a password. There is
+no email and no account form. There is no password reset yet; a one-time-code
+method (``domain/owner/otp.py``) comes later. The number is not verified by a
+code, so it is only a login name.
 
 ``/owner/bill-images`` - keep the uploaded bill so the owner can check figures
 against it (deleted after the retention period, or on request), and return
@@ -42,20 +42,26 @@ from fastapi import (
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
-from app.api.internal.ratelimit import owner_otp_limit, owner_submit_limit
+from app.api.internal.ratelimit import (
+    check_phone_attempts,
+    owner_auth_limit,
+    owner_submit_limit,
+)
 from app.config import Settings, get_settings
 from app.db import get_session
+from app.domain.owner import password as owner_password
 from app.domain.owner import session as owner_session
 from app.domain.owner.bill import BillExtractor, BillFields, ManualExtractor, resolve_meter
 from app.domain.owner.erasure import delete_image, erase_account
 from app.domain.owner.home import PortfolioRow, StationHome, portfolio, station_home
-from app.domain.owner.otp import DevStubOtp, OtpProvider, mask_phone, normalise_phone
+from app.domain.owner.otp import mask_phone, normalise_phone
 from app.domain.owner.service import (
     BillInvalidError,
     ConnectorSpec,
     StationSpec,
     add_bill,
-    find_or_create_account,
+    create_account,
+    find_account,
     owned_station,
     register_station,
     station_count,
@@ -72,15 +78,6 @@ Standard = Literal["CCS2", "CCS1", "CHAdeMO", "Type 2 AC", "GB/T", "Other"]
 
 
 # --- dependencies -------------------------------------------------------------
-
-
-def otp_provider(settings: Settings = Depends(get_settings)) -> OtpProvider:
-    """The development stub outside prod; nothing in prod until a provider exists."""
-    if settings.env == "prod":
-        raise HTTPException(
-            status.HTTP_503_SERVICE_UNAVAILABLE, "Phone sign-in is not switched on yet."
-        )
-    return DevStubOtp()
 
 
 def bill_extractor() -> BillExtractor:
@@ -117,16 +114,9 @@ def current_owner(
 # --- sign in --------------------------------------------------------------------
 
 
-class PhoneIn(BaseModel):
+class CredentialsIn(BaseModel):
     phone: str = Field(max_length=24)
-
-
-class VerifyIn(PhoneIn):
-    code: str = Field(min_length=4, max_length=8)
-
-
-class SentOut(BaseModel):
-    sent: bool
+    password: str = Field(max_length=256)
 
 
 class MeOut(BaseModel):
@@ -142,33 +132,54 @@ def _phone(raw: str) -> str:
     return phone
 
 
-@router.post("/otp/request", response_model=SentOut, dependencies=[Depends(owner_otp_limit)])
-def request_code(body: PhoneIn, provider: OtpProvider = Depends(otp_provider)) -> SentOut:
-    provider.send(_phone(body.phone))
-    return SentOut(sent=True)
-
-
-@router.post("/otp/verify", response_model=MeOut, dependencies=[Depends(owner_otp_limit)])
-def verify_code(
-    body: VerifyIn,
-    response: Response,
-    provider: OtpProvider = Depends(otp_provider),
-    settings: Settings = Depends(get_settings),
-    session: Session = Depends(get_session),
-) -> MeOut:
-    phone = _phone(body.phone)
-    if not provider.verify(phone, body.code):
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "That code is not right.")
-    account = find_or_create_account(session, phone, dt.datetime.now(dt.UTC))
+def _start_session(response: Response, settings: Settings, account_id: int) -> None:
     response.set_cookie(
         owner_session.COOKIE_NAME,
-        owner_session.issue(_secret(settings), account.id),
+        owner_session.issue(_secret(settings), account_id),
         max_age=settings.owner_session_max_age_seconds,
         httponly=True,
         samesite="lax",
         secure=settings.env == "prod",
         path="/",
     )
+
+
+@router.post(
+    "/signup", response_model=MeOut, status_code=201, dependencies=[Depends(owner_auth_limit)]
+)
+def signup(
+    body: CredentialsIn,
+    response: Response,
+    settings: Settings = Depends(get_settings),
+    session: Session = Depends(get_session),
+) -> MeOut:
+    phone = _phone(body.phone)
+    if (why := owner_password.problem(body.password)) is not None:
+        raise HTTPException(422, why)
+    if find_account(session, phone) is not None:
+        raise HTTPException(409, "This number already has an account. Log in instead.")
+    account = create_account(
+        session, phone, owner_password.make_hash(body.password), dt.datetime.now(dt.UTC)
+    )
+    _start_session(response, settings, account.id)
+    return MeOut(phone_masked=mask_phone(phone), station_count=0)
+
+
+@router.post("/login", response_model=MeOut, dependencies=[Depends(owner_auth_limit)])
+def login(
+    body: CredentialsIn,
+    response: Response,
+    settings: Settings = Depends(get_settings),
+    session: Session = Depends(get_session),
+) -> MeOut:
+    phone = _phone(body.phone)
+    check_phone_attempts(phone, settings)
+    account = find_account(session, phone)
+    if not owner_password.check(body.password, account.password_hash if account else None):
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Mobile number or password is not right.")
+    assert account is not None  # noqa: S101 - check() never passes without an account
+    account.last_login_at = dt.datetime.now(dt.UTC)
+    _start_session(response, settings, account.id)
     return MeOut(phone_masked=mask_phone(phone), station_count=station_count(session, account.id))
 
 

@@ -8,8 +8,15 @@ poller waits on that later stage, not on a missing authorisation. The owner flow
 that replaces it is PLAN Part O. What that flow does **not** yet have, so a ticked
 box there is not read as more than it is:
 
-- **The OTP provider is a development stub** (accepts `000000`, refused in prod).
-  Real owner sign-in needs an SMS provider wired behind `OtpProvider`.
+- **Owner sign-in is a mobile number and a password (migration 0019).** The number
+  is **not verified** - nothing proves the person owns it - so it is only a login
+  name, and anyone can register a number first. There is **no password reset and
+  no forgot-password**: a forgotten password locks the owner out of their account
+  (they can only start again with another number). Passwords are scrypt-hashed;
+  login is throttled per address and per number (10 tries / 15 minutes). A
+  one-time-code method (`OtpProvider`, `DevStubOtp` in `domain/owner/otp.py`) is
+  kept for later and nothing calls it; when it lands it should also verify the
+  number and provide reset.
 - **Bill extraction is manual.** `ManualExtractor` proposes nothing; the owner types
   the fields beside the image. No OCR has been evaluated.
 - **Retention and erasure (DPDP), migration 0018.** An owner can delete one bill

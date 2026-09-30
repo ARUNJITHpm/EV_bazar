@@ -28,8 +28,9 @@ import {
 import { Shell, choiceCls, inputCls, primaryCls, secondaryCls, useOwner } from "./ui";
 
 /**
- * Owner onboarding: sign in with a phone number and a code, add one bill, tell us
- * about the station once, and land on the station's home page. One question per
+ * Owner onboarding: sign up with a mobile number and a password (or log in), add
+ * one bill, tell us about the station once, and land on the station's home page.
+ * There is no password reset yet - a one-time-code method comes later. One question per
  * screen, no dropdowns, 56px tap targets, every step a real URL.
  *
  * Nothing here works anything out. The forecast and the peer comparison come from
@@ -38,8 +39,9 @@ import { Shell, choiceCls, inputCls, primaryCls, secondaryCls, useOwner } from "
  */
 
 type StepId =
+  | "welcome"
   | "phone"
-  | "code"
+  | "password"
   | "bill"
   | "details"
   | "name"
@@ -49,8 +51,9 @@ type StepId =
   | "meter"
   | "consent";
 const ORDER: StepId[] = [
+  "welcome",
   "phone",
-  "code",
+  "password",
   "bill",
   "details",
   "name",
@@ -80,31 +83,40 @@ function NextRow({
   );
 }
 
+function WelcomeStep({ onPick }: { onPick: (mode: "new" | "returning") => void }) {
+  return (
+    <Screen question="Welcome. Are you new here?">
+      <Answers>
+        <Answer
+          title="I'm a new owner"
+          sub="Create an account with your mobile number and a password."
+          onClick={() => onPick("new")}
+        />
+        <Answer
+          title="I already have an account"
+          sub="Log in with your mobile number and password."
+          onClick={() => onPick("returning")}
+        />
+      </Answers>
+    </Screen>
+  );
+}
+
 function PhoneStep({
   draft,
   set,
-  onSent,
+  onNext,
 }: {
   draft: OwnerDraft;
   set: (p: Partial<OwnerDraft>) => void;
-  onSent: () => void;
+  onNext: () => void;
 }) {
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const send = async () => {
-    setBusy(true);
-    setError(null);
-    const { data, error: err } = await api.POST("/api/internal/owner/otp/request", {
-      body: { phone: draft.phone },
-    });
-    setBusy(false);
-    if (!data) return setError(detailOf(err, "We could not send a code. Try again in a moment."));
-    onSent();
-  };
   return (
     <Screen question="What is your mobile number?">
       <p className="max-w-[640px] text-cw-muted">
-        We send a code to sign you in. No password and no email.
+        {draft.mode === "new"
+          ? "This is your login name. No email needed."
+          : "The number you signed up with."}
       </p>
       <input
         type="tel"
@@ -116,63 +128,86 @@ function PhoneStep({
         value={draft.phone}
         onChange={(e) => set({ phone: e.target.value.replace(/[^\d+ ]/g, "") })}
       />
-      {error && (
-        <p role="alert" className="text-cw-negative">
-          {error}
-        </p>
-      )}
-      <NextRow
-        onNext={() => void send()}
-        disabled={busy || draft.phone.replace(/\D/g, "").length < 10}
-        label={busy ? "Sending…" : "Send code"}
-      />
+      <NextRow onNext={onNext} disabled={draft.phone.replace(/\D/g, "").length < 10} />
     </Screen>
   );
 }
 
-function CodeStep({
+function PasswordStep({
   draft,
-  onSignedIn,
+  set,
+  onDone,
 }: {
   draft: OwnerDraft;
-  onSignedIn: (stations: number) => void;
+  set: (p: Partial<OwnerDraft>) => void;
+  onDone: (stations: number) => void;
 }) {
-  const [code, setCode] = useState("");
+  const creating = draft.mode === "new";
+  const [password, setPassword] = useState("");
+  const [shown, setShown] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const verify = async () => {
+  const [taken, setTaken] = useState(false);
+  const submit = async () => {
     setBusy(true);
     setError(null);
-    const { data, error: err } = await api.POST("/api/internal/owner/otp/verify", {
-      body: { phone: draft.phone, code },
-    });
+    setTaken(false);
+    const body = { phone: draft.phone, password };
+    const {
+      data,
+      error: err,
+      response,
+    } = creating
+      ? await api.POST("/api/internal/owner/signup", { body })
+      : await api.POST("/api/internal/owner/login", { body });
     setBusy(false);
-    if (!data) return setError(detailOf(err, "That code is not right."));
-    onSignedIn(data.station_count);
+    if (!data) {
+      setTaken(creating && response.status === 409);
+      return setError(detailOf(err, "We could not sign you in. Try again in a moment."));
+    }
+    onDone(data.station_count);
   };
   return (
-    <Screen question="Enter the code we sent.">
-      <input
-        inputMode="numeric"
-        autoComplete="one-time-code"
-        maxLength={8}
-        className={`${inputCls} max-w-[300px] font-cw-mono tracking-[0.3em] tabular-nums`}
-        aria-label="One-time code"
-        value={code}
-        onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-      />
-      {import.meta.env.DEV && (
-        <p className="text-[15px] text-cw-muted">Development build: the code is 000000.</p>
+    <Screen question={creating ? "Choose a password." : "Enter your password."}>
+      {creating && (
+        <p className="max-w-[640px] text-cw-muted">
+          At least 8 characters. There is no password reset yet, so keep it somewhere safe. Reset by
+          a code sent to your phone is coming later.
+        </p>
       )}
+      <div className="flex max-w-[520px] gap-3">
+        <input
+          type={shown ? "text" : "password"}
+          autoComplete={creating ? "new-password" : "current-password"}
+          className={inputCls}
+          aria-label="Password"
+          maxLength={128}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && password.length >= (creating ? 8 : 1)) void submit();
+          }}
+        />
+        <button type="button" className={secondaryCls} onClick={() => setShown((v) => !v)}>
+          {shown ? "Hide" : "Show"}
+        </button>
+      </div>
       {error && (
         <p role="alert" className="text-cw-negative">
           {error}
         </p>
       )}
+      {taken && (
+        <div>
+          <button type="button" className={secondaryCls} onClick={() => set({ mode: "returning" })}>
+            Log in instead
+          </button>
+        </div>
+      )}
       <NextRow
-        onNext={() => void verify()}
-        disabled={busy || code.length < 4}
-        label={busy ? "Checking…" : "Sign in"}
+        onNext={() => void submit()}
+        disabled={busy || password.length < (creating ? 8 : 1)}
+        label={busy ? "One moment…" : creating ? "Create account" : "Log in"}
       />
     </Screen>
   );
@@ -518,8 +553,8 @@ export function Owner() {
   const navigate = useNavigate();
   const client = useQueryClient();
   const params = useParams();
-  const raw = params.step ?? "phone";
-  const step: StepId = isStep(raw) ? raw : "phone";
+  const raw = params.step ?? "welcome";
+  const step: StepId = isStep(raw) ? raw : "welcome";
   const me = useOwner();
 
   const [draft, setDraft] = useState<OwnerDraft>(loadDraft);
@@ -533,19 +568,20 @@ export function Owner() {
   const ownMeter = tariffImpliesOwnMeter(draft.bill.tariff);
   const order = ownMeter ? ORDER.filter((s) => s !== "meter") : ORDER;
   const at = Math.max(order.indexOf(step), 0);
-  const next = () => go(order[Math.min(at + 1, order.length - 1)] ?? "phone");
+  const next = () => go(order[Math.min(at + 1, order.length - 1)] ?? "welcome");
+  const signingIn = step === "welcome" || step === "phone" || step === "password";
 
-  // Already signed in: skip the phone screens. A returning owner goes to their
+  // Already signed in: skip the sign-in screens. A returning owner goes to their
   // stations; someone new goes straight to the bill.
   useEffect(() => {
     if (me.isPending || !me.data) return;
-    if (step === "phone" || step === "code") {
+    if (signingIn) {
       navigate(me.data.station_count > 0 ? "/owner/home" : "/owner/bill", { replace: true });
     }
-  }, [me.isPending, me.data, step, navigate]);
+  }, [me.isPending, me.data, signingIn, navigate]);
 
   // A link into the middle of the flow with nothing behind it goes back to the start.
-  const needsSession = step !== "phone" && step !== "code";
+  const needsSession = !signingIn;
   const missing =
     (needsSession && !me.isPending && !me.data) ||
     (order.indexOf(step) > order.indexOf("details") &&
@@ -589,15 +625,27 @@ export function Owner() {
 
   const body = (() => {
     switch (step) {
-      case "phone":
-        return <PhoneStep draft={draft} set={set} onSent={() => go("code")} />;
-      case "code":
+      case "welcome":
         return (
-          <CodeStep
+          <WelcomeStep
+            onPick={(mode) => {
+              set({ mode });
+              go("phone");
+            }}
+          />
+        );
+      case "phone":
+        return <PhoneStep draft={draft} set={set} onNext={() => go("password")} />;
+      case "password":
+        return (
+          <PasswordStep
             draft={draft}
-            onSignedIn={async (stations) => {
+            set={set}
+            onDone={async (stations) => {
               await client.invalidateQueries({ queryKey: ["owner-me"] });
-              navigate(stations > 0 ? "/owner/home" : "/owner/bill", { replace: true });
+              navigate(draft.mode === "returning" && stations > 0 ? "/owner/home" : "/owner/bill", {
+                replace: true,
+              });
             }}
           />
         );
@@ -637,8 +685,8 @@ export function Owner() {
 
   return (
     <Shell
-      progress={{ at: at + 1, of: order.length }}
-      back={step !== "phone" && step !== "bill" ? () => navigate(-1) : undefined}
+      progress={step === "welcome" ? undefined : { at, of: order.length - 1 }}
+      back={step !== "welcome" && step !== "bill" ? () => navigate(-1) : undefined}
     >
       <div className="flex flex-grow flex-col justify-center">{body}</div>
     </Shell>

@@ -12,14 +12,13 @@ from collections.abc import Iterator
 from typing import Any
 
 import pytest
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.api.internal import owner
-from app.config import Settings
 from app.db import get_session
 from app.models.base import Base
 from app.models.owner import (
@@ -45,11 +44,12 @@ TABLES = [
 PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
 LIVE = dt.date(2025, 1, 1)
 PHONE = "98765 43210"
+PASSWORD = "correct horse battery"
 
 
 @pytest.fixture
 def db(monkeypatch: pytest.MonkeyPatch) -> Iterator[sessionmaker[Session]]:
-    monkeypatch.setenv("OWNER_OTP_LIMIT_PER_HOUR", "0")
+    monkeypatch.setenv("OWNER_AUTH_LIMIT_PER_HOUR", "0")
     monkeypatch.setenv("OWNER_SUBMIT_LIMIT_PER_HOUR", "0")
     engine = create_engine(
         "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
@@ -81,10 +81,12 @@ def client(db: sessionmaker[Session], monkeypatch: pytest.MonkeyPatch) -> Iterat
         yield c
 
 
-def sign_in(c: TestClient, phone: str = PHONE) -> dict[str, Any]:
-    assert c.post("/owner/otp/request", json={"phone": phone}).status_code == 200
-    r = c.post("/owner/otp/verify", json={"phone": phone, "code": "000000"})
-    assert r.status_code == 200, r.text
+def sign_in(c: TestClient, phone: str = PHONE, password: str = PASSWORD) -> dict[str, Any]:
+    """Sign up a new number, or log in to one that already has an account."""
+    r = c.post("/owner/signup", json={"phone": phone, "password": password})
+    if r.status_code == 409:
+        r = c.post("/owner/login", json={"phone": phone, "password": password})
+    assert r.status_code in (200, 201), r.text
     return r.json()  # type: ignore[no-any-return]
 
 
@@ -120,14 +122,98 @@ def onboard(c: TestClient, **over: Any) -> int:
 
 
 def test_bad_phone_is_refused(client: TestClient) -> None:
-    assert client.post("/owner/otp/request", json={"phone": "12345"}).status_code == 422
+    r = client.post("/owner/signup", json={"phone": "12345", "password": PASSWORD})
+    assert r.status_code == 422
 
 
-def test_wrong_code_is_refused_and_no_cookie_is_set(client: TestClient) -> None:
-    client.post("/owner/otp/request", json={"phone": PHONE})
-    r = client.post("/owner/otp/verify", json={"phone": PHONE, "code": "111111"})
+def test_short_password_is_refused_and_no_account_is_made(
+    client: TestClient, db: sessionmaker[Session]
+) -> None:
+    r = client.post("/owner/signup", json={"phone": PHONE, "password": "short"})
+    assert r.status_code == 422
+    assert "8 characters" in r.json()["detail"]
+    with db() as s:
+        assert s.query(OwnerAccount).count() == 0
+
+
+def test_signup_signs_you_in_and_starts_with_no_stations(client: TestClient) -> None:
+    r = client.post("/owner/signup", json={"phone": PHONE, "password": PASSWORD})
+    assert r.status_code == 201
+    assert "evsite_owner" in r.cookies
+    assert client.get("/owner/me").json()["station_count"] == 0
+
+
+def test_signing_up_twice_with_one_number_is_refused(client: TestClient) -> None:
+    sign_in(client)
+    r = client.post(
+        "/owner/signup", json={"phone": "+91 98765 43210", "password": "another pass 1"}
+    )
+    assert r.status_code == 409
+    client.cookies.clear()
+    # the second attempt did not replace the first password
+    ok = client.post("/owner/login", json={"phone": PHONE, "password": PASSWORD})
+    assert ok.status_code == 200
+
+
+def test_login_with_the_right_password(client: TestClient) -> None:
+    sign_in(client)
+    client.cookies.clear()
+    assert client.get("/owner/me").status_code == 401
+    r = client.post("/owner/login", json={"phone": "9876543210", "password": PASSWORD})
+    assert r.status_code == 200
+    assert client.get("/owner/me").status_code == 200
+
+
+def test_wrong_password_and_unknown_number_look_the_same(client: TestClient) -> None:
+    sign_in(client)
+    client.cookies.clear()
+    wrong = client.post("/owner/login", json={"phone": PHONE, "password": "not the password"})
+    unknown = client.post("/owner/login", json={"phone": "9000000001", "password": PASSWORD})
+    assert wrong.status_code == unknown.status_code == 401
+    assert wrong.json() == unknown.json()
+    assert "evsite_owner" not in wrong.cookies
+
+
+def test_the_password_is_stored_hashed_never_plain(
+    client: TestClient, db: sessionmaker[Session]
+) -> None:
+    sign_in(client)
+    with db() as s:
+        stored = s.query(OwnerAccount).one().password_hash
+    assert stored is not None and stored.startswith("scrypt$")
+    assert PASSWORD not in stored
+
+
+def test_an_account_with_no_password_cannot_log_in(
+    client: TestClient, db: sessionmaker[Session]
+) -> None:
+    with db() as s:
+        s.add(OwnerAccount(phone="+919876543210"))
+        s.commit()
+    r = client.post("/owner/login", json={"phone": PHONE, "password": PASSWORD})
     assert r.status_code == 401
-    assert "evsite_owner" not in r.cookies
+
+
+def test_a_number_is_locked_after_too_many_tries(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.api.internal import ratelimit
+
+    monkeypatch.setenv("OWNER_AUTH_LIMIT_PER_HOUR", "1000")
+    monkeypatch.setattr(
+        ratelimit, "_phone_limiter", ratelimit.SlidingWindowLimiter(window_seconds=900.0)
+    )
+    sign_in(client)
+    client.cookies.clear()
+    codes = [
+        client.post("/owner/login", json={"phone": PHONE, "password": f"guess number {i}"})
+        for i in range(ratelimit.PHONE_ATTEMPTS_PER_15_MIN + 2)
+    ]
+    assert codes[0].status_code == 401
+    assert codes[-1].status_code == 429
+    # even the right password is refused while the number is locked
+    right = client.post("/owner/login", json={"phone": PHONE, "password": PASSWORD})
+    assert right.status_code == 429
 
 
 def test_the_browser_only_ever_sees_a_masked_number(client: TestClient) -> None:
@@ -144,30 +230,11 @@ def test_the_full_number_is_stored(client: TestClient, db: sessionmaker[Session]
         assert s.query(OwnerAccount).one().phone == "+919876543210"
 
 
-def test_signing_in_again_reuses_the_account(client: TestClient, db: sessionmaker[Session]) -> None:
-    sign_in(client, "9876543210")
-    sign_in(client, "+91 98765 43210")
-    with db() as s:
-        assert s.query(OwnerAccount).count() == 1
-
-
 def test_everything_else_needs_a_session(client: TestClient) -> None:
     assert client.get("/owner/me").status_code == 401
     assert client.get("/owner/stations").status_code == 401
     assert client.post("/owner/onboard", json=onboard_body()).status_code == 401
     assert client.post("/owner/bill-images", files={"file": ("b.png", PNG)}).status_code == 401
-
-
-def test_the_dev_stub_is_never_handed_out_in_prod() -> None:
-    prod = Settings(
-        env="prod",
-        console_auth_disabled=False,
-        console_secret_key="k",
-        console_password_hash="h",
-    )
-    with pytest.raises(HTTPException) as exc:
-        owner.otp_provider(prod)
-    assert exc.value.status_code == 503
 
 
 # --- onboarding and validation ----------------------------------------------------

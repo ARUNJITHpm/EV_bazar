@@ -62,12 +62,15 @@ def first_of(index: int) -> dt.date:
     return dt.date(index // 12, index % 12 + 1, 1)
 
 
-def find_or_create_account(session: Session, phone: str, now: dt.datetime) -> OwnerAccount:
-    account = session.scalar(select(OwnerAccount).where(OwnerAccount.phone == phone))
-    if account is None:
-        account = OwnerAccount(phone=phone)
-        session.add(account)
-    account.last_login_at = now
+def find_account(session: Session, phone: str) -> OwnerAccount | None:
+    return session.scalar(select(OwnerAccount).where(OwnerAccount.phone == phone))
+
+
+def create_account(
+    session: Session, phone: str, password_hash: str, now: dt.datetime
+) -> OwnerAccount:
+    account = OwnerAccount(phone=phone, password_hash=password_hash, last_login_at=now)
+    session.add(account)
     session.flush()
     return account
 

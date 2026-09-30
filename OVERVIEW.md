@@ -199,7 +199,7 @@ CPO ranking runs the ROI engine **once per operator**, because each one changes 
 
 Three things start **immediately and in parallel**, because they have zero dependencies and one of them is time-critical:
 
-1. **Owner bill collection** — day one: phone sign-in, bill upload, the station home page
+1. **Owner bill collection** — day one: mobile-number sign-up, bill upload, the station home page
 2. **SERC tariff PDF collection** — one state per evening, pure manual labour
 3. **CPO conversations** — their fee terms determine what the attribution chain must log
 

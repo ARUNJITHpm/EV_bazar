@@ -15,7 +15,7 @@ React console SPA, PostGIS on Neon. Station data comes from owner-uploaded
 bills; the charger-status poller is a deferred later stage, off unless
 `SCRAPER_ENABLED=true`.
 
-- Station owners sign in at `/owner` (phone number and a one-time code), add a
+- Station owners sign up or log in at `/owner` (mobile number and a password), add a
   bill, and get their station's home page at `/owner/station/:id`.
 - The operations console lives at `/console` (login required).
 - Partner API under `/api/v1`, console API under `/api/internal`.
