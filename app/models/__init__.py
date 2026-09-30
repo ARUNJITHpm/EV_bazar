@@ -18,6 +18,17 @@ from app.models.charger_status import (
     PollRun,
     Transition,
 )
+from app.models.charging import (
+    Charger,
+    ChargerListing,
+    Connector,
+    Cpo,
+    CpoAlias,
+    DataSource,
+    ScrapedRecord,
+    Station,
+    StationListing,
+)
 from app.models.competitors import CompetitorStation
 from app.models.geocode import GeocodeCache
 from app.models.manual_queue import GeocodeManualQueue, QueueStatus
@@ -41,10 +52,16 @@ __all__ = [
     "BILLABLE_STATUSES",
     "ApiUsageEvent",
     "Base",
+    "Charger",
+    "ChargerListing",
     "ChargerStatusEvent",
     "CompetitorStation",
+    "Connector",
     "ConnectorState",
     "ConnectorStatus",
+    "Cpo",
+    "CpoAlias",
+    "DataSource",
     "District",
     "DistrictNameCrosswalk",
     "ElectricityTariff",
@@ -62,8 +79,11 @@ __all__ = [
     "ReferenceLayer",
     "Report",
     "SchemaVersion",
+    "ScrapedRecord",
     "Site",
     "State",
+    "Station",
+    "StationListing",
     "SubsidyRule",
     "Transition",
     "UsageStatus",
