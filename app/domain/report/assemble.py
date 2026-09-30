@@ -408,7 +408,7 @@ def assemble_report(
                 margin_of_safety_pp=round(
                     (util["P10 · downside"] - run.breakeven_utilisation) * 100, 1
                 ),
-                uptime="awaiting poller",
+                uptime="not measured",
                 ocpi_roaming=option.ocpi_roaming,
             )
         )

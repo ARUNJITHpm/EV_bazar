@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { useFeatures } from "@/lib/features";
 import { cn } from "@/lib/utils";
 
 import { PanelHeader } from "./ConsoleLayout";
@@ -47,6 +48,7 @@ async function get<T>(path: string): Promise<T> {
 }
 
 export function Data() {
+  const { scraperEnabled } = useFeatures();
   const tables = useQuery({
     queryKey: ["lookup-tables"],
     queryFn: () =>
@@ -181,9 +183,11 @@ export function Data() {
                   <th className="w-16 py-1 text-center font-medium" title="PLAN 0.2">
                     Tariff
                   </th>
-                  <th className="w-16 py-1 text-center font-medium" title="PLAN 0.1 — the poller">
-                    Occupancy
-                  </th>
+                  {scraperEnabled && (
+                    <th className="w-16 py-1 text-center font-medium" title="PLAN 0.1 — the poller">
+                      Occupancy
+                    </th>
+                  )}
                   <th className="w-16 py-1 text-center font-medium" title="PLAN 4.1">
                     VAHAN
                   </th>
@@ -211,7 +215,7 @@ export function Data() {
                       {s.districts}
                     </td>
                     <Flag on={s.has_tariff_data} />
-                    <Flag on={s.has_competitor_poll} />
+                    {scraperEnabled && <Flag on={s.has_competitor_poll} />}
                     <Flag on={s.has_vahan_data} />
                     <Flag on={s.has_osm_road_quality} />
                     <td className="py-1.5 text-center">

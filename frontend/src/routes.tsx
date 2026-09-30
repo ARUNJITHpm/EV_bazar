@@ -55,6 +55,13 @@ const Animations = lazy(() =>
 
 /** Station-owner upload: its own route, its own chunk. */
 const Owner = lazy(() => import("./features/owner/Owner").then((m) => ({ default: m.Owner })));
+const OwnerHome = lazy(() =>
+  import("./features/owner/Home").then((m) => ({ default: m.OwnerHome })),
+);
+const StationPage = lazy(() =>
+  import("./features/owner/Home").then((m) => ({ default: m.StationPage })),
+);
+const BillPage = lazy(() => import("./features/owner/Home").then((m) => ({ default: m.BillPage })));
 
 function Deferred({ children }: { children: ReactNode }) {
   return <Suspense fallback={<div className="min-h-dvh bg-cw-ground" />}>{children}</Suspense>;
@@ -83,6 +90,30 @@ export const router = createBrowserRouter([
     element: (
       <Deferred>
         <Owner />
+      </Deferred>
+    ),
+  },
+  {
+    path: "/owner/home",
+    element: (
+      <Deferred>
+        <OwnerHome />
+      </Deferred>
+    ),
+  },
+  {
+    path: "/owner/station/:id",
+    element: (
+      <Deferred>
+        <StationPage />
+      </Deferred>
+    ),
+  },
+  {
+    path: "/owner/station/:id/bill",
+    element: (
+      <Deferred>
+        <BillPage />
       </Deferred>
     ),
   },

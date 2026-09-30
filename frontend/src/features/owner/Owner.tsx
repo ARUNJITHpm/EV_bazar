@@ -1,135 +1,275 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { api } from "../../api/client";
-import { formatKw, formatKwhBound, kw, kwh } from "../../lib/units";
 import { Answer, Answers, Screen } from "../public/flow/Question";
+import { BillForm, BillImage } from "./BillForm";
+import { BillUpload } from "./BillUpload";
+import { PlacePicker } from "./PlacePicker";
 import {
-  billMonths,
+  PRESETS,
   blankDraft,
   clearDraft,
+  detailOf,
+  expandConnectors,
+  lastFullMonth,
   loadDraft,
   monthFromIndex,
   monthIndex,
   monthLabel,
   saveDraft,
-  toReadings,
-  type MeterType,
+  tariffImpliesOwnMeter,
+  toBillIn,
+  totalKw,
   type OwnerDraft,
-  type OwnerStation,
+  type Standard,
 } from "./state";
+import { Shell, choiceCls, inputCls, primaryCls, secondaryCls, useOwner } from "./ui";
 
 /**
- * Station-owner upload: find your station, pick your connectors, say when it
- * went live, whether the meter is its own, and type up to six months of bills.
+ * Owner onboarding: sign in with a phone number and a code, add one bill, tell us
+ * about the station once, and land on the station's home page. One question per
+ * screen, no dropdowns, 56px tap targets, every step a real URL.
  *
- * Nothing on this side works anything out. The peer comparison and the
- * next-month band come back from POST /owner/submissions (app/domain/owner),
- * so the numbers an owner is shown are the ones that were stored. Energy is
- * kWh only - no rupee figure exists on this surface.
- *
- * Same rules as the assessment flow: one question per screen, no dropdowns,
- * 56px tap targets, every step a real URL.
+ * Nothing here works anything out. The forecast and the peer comparison come from
+ * the API, and the fields are saved only after the owner ticks "These match my
+ * bill" and the consent box.
  */
 
-type StepId = "station" | "connectors" | "installed" | "meter" | "energy" | "consent" | "result";
+type StepId =
+  | "phone"
+  | "code"
+  | "bill"
+  | "details"
+  | "name"
+  | "place"
+  | "connectors"
+  | "live"
+  | "meter"
+  | "consent";
 const ORDER: StepId[] = [
-  "station",
+  "phone",
+  "code",
+  "bill",
+  "details",
+  "name",
+  "place",
   "connectors",
-  "installed",
+  "live",
   "meter",
-  "energy",
   "consent",
-  "result",
 ];
 const isStep = (v: string): v is StepId => (ORDER as string[]).includes(v);
 
-/** The latest month an owner can hold a full bill for: last calendar month. */
-function lastFullMonth(): string {
-  const now = new Date();
-  return monthFromIndex(now.getFullYear() * 12 + now.getMonth() - 1);
+function NextRow({
+  onNext,
+  disabled,
+  label = "Continue",
+}: {
+  onNext: () => void;
+  disabled?: boolean;
+  label?: string;
+}) {
+  return (
+    <div className="flex justify-end">
+      <button type="button" className={primaryCls} disabled={disabled} onClick={onNext}>
+        {label}
+      </button>
+    </div>
+  );
 }
 
-const inputCls =
-  "min-h-[56px] w-full border border-cw-line bg-cw-surface px-5 text-[18px] text-cw-text placeholder:text-cw-muted focus:border-cw-slate focus:outline-none";
-
-const primaryCls =
-  "inline-flex min-h-[58px] items-center justify-center bg-cw-accent px-7 text-[17px] font-semibold text-cw-ground transition-[filter] duration-200 hover:brightness-107 disabled:cursor-not-allowed disabled:opacity-40";
-
-const choiceCls = (on: boolean) =>
-  `flex min-h-[56px] flex-col gap-1 border p-5 text-left transition-colors duration-200 ${
-    on ? "border-cw-accent bg-cw-surface-2" : "border-cw-line bg-cw-surface hover:border-cw-slate"
-  }`;
-
-function StationStep({
+function PhoneStep({
   draft,
-  onPick,
+  set,
+  onSent,
+}: {
+  draft: OwnerDraft;
+  set: (p: Partial<OwnerDraft>) => void;
+  onSent: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const send = async () => {
+    setBusy(true);
+    setError(null);
+    const { data, error: err } = await api.POST("/api/internal/owner/otp/request", {
+      body: { phone: draft.phone },
+    });
+    setBusy(false);
+    if (!data) return setError(detailOf(err, "We could not send a code. Try again in a moment."));
+    onSent();
+  };
+  return (
+    <Screen question="What is your mobile number?">
+      <p className="max-w-[640px] text-cw-muted">
+        We send a code to sign you in. No password and no email.
+      </p>
+      <input
+        type="tel"
+        inputMode="numeric"
+        autoComplete="tel-national"
+        className={`${inputCls} max-w-[420px] font-cw-mono tabular-nums`}
+        placeholder="98765 43210"
+        aria-label="Mobile number"
+        value={draft.phone}
+        onChange={(e) => set({ phone: e.target.value.replace(/[^\d+ ]/g, "") })}
+      />
+      {error && (
+        <p role="alert" className="text-cw-negative">
+          {error}
+        </p>
+      )}
+      <NextRow
+        onNext={() => void send()}
+        disabled={busy || draft.phone.replace(/\D/g, "").length < 10}
+        label={busy ? "Sending…" : "Send code"}
+      />
+    </Screen>
+  );
+}
+
+function CodeStep({
+  draft,
+  onSignedIn,
+}: {
+  draft: OwnerDraft;
+  onSignedIn: (stations: number) => void;
+}) {
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const verify = async () => {
+    setBusy(true);
+    setError(null);
+    const { data, error: err } = await api.POST("/api/internal/owner/otp/verify", {
+      body: { phone: draft.phone, code },
+    });
+    setBusy(false);
+    if (!data) return setError(detailOf(err, "That code is not right."));
+    onSignedIn(data.station_count);
+  };
+  return (
+    <Screen question="Enter the code we sent.">
+      <input
+        inputMode="numeric"
+        autoComplete="one-time-code"
+        maxLength={8}
+        className={`${inputCls} max-w-[300px] font-cw-mono tracking-[0.3em] tabular-nums`}
+        aria-label="One-time code"
+        value={code}
+        onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+      />
+      {import.meta.env.DEV && (
+        <p className="text-[15px] text-cw-muted">Development build: the code is 000000.</p>
+      )}
+      {error && (
+        <p role="alert" className="text-cw-negative">
+          {error}
+        </p>
+      )}
+      <NextRow
+        onNext={() => void verify()}
+        disabled={busy || code.length < 4}
+        label={busy ? "Checking…" : "Sign in"}
+      />
+    </Screen>
+  );
+}
+
+function BillStep({
+  draft,
+  set,
   onNext,
 }: {
   draft: OwnerDraft;
-  onPick: (s: OwnerStation) => void;
+  set: (p: Partial<OwnerDraft>) => void;
   onNext: () => void;
 }) {
-  const [q, setQ] = useState("");
-  const [list, setList] = useState<OwnerStation[] | null>(null);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    let live = true;
-    const t = setTimeout(async () => {
-      const { data } = await api.GET("/api/internal/owner/stations", {
-        params: { query: { q, state: "Kerala", limit: 30 } },
-      });
-      if (!live) return;
-      setFailed(!data);
-      setList(data?.stations ?? []);
-    }, 250);
-    return () => {
-      live = false;
-      clearTimeout(t);
-    };
-  }, [q]);
-
   return (
-    <Screen question="Which station is yours?">
-      <input
-        type="search"
-        className={inputCls}
-        placeholder="Try Kochi, ChargeMOD or KSEB"
-        aria-label="Search stations"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
+    <Screen question="Add this month's electricity bill.">
+      <BillUpload
+        onUploaded={(u) => {
+          set({ bill: { ...draft.bill, imageId: u.imageId, imageType: u.contentType } });
+          onNext();
+        }}
+        onTypeInstead={() => {
+          set({ bill: { ...draft.bill, imageId: null, imageType: null } });
+          onNext();
+        }}
       />
-      <div role="list" className="flex flex-col gap-3">
-        {failed && (
-          <p className="text-cw-muted">We could not load stations. Try again in a moment.</p>
-        )}
-        {list?.length === 0 && !failed && (
-          <p className="text-cw-muted">No station matches “{q}”. Try the town or the company.</p>
-        )}
-        {list?.map((s) => (
-          <button
-            key={s.id}
-            type="button"
-            role="listitem"
-            aria-pressed={draft.station?.id === s.id}
-            onClick={() => onPick(s)}
-            className={choiceCls(draft.station?.id === s.id)}
-          >
-            <span className="text-[19px] font-medium">{s.name ?? "Unnamed station"}</span>
-            <span className="text-cw-muted">
-              {[s.operator, s.town].filter(Boolean).join(" · ")} ·{" "}
-              <span className="font-cw-mono tabular-nums">{s.connectors.length}</span> connector
-              {s.connectors.length === 1 ? "" : "s"}
-            </span>
-          </button>
-        ))}
+    </Screen>
+  );
+}
+
+function DetailsStep({
+  draft,
+  set,
+  onNext,
+}: {
+  draft: OwnerDraft;
+  set: (p: Partial<OwnerDraft>) => void;
+  onNext: () => void;
+}) {
+  const b = draft.bill;
+  const ok = !!toBillIn(b) && b.confirmed;
+  return (
+    <Screen question="Check the figures against your bill.">
+      <div className={b.imageId ? "grid gap-8 lg:grid-cols-2" : ""}>
+        <BillImage id={b.imageId} type={b.imageType} />
+        <BillForm
+          bill={b}
+          set={(p) => set({ bill: { ...b, ...p } })}
+          connectors={draft.connectors}
+          error={null}
+        />
       </div>
-      <div className="flex justify-end">
-        <button type="button" className={primaryCls} disabled={!draft.station} onClick={onNext}>
-          This is my station
-        </button>
-      </div>
+      <NextRow onNext={onNext} disabled={!ok} />
+    </Screen>
+  );
+}
+
+function NameStep({
+  draft,
+  set,
+  onNext,
+}: {
+  draft: OwnerDraft;
+  set: (p: Partial<OwnerDraft>) => void;
+  onNext: () => void;
+}) {
+  return (
+    <Screen question="What is the station called?">
+      <input
+        className={`${inputCls} max-w-[560px]`}
+        aria-label="Station name"
+        maxLength={120}
+        value={draft.name}
+        onChange={(e) => set({ name: e.target.value })}
+      />
+      <NextRow onNext={onNext} disabled={draft.name.trim() === ""} />
+    </Screen>
+  );
+}
+
+function PlaceStep({
+  draft,
+  set,
+  onNext,
+}: {
+  draft: OwnerDraft;
+  set: (p: Partial<OwnerDraft>) => void;
+  onNext: () => void;
+}) {
+  return (
+    <Screen question="Where is it?">
+      <PlacePicker
+        pin={draft.pin}
+        address={draft.address}
+        onChange={(p) => set({ pin: p.pin, address: p.address })}
+      />
+      <NextRow onNext={onNext} disabled={!draft.pin} />
     </Screen>
   );
 }
@@ -143,51 +283,118 @@ function ConnectorsStep({
   set: (p: Partial<OwnerDraft>) => void;
   onNext: () => void;
 }) {
-  const conns = draft.station?.connectors ?? [];
-  const toggle = (id: number) =>
+  const [custom, setCustom] = useState<{ standard: Standard; kw: string }>({
+    standard: "CCS2",
+    kw: "",
+  });
+  const add = (standard: Standard, power_kw: number) => {
+    const at = draft.connectors.findIndex(
+      (c) => c.standard === standard && c.power_kw === power_kw,
+    );
     set({
-      connectors: draft.connectors.includes(id)
-        ? draft.connectors.filter((x) => x !== id)
-        : [...draft.connectors, id].sort((a, b) => a - b),
+      connectors:
+        at >= 0
+          ? draft.connectors.map((c, i) => (i === at ? { ...c, count: c.count + 1 } : c))
+          : [...draft.connectors, { standard, power_kw, count: 1 }],
     });
+  };
+  const remove = (i: number) =>
+    set({
+      connectors: draft.connectors
+        .map((c, j) => (j === i ? { ...c, count: c.count - 1 } : c))
+        .filter((c) => c.count > 0),
+    });
+  const kw = Number(custom.kw);
+  const standards: Standard[] = ["CCS2", "Type 2 AC", "CHAdeMO", "GB/T", "Other"];
   return (
-    <Screen question="Which connectors do you own?">
-      <p className="max-w-[640px] text-cw-muted">
-        Pick every connector billed on the electricity connection you will upload.
-      </p>
+    <Screen question="Which connectors does it have?">
+      <p className="max-w-[640px] text-cw-muted">Tap once for each connector.</p>
       <Answers cols={3}>
-        {conns.map((c, i) => (
+        {PRESETS.map((p) => (
           <button
-            key={c.id}
+            key={p.label}
             type="button"
-            aria-pressed={draft.connectors.includes(c.id)}
-            onClick={() => toggle(c.id)}
-            className={choiceCls(draft.connectors.includes(c.id))}
+            className={choiceCls(false)}
+            onClick={() => add(p.standard, p.power_kw)}
           >
-            <span className="font-cw-mono text-[22px] font-medium tabular-nums">
-              {formatKw(kw(c.power_kw))}
-            </span>
-            <span className="text-cw-muted">
-              {c.standard ? `${c.standard} · ` : ""}Connector {i + 1}
-            </span>
+            <span className="text-[19px] font-medium">{p.label}</span>
+            <span className="text-cw-muted">Tap to add</span>
           </button>
         ))}
       </Answers>
-      <div className="flex justify-end">
-        <button
-          type="button"
-          className={primaryCls}
-          disabled={draft.connectors.length === 0}
-          onClick={onNext}
-        >
-          Continue
-        </button>
+      <div className="flex max-w-[640px] flex-col gap-3">
+        <p className="text-[15px] text-cw-muted">Something else</p>
+        <div className="flex flex-wrap gap-3">
+          {standards.map((s) => (
+            <button
+              key={s}
+              type="button"
+              aria-pressed={custom.standard === s}
+              className={`min-h-[56px] border px-5 ${
+                custom.standard === s
+                  ? "border-cw-accent bg-cw-surface-2"
+                  : "border-cw-line bg-cw-surface"
+              }`}
+              onClick={() => setCustom({ ...custom, standard: s })}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-3">
+          <input
+            inputMode="decimal"
+            className={`${inputCls} font-cw-mono tabular-nums`}
+            placeholder="kW"
+            aria-label="Power in kW"
+            value={custom.kw}
+            onChange={(e) => setCustom({ ...custom, kw: e.target.value.replace(/[^\d.]/g, "") })}
+          />
+          <button
+            type="button"
+            className={secondaryCls}
+            disabled={!(kw > 0 && kw <= 1000)}
+            onClick={() => {
+              add(custom.standard, kw);
+              setCustom({ ...custom, kw: "" });
+            }}
+          >
+            Add
+          </button>
+        </div>
       </div>
+      {draft.connectors.length > 0 && (
+        <ul className="flex max-w-[640px] flex-col gap-3" aria-label="Connectors added">
+          {draft.connectors.map((c, i) => (
+            <li
+              key={`${c.standard}-${c.power_kw}`}
+              className="flex min-h-[56px] items-center justify-between gap-4 border border-cw-line bg-cw-surface px-5"
+            >
+              <span>
+                <span className="font-cw-mono tabular-nums">{c.count}</span> × {c.standard}{" "}
+                <span className="font-cw-mono tabular-nums">{c.power_kw} kW</span>
+              </span>
+              <button
+                type="button"
+                className="inline-flex min-h-[56px] min-w-[56px] items-center justify-center text-[24px] text-cw-muted"
+                aria-label={`Remove one ${c.standard} ${c.power_kw} kW`}
+                onClick={() => remove(i)}
+              >
+                −
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="text-cw-muted">
+        Total <span className="font-cw-mono tabular-nums">{totalKw(draft.connectors)} kW</span>
+      </p>
+      <NextRow onNext={onNext} disabled={draft.connectors.length === 0} />
     </Screen>
   );
 }
 
-function InstalledStep({
+function LiveStep({
   draft,
   set,
   onNext,
@@ -196,21 +403,16 @@ function InstalledStep({
   set: (p: Partial<OwnerDraft>) => void;
   onNext: () => void;
 }) {
-  const latest = lastFullMonth();
-  const value = draft.installMonth ?? monthFromIndex(monthIndex(latest) - 11);
+  const billMonth = draft.bill.period ?? lastFullMonth();
+  const value = draft.wentLive ?? billMonth;
   const step = (d: number) => {
     const next = monthIndex(value) + d;
-    if (next <= monthIndex(latest)) set({ installMonth: monthFromIndex(next) });
+    if (next <= monthIndex(billMonth)) set({ wentLive: monthFromIndex(next) });
   };
-  const months = monthIndex(latest) - monthIndex(value) + 1;
   const stepper =
     "inline-flex min-h-[56px] min-w-[56px] items-center justify-center border border-cw-line bg-cw-surface text-[24px] transition-colors duration-200 hover:border-cw-slate";
   return (
-    <Screen question="When did it start charging?">
-      <p className="max-w-[640px] text-cw-muted">
-        The month the station first went live. Usage grows as drivers find a station, so we compare
-        you with stations of the same age.
-      </p>
+    <Screen question="Which month did it start charging?">
       <div className="flex items-center gap-4">
         <button
           type="button"
@@ -228,42 +430,38 @@ function InstalledStep({
         </button>
       </div>
       <p className="text-cw-muted">
-        <span className="font-cw-mono tabular-nums">{months}</span> months of operation by{" "}
-        {monthLabel(latest)}
+        <span className="font-cw-mono tabular-nums">
+          {monthIndex(billMonth) - monthIndex(value) + 1}
+        </span>{" "}
+        months of operation by {monthLabel(billMonth)}
       </p>
-      <div className="flex justify-end">
-        <button
-          type="button"
-          className={primaryCls}
-          onClick={() => {
-            set({ installMonth: value });
-            onNext();
-          }}
-        >
-          Continue
-        </button>
-      </div>
+      <NextRow
+        onNext={() => {
+          set({ wentLive: value });
+          onNext();
+        }}
+      />
     </Screen>
   );
 }
 
-function MeterStep({ onPick }: { onPick: (m: MeterType) => void }) {
+function MeterStep({ onPick }: { onPick: (m: "separate" | "shared" | "unsure") => void }) {
   return (
-    <Screen question="Does the charger have its own electricity meter?">
+    <Screen question="Does the charger have its own meter?">
       <Answers cols={3}>
         <Answer
-          title="Yes, its own meter"
+          title="Yes"
           sub="The bill shows only charging."
           onClick={() => onPick("separate")}
         />
         <Answer
-          title="No, it shares a meter"
+          title="No, shared"
           sub="With a shop, office or building."
           onClick={() => onPick("shared")}
         />
         <Answer
           title="Not sure"
-          sub="We will treat the figures as possibly including other load."
+          sub="We will flag your figures as possibly including other load."
           onClick={() => onPick("unsure")}
         />
       </Answers>
@@ -271,99 +469,35 @@ function MeterStep({ onPick }: { onPick: (m: MeterType) => void }) {
   );
 }
 
-function EnergyStep({
-  draft,
-  set,
-  onNext,
-}: {
-  draft: OwnerDraft;
-  set: (p: Partial<OwnerDraft>) => void;
-  onNext: () => void;
-}) {
-  const months = billMonths(lastFullMonth());
-  const usable = toReadings(draft).length;
-  return (
-    <Screen question="How much energy did the charger use each month?">
-      <p className="max-w-[640px] text-cw-muted">
-        Read the kWh from your electricity bill. Leave a month empty if you do not have it. One
-        month is enough to start; six gives a tighter range.
-      </p>
-      <div className="flex max-w-[560px] flex-col gap-3">
-        {months.map((m) => {
-          const off = !!draft.installMonth && monthIndex(m) < monthIndex(draft.installMonth);
-          return (
-            <div key={m} className={`flex items-center gap-4 ${off ? "opacity-40" : ""}`}>
-              <label htmlFor={`kwh-${m}`} className="w-[120px] shrink-0">
-                {monthLabel(m)}
-                {off && <span className="block text-[13px] text-cw-muted">not live yet</span>}
-              </label>
-              <input
-                id={`kwh-${m}`}
-                inputMode="numeric"
-                disabled={off}
-                className={`${inputCls} font-cw-mono tabular-nums`}
-                placeholder="kWh"
-                value={draft.readings[m] ?? ""}
-                onChange={(e) =>
-                  set({
-                    readings: { ...draft.readings, [m]: e.target.value.replace(/[^\d.,]/g, "") },
-                  })
-                }
-              />
-            </div>
-          );
-        })}
-      </div>
-      <div className="flex justify-end">
-        <button type="button" className={primaryCls} disabled={usable === 0} onClick={onNext}>
-          Continue
-        </button>
-      </div>
-    </Screen>
-  );
-}
-
 function ConsentStep({
   draft,
   set,
-  onSubmit,
   busy,
   error,
+  onSubmit,
 }: {
   draft: OwnerDraft;
   set: (p: Partial<OwnerDraft>) => void;
-  onSubmit: () => void;
   busy: boolean;
   error: string | null;
+  onSubmit: () => void;
 }) {
-  const box = "mt-1 h-6 w-6 shrink-0 accent-cw-accent";
   return (
-    <Screen question="How may we use your figures?">
+    <Screen question="One last thing.">
       <label className="flex max-w-[680px] cursor-pointer gap-4 border border-cw-line bg-cw-surface p-6">
         <input
           type="checkbox"
-          className={box}
-          checked={draft.consentAggregate}
-          onChange={(e) => set({ consentAggregate: e.target.checked })}
+          className="mt-1 h-6 w-6 shrink-0 accent-cw-accent"
+          checked={draft.consent}
+          onChange={(e) => set({ consent: e.target.checked })}
         />
         <span>
-          <span className="block text-[19px] font-medium">Include me in anonymous averages</span>
-          <span className="text-cw-muted">
-            Required. Your figures help other owners see what stations like yours deliver. Your
-            station is never named.
+          <span className="block text-[19px] font-medium">
+            Use my figures to benchmark and forecast my station.
           </span>
-        </span>
-      </label>
-      <label className="flex max-w-[680px] cursor-pointer gap-4 border border-cw-line bg-cw-surface p-6">
-        <input
-          type="checkbox"
-          className={box}
-          checked={draft.consentPublic}
-          onChange={(e) => set({ consentPublic: e.target.checked })}
-        />
-        <span>
-          <span className="block text-[19px] font-medium">Show my station as a verified owner</span>
-          <span className="text-cw-muted">Optional. You can leave this off.</span>
+          <span className="text-cw-muted">
+            Only published as anonymised district averages of 10 or more stations.
+          </span>
         </span>
       </label>
       {error && (
@@ -371,67 +505,22 @@ function ConsentStep({
           {error}
         </p>
       )}
-      <div className="flex justify-end">
-        <button
-          type="button"
-          className={primaryCls}
-          disabled={!draft.consentAggregate || busy}
-          onClick={onSubmit}
-        >
-          {busy ? "Working it out…" : "Show my range"}
-        </button>
-      </div>
-    </Screen>
-  );
-}
-
-function ResultStep({ draft, onRestart }: { draft: OwnerDraft; onRestart: () => void }) {
-  const r = draft.result;
-  if (!r) return null;
-  const f = r.forecast;
-  return (
-    <Screen question={`Expect ${monthLabel(r.next_month)} to land in this range.`}>
-      <div className="flex flex-col gap-3 border border-cw-line bg-cw-surface p-8">
-        <span className="text-cw-muted">Your station, next month</span>
-        <span className="font-cw-mono text-[clamp(30px,5.5vw,52px)] font-medium tabular-nums text-cw-accent">
-          {formatKwhBound(kwh(f.p10_kwh), "low")} to {formatKwhBound(kwh(f.p90_kwh), "high")}
-        </span>
-        <span className="text-cw-muted">Nine times in ten it lands inside this range.</span>
-      </div>
-      <div className="flex flex-col gap-3 border border-cw-line bg-cw-surface p-8">
-        <span className="text-cw-muted">Against stations of the same age and power</span>
-        <p className="text-[22px] font-medium">
-          Your latest month is ahead of about{" "}
-          <span className="font-cw-mono tabular-nums">{Math.round(r.peer_percentile)}</span> in 100
-          comparable stations.
-        </p>
-        <span className="text-cw-muted">
-          Comparable stations deliver {formatKwhBound(kwh(r.peer.p10_kwh), "low")} to{" "}
-          {formatKwhBound(kwh(r.peer.p90_kwh), "high")} in {monthLabel(r.next_month)}.
-        </span>
-      </div>
-      <p className="max-w-[680px] text-[14px] text-cw-muted">
-        Based on {r.readings_used} month{r.readings_used === 1 ? "" : "s"} of your bills
-        {r.readings_ignored > 0 &&
-          ` (${r.readings_ignored} ignored: before go-live, or more than your connectors could deliver)`}
-        . Peer curve <span className="font-cw-mono">{r.model_version}</span>, an early estimate that
-        sharpens as more owners upload.
-      </p>
-      <div className="flex justify-end">
-        <button type="button" className={primaryCls} onClick={onRestart}>
-          Start again
-        </button>
-      </div>
+      <NextRow
+        onNext={onSubmit}
+        disabled={!draft.consent || busy}
+        label={busy ? "Setting up your station…" : "Show my station"}
+      />
     </Screen>
   );
 }
 
 export function Owner() {
   const navigate = useNavigate();
+  const client = useQueryClient();
   const params = useParams();
-  const raw = params.step ?? "station";
-  const step: StepId = isStep(raw) ? raw : "station";
-  const at = ORDER.indexOf(step);
+  const raw = params.step ?? "phone";
+  const step: StepId = isStep(raw) ? raw : "phone";
+  const me = useOwner();
 
   const [draft, setDraft] = useState<OwnerDraft>(loadDraft);
   const [busy, setBusy] = useState(false);
@@ -440,68 +529,90 @@ export function Owner() {
 
   const set = useCallback((p: Partial<OwnerDraft>) => setDraft((d) => ({ ...d, ...p })), []);
   const go = useCallback((id: StepId) => navigate(`/owner/${id}`), [navigate]);
-  const next = () => go(ORDER[Math.min(at + 1, ORDER.length - 1)] ?? "station");
 
-  // A link into the middle of the flow with nothing stored goes back to the
-  // first question rather than showing an empty screen.
+  const ownMeter = tariffImpliesOwnMeter(draft.bill.tariff);
+  const order = ownMeter ? ORDER.filter((s) => s !== "meter") : ORDER;
+  const at = Math.max(order.indexOf(step), 0);
+  const next = () => go(order[Math.min(at + 1, order.length - 1)] ?? "phone");
+
+  // Already signed in: skip the phone screens. A returning owner goes to their
+  // stations; someone new goes straight to the bill.
+  useEffect(() => {
+    if (me.isPending || !me.data) return;
+    if (step === "phone" || step === "code") {
+      navigate(me.data.station_count > 0 ? "/owner/home" : "/owner/bill", { replace: true });
+    }
+  }, [me.isPending, me.data, step, navigate]);
+
+  // A link into the middle of the flow with nothing behind it goes back to the start.
+  const needsSession = step !== "phone" && step !== "code";
   const missing =
-    (at >= 1 && !draft.station) ||
-    (at >= 2 && draft.connectors.length === 0) ||
-    (at >= 5 && (!draft.meter || toReadings(draft).length === 0)) ||
-    (step === "result" && !draft.result);
+    (needsSession && !me.isPending && !me.data) ||
+    (order.indexOf(step) > order.indexOf("details") &&
+      !(toBillIn(draft.bill) && draft.bill.confirmed)) ||
+    (step === "connectors" && !draft.pin) ||
+    (order.indexOf(step) > order.indexOf("connectors") && draft.connectors.length === 0);
   useEffect(() => {
     if (missing) navigate("/owner", { replace: true });
   }, [missing, navigate]);
 
   const submit = async () => {
-    if (!draft.station || !draft.installMonth || !draft.meter) return;
+    const bill = toBillIn(draft.bill);
+    if (!bill || !draft.pin || !draft.wentLive) return;
     setBusy(true);
     setError(null);
-    const { data, error: err } = await api.POST("/api/internal/owner/submissions", {
+    const { data, error: err } = await api.POST("/api/internal/owner/onboard", {
       body: {
-        station_id: draft.station.id,
-        connector_ids: draft.connectors,
-        install_month: draft.installMonth,
-        meter_type: draft.meter,
-        readings: toReadings(draft),
-        consent_aggregate: draft.consentAggregate,
-        consent_public: draft.consentPublic,
+        station: {
+          name: draft.name.trim(),
+          address: draft.address || null,
+          lat: draft.pin.lat,
+          lng: draft.pin.lng,
+          went_live: draft.wentLive,
+        },
+        connectors: expandConnectors(draft.connectors),
+        bill,
+        meter_answer: ownMeter ? null : draft.meter,
+        consent_aggregate: draft.consent,
       },
     });
     setBusy(false);
     if (!data) {
-      const detail = (err as { detail?: unknown } | undefined)?.detail;
-      setError(
-        typeof detail === "string"
-          ? detail
-          : "We could not use those figures. Check the months and the kWh.",
-      );
+      setError(detailOf(err, "We could not save that. Check the figures and try again."));
       return;
     }
-    set({ result: data });
-    go("result");
+    clearDraft();
+    setDraft(blankDraft());
+    await client.invalidateQueries({ queryKey: ["owner-me"] });
+    navigate(`/owner/station/${data.station_id}`, { replace: true });
   };
 
   const body = (() => {
     switch (step) {
-      case "station":
+      case "phone":
+        return <PhoneStep draft={draft} set={set} onSent={() => go("code")} />;
+      case "code":
         return (
-          <StationStep
+          <CodeStep
             draft={draft}
-            onPick={(s) =>
-              setDraft((d) => ({
-                ...d,
-                station: s,
-                connectors: d.station?.id === s.id ? d.connectors : [],
-              }))
-            }
-            onNext={next}
+            onSignedIn={async (stations) => {
+              await client.invalidateQueries({ queryKey: ["owner-me"] });
+              navigate(stations > 0 ? "/owner/home" : "/owner/bill", { replace: true });
+            }}
           />
         );
+      case "bill":
+        return <BillStep draft={draft} set={set} onNext={next} />;
+      case "details":
+        return <DetailsStep draft={draft} set={set} onNext={next} />;
+      case "name":
+        return <NameStep draft={draft} set={set} onNext={next} />;
+      case "place":
+        return <PlaceStep draft={draft} set={set} onNext={next} />;
       case "connectors":
         return <ConnectorsStep draft={draft} set={set} onNext={next} />;
-      case "installed":
-        return <InstalledStep draft={draft} set={set} onNext={next} />;
+      case "live":
+        return <LiveStep draft={draft} set={set} onNext={next} />;
       case "meter":
         return (
           <MeterStep
@@ -511,57 +622,25 @@ export function Owner() {
             }}
           />
         );
-      case "energy":
-        return <EnergyStep draft={draft} set={set} onNext={next} />;
       case "consent":
-        return <ConsentStep draft={draft} set={set} onSubmit={submit} busy={busy} error={error} />;
-      case "result":
         return (
-          <ResultStep
+          <ConsentStep
             draft={draft}
-            onRestart={() => {
-              clearDraft();
-              setDraft(blankDraft());
-              navigate("/owner", { replace: true });
-            }}
+            set={set}
+            busy={busy}
+            error={error}
+            onSubmit={() => void submit()}
           />
         );
     }
   })();
 
   return (
-    <div className="cw-surface-root relative flex min-h-dvh flex-col bg-cw-ground font-cw-sans text-[17px] leading-[1.6] text-cw-text antialiased">
-      <header className="flex items-center justify-between gap-6 px-[clamp(24px,7vw,112px)] py-5">
-        <Link
-          to="/"
-          className="inline-flex min-h-[44px] items-center font-cw-mono text-[clamp(18px,1.6vw,21px)] font-medium tracking-[0.08em] text-cw-text uppercase"
-        >
-          Chargeworthy
-        </Link>
-        <span className="font-cw-mono text-[14px] tracking-[0.08em] text-cw-muted">
-          {step === "result" ? "RESULT" : `${String(at + 1).padStart(2, "0")} / 06`}
-        </span>
-      </header>
-      <div className="h-0.5 bg-cw-line">
-        <div
-          className="h-0.5 bg-cw-slate transition-[width] duration-[420ms] ease-(--cw-ease)"
-          style={{ width: `${Math.min(((at + 1) / 6) * 100, 100)}%` }}
-        />
-      </div>
-      {step !== "station" && step !== "result" && (
-        <div className="px-[clamp(24px,7vw,112px)] pt-3.5">
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="inline-flex min-h-[56px] items-center px-1 text-[17px] text-cw-muted transition-colors duration-200 hover:text-cw-text"
-          >
-            ← Back
-          </button>
-        </div>
-      )}
-      <main className="flex flex-grow flex-col justify-center px-[clamp(24px,7vw,112px)] pt-[clamp(24px,5vw,56px)] pb-[clamp(48px,7vw,72px)]">
-        {body}
-      </main>
-    </div>
+    <Shell
+      progress={{ at: at + 1, of: order.length }}
+      back={step !== "phone" && step !== "bill" ? () => navigate(-1) : undefined}
+    >
+      <div className="flex flex-grow flex-col justify-center">{body}</div>
+    </Shell>
   );
 }

@@ -1,5 +1,41 @@
 # FINDINGS
 
+## Initial stage: owner-uploaded bills only — 2026-09-30
+
+Status scraping (charger status polled from CPO apps) is **deferred**; see
+`OVERVIEW.md`, "Later stage: status scraping". Anything below that waits on the
+poller waits on that later stage, not on a missing authorisation. The owner flow
+that replaces it is PLAN Part O. What that flow does **not** yet have, so a ticked
+box there is not read as more than it is:
+
+- **The OTP provider is a development stub** (accepts `000000`, refused in prod).
+  Real owner sign-in needs an SMS provider wired behind `OtpProvider`.
+- **Bill extraction is manual.** `ManualExtractor` proposes nothing; the owner types
+  the fields beside the image. No OCR has been evaluated.
+- **Retention and erasure (DPDP), migration 0018.** An owner can delete one bill
+  image, or all their data (phone number, stations, bills, images, forecasts) from
+  the station page (`DELETE /owner/me`). Bill images expire after 365 days (the
+  confirmed figures stay) and an account with no sign-in for 730 days is erased;
+  `scripts/purge_owner_data.py` applies both and `deploy/start.sh` runs it daily.
+  Both periods are settings (`OWNER_BILL_IMAGE_RETENTION_DAYS`,
+  `OWNER_INACTIVE_PURGE_DAYS`) and are **defaults chosen by the engineer, not by
+  counsel** - a human should confirm them. The upload screen's "12 months" is
+  written text and must be changed with the setting. Erasing a row is final: it is
+  not in any backup-aware scheme here, and Neon's own backups are out of scope.
+- **Phone numbers are stored in full** (owner's decision), shown to the browser
+  masked (last four digits), and erased with the account. They are not encrypted
+  at rest by the application; restrict who can read the `owner_accounts` column.
+- **Peer cohort is the state, the consent text says "district averages".** The
+  comparison uses same charger type, similar age (±3 months) and same state, with
+  a floor of 10 stations. The consent wording was given verbatim; whether a
+  state-level cohort honours "district averages" is a wording decision for a human.
+- **The peer curve is `owner_peer_v0`**, an assumption, not a fit (see
+  `app/domain/owner/forecast.py`). It is stamped on every stored forecast.
+- **The owner pages were verified through the API tests and the type-checker, not in
+  a browser** (the browser extension was not connected). Layout on a mid-range
+  Android phone, the map pin and the chart are unchecked by eye.
+
+
 **What this is.** `PLAN.md` says what to build. This says what we **learned while
 building it** — every blocker, every decision made under uncertainty, every gap
 between what a checkbox claims and what is actually verified, and everything
@@ -54,7 +90,7 @@ misses into L6, measures cost per address from `api_usage_events` rather than
 assuming it, and writes an empty `correct_y_n` column for the hand check.
 
 ### 🚫 B3 · No authorised polling source
-*Blocks: 0.1 producing any data · C.4 measured uptime · 2.3 competitor occupancy*
+*Blocks: 0.1 producing any data · C.4 measured uptime · 2.3 competitor live status*
 
 The poller is complete and its dead-man's switch is live, but every source ships
 `authorised=False`. Two locks are required by design (registry + endpoint), and
@@ -113,7 +149,7 @@ close them.
 | G5 | **`sites` upsert is not in CI.** The table carries a PostGIS geometry, so it cannot be created on SQLite. All judgement (`combine`, `choose_pincode`) is pure and unit-tested; the round-trip, the generated `geom` and its read-only guarantee are covered by `scripts/resolve_site --selftest`, which needs a database. | Run the selftest after every reference reload. A CI Postgres service would close it properly. |
 | G6 | **`npm run lint` is broken** — no eslint config exists at all. Pre-existing; CI does not run it, so nothing is currently failing because of it. | Add a flat config, or remove the script so it stops implying coverage. |
 | G7 | **C.2 is partly shipped.** Cost per resolved address and the free-share funnel are live. % of cap, burn-rate projection, the Google-escalation list in the console, and tie/disagreement aggregation are not. | Part C.2 proper. |
-| G8 | **Occupancy reconstruction is designed, not demonstrated.** ② plus `poll_runs` liveness should reconstruct occupancy exactly without materialising 288 ticks/day. `replay()` is tested; the occupancy query itself does not exist. | First real polling data (B3). |
+| G8 | **Live status reconstruction is designed, not demonstrated.** ② plus `poll_runs` liveness should reconstruct live status exactly without materialising 288 ticks/day. `replay()` is tested; the live status query itself does not exist. | First real polling data (B3). |
 | G9 | **Row-count sizing is an estimate.** ~1M rows/day for ②, ~30× for every-observation, resting on ~100k public connectors. The **ratio** is the robust part; the absolute numbers are not measured. | Real volume. |
 
 ---
@@ -323,8 +359,8 @@ Zeon, Tata Power, Statiq, ChargeZone, Jio-bp.
   operator is the field a competitor comparison turns on. Found on the first
   real fetch (500 stations all "unattributed") — the same G1-shaped "shape
   written from docs" lesson.
-- ⚠️ This is inventory + specs + an operational flag, **NOT occupancy**. OCM is
-  crowd-sourced, so counts are a floor and freshness varies. Occupancy — the
+- ⚠️ This is inventory + specs + an operational flag, **NOT live status**. OCM is
+  crowd-sourced, so counts are a floor and freshness varies. Live status — the
   moat — still comes only from the poller (B3), and will attach to these rows.
 - The "tamilnadu" bbox overlaps Karnataka heavily (Bengaluru sits inside it), so
   a lot of Karnataka coverage came for free. Not wrong — the resolver is
@@ -374,7 +410,7 @@ on the Data panel on its own, and the VAHAN console panel lights up.
   free-key REST API covering all of India (operator, connectors, kW, an
   operational flag) instead of seven fragile app captures. Live-tested — it now
   returns **403 without an API key** (historically keyless). It does NOT carry
-  real-time occupancy, so the app-scrape moat (starting with chargeMOD) stands.
+  real-time live status, so the app-scrape moat (starting with chargeMOD) stands.
   `CPO_SOURCES.md` updated with the verified shape and a KL+TN-first order.
 
 ### PART 2.3 — GoEC + Zeon inventory added 2026-08-17
@@ -386,15 +422,15 @@ are grouped by (label, point) into one station with a hashed stable id (490 rows
 → 251); its bare host 308-redirects to `www` (now followed). Zeon ships a stable
 `id` + `connector_data`. Each keeps its own `source`, so the same network seen via
 both OCM and its own feed is two rows until the downstream dedupe — visible now as
-"Zeon" (458) beside OCM's "Zeon Charging" (154). Inventory only; no occupancy.
+"Zeon" (458) beside OCM's "Zeon Charging" (154). Inventory only; no live status.
 
-### PART 0.1 — Tata Power occupancy adapter — code done 2026-08-17
+### PART 0.1 — Tata Power live status adapter — code done 2026-08-17
 `TataEzChargeAdapter` is built and tested: a **POST** to
 `ezcharge.tatapower.com/HobsIntegration/syncRequestHandler?service=GET_CHARGING_
 STATIONS_ALL`, station-level `stationStatus` normalised through the (extended)
 `from_scraped_stations` — `statusList` wrapper + `stationStatus`/`stationId` keys,
 plus `outofservice→OFFLINE`. Wired in `build_targets` (Tata gets this adapter, the
-rest keep the generic GET one). **The first confirmed live-occupancy route to a
+rest keep the generic GET one). **The first confirmed live-status route to a
 competitor** (browser-verified 2026-08-15).
 
 - ⚠️ **TWO things stay UNVERIFIED until one authorised `--dry-run`**, because a

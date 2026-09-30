@@ -10,7 +10,7 @@ Read `OVERVIEW.md` for architecture, `STACK.md` for structure, `PLAN.md` for seq
 - **`app/api/v1/` is for CPO partners; `app/api/internal/` is for our own frontend.** Do not collapse them. `v1` is a contract with an outside party — breaking it breaks a partner integration. `internal` may be reshaped whenever the UI needs it.
 - **The typed client is generated, never hand-written.** `frontend/src/api/schema.d.ts` comes from FastAPI's OpenAPI output; CI fails if the committed copy is stale. A renamed backend field must surface as a TypeScript error, not as `undefined` where a rupee figure should be.
 - **No Node process in production.** The frontend is a build artifact: Caddy serves `dist/`, uvicorn serves `/api`.
-- **`workers/poller.py` is a separate process.** It shares models but not the request lifecycle, and it runs at a higher reliability tier than the web app.
+- **`workers/poller.py` is a separate process, and deferred.** Status scraping is a later stage (`OVERVIEW.md`, "Later stage: status scraping"): nothing runs or renders unless `SCRAPER_ENABLED=true`. When it is on, it shares models but not the request lifecycle, and it runs at a higher reliability tier than the web app.
 - **The operations console is a route group in the same SPA** (`features/console/`), behind session auth, backed by `api/internal/console_*.py`. Not a second application.
 - If you think the project needs Redis, Celery, a message queue, or a global state library, first point at the specific query, job, or piece of state that requires it.
 

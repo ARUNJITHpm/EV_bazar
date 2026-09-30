@@ -10,17 +10,24 @@ from __future__ import annotations
 
 import datetime as dt
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.config import get_settings
+from app.config import Settings, get_settings
 from app.db import get_session
 from app.domain.polling import poller_health, source_health
 from app.domain.polling.sources import SOURCES
 
 router = APIRouter()
+
+
+def require_scraper(settings: Settings = Depends(get_settings)) -> None:
+    """Status scraping is deferred: with SCRAPER_ENABLED off these routes do not exist."""
+    if not settings.scraper_enabled:
+        raise HTTPException(404, "Not found")
+
 
 #: Endpoints an external uptime monitor can reach without a session. Keep this
 #: to liveness alone - a monitor needs a status code, not our source list.

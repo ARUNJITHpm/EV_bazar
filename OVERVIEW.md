@@ -71,7 +71,7 @@ margin_of_safety      = predicted_utilisation_P10 − breakeven_utilisation
 | 3 | **Capital subsidies & tax treatment** | PM E-DRIVE and state EV-policy subsidies, accelerated depreciation, GST input credit — these change amortised capex materially. A per-state **subsidy ledger** lives next to the tariff ledger, same effective-dating discipline. |
 | 4 | **Sanctioned load as an *output*** | Don't just take kVA as input — *recommend* it. Battery-buffered chargers or a smaller sanctioned load with managed peaks can cut ₹2–4 lakh/year of fixed cost. That's advice worth paying for, not just assessment. |
 | 5 | **Solar co-location scenario** | Rooftop/canopy solar changes `margin_per_kWh` enough to flip verdicts, and site owners ask about it unprompted. |
-| 6 | **Selling price as a decision variable** | Price is a choice constrained by nearby competitor pricing (which the poller observes). One sensitivity line — "at ₹19/kWh vs ₹22/kWh your breakeven moves 14% → 18%" — makes the report feel alive. |
+| 6 | **Selling price as a decision variable** | Price is a choice constrained by nearby competitor pricing (from public listings). One sensitivity line — "at ₹19/kWh vs ₹22/kWh your breakeven moves 14% → 18%" — makes the report feel alive. |
 | 7 | **2W/3W segment economics** | Indian EV volume is overwhelmingly two- and three-wheelers. AC / swap / low-ticket charging is a different archetype from 4W DC fast. Archetypes that only cover 4W DC miss most of the actual demand in Tier 1 states. |
 | 8 | **Financing structure** | IRR without a debt/equity split and interest rate is incomplete for the buyer segment with the deepest pockets: lenders. Optional input block. |
 
@@ -107,7 +107,7 @@ A waitlist response is **not a failure — it is lead capture**. Log every waitl
 
 Not the model.
 
-**a) The polling dataset.** Public charger availability, every 5 minutes, nationwide, starting day one. Nobody else will have three years of national occupancy data. This is the one asset that **cannot be retroactively acquired** — every day you don't poll is a day permanently lost.
+**a) The owner-bill dataset.** Monthly units from real station owners' electricity bills, each tied to that station's connectors, age and location. Owners get a free page showing how their station is performing; we get the ground truth the demand model needs. We know of no comparable station-level dataset in India. It grows by one bill per station per month, and it is only ever published as anonymised averages of 10 or more stations.
 
 **b) The attribution chain.** If you can't prove the lead was yours, nobody pays. Built in Part 7, *before* it feels necessary.
 
@@ -144,7 +144,7 @@ We are ourselves affiliated with an operating CPO. A CPO-owned assessment platfo
 
 ### 6.4 Publish the data
 
-A quarterly *State of EV Charger Utilisation* note (Kerala / TN / Karnataka) built from the polling data would be the only report of its kind in India. Cheap PR, inbound institutional interest — and it advertises the moat itself.
+A quarterly *State of EV Charger Utilisation* note (Kerala / TN / Karnataka) built from owner-uploaded bills would be the only report of its kind in India. Cheap PR, inbound institutional interest — and it advertises the moat itself.
 
 ---
 
@@ -199,11 +199,34 @@ CPO ranking runs the ROI engine **once per operator**, because each one changes 
 
 Three things start **immediately and in parallel**, because they have zero dependencies and one of them is time-critical:
 
-1. **Status poller** — day one, non-negotiable
+1. **Owner bill collection** — day one: phone sign-in, bill upload, the station home page
 2. **SERC tariff PDF collection** — one state per evening, pure manual labour
 3. **CPO conversations** — their fee terms determine what the attribution chain must log
 
 Everything else is sequenced in `PLAN.md`.
+
+### Later stage: status scraping
+
+The initial stage has one station data source: **what owners upload** — an
+electricity bill (photo or PDF), or monthly units typed in by hand. Public data
+(VAHAN registrations, OpenStreetMap and Open Charge Map inventory, state tariff
+orders) still feeds the site model. What is **deferred** is reading charger
+status from CPO apps on a schedule, and everything that depends on it:
+
+- the 10-minute status poller and its raw-response archive
+- a pre-scraped station list, a station search built on it, and "tracked since" dates
+- scraper-based usage estimates, the "scraper check" and load-factor calibration
+- a busy-hours grid and occupancy by hour
+- downtime, offline and faulted hours
+- alerts about new competing stations nearby
+- automatic checks of a station's listings across charging apps
+
+The code stays in the repo behind the `SCRAPER_ENABLED` setting, default
+`false`: with it off the poller process exits, its API routes return 404, and
+the console hides its panels. **Each app's terms of service must be checked
+before that app is polled** — a source is only ever polled when it is both
+authorised in `app/domain/polling/sources.py` and configured. Nothing on the
+owner's station page uses scraped data, and none of the list above appears there.
 
 ---
 

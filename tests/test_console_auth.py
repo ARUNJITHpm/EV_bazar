@@ -53,11 +53,15 @@ PUBLIC_PATHS = {
     # customer dropping the pin holds no login. It writes one sites lead row
     # and prices from typed tariffs; nothing paid, nothing keyed.
     "/api/internal/assess",
-    # Open BY DECISION (api/internal/owner.py): a station owner holds no login.
-    # Search reads public inventory only; a submission writes append-only rows
-    # and returns an energy band. Both are throttled like /assess.
-    "/api/internal/owner/stations",
-    "/api/internal/owner/submissions",
+    # Open BY DECISION (api/internal/owner.py): owners sign in with a phone number
+    # and a one-time code, so these three cannot need a session. Every other
+    # /owner route needs the OWNER session and is checked by the walk below
+    # (no session -> 401), and the throttle covers the two code endpoints.
+    "/api/internal/owner/otp/request",
+    "/api/internal/owner/otp/verify",
+    "/api/internal/owner/logout",
+    # Which deferred features are on, so the SPA can hide the rest. Says nothing else.
+    "/api/internal/features",
 }
 
 
@@ -75,6 +79,7 @@ def _settings() -> Settings:
         env="test",
         console_secret_key=SECRET,
         console_password_hash=hash_password(PASSWORD),
+        scraper_enabled=True,  # these tests exercise the poller panels; the flag has its own file
         _env_file=None,
     )
 
@@ -295,7 +300,7 @@ def test_the_dev_bypass_opens_the_console_without_a_session() -> None:
     app = create_app()
     app.dependency_overrides[get_session] = override_session
     app.dependency_overrides[get_settings] = lambda: Settings(
-        env="dev", console_auth_disabled=True, _env_file=None
+        env="dev", console_auth_disabled=True, scraper_enabled=True, _env_file=None
     )
     with TestClient(app) as c:
         me = c.get("/api/internal/console/me")

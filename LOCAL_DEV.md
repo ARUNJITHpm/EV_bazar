@@ -3,39 +3,16 @@
 Docker is **optional**. `docker-compose.yml` is kept as a reference for later, but
 everything below runs natively on Windows with no containers.
 
-There are two levels of "run", depending on what you're doing.
+The initial stage has one station data source: what owners upload (a bill photo or
+PDF, or monthly units typed in). Nothing below needs a scraper. Status scraping is
+a deferred later stage (`OVERVIEW.md`, "Later stage: status scraping") and stays
+off unless `SCRAPER_ENABLED=true` — see the last section here.
 
 ---
 
-## Level 1 — Validate a scrape, no database needed
+## Run the app (needs Postgres)
 
-The fastest loop when you've just captured a CPO app's endpoint and want to check
-the mapping. **No Postgres, no Docker, nothing but Python.**
-
-1. Put the endpoint in `.env` and authorise the source (see "Enabling a source").
-2. Dry-run:
-
-   ```powershell
-   uv run python -m workers.poller --dry-run
-   ```
-
-   It fetches each configured source and prints, per source, how many stations and
-   connectors came back and the status breakdown, e.g.:
-
-   ```
-   chargezone: 214 connectors across 88 stations [available=141, charging=52, offline=21]
-   ```
-
-   If the counts look wrong (everything `unknown`, or zero stations), correct the
-   field names / status words in `app/domain/polling/normalise.py`
-   (`from_scraped_stations` / `SCRAPE_STATUS_MAP`) and run it again. Nothing is
-   written anywhere, so iterate freely.
-
----
-
-## Level 2 — Actually record data (needs Postgres)
-
-To store observations you need PostgreSQL. Native install, no Docker:
+To store owners, bills and forecasts you need PostgreSQL. Native install, no Docker:
 
 1. **Install PostgreSQL 16 + PostGIS** (Windows): the EDB installer
    (<https://www.postgresql.org/download/windows/>), then add the **PostGIS**
@@ -54,20 +31,13 @@ To store observations you need PostgreSQL. Native install, no Docker:
    DATABASE_URL=postgresql+psycopg://evsite:evsite@localhost:5432/evsite
    ```
 
-4. **Create the schema** (installs PostGIS, builds the partitioned tables):
+4. **Create the schema** (installs PostGIS, builds the tables):
 
    ```powershell
    uv run alembic upgrade head
    ```
 
-5. **Run the poller:**
-
-   ```powershell
-   uv run python -m workers.poller --once   # one sweep, then exit
-   uv run python -m workers.poller          # loop forever on the interval
-   ```
-
-6. **See it in the console** — start the API and the SPA in two terminals:
+5. **Run it** — — start the API and the SPA in two terminals:
 
    ```powershell
    uv run python -m uvicorn app.main:app --reload --port 8000
@@ -76,7 +46,9 @@ To store observations you need PostgreSQL. Native install, no Docker:
    cd frontend; npm install; npm run dev
    ```
 
-   Then open `http://localhost:5173/console` and sign in.
+   Then open `http://localhost:5173/owner` for the owner flow (in development the
+   sign-in code is `000000`; it is refused in production until a real SMS provider is
+   wired), or `http://localhost:5173/console` for the operations console.
 
 > **`uv run <name>` failing with "trampoline failed to canonicalize script
 > path"?** The console-script shims in `.venv/Scripts` record the absolute path
@@ -106,41 +78,34 @@ that edits your `.env` is a script that can clobber it.
 |---|---|
 | **Lookup** | Put in a coordinate → district, state, LGD code, **and every step that got there**, with the table behind each answer. The example buttons walk through the interesting cases, including two deliberate refusals. |
 | **Data** | Every table, how full it is, and what it is *for*. Then the tier per state, derived live from the evidence rather than declared. |
-| **CPO** | Every charging network, and whether both locks are open yet. |
 | **Geocoding** | The cascade funnel, spend per level, and the manual queue. |
-| **Overview** | Health and the poller heartbeat. |
+| **Overview** | Health and spend. |
 
 Each panel carries a **"Words on this page"** box defining its own jargon, so the
 terms are explained where they are used rather than in a document nobody opens.
 
-> A cheap always-on VPS is where the poller belongs in the end (PLAN 0.1) — never
-> your laptop, because a laptop that sleeps is a hole in the record. For local
-> development, running it by hand is fine.
-
 ---
 
-## Enabling a source (the two locks)
+## Status scraping (deferred)
 
-A source is polled only when **both** are true — config alone is never consent:
+Off by default. With `SCRAPER_ENABLED` unset the poller process exits at start, its
+API routes return 404, and the console hides the CPO panel and the poller section.
+To work on it locally, set `SCRAPER_ENABLED=true` in `.env`, then:
+
+```powershell
+uv run python -m workers.poller --dry-run   # fetch and print counts, no database
+uv run python -m workers.poller --once      # one sweep, then exit
+```
+
+A source is polled only when **both** locks are open — config alone is never
+consent:
 
 1. **Authorised in code** — read the app's Terms of Service, record `terms_url`,
    `terms_note` and a `rate_limit_per_minute`, then set `authorised=True` for that
    entry in `app/domain/polling/sources.py`. That edit is the recorded decision.
+2. **Configured in settings** — set its endpoint in `.env` (nested delimiter `__`),
+   e.g. `CHARGEZONE__BASE_URL=...`, `CHARGEZONE__RATE_LIMIT_PER_MINUTE=30`.
 
-2. **Configured in settings** — set its endpoint in `.env` (nested delimiter `__`):
-
-   ```
-   CHARGEZONE__BASE_URL=https://api.chargezone.example
-   CHARGEZONE__STATIONS_PATH=/stations
-   CHARGEZONE__API_KEY=            # if the endpoint needs one
-   CHARGEZONE__RATE_LIMIT_PER_MINUTE=30
-   ```
-
-Scraped sources available: `chargezone`, `statiq`, `kazam`, `chargemod`,
-`tata_power_ez`, `ather_grid`, `jio_bp`. They share one generic adapter and one
-tolerant normaliser; only the endpoint and status words differ per app.
-
-> **On overlap:** many chargers roam across these networks over OCPI, so the same
-> physical unit shows up under several apps. That is kept on purpose — it maps the
-> roaming graph and cross-checks occupancy — and is deduped downstream at analysis
-> time (PLAN 2.3), never at poll time.
+Sources in the registry: `chargezone`, `statiq`, `kazam`, `chargemod`,
+`tata_power_ez`, `ather_grid`, `jio_bp`. A laptop that sleeps leaves a hole in
+any record it keeps, so a real run belongs on an always-on host.

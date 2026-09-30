@@ -412,6 +412,7 @@ def test_cpo_sources_endpoint_lists_registry_with_measured_status() -> None:
         env="test",
         console_secret_key="k",
         console_password_hash=hash_password("password-1234"),
+        scraper_enabled=True,
         _env_file=None,
     )
     client = TestClient(app)

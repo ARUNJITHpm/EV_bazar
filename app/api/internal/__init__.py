@@ -41,7 +41,11 @@ router = APIRouter()
 
 # --- open ------------------------------------------------------------------
 router.include_router(health.router, tags=["internal-health"])
-router.include_router(poller.public_router, tags=["internal-poller"])
+router.include_router(
+    poller.public_router,
+    tags=["internal-poller"],
+    dependencies=[Depends(poller.require_scraper)],
+)
 router.include_router(console_auth.router, tags=["console-auth"])
 # Reports are open BY DECISION: the report page is customer-facing and the
 # customer holds a link, not a login. The report id is the capability - see
@@ -68,7 +72,11 @@ router.include_router(
 
 # --- guarded ---------------------------------------------------------------
 guarded = APIRouter(dependencies=[Depends(require_operator)])
-guarded.include_router(poller.router, tags=["internal-poller"])
+guarded.include_router(
+    poller.router,
+    tags=["internal-poller"],
+    dependencies=[Depends(poller.require_scraper)],
+)
 guarded.include_router(geocoding.router, tags=["internal-geocoding"])
 guarded.include_router(lookup.router, tags=["internal-lookup"])
 guarded.include_router(progress.router, tags=["internal-progress"])

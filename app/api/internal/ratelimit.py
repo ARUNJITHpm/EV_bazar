@@ -192,3 +192,19 @@ def owner_submit_limit(request: Request, settings: Settings = Depends(get_settin
             decision,
             "You have sent a lot of submissions from this address. Please try again in a while.",
         )
+
+
+#: Sign-in code requests and checks, an hour wide and separate from the rest: a
+#: code guess is the abuse here, and it must not spend (or be spent by) the
+#: submission allowance.
+_otp_limiter = SlidingWindowLimiter(window_seconds=3600.0)
+
+
+def owner_otp_limit(request: Request, settings: Settings = Depends(get_settings)) -> None:
+    """FastAPI dependency for ``/owner/otp/*``: a per-IP hourly cap. 0 disables it."""
+    limit = settings.owner_otp_limit_per_hour
+    if limit <= 0:
+        return
+    decision = _otp_limiter.check(client_key(request), limit)
+    if not decision.allowed:
+        raise _refuse(decision, "Too many sign-in attempts. Please try again in a while.")

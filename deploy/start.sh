@@ -19,13 +19,25 @@ python -m scripts.ensure_partitions || echo "[start] ensure_partitions failed; c
 # API on the loopback; Caddy proxies /api here.
 uvicorn app.main:app --host 127.0.0.1 --port 8001 &
 
-# The poller: restart on exit, never silently gone (compose: restart: always).
+# Owner-data retention (bill images, inactive accounts): daily, best-effort.
 (
   while true; do
-    python -m workers.poller || echo "[start] poller exited; restarting in 60s"
-    sleep 60
+    python -m scripts.purge_owner_data || echo "[start] owner purge failed; retrying tomorrow"
+    sleep 86400
   done
 ) &
+
+# The poller: restart on exit, never silently gone (compose: restart: always).
+# Status scraping is deferred - the only station data source in the initial stage
+# is what owners upload - so it starts only when SCRAPER_ENABLED=true.
+if [ "${SCRAPER_ENABLED:-false}" = "true" ]; then
+  (
+    while true; do
+      python -m workers.poller || echo "[start] poller exited; restarting in 60s"
+      sleep 60
+    done
+  ) &
+fi
 
 # Caddy owns the public port; if it dies, the Space restarts the container.
 exec caddy run --config /srv/deploy/Caddyfile --adapter caddyfile

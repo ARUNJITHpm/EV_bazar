@@ -14,7 +14,7 @@ The designed result screen shows **"2.1% effective return"**. That number is
 the output of a demand prediction (a return presumes a utilisation), and
 AGENTS.md constraint 6 forbids the point estimate while rule 5 requires any
 model run to write a `predictions` row. The public flow deliberately runs
-**no model** — that is what lets it exist before the poller has data, and why
+**no model** — that is what lets it exist before there is any measured data, and why
 `teaser.py`'s docstring says it writes no predictions row.
 
 So the fix is not "put a band around 2.1%". It is to recognise the design

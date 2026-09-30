@@ -209,15 +209,15 @@ def test_the_owner_cap_is_per_caller_and_can_be_switched_off(
         owner_submit_limit(a, off)
 
 
-def test_the_owner_cap_fires_on_the_route_and_search_does_not_spend_it(
+def test_the_owner_cap_fires_on_the_route_and_other_owner_calls_do_not_spend_it(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Through the real routing stack, so dropping the dependency from the POST fails here.
 
-    The session is a mock: the POST body errors once the guard lets a call
-    through (the first call's status is not what is under test). The SECOND
-    POST, with the hourly cap at 1, must be refused with a 429 - and the station
-    searches between them must not have used the allowance up first.
+    The caller holds no owner session, so a POST that gets past the throttle is
+    answered 401 - that first status is not what is under test. The SECOND POST,
+    with the hourly cap at 1, must be refused with a 429, and the reads between
+    them must not have used the allowance up first.
     """
     monkeypatch.setattr("app.api.internal.ratelimit._limiter", _limiter(FakeClock()))
     monkeypatch.setattr(
@@ -229,24 +229,31 @@ def test_the_owner_cap_fires_on_the_route_and_search_does_not_spend_it(
     )
     app.dependency_overrides[get_session] = lambda: (yield MagicMock())
 
-    body = {
-        "station_id": 1,
-        "connector_indices": [0],
-        "install_month": "2025-01",
-        "meter_type": "separate",
-        "readings": [{"month": "2025-06", "kwh": 500}],
-        "consent_aggregate": True,
-        "consent_public": False,
-    }
     with TestClient(app, raise_server_exceptions=False) as c:
         for _ in range(5):
-            assert c.get("/api/internal/owner/stations?q=kochi").status_code != 429
-        first = c.post("/api/internal/owner/submissions", json=body)
-        second = c.post("/api/internal/owner/submissions", json=body)
+            assert c.get("/api/internal/owner/me").status_code != 429
+        first = c.post("/api/internal/owner/onboard", json={})
+        second = c.post("/api/internal/owner/onboard", json={})
 
     assert first.status_code != 429
     assert second.status_code == 429
     assert second.headers["retry-after"] == "3600"
+
+
+def test_the_code_endpoints_have_their_own_hourly_cap(monkeypatch: pytest.MonkeyPatch) -> None:
+    from app.api.internal.ratelimit import owner_otp_limit
+
+    monkeypatch.setattr(
+        "app.api.internal.ratelimit._otp_limiter", _limiter(FakeClock(), window=3600.0)
+    )
+    settings = Settings(env="test", owner_otp_limit_per_hour=2, _env_file=None)
+    req = _request({"x-forwarded-for": "203.0.113.7"}, ("127.0.0.1", 8001))
+    owner_otp_limit(req, settings)
+    owner_otp_limit(req, settings)
+    with pytest.raises(HTTPException) as caught:
+        owner_otp_limit(req, settings)
+    assert caught.value.status_code == 429
+    owner_otp_limit(req, Settings(env="test", owner_otp_limit_per_hour=0, _env_file=None))
 
 
 # --- the client key behind the Space's front proxy -----------------------------

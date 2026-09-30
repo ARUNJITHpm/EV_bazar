@@ -13,7 +13,7 @@ docs before proposing anything._
 3. `AGENTS.md` — the hard constraints. Line 19 is the one that governs everything you build.
 4. `STACK.md` §5 — the frontend structure and the planned `features/report/` components.
 5. `FINDINGS.md` — the honest gap list, so you don't design around data that isn't there.
-6. `CPO_SOURCES.md` — where live-occupancy data will eventually come from (and why it's not here yet).
+6. `CPO_SOURCES.md` — the research on charger-status sources, kept for the deferred later stage (status scraping is off in the initial stage).
 
 **I do not want you to reinvent the vision. It already exists and I like it. I want you to design and
 build the customer-facing experience on top of it, and fill three specific gaps.** If anything below
@@ -59,14 +59,14 @@ or a site owner sees first.
 
 | Gap | State today | What to do |
 |---|---|---|
-| **A. Occupancy / usage** | Zero rows — no CPO source is authorised yet (blocker B3). This is the "moat" data and it isn't here. | Build a **clearly-labeled synthetic usage stopgap** (see §5). It demonstrates the pipeline. It is never shown to a customer as a real prediction. |
+| **A. Station usage** | Zero rows — the only usage source in the initial stage is owner-uploaded bills, and none are in yet. This is the "moat" data and it isn't here. | Build a **clearly-labeled synthetic usage stopgap** (see §5). It demonstrates the pipeline. It is never shown to a customer as a real prediction. |
 | **B. Location / traffic layer** | Spec only. `PLAN.md` §2.1–2.3 and §4.2 define the formula and road/POI features; none of it is built. No traffic-count data exists anywhere. | Build the location layer from **free** data sources (see §6) and feed it into the heuristic in `PLAN.md` §4.2. |
 | **C. Report + funnel UI** | Doesn't exist. | Build it (§2). |
 
-You may **defer live-occupancy scraping** (Tata Power / Statiq / chargeMOD app capture). It's
-gated on a human authorisation decision (`CPO_SOURCES.md`, `app/domain/polling/sources.py`) and is
-not blocking the customer-facing work. Design the report so that when real occupancy *does* arrive,
-it drops into the same slot the synthetic stopgap occupies now.
+**Status scraping is deferred** to a later stage (`OVERVIEW.md`, "Later stage: status scraping"),
+behind `SCRAPER_ENABLED`. It is not blocking the customer-facing work. Design the report so that
+when real usage figures *do* arrive (from owner bills), they drop into the same slot the synthetic
+stopgap occupies now.
 
 ---
 
@@ -91,7 +91,7 @@ These come from `AGENTS.md` and `OVERVIEW.md`. Breaking them breaks the product'
 
 ## 5. The synthetic usage stopgap — how to do it without lying
 
-Goal: let the ROI engine and report run end-to-end before real occupancy exists, without
+Goal: let the ROI engine and report run end-to-end before real usage figures exist, without
 fabricating a "reading."
 
 - Make it a **deterministic, seeded function** — not random noise — of signals we actually have:
@@ -99,7 +99,7 @@ fabricating a "reading."
   in the catchment (real), and **competitor density/specs** nearby (real, 1,788 stations on hand).
   Same inputs → same output, so reports are reproducible.
 - Output it as a **utilisation distribution (P10/P50/P90)**, matching the real demand-model
-  interface, so swapping in real poller data later is a data-source change, not a UI change.
+  interface, so swapping in real owner-bill data later is a data-source change, not a UI change.
 - **Stamp it** `source = "synthetic_v0"` with a version, surface it in the assumption ledger with a
   ⚠️, and render it in a visually distinct "modelled, not measured" style in the report.
 - Put it behind the same interface the real demand model (`PLAN.md` §4.3, `app/domain/demand/`,
@@ -141,10 +141,10 @@ the existing spend ledger (`api_usage_events`).
 - **Demand:** `vahan_ev_registrations` — EV registrations for Kerala + Tamil Nadu, per calendar year
   2023–2026, by vehicle class, as a time series of snapshots (growth is computable, not just level).
 - **Competitors:** 1,788 charging stations (Open Charge Map + GoEC + Zeon) with specs, connectors,
-  power — **inventory, not occupancy**.
+  power — **inventory, not usage**.
 - **Tariffs:** electricity tariff rows for KL + TN (gazette-exact for KL), plus subsidy rules.
 - **ROI engine:** `app/domain/roi/engine.py` — built, pure, 43 tests, `economics_version 0.1.0`.
-- **What's missing:** occupancy (gap A), the location layer (gap B), the report/funnel UI (gap C).
+- **What's missing:** station usage (gap A), the location layer (gap B), the report/funnel UI (gap C).
 
 ---
 
@@ -152,7 +152,7 @@ the existing spend ledger (`api_usage_events`).
 
 1. **VERDICT** — Build / Conditional / Don't (driven by P10).
 2. **THE NUMBER** — Breakeven utilisation, predicted P10–P90 band, margin of safety (with ⚠️ when negative).
-3. **SITE PROFILE** — archetype, comparables, competitor occupancy, **road/access/catchment** (your new §6 layer).
+3. **SITE PROFILE** — archetype, comparables, competitor stations, **road/access/catchment** (your new §6 layer).
 4. **FINANCIALS** — 3 scenarios · NPV · IRR · payback · 10-yr cashflow — **all from the ROI engine**.
 5. **CPO COMPARISON** — ranked table, IRR recomputed per operator.
 6. **ASSUMPTION LEDGER** — every default, ⚠️ on anything unverified or synthetic.

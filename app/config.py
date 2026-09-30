@@ -160,6 +160,34 @@ class Settings(BaseSettings):
     # behind one mobile carrier's address, stay well under it. 0 disables it.
     owner_submit_limit_per_hour: int = 20
 
+    # --- Owner accounts (phone + OTP) --------------------------------------
+    # Owners sign in with a phone number and a one-time code, nothing else. The
+    # OTP provider sits behind an interface (domain/owner/otp.py); outside prod a
+    # development stub accepts 000000, and in prod NO provider is wired until one
+    # is configured, so sign-in refuses (503) rather than accepting the stub.
+    #: Signs the owner session cookie. Falls back to ``console_secret_key``; in
+    #: prod one of the two must be set or owner sign-in refuses.
+    owner_session_secret: str | None = None
+    owner_session_max_age_seconds: int = 30 * 24 * 3600
+    #: OTP request/verify attempts per caller IP per hour. 0 disables it.
+    owner_otp_limit_per_hour: int = 30
+    owner_bill_max_bytes: int = 8 * 1024 * 1024
+    # Retention (DPDP storage limitation). A bill image is kept only so the owner
+    # can check their figures against it: it is deleted after this many days and
+    # the confirmed figures stay. An account nobody has signed in to for the second
+    # period is erased with everything it holds. 0 switches a rule off.
+    # scripts/purge_owner_data.py applies both; deploy/start.sh runs it daily.
+    owner_bill_image_retention_days: int = 365
+    owner_inactive_purge_days: int = 730
+
+    # --- Status scraping (deferred) ----------------------------------------
+    # Polling charger status from CPO apps every few minutes is NOT part of the
+    # initial stage: the only station data source is what owners upload. The
+    # poller, its console panels and its API refuse to run or render unless this
+    # is set. Collecting public data (VAHAN, OpenStreetMap / Open Charge Map
+    # inventory, tariff orders) is a different thing and is not gated.
+    scraper_enabled: bool = False
+
     # --- Operations console (PLAN C.0) -------------------------------------
     # One operator, one password, a signed httpOnly cookie. The console
     # exposes CPO commercial terms and our own spend, so it is the most

@@ -13,13 +13,42 @@
 
 ---
 
+## PART O — Owner-uploaded bills (the initial stage's data source)
+
+> Station owners sign in with a phone number, upload an electricity bill (or type
+> the monthly units), register the station once, and get a page showing how it is
+> performing. We get real usage figures for the demand model. Consent is one
+> required checkbox; nothing is published below 10 stations.
+
+- [x] **Phone + OTP sign-in.** `OtpProvider` interface, development stub (`000000`, never in prod), signed httpOnly session, per-IP throttle. `app/domain/owner/otp.py`, `api/internal/owner.py`.
+- [ ] **A real OTP provider** behind `OtpProvider`. Needs a decision and a key; none is in the repo.
+- [x] **Bill upload and manual extraction.** Photo or PDF kept so the owner can check figures against it; `BillExtractor` interface with `ManualExtractor`; fields saved only after the owner confirms them.
+- [ ] **Automatic extraction** (an OCR or model behind `BillExtractor`). Any LLM-proposed value stays a proposal until the owner confirms it (AGENTS.md rule 11).
+- [x] **Bill fields.** Period and kWh required; history (12 months), tariff category, contract and recorded demand (kVA/kW as printed), power factor and penalty/incentive (paise), time-of-day units, board, consumer number (last 4 only).
+- [x] **Validation.** kWh above 0 and at most total connector kW × 744; the error names the limit.
+- [x] **Station registered once**, in the same flow as the first bill: name, pin/address, connectors (presets), month live, the own-meter question only when the tariff category does not settle it.
+- [x] **Shared meters** are flagged and excluded from peer averages.
+- [x] **Forecast module** with one interface (`Forecaster`); placeholder `PeerBlendForecaster` (`owner_peer_v0`). Every forecast is stored when made; the track record compares against the stored one.
+- [x] **Peer comparison** only with 10 or more comparable stations (same charger type, similar age, same state), sample size always printed; below that, the labelled model curve.
+- [x] **Station home page** in the order: last month + forecast, trend (months since opening), peers, money on the bill, track record, upload button, all-stations table.
+- [ ] **Fit `owner_peer_v0` on real submissions** and replace the placeholder curve.
+- [x] **Retention and erasure.** Owner-initiated deletion of an image or the whole account; bill images expire after 365 days, inactive accounts after 730 (`app/domain/owner/erasure.py`, migration 0018, daily purge). Periods are engineer defaults awaiting a human decision (see FINDINGS).
+
+**Exit criteria:** a new owner reaches their home page with one bill in under two minutes on a phone; a shared-meter station never enters a peer average; the comparison hides itself below 10.
+
+---
+
 ## PART 0 — Start Immediately, In Parallel
 
 > These three have **zero dependencies** and must not wait for the repo to exist.
 
-### 0.1 ⚡ Status Poller — START TODAY
+### 0.1 Status Poller — DEFERRED (later stage)
 
-The one asset that cannot be retroactively acquired. Every day not polling is permanently lost.
+> **Deferred.** The initial stage's only station data source is what owners upload
+> (Part O above). Reading charger status from CPO apps is a later stage
+> (`OVERVIEW.md`, "Later stage: status scraping"), off unless `SCRAPER_ENABLED=true`,
+> and each app's terms of service must be checked before it is polled. The code and
+> the items below are kept as the record of that stage; none of it runs now.
 
 - [x] Enumerate availability sources: PlugShare, OCPI feeds, individual CPO apps/APIs, ChargeZone / Statiq / Kazam / chargeMOD / Tata Power EZ / Jio-bp / Ather Grid endpoints — all nine registered in `sources.py`; research notes per network in `CPO_SOURCES.md`. Enumerated, not yet captured (next bullet).
 
@@ -31,7 +60,7 @@ The one asset that cannot be retroactively acquired. Every day not polling is pe
 - [ ] **Discover each app's endpoint once** (~hours per app): watch the app's traffic with mitmproxy on a phone, or devtools on their web map. Record endpoint, auth shape, and response schema per source. Validate the mapping with **no database**: `uv run python -m workers.poller --dry-run` prints per-source station/connector/status counts.
 - [x] ⚠️ **Two locks, both required.** A source polls only when it is authorised in `app/domain/polling/sources.py` (its ToS read, terms + rate limit recorded, `authorised` flipped by a human) **and** given an endpoint in settings. Config alone is never consent; the registry refuses otherwise.
 - [ ] Poll at the gentlest rate that still gives 5-min resolution; back off on errors. ⚠️ A blocked IP loses data days, and data days cannot be bought back.
-- [ ] ⚠️ **Networks overlap — keep the duplicates.** Many chargers roam across these apps over OCPI, so the same physical unit appears under several sources with different station ids. That overlap is signal (it maps the roaming graph and cross-checks occupancy) and is kept per-source, deduped downstream at analysis time on distance + operator + connector fingerprint (Part 2.3) — never at poll time.
+- [ ] ⚠️ **Networks overlap — keep the duplicates.** Many chargers roam across these apps over OCPI, so the same physical unit appears under several sources with different station ids. That overlap is signal (it maps the roaming graph and cross-checks live status) and is kept per-source, deduped downstream at analysis time on distance + operator + connector fingerprint (Part 2.3) — never at poll time.
 - [ ] **OCPI is the upgrade path, not the prerequisite:** ask every CPO for OCPI credentials during the 0.3 conversations. When a partner token lands, switch that source from scraped endpoint to official feed — provenance (`source`) already records which rows came from which. Scraped history stays; official data takes over from that date.
 - [ ] Expect endpoint churn: apps change their APIs every few months. The dead-man's switch catches it; budget the occasional hour to re-discover. This maintenance attention — not compute — is the real ongoing cost.
 - [x] **Local run is Docker-free** — see `LOCAL_DEV.md`. Dry-run needs only Python; recording needs a native Postgres. Console CPO panel (`/console/cpo`) shows every source's governance + measured status.
@@ -42,8 +71,8 @@ The one asset that cannot be retroactively acquired. Every day not polling is pe
 > Capture and storage are separated on purpose. The capture is irreplaceable and must be lossless; the queryable layer must be cheap. Doing lossy compression at ingest — the one irreproducible moment — based on diff logic you will tweak for months is the wrong place to be clever. So ingest keeps everything; the derived table is where the ~30× win lives, and any bug in it costs a recompute, not data.
 
 - [x] **① Raw archive — lossless, append-only, the insurance.** Every poll cycle stores its raw payload per source (one blob per source per cycle is fine), unindexed and compressible. This is the asset that cannot be re-acquired; ingest must be bug-proof, and any downstream logic error stays recoverable offline forever. Honors "always keep the raw blob." — `poll_raw_payloads`, one row **per page** (page boundaries are part of what we saw and a merge cannot be undone), committed *before* anything interprets it.
-- [x] **② Derived events — presence-aware change log, the working set.** A row is written on **appear / disappear / status-change**, *derived* from ①. ⚠️ A "change" is not just a status transition: a connector that stops appearing in the feed (station delisted, one station's API hiccups) must write an `unknown`/`offline` row — otherwise its last-known status is wrongly credited as "still available." This is where occupancy queries run. — `derive.py`, pure; disappearance records `unknown` (we stopped being told, we did not learn it went offline) and is written **once**, not once per cycle. ⚠️ Disappearance is derived **only from a successful fetch** — one 500 must never append a fleet-wide vanishing.
-- [ ] **Occupancy reconstructs exactly** from ②: a connector held status X from t1 until the next transition at t2, *given the poller was alive throughout* — which `poll_runs` proves. No need to materialise 288 identical ticks; the denominator comes from cadence + liveness, not from row count.
+- [x] **② Derived events — presence-aware change log, the working set.** A row is written on **appear / disappear / status-change**, *derived* from ①. ⚠️ A "change" is not just a status transition: a connector that stops appearing in the feed (station delisted, one station's API hiccups) must write an `unknown`/`offline` row — otherwise its last-known status is wrongly credited as "still available." This is where live status queries run. — `derive.py`, pure; disappearance records `unknown` (we stopped being told, we did not learn it went offline) and is written **once**, not once per cycle. ⚠️ Disappearance is derived **only from a successful fetch** — one 500 must never append a fleet-wide vanishing.
+- [ ] **Live status reconstructs exactly** from ②: a connector held status X from t1 until the next transition at t2, *given the poller was alive throughout* — which `poll_runs` proves. No need to materialise 288 identical ticks; the denominator comes from cadence + liveness, not from row count.
 - [x] **Liveness = `poll_runs`**, one row per cycle per source — that *is* the heartbeat (source-level). Optional: an hourly full snapshot into ② so reconstruction queries need not join `poll_runs`. — **hourly snapshot deliberately NOT built**: at ~100k connectors it is 2.4M rows/day, more than the ~1M/day the whole design targets. `longest_gap()` reads `poll_runs` for the "no gaps > 15 min" criterion.
 - [x] ⚠️ **Do NOT change-detect at ingest.** Writing only-on-change directly from the network, with raw dropped on unchanged polls, is both presence-blind and irreversible — the one approach to avoid. Change-detection is a *derivation* over ①, re-runnable and fixable. — `scripts/rederive.py` replays ① and reports drift against ②; `replay()` is unit-tested to reproduce the live incremental path exactly.
 - [ ] Sizing: ② lands near ~1M rows/day nationwide vs ~30M for every-observation (~30× on ~10–20 transitions/connector/day vs 288 polls). ① compresses hard because it is so repetitive. **These counts are estimates** (rest on ~100k public connectors — verify against real volume); the 30× ratio is the robust part. One small always-on VPS (1–2 vCPU) handles the polling either way — compute is trivial, only storage grows.
@@ -233,7 +262,7 @@ The one asset that cannot be retroactively acquired. Every day not polling is pe
 - [ ] Ingest from PlugShare + OCPI + CPO apps
 - [ ] ⚠️ **Dedupe across sources** — same physical charger appears 3×. Match on distance + operator + connector fingerprint.
 - [ ] Counts within 1 / 3 / 5 km, connector types, rated kW
-- [ ] **Join to poller data → observed occupancy.** This is the piece nobody else has.
+- [ ] **Join to poller data → observed live status.** This is the piece nobody else has.
 
 ### 2.4 Grid
 - [ ] Distance to nearest 11 kV feeder / DISCOM substation (where data exists)

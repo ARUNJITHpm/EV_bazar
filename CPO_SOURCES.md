@@ -1,5 +1,12 @@
 # CPO Data Sources — how to get availability from each network
 
+> **Deferred (later stage).** Everything below about reading charger status
+> (free / busy) from CPO apps is research for the later stage described in
+> `OVERVIEW.md`, "Later stage: status scraping". In the initial stage none of it
+> runs: `SCRAPER_ENABLED` is false and the only station data source is what owners
+> upload. The **inventory** sections (locations, connectors, specs) are unaffected
+> and still in use.
+
 Research notes for PLAN 0.1. **Verify every endpoint against a live capture before
 wiring it** — app APIs are private and change without notice. Nothing here is a
 committed integration; it is the map for the reverse-engineering evening.
@@ -59,9 +66,9 @@ CPO's public web map makes** (anonymous browser, no logins, nothing bypassed).
 > also a hand check on whether the scraping method is accurate — but it is a data
 > source first, a benchmark second.
 
-### Live occupancy (free/busy) — competitors
+### Live live status (free/busy) — competitors
 
-| Rank | Source | How the data arrives | Occupancy? | KL/TN | Caveat |
+| Rank | Source | How the data arrives | Live status? | KL/TN | Caveat |
 |---|---|---|---|---|---|
 | **1** | **Tata Power EZ Charge** (public web map) | `POST ezcharge.tatapower.com/HobsIntegration/syncRequestHandler?service=GET_CHARGING_STATIONS_ALL` → JSON; UI has "only available/free" toggles | **Yes** | Both | **CONFIRMED IN BROWSER 2026-08-15** — see note below |
 | **2** | **Statiq** (public web map) | Status is server-rendered into each per-station HTML page; the clean bulk data is auth-gated (`csms.statiq.in`) | **Yes** | Both | **Investigated 2026-08-17:** no keyless bulk JSON. Per-station HTML is too heavy/fragile to poll. Clean path = capture the map's data endpoint + auth from DevTools, like Tata |
@@ -75,7 +82,7 @@ session, no login, nothing bypassed:
   clusters with NO user sign-in.** The data call is
   `POST /HobsIntegration/syncRequestHandler?service=GET_CHARGING_STATIONS_ALL` →
   HTTP 200.
-- It **carries live occupancy, not just inventory** — the app bundle has "only
+- It **carries live live status, not just inventory** — the app bundle has "only
   available" / "only free chargers" filters and reads `stationStatus` /
   `availability`, with the OCCUPIED/CHARGING/BUSY family referenced ~75 times.
 - **BUT it is not an open feed.** A clean replay of the call *without* the app's
@@ -87,10 +94,10 @@ session, no login, nothing bypassed:
 - **ToS:** the Terms of Use is a **customer/service agreement** (charging sessions,
   EZ Charge cards, payments) with **no explicit anti-scraping or automated-access
   clause** — but no grant of permission either, and it disclaims the accuracy and
-  availability of the displayed status. The durable path for Tata occupancy remains
+  availability of the displayed status. The durable path for Tata live status remains
   an **OCPI/partner ask**; the web endpoint is a viable interim with upkeep risk.
 
-### Inventory only (locations/connectors, NO occupancy) — WIRED 2026-08-17
+### Inventory only (locations/connectors, NO live status) — WIRED 2026-08-17
 
 Both are now sources in `scripts/fetch_competitors.py` (parsers + fetchers in
 `app/domain/context/competitors.py`, tested). One national GET each, no key:
@@ -107,7 +114,7 @@ Both are now sources in `scripts/fetch_competitors.py` (parsers + fetchers in
 - Each carries its own `source` ("goec"/"zeon"), so a GO EC station seen via both OCM
   and GoEC's own feed is two rows until the downstream dedupe (2.3) — overlap kept as
   signal, not dropped at fetch. Both complement OCM for the KL/TN master list; neither
-  carries free/busy (occupancy stays the poller's job).
+  carries free/busy (live status stays the poller's job).
 
 ### The official *non-OCPI* standard: UBC / UEI (Beckn, not OCPI)
 
@@ -115,11 +122,11 @@ India's national interoperability hub — **Unified Bharat eCharge / Unified Ene
 Interface** — runs on the **Beckn protocol, explicitly NOT OCPI**. An app joins as
 a **BAP** and receives standardized discover → **status** → stop across every
 onboarded CPO's BPP. This is the genuine official non-OCPI route to cross-network
-occupancy — but **nascent in 2026** (coverage ramping; Pulse integrated 10,000+
+live status — but **nascent in 2026** (coverage ramping; Pulse integrated 10,000+
 points under UBC by Aug 2026, BHEL nodal). A pilot-as-BAP is the Phase-2 upgrade,
 not a today-source.
 
-### Not viable via the public web for occupancy
+### Not viable via the public web for live status
 ChargeZone, Jio-bp, **Ather** (Cloudflare-gated, `/api` disallowed — live status only
 via Google), **Kazam** (no public web map), **ElectricPe** (app-only aggregator,
 richest data but no API), **Relux** (only active/inactive commissioning flag) — all
@@ -130,7 +137,7 @@ keep live status inside the app or an authenticated CMS.
   **TNEV** (Tamil Nadu) — locations, some declared status, but **no public API** →
   scrape-only, inventory-grade.
 - **TomTom** EV Availability API — real-time globally but **static-only in India**.
-- **Eco-Movement / HERE** — paid B2B feeds with real-time occupancy; **India dynamic
+- **Eco-Movement / HERE** — paid B2B feeds with real-time live status; **India dynamic
   depth unverified** — validate KL/TN before relying.
 - **PlugShare** — real-time is mostly crowd-sourced; official access is a **commercial
   license only**, and scraping the unofficial `api.plugshare.com/v3` violates ToS.
@@ -210,8 +217,8 @@ response shape.
 ## Public / commercial APIs (documented, no scraping)
 
 - **Open Charge Map** — free, documented REST: `GET /api/v3/poi?output=json&countrycode=IN&latitude=..&longitude=..&distance=..&distanceunit=km&maxresults=..&compact=true` with a free key (openchargemap.org → My Apps → Register an Application). Crowd-sourced; strong on **locations**, weak on live status. Good for backfilling the station master list and cross-checking dedupe.
-  - ✅ **Verified live 2026-08-15** against Kochi coords: the API answered, but now **returns HTTP 403 without an API key** (it was keyless historically — no longer). So this is a one-account, one-key step, then it works. Each POI carries `AddressInfo` (title, lat/lng, town, state), `OperatorInfo.Title` (the network), `Connections[]` (`ConnectionType`, `PowerKW`, `Level`), a `StatusType.IsOperational` flag and `NumberOfPoints` — enough for the **competitor inventory** (PLAN 2.3), NOT for real-time occupancy (the moat still needs per-app polling).
-  - 🎯 **This is the "better source" for the starting stage of the competitor map**: one keyed API covering all of India instead of seven fragile app captures. Recommended as the *first* thing wired for KL+TN — it needs only a free key, no mitmproxy evening. Keep chargeMOD app-scrape as the parallel **occupancy** pilot.
+  - ✅ **Verified live 2026-08-15** against Kochi coords: the API answered, but now **returns HTTP 403 without an API key** (it was keyless historically — no longer). So this is a one-account, one-key step, then it works. Each POI carries `AddressInfo` (title, lat/lng, town, state), `OperatorInfo.Title` (the network), `Connections[]` (`ConnectionType`, `PowerKW`, `Level`), a `StatusType.IsOperational` flag and `NumberOfPoints` — enough for the **competitor inventory** (PLAN 2.3), NOT for real-time live status (the moat still needs per-app polling).
+  - 🎯 **This is the "better source" for the starting stage of the competitor map**: one keyed API covering all of India instead of seven fragile app captures. Recommended as the *first* thing wired for KL+TN — it needs only a free key, no mitmproxy evening. Keep chargeMOD app-scrape as the parallel **live status** pilot.
 - **TomTom EV Charging Stations Availability API** — commercial, aggregated **real-time** availability. A paid but clean real-time source if the metering budget allows (goes through the paid-provider cap machinery in `config.py`).
 - **Delhi OpenEV API** (`ev.delhi.gov.in/openev/documentation`) — government open data for Delhi EV stations. Worth checking for other states' open-data portals too.
 
@@ -247,9 +254,9 @@ Every capture below is scoped to KL+TN coordinates first; national coverage foll
 **Starting stage — in this order:**
 0. **Open Charge Map** (free key, ~15 min) — the fastest first win, verified working today.
    Wire it for KL+TN to stand up the **competitor inventory** with no reverse-engineering.
-   One key, one documented API, all of India. Does NOT give occupancy — that is why the
+   One key, one documented API, all of India. Does NOT give live status — that is why the
    app-scrape below still matters.
-1. **chargeMOD** (ours) — scrape it first for **occupancy**; no ToS question, fastest to
+1. **chargeMOD** (ours) — scrape it first for **live status**; no ToS question, fastest to
    first real-time data, and it is the accuracy check for scraping the rest.
 2. **An aggregator** (1C / "Massive Charging") — one capture yields ChargeZone, Statiq,
    Tata, Jio-bp together. Biggest coverage per evening (check its ToS; it may not label

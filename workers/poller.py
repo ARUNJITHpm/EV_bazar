@@ -270,6 +270,12 @@ def main() -> None:
     )
     settings = get_settings()
 
+    # Status scraping is deferred: the initial stage's only station data source
+    # is what owners upload. Nothing here runs unless SCRAPER_ENABLED is set.
+    if not settings.scraper_enabled:
+        log.warning("status scraping is switched off (SCRAPER_ENABLED=false); not polling")
+        return
+
     if args.dry_run:
         dry_run(settings)
         return

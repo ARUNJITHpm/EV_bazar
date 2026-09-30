@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { useFeatures } from "@/lib/features";
 import { cn } from "@/lib/utils";
 
 import { PanelHeader } from "./ConsoleLayout";
@@ -56,7 +57,26 @@ function Legend({ term, cls, children }: { term: string; cls: string; children: 
   );
 }
 
+/** The CPO panel is about polled status sources, so it is a later-stage panel. */
 export function Cpo() {
+  const { scraperEnabled } = useFeatures();
+  if (!scraperEnabled) {
+    return (
+      <>
+        <PanelHeader
+          title="CPO"
+          note="Status scraping is deferred to a later stage. In the initial stage the only station data source is what owners upload, so there are no polled networks to show here."
+        />
+        <p className="max-w-3xl text-[13px] text-ink-muted">
+          Set <code>SCRAPER_ENABLED=true</code> once each app's terms of service have been checked.
+        </p>
+      </>
+    );
+  }
+  return <CpoSources />;
+}
+
+function CpoSources() {
   const q = useQuery({
     queryKey: ["cpo-sources"],
     queryFn: async () => {

@@ -23,9 +23,7 @@ type Group = { heading: string | null; items: Item[] };
 const NAV: Group[] = [
   {
     heading: null,
-    items: [
-      { to: "/console", label: "Overview", hint: "health · spend today · poller", end: true },
-    ],
+    items: [{ to: "/console", label: "Overview", hint: "health · spend today", end: true }],
   },
   {
     heading: "Explain",
@@ -39,7 +37,7 @@ const NAV: Group[] = [
   {
     heading: "Sources",
     items: [
-      { to: "/console/cpo", label: "CPO", hint: "partners · terms · uptime" },
+      { to: "/console/cpo", label: "CPO", hint: "partners · terms" },
       { to: "/console/network", label: "Network", hint: "stations · chargers · connectors" },
       { to: "/console/competitors", label: "Competitors", hint: "inventory · networks · DC-fast" },
       { to: "/console/geocoding", label: "Geocoding", hint: "cascade · manual queue" },

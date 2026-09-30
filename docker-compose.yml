@@ -58,6 +58,10 @@ services:
       - api
 
   poller:
+    # Status scraping is deferred (initial stage = owner-uploaded bills only).
+    # Start it deliberately: docker compose --profile scraper up  (and set
+    # SCRAPER_ENABLED=true).
+    profiles: ["scraper"]
     build: .
     command: python -m workers.poller
     environment:

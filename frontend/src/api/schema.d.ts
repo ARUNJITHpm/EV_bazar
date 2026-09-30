@@ -99,6 +99,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/internal/features": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Features
+     * @description Which deferred features are switched on, so the SPA can hide the rest.
+     */
+    get: operations["features_api_internal_features_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/geocoding/funnel": {
     parameters: {
       query?: never;
@@ -320,24 +340,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/internal/owner/stations": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Stations */
-    get: operations["stations_api_internal_owner_stations_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/internal/owner/submissions": {
+  "/api/internal/owner/bill-images": {
     parameters: {
       query?: never;
       header?: never;
@@ -346,8 +349,169 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Submit */
-    post: operations["submit_api_internal_owner_submissions_post"];
+    /** Upload Bill Image */
+    post: operations["upload_bill_image_api_internal_owner_bill_images_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/owner/bill-images/{image_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Bill Image */
+    get: operations["bill_image_api_internal_owner_bill_images__image_id__get"];
+    put?: never;
+    post?: never;
+    /**
+     * Remove Bill Image
+     * @description Delete one bill image. The figures the owner confirmed from it stay.
+     */
+    delete: operations["remove_bill_image_api_internal_owner_bill_images__image_id__delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/owner/logout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Logout */
+    post: operations["logout_api_internal_owner_logout_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/owner/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Me */
+    get: operations["me_api_internal_owner_me_get"];
+    put?: never;
+    post?: never;
+    /**
+     * Erase Me
+     * @description Erase the account and everything it holds: phone number, stations, bills, images.
+     */
+    delete: operations["erase_me_api_internal_owner_me_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/owner/onboard": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Onboard */
+    post: operations["onboard_api_internal_owner_onboard_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/owner/otp/request": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Request Code */
+    post: operations["request_code_api_internal_owner_otp_request_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/owner/otp/verify": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Verify Code */
+    post: operations["verify_code_api_internal_owner_otp_verify_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/owner/stations": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** My Stations */
+    get: operations["my_stations_api_internal_owner_stations_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/owner/stations/{station_id}/bills": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Save Bill */
+    post: operations["save_bill_api_internal_owner_stations__station_id__bills_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/owner/stations/{station_id}/home": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Home */
+    get: operations["home_api_internal_owner_stations__station_id__home_get"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -576,14 +740,83 @@ export interface components {
       /** Waitlisted */
       waitlisted: boolean;
     };
-    /** BandOut */
-    BandOut: {
+    /** Band */
+    Band: {
       /** P10 Kwh */
       p10_kwh: number;
       /** P50 Kwh */
       p50_kwh: number;
       /** P90 Kwh */
       p90_kwh: number;
+    };
+    /** BillIn */
+    BillIn: {
+      /** Board */
+      board?: string | null;
+      /** Confirmed */
+      confirmed: boolean;
+      /** Consumer Number */
+      consumer_number?: string | null;
+      /** Contract Demand */
+      contract_demand?: number | null;
+      /** Demand Unit */
+      demand_unit?: ("kVA" | "kW") | null;
+      /** History */
+      history?: components["schemas"]["HistoryIn"][];
+      /** Image Id */
+      image_id?: string | null;
+      /** Kwh */
+      kwh: number;
+      /** Period */
+      period: string;
+      /** Pf Amount Paise */
+      pf_amount_paise?: number | null;
+      /** Pf Effect */
+      pf_effect?: ("penalty" | "incentive") | null;
+      /** Power Factor */
+      power_factor?: number | null;
+      /** Recorded Demand */
+      recorded_demand?: number | null;
+      /** Tariff Category */
+      tariff_category?: string | null;
+      /** Tod Normal Kwh */
+      tod_normal_kwh?: number | null;
+      /** Tod Offpeak Kwh */
+      tod_offpeak_kwh?: number | null;
+      /** Tod Peak Kwh */
+      tod_peak_kwh?: number | null;
+    };
+    /** BillMoney */
+    BillMoney: {
+      demand: components["schemas"]["DemandCard"] | null;
+      /**
+       * Period
+       * Format: date
+       */
+      period: string;
+      power_factor: components["schemas"]["PowerFactorCard"] | null;
+      time_of_day: components["schemas"]["TodCard"] | null;
+    };
+    /** BillRef */
+    BillRef: {
+      /** Image Id */
+      image_id: string | null;
+      /** Kwh */
+      kwh: number;
+      /**
+       * Period
+       * Format: date
+       */
+      period: string;
+    };
+    /** BillSaveIn */
+    BillSaveIn: {
+      bill: components["schemas"]["BillIn"];
+    };
+    /** Body_upload_bill_image_api_internal_owner_bill_images_post */
+    Body_upload_bill_image_api_internal_owner_bill_images_post: {
+      /** File */
+      file: string;
     };
     /** BreakevenPayload */
     BreakevenPayload: {
@@ -658,6 +891,16 @@ export interface components {
       /** Within 3Km */
       within_3km: number;
     };
+    /** ConnectorIn */
+    ConnectorIn: {
+      /** Power Kw */
+      power_kw: number;
+      /**
+       * Standard
+       * @enum {string}
+       */
+      standard: "CCS2" | "CCS1" | "CHAdeMO" | "Type 2 AC" | "GB/T" | "Other";
+    };
     /** ConnectorOut */
     ConnectorOut: {
       /** Format */
@@ -668,6 +911,13 @@ export interface components {
       max_power_kw: number | null;
       /** Standard */
       standard: string | null;
+    };
+    /** ConnectorView */
+    ConnectorView: {
+      /** Power Kw */
+      power_kw: number;
+      /** Standard */
+      standard: string;
     };
     /** Counts */
     Counts: {
@@ -765,6 +1015,19 @@ export interface components {
       /** Sources */
       sources: components["schemas"]["CpoSourceOut"][];
     };
+    /** DemandCard */
+    DemandCard: {
+      /** Contract */
+      contract: number;
+      /** Recorded */
+      recorded: number;
+      /** Unit */
+      unit: string;
+      /** Used Share */
+      used_share: number;
+      /** Well Above Peak */
+      well_above_peak: boolean;
+    };
     /** DemandPayload */
     DemandPayload: {
       /** District Ev 2025 */
@@ -815,6 +1078,11 @@ export interface components {
       /** States */
       states: components["schemas"]["StateFacet"][];
     };
+    /** Features */
+    Features: {
+      /** Scraper Enabled */
+      scraper_enabled: boolean;
+    };
     /**
      * FieldSource
      * @description Where one field on the answer physically came from.
@@ -843,6 +1111,21 @@ export interface components {
       scenarios: components["schemas"]["Scenario"][];
       /** Selling Price Paise Kwh */
       selling_price_paise_kwh: number;
+    };
+    /** ForecastView */
+    ForecastView: {
+      band: components["schemas"]["Band"];
+      /** Model Version */
+      model_version: string;
+      /** Month Of Operation */
+      month_of_operation: number;
+      /** Readings Used */
+      readings_used: number;
+      /**
+       * Target Month
+       * Format: date
+       */
+      target_month: string;
     };
     /** FunnelOut */
     FunnelOut: {
@@ -892,6 +1175,31 @@ export interface components {
       /** Status */
       status: string;
     };
+    /** HistoryIn */
+    HistoryIn: {
+      /** Kwh */
+      kwh: number;
+      /** Period */
+      period: string;
+    };
+    /** ImageOut */
+    ImageOut: {
+      /** Content Type */
+      content_type: string;
+      /** Extractor */
+      extractor: string;
+      /**
+       * Image Id
+       * Format: uuid
+       */
+      image_id: string;
+      /** Size Bytes */
+      size_bytes: number;
+      /** Suggested */
+      suggested: {
+        [key: string]: string | number | null;
+      };
+    };
     /**
      * InputOut
      * @description One external thing only a human can supply: a key, an endpoint, a file.
@@ -920,6 +1228,18 @@ export interface components {
      * @enum {string}
      */
     InputStatus: "configured" | "missing" | "attention" | "later";
+    /** LastMonth */
+    LastMonth: {
+      /** Kwh */
+      kwh: number;
+      /** Month Of Operation */
+      month_of_operation: number;
+      /**
+       * Period
+       * Format: date
+       */
+      period: string;
+    };
     /**
      * LayerOut
      * @description Provenance of the map data itself - PLAN C.5's data-vintage row.
@@ -988,6 +1308,13 @@ export interface components {
       /** Password */
       password: string;
     };
+    /** MeOut */
+    MeOut: {
+      /** Phone Masked */
+      phone_masked: string;
+      /** Station Count */
+      station_count: number;
+    };
     /** MilestoneOut */
     MilestoneOut: {
       /** Evidence */
@@ -1004,6 +1331,12 @@ export interface components {
       /** What */
       what: string;
     };
+    /** ModelPoint */
+    ModelPoint: {
+      band: components["schemas"]["Band"];
+      /** Month Of Operation */
+      month_of_operation: number;
+    };
     /** NeighbourOut */
     NeighbourOut: {
       /** Distance M */
@@ -1014,6 +1347,17 @@ export interface components {
       name: string;
       /** State Name */
       state_name: string;
+    };
+    /** OnboardIn */
+    OnboardIn: {
+      bill: components["schemas"]["BillIn"];
+      /** Connectors */
+      connectors: components["schemas"]["ConnectorIn"][];
+      /** Consent Aggregate */
+      consent_aggregate: boolean;
+      /** Meter Answer */
+      meter_answer?: ("separate" | "shared" | "unsure") | null;
+      station: components["schemas"]["StationIn"];
     };
     /** Operator */
     Operator: {
@@ -1038,38 +1382,40 @@ export interface components {
       /** Stations */
       stations: number;
     };
-    /** OwnerConnector */
-    OwnerConnector: {
-      /** Id */
-      id: number;
-      /** Power Kw */
-      power_kw: number;
-      /** Standard */
-      standard: string | null;
+    /** PeerBandPoint */
+    PeerBandPoint: {
+      band: components["schemas"]["Band"];
+      /** Month Of Operation */
+      month_of_operation: number;
+      /** N */
+      n: number;
     };
-    /** OwnerStation */
-    OwnerStation: {
-      /** Connectors */
-      connectors: components["schemas"]["OwnerConnector"][];
-      /** Id */
-      id: number;
-      /** Lat */
-      lat: number;
-      /** Lng */
-      lng: number;
-      /** Name */
-      name: string | null;
-      /** Operator */
-      operator: string | null;
-      /** Town */
-      town: string | null;
+    /** PeerView */
+    PeerView: {
+      /** Available */
+      available: boolean;
+      /** Band */
+      band: components["schemas"]["PeerBandPoint"][];
+      /** Basis */
+      basis: string;
+      latest_band: components["schemas"]["Band"] | null;
+      /** Message */
+      message: string;
+      /** Min Required */
+      min_required: number;
+      /** Model Curve */
+      model_curve: components["schemas"]["ModelPoint"][];
+      /** N */
+      n: number;
+      /** Percentile */
+      percentile: number | null;
+      /** Reason */
+      reason: string | null;
     };
-    /** OwnerStationsOut */
-    OwnerStationsOut: {
-      /** Stations */
-      stations: components["schemas"]["OwnerStation"][];
-      /** Total */
-      total: number;
+    /** PhoneIn */
+    PhoneIn: {
+      /** Phone */
+      phone: string;
     };
     /** PointOut */
     PointOut: {
@@ -1130,6 +1476,36 @@ export interface components {
       stale_sources: string[];
       /** Threshold Minutes */
       threshold_minutes: number;
+    };
+    /** PortfolioRow */
+    PortfolioRow: {
+      /** Change Pct */
+      change_pct: number | null;
+      /** District */
+      district: string | null;
+      /** Last Kwh */
+      last_kwh: number | null;
+      /** Last Period */
+      last_period: string | null;
+      /** Name */
+      name: string;
+      /** Peer N */
+      peer_n: number;
+      /** Peer Percentile */
+      peer_percentile: number | null;
+      /** Possibly Shared */
+      possibly_shared: boolean;
+      /** Station Id */
+      station_id: number;
+    };
+    /** PowerFactorCard */
+    PowerFactorCard: {
+      /** Amount Paise */
+      amount_paise: number | null;
+      /** Effect */
+      effect: string | null;
+      /** Power Factor */
+      power_factor: number | null;
     };
     /** PriceSensitivityPoint */
     PriceSensitivityPoint: {
@@ -1208,13 +1584,6 @@ export interface components {
       /** Postgis */
       postgis: string;
     };
-    /** ReadingIn */
-    ReadingIn: {
-      /** Kwh */
-      kwh: number;
-      /** Month */
-      month: string;
-    };
     /** RejectIn */
     RejectIn: {
       /** Note */
@@ -1267,6 +1636,16 @@ export interface components {
       /** Saving Paise Year */
       saving_paise_year: number;
     };
+    /** SavedOut */
+    SavedOut: {
+      /**
+       * Period
+       * Format: date
+       */
+      period: string;
+      /** Station Id */
+      station_id: number;
+    };
     /** Scenario */
     Scenario: {
       /** Irr Pct */
@@ -1281,6 +1660,23 @@ export interface components {
       payback_years: number | null;
       /** Utilisation */
       utilisation: number;
+    };
+    /** SentOut */
+    SentOut: {
+      /** Sent */
+      sent: boolean;
+    };
+    /** SeriesPoint */
+    SeriesPoint: {
+      /** Kwh */
+      kwh: number;
+      /** Month Of Operation */
+      month_of_operation: number;
+      /**
+       * Period
+       * Format: date
+       */
+      period: string;
     };
     /** SiteFact */
     SiteFact: {
@@ -1425,6 +1821,33 @@ export interface components {
       postcode: string | null;
       station: components["schemas"]["StationRow"];
     };
+    /** StationHome */
+    StationHome: {
+      /** Bills */
+      bills: components["schemas"]["BillRef"][];
+      forecast: components["schemas"]["ForecastView"] | null;
+      last_month: components["schemas"]["LastMonth"] | null;
+      money: components["schemas"]["BillMoney"] | null;
+      peer: components["schemas"]["PeerView"];
+      /** Series */
+      series: components["schemas"]["SeriesPoint"][];
+      station: components["schemas"]["StationView"];
+      /** Track Record */
+      track_record: components["schemas"]["TrackRow"][];
+    };
+    /** StationIn */
+    StationIn: {
+      /** Address */
+      address?: string | null;
+      /** Lat */
+      lat: number;
+      /** Lng */
+      lng: number;
+      /** Name */
+      name: string;
+      /** Went Live */
+      went_live: string;
+    };
     /** StationRow */
     StationRow: {
       /** Chargers */
@@ -1460,6 +1883,28 @@ export interface components {
        * Format: date-time
        */
       updated_at: string;
+    };
+    /** StationView */
+    StationView: {
+      /** Connectors */
+      connectors: components["schemas"]["ConnectorView"][];
+      /** District */
+      district: string | null;
+      /** Id */
+      id: number;
+      /** Meter Type */
+      meter_type: string;
+      /** Name */
+      name: string;
+      /** Possibly Shared */
+      possibly_shared: boolean;
+      /** State */
+      state: string | null;
+      /**
+       * Went Live
+       * Format: date
+       */
+      went_live: string;
     };
     /** StationsOut */
     StationsOut: {
@@ -1499,53 +1944,6 @@ export interface components {
       question: string;
       /** Using */
       using: string;
-    };
-    /** SubmissionIn */
-    SubmissionIn: {
-      /** Connector Ids */
-      connector_ids: number[];
-      /** Consent Aggregate */
-      consent_aggregate: boolean;
-      /**
-       * Consent Public
-       * @default false
-       */
-      consent_public: boolean;
-      /** Install Month */
-      install_month: string;
-      /**
-       * Meter Type
-       * @enum {string}
-       */
-      meter_type: "separate" | "shared" | "unsure";
-      /** Readings */
-      readings: components["schemas"]["ReadingIn"][];
-      /** Station Id */
-      station_id: number;
-    };
-    /** SubmissionOut */
-    SubmissionOut: {
-      /** Age Months */
-      age_months: number;
-      forecast: components["schemas"]["BandOut"];
-      /** Model Version */
-      model_version: string;
-      /** Next Month */
-      next_month: string;
-      peer: components["schemas"]["BandOut"];
-      /** Peer Percentile */
-      peer_percentile: number;
-      /** Readings Ignored */
-      readings_ignored: number;
-      /** Readings Used */
-      readings_used: number;
-      /** Relative To Peers */
-      relative_to_peers: number;
-      /**
-       * Submission Id
-       * Format: uuid
-       */
-      submission_id: string;
     };
     /** TableOut */
     TableOut: {
@@ -1610,6 +2008,37 @@ export interface components {
       /** Tariff Source */
       tariff_source: string;
     };
+    /** TodCard */
+    TodCard: {
+      /** Normal Kwh */
+      normal_kwh: number | null;
+      /** Offpeak Kwh */
+      offpeak_kwh: number | null;
+      /** Peak Kwh */
+      peak_kwh: number | null;
+    };
+    /** TrackRow */
+    TrackRow: {
+      /** Actual Kwh */
+      actual_kwh: number;
+      band: components["schemas"]["Band"];
+      /** Error Pct */
+      error_pct: number;
+      /**
+       * Forecast Made From
+       * Format: date
+       */
+      forecast_made_from: string;
+      /** Inside Range */
+      inside_range: boolean;
+      /** Model Version */
+      model_version: string;
+      /**
+       * Target Month
+       * Format: date
+       */
+      target_month: string;
+    };
     /** UtilisationBand */
     UtilisationBand: {
       /** Model Version */
@@ -1667,6 +2096,13 @@ export interface components {
        * @enum {string}
        */
       value: "build" | "conditional" | "dont";
+    };
+    /** VerifyIn */
+    VerifyIn: {
+      /** Code */
+      code: string;
+      /** Phone */
+      phone: string;
     };
   };
   responses: never;
@@ -1821,6 +2257,26 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  features_api_internal_features_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Features"];
         };
       };
     };
@@ -2187,26 +2643,28 @@ export interface operations {
       };
     };
   };
-  stations_api_internal_owner_stations_get: {
+  upload_bill_image_api_internal_owner_bill_images_post: {
     parameters: {
-      query?: {
-        q?: string;
-        state?: string;
-        limit?: number;
-      };
+      query?: never;
       header?: never;
       path?: never;
-      cookie?: never;
+      cookie?: {
+        evsite_owner?: string | null;
+      };
     };
-    requestBody?: never;
+    requestBody: {
+      content: {
+        "multipart/form-data": components["schemas"]["Body_upload_bill_image_api_internal_owner_bill_images_post"];
+      };
+    };
     responses: {
       /** @description Successful Response */
-      200: {
+      201: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["OwnerStationsOut"];
+          "application/json": components["schemas"]["ImageOut"];
         };
       };
       /** @description Validation Error */
@@ -2220,16 +2678,160 @@ export interface operations {
       };
     };
   };
-  submit_api_internal_owner_submissions_post: {
+  bill_image_api_internal_owner_bill_images__image_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        image_id: string;
+      };
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  remove_bill_image_api_internal_owner_bill_images__image_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        image_id: string;
+      };
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  logout_api_internal_owner_logout_post: {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  me_api_internal_owner_me_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MeOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  erase_me_api_internal_owner_me_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  onboard_api_internal_owner_onboard_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["SubmissionIn"];
+        "application/json": components["schemas"]["OnboardIn"];
       };
     };
     responses: {
@@ -2239,7 +2841,174 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["SubmissionOut"];
+          "application/json": components["schemas"]["SavedOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  request_code_api_internal_owner_otp_request_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PhoneIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SentOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  verify_code_api_internal_owner_otp_verify_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["VerifyIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MeOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  my_stations_api_internal_owner_stations_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PortfolioRow"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  save_bill_api_internal_owner_stations__station_id__bills_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        station_id: number;
+      };
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["BillSaveIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SavedOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  home_api_internal_owner_stations__station_id__home_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        station_id: number;
+      };
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StationHome"];
         };
       };
       /** @description Validation Error */

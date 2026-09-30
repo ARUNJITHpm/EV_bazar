@@ -19,9 +19,11 @@ boundary. Demand model → ROI engine is a Python function call. Making it an HT
 call would add latency, failure modes, and a serialisation format to maintain,
 and would buy nothing — they deploy together, scale together, version together.
 
-The one thing that genuinely wants separate deployment is the **status poller**,
-because it must run every 5 minutes forever regardless of whether the web app is
-up. Separate process, same repo, same models, different entrypoint.
+The one thing that would want separate deployment is the **status poller**, if and
+when it is switched on (a deferred later stage, off unless `SCRAPER_ENABLED=true`):
+it would have to run on a fixed cadence regardless of whether the web app is up.
+Separate process, same repo, same models, different entrypoint. In the initial
+stage it does not run.
 
 ### Why a SPA
 
@@ -118,7 +120,7 @@ evsite/
 │   │   │   ├── lgbm_v1.py      # PART 8, drops in behind interface.py
 │   │   │   └── coefficients/   # versioned YAML, never hardcoded
 │   │   │
-│   │   ├── polling/            # PART 0.1 — availability sources
+│   │   ├── polling/            # PART 0.1 — availability sources (deferred)
 │   │   │   ├── sources.py      # registry; refuses unauthorised sources
 │   │   │   ├── normalise.py    # payload -> observations. PURE.
 │   │   │   ├── adapters.py     # OCPI fetch
@@ -200,7 +202,7 @@ evsite/
 │   └── dist/                   # build output; archived per release
 │
 ├── workers/                    # separate entrypoints, same models
-│   ├── poller.py               # ⚡ PART 0.1 — runs forever, independent
+│   ├── poller.py               # ⚡ PART 0.1 — deferred; exits unless SCRAPER_ENABLED
 │   ├── vahan_ingest.py         # monthly
 │   └── tariff_watch.py
 │
@@ -484,7 +486,7 @@ services:
   nominatim: mediagis/nominatim:4.4       # India extract, self-hosted, profile-gated
   api:       uvicorn app.main:app
   frontend:  npm run dev                  # vite dev server, proxies /api -> api
-  poller:    python -m workers.poller     # ⚡ separate, always up
+  poller:    python -m workers.poller     # deferred; compose profile "scraper"
 ```
 
 Dev: Vite dev server on :5173 proxying `/api` to uvicorn on :8000. One command.
@@ -494,11 +496,11 @@ reverse-proxies `/api` to uvicorn.** No Node process in production — the
 frontend is a build artifact, not a running service. That keeps the SPA's
 production footprint close to what server rendering had.
 
-The poller runs as its own container with `restart: always` and its own
-dead-man's-switch alert.
-
-The web app can go down for an hour without lasting harm. **The poller cannot.**
-Treat them as different reliability tiers from day one.
+If status scraping is switched on, the poller runs as its own container
+(compose profile `scraper`) with `restart: always` and its own dead-man's-switch
+alert. The web app can go down for an hour without lasting harm; a running poller
+cannot without leaving a gap in its record, so they are different reliability
+tiers when it is enabled.
 
 ---
 
@@ -506,7 +508,7 @@ Treat them as different reliability tiers from day one.
 
 | Part | Backend | Frontend |
 |---|---|---|
-| 0.1 Poller | `workers/poller.py`, `domain/polling/`, `models/charger_status.py` | console Overview |
+| 0.1 Poller (deferred) | `workers/poller.py`, `domain/polling/`, `models/charger_status.py` | console Overview |
 | 0.2 Tariff PDFs | `domain/tariffs/parse/` | — |
 | 1 Resolution | `domain/resolution/` + `scripts/load_*.py` | `features/assess/` |
 | 2 Context | `domain/context/` | — |

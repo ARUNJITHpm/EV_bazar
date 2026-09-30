@@ -219,6 +219,9 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
     what is parked on purpose.
     """
     poller_live = s.poll_runs > 0
+    # Status scraping is a later stage: until SCRAPER_ENABLED is set, the poller
+    # is parked on purpose, not the head of the queue.
+    scraper_on = get_settings().scraper_enabled
     geocoding_live = s.geocoded > 0
 
     out: list[MilestoneOut] = []
@@ -242,31 +245,45 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         )
 
     # ------------------------------------------------------------------ NEXT
-    add(
-        "0.1",
-        "Turn the poller on - one source",
-        Status.PARTIAL if poller_live else Status.NEXT,
-        "The recorder. Every few minutes it asks each charging network's app which "
-        "chargers are free, and writes it down. Months of this becomes the occupancy "
-        "record nobody else in India has - and the ONE thing in this project that "
-        "cannot be backfilled, bought, or hurried. The 90-day clock for the demand "
-        "model starts at the first recorded row.",
-        (
-            f"{s.poll_runs:,} poll runs recorded; "
-            f"{s.sources_authorised} of {s.sources_total} sources authorised."
+    if scraper_on or poller_live:
+        add(
+            "0.1",
+            "Turn the poller on - one source",
+            Status.PARTIAL if poller_live else Status.NEXT,
+            "The recorder. Every few minutes it asks each charging network's app which "
+            "chargers are free, and writes it down. Months of this becomes the occupancy "
+            "record nobody else in India has - and the ONE thing in this project that "
+            "cannot be backfilled, bought, or hurried. The 90-day clock for the demand "
+            "model starts at the first recorded row.",
+            (
+                f"{s.poll_runs:,} poll runs recorded; "
+                f"{s.sources_authorised} of {s.sources_total} sources authorised."
+                if poller_live
+                else f"Never run. 0 of {s.sources_total} sources authorised - the code is "
+                "complete and tested, waiting only on a human decision."
+            ),
+            None
             if poller_live
-            else f"Never run. 0 of {s.sources_total} sources authorised - the code is "
-            "complete and tested, waiting only on a human decision."
-        ),
-        None
-        if poller_live
-        else "Human: the poller collects by SCRAPING competitors, and the Tata Power adapter "
-        "is BUILT with its route confirmed - authorise it in app/domain/polling/sources.py, put "
-        "TATA_POWER_EZ__BASE_URL + the token in .env, then validate with "
-        "`python -m workers.poller --dry-run`. chargeMOD's real occupancy is the private "
-        "accuracy check (scraped-vs-real, by hand), not a wired feed. Then a VPS, never a "
-        "laptop - a laptop that sleeps is a hole in the record.",
-    )
+            else "Human: the poller collects by SCRAPING competitors, and the Tata Power adapter "
+            "is BUILT with its route confirmed - authorise it in "
+            "app/domain/polling/sources.py, put TATA_POWER_EZ__BASE_URL + the token in "
+            ".env, then validate with "
+            "`python -m workers.poller --dry-run`. chargeMOD's real occupancy is the private "
+            "accuracy check (scraped-vs-real, by hand), not a wired feed. Then a VPS, never a "
+            "laptop - a laptop that sleeps is a hole in the record.",
+        )
+    else:
+        add(
+            "0.1",
+            "Status scraping - deferred to a later stage",
+            Status.PARKED,
+            "Deferred. The initial stage's only station data source is what owners "
+            "upload: an electricity bill, or monthly units typed in. Polling charger "
+            "status from CPO apps is off, and nothing that depends on it is shown.",
+            f"Off (SCRAPER_ENABLED is not set). {s.sources_total} sources registered, none polled.",
+            "Check each app's terms of service, then set SCRAPER_ENABLED=true. See "
+            "'Later stage: status scraping' in OVERVIEW.md.",
+        )
     assess_live = s.pin_leads > 0
     add(
         "G.2",

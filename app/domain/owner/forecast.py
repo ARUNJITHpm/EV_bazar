@@ -21,7 +21,7 @@ from __future__ import annotations
 import math
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Protocol
 
 MODEL_VERSION = "owner_peer_v0"
 
@@ -67,6 +67,15 @@ def peer_median_kwh(connector_kw: Sequence[float], age_months: int) -> float:
     """Median monthly kWh peers of this connector mix deliver at this age."""
     ramp = 1.0 - math.exp(-(max(age_months, 0) + 0.5) / RAMP_MONTHS)
     return sum(plateau_kwh(kw) * ramp for kw in connector_kw)
+
+
+def model_band(connector_kw: Sequence[float], age_months: int) -> ForecastBand:
+    """The model's expected P10/P50/P90 for this connector mix at this age.
+
+    Shown when there are too few real peers, and always labelled as a model
+    estimate: it is the ``owner_peer_v0`` curve, not a measurement.
+    """
+    return _band(peer_median_kwh(connector_kw, age_months), PEER_SIGMA)
 
 
 def max_monthly_kwh(connector_kw: Sequence[float]) -> float:
@@ -145,3 +154,45 @@ def forecast(
         relative_to_peers=rel,
         peer_percentile=round(100.0 * _phi(z), 1),
     )
+
+
+class Forecaster(Protocol):
+    """The seam the real cluster model plugs into.
+
+    A forecaster gets the station's connector powers, the month it went live
+    and its confirmed monthly kWh, and returns the next month's P10/P50/P90 (or
+    None with nothing usable). ``PeerBlendForecaster`` below is the placeholder
+    until a fitted model replaces it; the stored ``model_version`` on every
+    forecast says which one produced it.
+    """
+
+    model_version: str
+
+    def __call__(
+        self,
+        connector_kw: Sequence[float],
+        install_month: int,
+        readings: Mapping[int, float],
+    ) -> OwnerForecast | None: ...
+
+
+class PeerBlendForecaster:
+    """Peer growth curve by power tier and age, blended with the station's own bills.
+
+    The blend leans further on the station's own history as months arrive
+    (``trust``), and the range narrows with each month (``sd``) - both inside
+    ``forecast``.
+    """
+
+    model_version = MODEL_VERSION
+
+    def __call__(
+        self,
+        connector_kw: Sequence[float],
+        install_month: int,
+        readings: Mapping[int, float],
+    ) -> OwnerForecast | None:
+        return forecast(connector_kw, install_month, readings)
+
+
+DEFAULT_FORECASTER: Forecaster = PeerBlendForecaster()

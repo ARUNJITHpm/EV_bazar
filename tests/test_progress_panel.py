@@ -8,6 +8,8 @@ non-empty one must not.
 
 from __future__ import annotations
 
+import pytest
+
 from app.api.internal.progress import (
     InputStatus,
     Signals,
@@ -103,11 +105,21 @@ def test_a_stamped_site_moves_the_tier_gate_off_code_done() -> None:
     assert "2 state(s)" in gate.evidence
 
 
-def test_a_silent_poller_is_the_first_item_in_the_queue() -> None:
+def test_scraping_is_parked_until_the_flag_is_set() -> None:
+    first = build_milestones(EMPTY_WORLD)[0]
+    assert first.part == "0.1"
+    assert first.status is Status.PARKED
+    assert "deferred" in first.title.lower()
+    assert first.what.startswith("Deferred")
+
+
+def test_a_silent_poller_is_the_first_item_in_the_queue(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("SCRAPER_ENABLED", "true")
     first = build_milestones(EMPTY_WORLD)[0]
     assert first.part == "0.1"
     assert first.status is Status.NEXT
     assert first.to_close is not None
+    assert not first.what.startswith("Deferred")
 
 
 def test_a_running_poller_leaves_the_queue() -> None:

@@ -1,31 +1,20 @@
-"""Station-owner upload: the pure forecast, and the submission endpoint.
-
-The endpoint runs against a stub session: ``competitor_stations`` carries a
-PostGIS column that SQLite cannot create, and the handler only needs ``get``,
-``add``, ``add_all`` and ``flush``.
-"""
+"""Owner forecast: the pure peer-blend module and its Forecaster seam."""
 
 from __future__ import annotations
 
 import math
-from collections.abc import Iterator
-from types import SimpleNamespace
-from typing import Any
 
 import pytest
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
 
-from app.api.internal import owner
-from app.db import get_session
 from app.domain.owner import (
+    DEFAULT_FORECASTER,
     MODEL_VERSION,
+    PeerBlendForecaster,
     expand_connectors,
     forecast,
     peer_median_kwh,
     valid_readings,
 )
-from app.models.charging import Station
 
 INSTALL = 2025 * 12  # Jan 2025
 
@@ -98,158 +87,28 @@ def test_forecast_busy_station_ranks_above_peers() -> None:
     assert f.peer_percentile > 90
 
 
-# --- endpoint ---------------------------------------------------------------
+def test_forecaster_seam_matches_the_function_and_names_its_version() -> None:
+    kw = [60.0]
+    readings = {INSTALL + i: 900.0 for i in range(3)}
+    assert isinstance(DEFAULT_FORECASTER, PeerBlendForecaster)
+    assert DEFAULT_FORECASTER.model_version == MODEL_VERSION
+    assert DEFAULT_FORECASTER(kw, INSTALL, readings) == forecast(kw, INSTALL, readings)
 
 
-class _Rows:
-    def __init__(self, rows: list[Any]) -> None:
-        self._rows = rows
-
-    def all(self) -> list[Any]:
-        return self._rows
-
-
-class StubSession:
-    """Answers the two queries the handlers make, by what the statement selects."""
-
-    def __init__(self, station: Any, connectors: list[Any]) -> None:
-        self.station = station
-        self.connectors = connectors  # (station id, connector id, standard, kW)
-        self.added: list[Any] = []
-
-    def get(self, _model: Any, key: int) -> Any:
-        return self.station if self.station is not None and self.station.id == key else None
-
-    def execute(self, stmt: Any) -> _Rows:
-        if stmt.column_descriptions[0]["entity"] is Station:
-            return _Rows([(self.station, "Zeon")] if self.station is not None else [])
-        return _Rows(self.connectors)
-
-    def add(self, obj: Any) -> None:
-        self.added.append(obj)
-
-    def add_all(self, objs: Any) -> None:
-        self.added.extend(objs)
-
-    def flush(self) -> None:
-        return None
-
-
-def _station() -> Any:
-    return SimpleNamespace(
-        id=7,
-        name="Casino Hotel",
-        operator_raw="Zeon Charging",
-        town="Kochi",
-        lat=9.96,
-        lng=76.27,
-        merged_into_id=None,
+def test_more_months_of_own_history_pull_the_forecast_toward_it() -> None:
+    kw = [60.0]
+    one = forecast(kw, INSTALL, {INSTALL: 3 * peer_median_kwh(kw, 0)})
+    six = forecast(kw, INSTALL, {INSTALL + i: 3 * peer_median_kwh(kw, i) for i in range(6)})
+    assert one is not None and six is not None
+    # 3x the peer line: six months of evidence trusts that more than one month does.
+    assert six.band.p50 / peer_median_kwh(kw, six.age_months) > (
+        one.band.p50 / peer_median_kwh(kw, one.age_months)
     )
 
 
-CONNECTORS = [(7, 11, "CCS2", 60.0), (7, 12, "CCS2", 60.0), (7, 13, "Type2", 7.4)]
+def test_model_band_is_ordered_and_grows_with_age() -> None:
+    from app.domain.owner.forecast import model_band
 
-
-@pytest.fixture
-def stub() -> StubSession:
-    return StubSession(_station(), list(CONNECTORS))
-
-
-@pytest.fixture
-def client(stub: StubSession) -> Iterator[TestClient]:
-    app = FastAPI()
-    app.include_router(owner.router, prefix="/api/internal")
-    app.dependency_overrides[get_session] = lambda: stub
-    with TestClient(app) as c:
-        yield c
-
-
-def _body(**over: Any) -> dict[str, Any]:
-    body: dict[str, Any] = {
-        "station_id": 7,
-        "connector_ids": [11, 12],
-        "install_month": "2025-01",
-        "meter_type": "separate",
-        "readings": [{"month": "2025-06", "kwh": 3000}, {"month": "2025-07", "kwh": 3400}],
-        "consent_aggregate": True,
-    }
-    body.update(over)
-    return body
-
-
-def test_submit_stores_and_returns_band(client: TestClient, stub: StubSession) -> None:
-    r = client.post("/api/internal/owner/submissions", json=_body())
-    assert r.status_code == 201, r.text
-    out = r.json()
-    assert out["model_version"] == MODEL_VERSION
-    assert out["next_month"] == "2025-08"
-    assert out["readings_used"] == 2 and out["readings_ignored"] == 0
-    f = out["forecast"]
-    assert f["p10_kwh"] < f["p50_kwh"] < f["p90_kwh"]
-    kinds = [type(o).__name__ for o in stub.added]
-    assert kinds == ["OwnerSubmission", "OwnerReading", "OwnerReading"]
-    assert stub.added[0].forecast["model_version"] == MODEL_VERSION
-    assert stub.added[0].install_month.isoformat() == "2025-01-01"
-    # Real ids, not positions; the legacy pair stays empty.
-    assert stub.added[0].station_id == 7 and stub.added[0].connector_ids == [11, 12]
-    assert stub.added[0].competitor_station_id is None
-
-
-def test_submit_counts_ignored_readings(client: TestClient) -> None:
-    body = _body(readings=[{"month": "2024-11", "kwh": 500}, {"month": "2025-06", "kwh": 3000}])
-    out = client.post("/api/internal/owner/submissions", json=body).json()
-    assert out["readings_used"] == 1 and out["readings_ignored"] == 1
-
-
-@pytest.mark.parametrize(
-    ("over", "code"),
-    [
-        ({"consent_aggregate": False}, 422),
-        ({"station_id": 999}, 404),
-        ({"connector_ids": [999]}, 422),  # not a connector of this station
-        ({"connector_ids": [11, 999]}, 422),
-        ({"connector_ids": [0]}, 422),
-        ({"connector_ids": [-1]}, 422),
-        ({"install_month": "2025-13"}, 422),
-        ({"meter_type": "maybe"}, 422),
-        ({"readings": []}, 422),
-        ({"readings": [{"month": "2025-06", "kwh": -1}]}, 422),
-        ({"readings": [{"month": "2024-01", "kwh": 100}]}, 422),  # all before install
-        ({"readings": [{"month": "2025-06", "kwh": 900000}]}, 422),  # above ceiling
-    ],
-)
-def test_submit_rejects_bad_input(
-    client: TestClient, stub: StubSession, over: Any, code: int
-) -> None:
-    r = client.post("/api/internal/owner/submissions", json=_body(**over))
-    assert r.status_code == code
-    assert stub.added == []
-
-
-def test_submit_station_without_powered_connectors(client: TestClient, stub: StubSession) -> None:
-    stub.connectors = []
-    assert client.post("/api/internal/owner/submissions", json=_body()).status_code == 422
-
-
-def test_submit_merged_station_is_unknown(client: TestClient, stub: StubSession) -> None:
-    stub.station.merged_into_id = 3
-    assert client.post("/api/internal/owner/submissions", json=_body()).status_code == 404
-
-
-def test_the_old_position_field_is_no_longer_accepted(client: TestClient) -> None:
-    body = _body()
-    body.pop("connector_ids")
-    body["connector_indices"] = [0, 1]
-    assert client.post("/api/internal/owner/submissions", json=body).status_code == 422
-
-
-def test_search_returns_powered_connectors_with_ids(client: TestClient) -> None:
-    r = client.get("/api/internal/owner/stations", params={"q": "casino"})
-    assert r.status_code == 200, r.text
-    (st,) = r.json()["stations"]
-    assert st["id"] == 7 and st["operator"] == "Zeon" and st["town"] == "Kochi"
-    assert [(c["id"], c["standard"], c["power_kw"]) for c in st["connectors"]] == [
-        (11, "CCS2", 60.0),
-        (12, "CCS2", 60.0),
-        (13, "Type2", 7.4),
-    ]
+    young, old = model_band([60.0], 1), model_band([60.0], 24)
+    assert young.p10 < young.p50 < young.p90
+    assert old.p50 > young.p50

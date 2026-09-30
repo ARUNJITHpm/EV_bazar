@@ -34,6 +34,17 @@ def healthz() -> Health:
     return Health(status="ok")
 
 
+class Features(BaseModel):
+    #: Status scraping (charger status polled from CPO apps) is a later stage.
+    scraper_enabled: bool
+
+
+@router.get("/features", response_model=Features)
+def features() -> Features:
+    """Which deferred features are switched on, so the SPA can hide the rest."""
+    return Features(scraper_enabled=get_settings().scraper_enabled)
+
+
 @router.get("/readyz", response_model=Readiness)
 def readyz() -> JSONResponse:
     """Readiness: database reachable and PostGIS actually installed.
