@@ -1,3 +1,10 @@
+import {
+  ContentIndex,
+  ContentArticle,
+  LatestWeekly,
+  RecentInsights,
+  TopicList,
+} from "./content/Content";
 import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
 import publicCatalogue from "virtual:analytics-public-data";
@@ -36,7 +43,7 @@ function Search({ districtsOnly = false }: { districtsOnly?: boolean }) {
           ? publicCatalogue.districts.length
             ? "Search district names or states in our archived LGD reference. District boundaries and names may have changed since this snapshot; indicators will appear after their sources are verified."
             : "District search will open once a sourced district reference is available."
-          : "Search topic titles. Insights, weekly charts and districts will join this index as they are published."}
+          : "Search published insights, weekly charts, topics and districts."}
       </p>
       <label htmlFor={id}>{districtsOnly ? "District name" : "Search Chargeworthy Data"}</label>
       <input
@@ -98,12 +105,9 @@ function Landing() {
       <section className="analytics-section" aria-labelledby="latest-weekly">
         <p className="analytics-label">One question, one chart</p>
         <h2 id="latest-weekly">The weekly chart</h2>
-        <Preparation>
-          Our first weekly chart will appear here after its dataset is verified and the accompanying
-          explanation is published.
-        </Preparation>
+        <LatestWeekly />
         <Link className="analytics-text-link" to="/data/weekly">
-          About the weekly series <span aria-hidden="true">→</span>
+          Browse weekly charts <span aria-hidden="true">→</span>
         </Link>
       </section>
       <section className="analytics-section" aria-labelledby="topics-heading">
@@ -127,16 +131,14 @@ function Landing() {
       </section>
       <section className="analytics-section" aria-labelledby="insights-heading">
         <h2 id="insights-heading">Recent insights</h2>
-        <Preparation>
-          Articles will appear here when their sourced charts and explanations are ready. Each
-          article will show its publication date, updates and corrections.
-        </Preparation>
+        <RecentInsights />
         <Link className="analytics-text-link" to="/data/insights">
-          About the insights <span aria-hidden="true">→</span>
+          Browse insights <span aria-hidden="true">→</span>
         </Link>
       </section>
       <Search districtsOnly />
       <Search />
+      <TopicList />
     </>
   );
 }
@@ -178,23 +180,14 @@ function DistrictPage() {
 function InsightsPage() {
   return (
     <DocumentPage title="Insights">
-      <Preparation>
-        Our first insights are being prepared. Articles answering a question with sourced charts
-        will appear once their datasets are checked and their explanations are published.
-      </Preparation>
-      <p>Every article will carry an update date and a record of changes.</p>
+      <ContentIndex format="insights" />
     </DocumentPage>
   );
 }
-
 function WeeklyPage() {
   return (
     <DocumentPage title="One question, one chart">
-      <Preparation>
-        The first weekly post is being prepared. It will appear when its public dataset is verified,
-        with one chart, a short explanation and a source you can follow.
-      </Preparation>
-      <p>Each published chart will include a table view and downloadable data.</p>
+      <ContentIndex format="weekly" />
     </DocumentPage>
   );
 }
@@ -443,9 +436,9 @@ export function AnalyticsApp() {
           <Route path="district" element={<DistrictPage />} />
           <Route path="district/:slug" element={<DistrictPage />} />
           <Route path="insights" element={<InsightsPage />} />
-          <Route path="insights/:slug" element={<InsightsPage />} />
+          <Route path="insights/:slug" element={<ContentArticle format="insights" />} />
           <Route path="weekly" element={<WeeklyPage />} />
-          <Route path="weekly/:slug" element={<WeeklyPage />} />
+          <Route path="weekly/:slug" element={<ContentArticle format="weekly" />} />
           <Route path="methodology" element={<MethodologyPage />} />
           <Route path="sources" element={<SourcesPage />} />
           <Route path="*" element={<UnpublishedPage />} />

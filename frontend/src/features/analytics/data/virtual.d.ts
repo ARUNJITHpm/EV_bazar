@@ -14,3 +14,8 @@ declare module "virtual:analytics-fixtures" {
   } | null;
   export default fixtures;
 }
+
+declare module "virtual:analytics-content" {
+  const articles: import("../content/model").Article[];
+  export default articles;
+}

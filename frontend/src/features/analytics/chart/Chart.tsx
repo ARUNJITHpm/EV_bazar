@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { Plot } from "./Plot";
 import {
@@ -114,12 +114,14 @@ function Table({ rows, title, unit }: { rows: readonly ChartRow[]; title: string
 }
 export function Chart({ data }: { data: ChartData }) {
   validateChart(data);
-  const uid = useId();
+  const uid = `chart-${data.id}`;
   const location = useLocation();
   const [params, setParams] = useSearchParams();
-  const filters = chartFilters(location.search, data.id);
+  const [enhanced, setEnhanced] = useState(false);
+  useEffect(() => setEnhanced(true), []);
+  const filters = chartFilters(enhanced ? location.search : "", data.id);
   const rows = selectRows(data.rows, filters);
-  const table = params.get(`${data.id}.view`) === "table";
+  const table = enhanced && params.get(`${data.id}.view`) === "table";
   const [message, setMessage] = useState("");
   const [manualCitation, setManualCitation] = useState("");
   const change = (key: string, value: string) => {
@@ -209,9 +211,7 @@ export function Chart({ data }: { data: ChartData }) {
             type={data.type}
             summary={`${data.summary} Selection: ${rows.length.toLocaleString("en-IN")} observations. ${rows.map((row) => `${row.label}: ${rowValue(row)}`).join("; ")}`}
           />
-          <noscript>
-            <Table rows={rows} title={data.title} unit={data.unit} />
-          </noscript>
+          {!enhanced && <Table rows={rows} title={data.title} unit={data.unit} />}
         </>
       )}
       <figcaption>

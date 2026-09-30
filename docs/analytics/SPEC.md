@@ -1,6 +1,6 @@
 # Chargeworthy Data: specification
 
-Status: Parts 0–3 complete; Part 4 implementation complete, live geographic indicators pending sources. Reviewed 2026-09-30.
+Status: Parts 0–3 complete; Part 4 implementation complete with live indicators pending sources; Part 5 working draft unpublished; Part 6 content implementation complete. Reviewed 2026-10-01.
 Implementation brief: `chargeworthy-data-section-antigravity.md`.
 Read this file before every subsequent analytics part, alongside `AGENTS.md`,
 `OVERVIEW.md`, `STACK.md`, `PLAN.md` and `FINDINGS.md`.
@@ -346,3 +346,13 @@ product roadmap numbering in `PLAN.md`.
 - District documents render static key figures, class/month registration charts, known opening records, integer-paise tariffs, locator and shared-edge neighbours when sources exist. Twelve-month totals need explicit complete class/month coverage; absent inventory is unknown, not zero. No-indicator districts remain noindex.
 - Acceptance: 185 frontend tests passed including five new district tests; typecheck and production build passed with 795 documents. Browser checks passed development-fixture hatching, keyboard selection, observed counts, three widths, static empty district pages with JavaScript on/off, production demo exclusion and the existing 17-route shell. Build refusal/fixture scan passed. Changed-file formatting passed.
 - Live boundaries, monthly registrations, curated charger inventory and tariffs remain pending in DATA_SOURCES_TODO.md. Production renders honest absence and archived district names, not invented geography or coverage. Real source-dependent figures and wide-range estimates are not claimed as live verification. Next: Part 5 offline engine, gated on reviewed private inputs and public inventory.
+
+## Part 6 checkpoint — 2026-10-01
+
+Implemented reviewed Markdown insight and weekly formats with strict front matter, safe body rendering, dataset-backed Chart components, publication/update dates and insight changelogs. Weekly posts have exactly one chart, at most 150 explanation words and captions under 300 characters. Indices sort newest first and retain vertical filters in URLs. Published posts join search, static routes, metadata, recent insights, the latest weekly chart and the landing topic list.
+
+The initial insight and weekly post use the verified archived district reference only. Their charts derive counts from the source records and disclose the historical coverage. They do not infer current district boundaries or EV indicators. No fixtures, owner records or unverified usage estimates are published. Part 5's implementation remains an unpublished working draft; real fitting and usage publication still require reviewed inputs and validation.
+
+Validation: isolated public build and strict TypeScript checks; content schema/source/length/date tests; component, search and prerender checks; production artifact privacy scan; browser checks with JavaScript enabled and disabled at 375, 768 and 1440 pixels, including chart tables, CSV download and vertical filters. Authoring and review rules are in `WRITING.md`.
+
+ESLint could not run: the repository does not provide an `eslint.config.*` file. Strict TypeScript, scoped Prettier and the checks above passed.

@@ -165,7 +165,7 @@ export function Plot({
                           y={horizontal ? y : bottom - 12}
                           textAnchor={horizontal ? "start" : "middle"}
                         >
-                          No data<title>{row.label}: Not enough data yet</title>
+                          No data<title>{`${row.label}: Not enough data yet`}</title>
                         </text>
                         {horizontal && (
                           <text x={left - 12} y={y} textAnchor="end">
@@ -176,9 +176,7 @@ export function Plot({
                     );
                   return (
                     <g key={index}>
-                      <title>
-                        {row.series}, {row.label}: {rowValue(row)}
-                      </title>
+                      <title>{`${row.series}, ${row.label}: ${rowValue(row)}`}</title>
                       {horizontal ? (
                         <>
                           <text
