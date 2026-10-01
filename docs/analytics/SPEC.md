@@ -505,3 +505,21 @@ proposals require notified-order/amendment and human verification. No policy,
 subsidy, ROI input, production database, report payload or archived PDF changed.
 See PART12_SOURCE_REVIEW.md and PART12_SOURCE_INDEX.json for evidence and owner
 actions. Full Part 12 acquisition and source-dependent Parts 13–16 remain open.
+
+## Part 13 available-source checkpoint — 2026-10-01
+
+OSM power proximity now enriches newly assembled reports through the shared
+release-pinned reference, using PostGIS geography within 2 km. Mapped distance
+and raw voltage remain unverified; first-way-vertex and regional coverage limits
+are explicit. Written DISCOM spare-capacity confirmation uses the existing
+advised kVA; demand and ROI inputs are unchanged. Optional public context,
+ledger carry-through, source digests/dates and ODbL attribution are persisted.
+Enriched reports carry schema stamp 0013_public_context_v1. Old stored JSON is
+served without filling new defaults; no archived PDF is regenerated.
+
+Parts 12 and 13 source-dependent work is deferred at the owner's request.
+See PART13_REPORT_CONTEXT.md for each gate and remaining task. The unpublished
+twelve-section report rebuild is preserved: local section 08 carries the grid
+condition; published legacy reports carry it inside the verdict section until the
+rebuild is separately published. Production reference configuration/deployment
+is still required; this checkpoint does not claim deployment completion.

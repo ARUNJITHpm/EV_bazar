@@ -22,8 +22,8 @@ export function Provenance({ payload }: { payload: ReportPayload }) {
             <dd
               className={
                 p.unverified
-                  ? "bg-warn-ground px-1 text-right font-data text-[12px] text-warn"
-                  : "text-right font-data text-[12px]"
+                  ? "bg-warn-ground px-1 break-words text-right font-data text-[12px] text-warn"
+                  : "break-words text-right font-data text-[12px]"
               }
             >
               {p.value}

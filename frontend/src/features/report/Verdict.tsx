@@ -1,3 +1,4 @@
+import { GridConditions } from "./GridConditions";
 import type { ReportPayload, Verdict as VerdictValue } from "./payload";
 
 /**
@@ -31,6 +32,7 @@ export function Verdict({ payload }: { payload: ReportPayload }) {
         <span className={`font-bold ${INK[verdict.value]}`}>{LABEL[verdict.value]}</span>
       </p>
       <p className="mt-2 max-w-[34rem] text-[0.9375rem] text-ink-muted">{verdict.reason}</p>
+      <GridConditions payload={payload} />
     </section>
   );
 }
