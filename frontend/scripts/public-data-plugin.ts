@@ -1,3 +1,4 @@
+import { loadAnalyticsMethod } from "./analytics-method.ts";
 import { loadAnalyticsContent } from "./analytics-content.ts";
 import { resolve } from "node:path";
 import type { Plugin } from "vite";
@@ -38,6 +39,7 @@ export function publicDataPlugin(): Plugin {
     resolveId(id) {
       if (
         [
+          "virtual:analytics-method",
           "virtual:analytics-content",
           "virtual:analytics-public-data",
           "virtual:analytics-fixtures",
@@ -47,6 +49,12 @@ export function publicDataPlugin(): Plugin {
         return `\0${id}`;
     },
     async load(id) {
+      if (id === "\0virtual:analytics-method") {
+        loaded ??= await loadPublicData(resolve(root, "public"));
+        const contentRoot = resolve(root, "../frontend/content/analytics");
+        const articles = await loadAnalyticsContent(contentRoot, loaded.catalogue);
+        return `export default ${JSON.stringify(await loadAnalyticsMethod(contentRoot, articles))};`;
+      }
       if (id === "\0virtual:analytics-content") {
         loaded ??= await loadPublicData(resolve(root, "public"));
         return `export default ${JSON.stringify(await loadAnalyticsContent(resolve(root, "../frontend/content/analytics"), loaded.catalogue))};`;

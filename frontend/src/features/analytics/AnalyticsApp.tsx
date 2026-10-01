@@ -1,3 +1,4 @@
+import { Methodology, Sources } from "./method/Method";
 import {
   ContentIndex,
   ContentArticle,
@@ -195,62 +196,14 @@ function WeeklyPage() {
 function MethodologyPage() {
   return (
     <DocumentPage title="Methodology">
-      <p className="analytics-lead">Know what a number can tell you.</p>
-      <p>
-        Every published chart will identify its source, reporting period and last update. Estimates
-        will carry a range, and missing observations will be labelled.
-      </p>
-      <h2>Owner data stays private</h2>
-      <ul>
-        <li>Only stations whose owners gave analysis consent are eligible.</li>
-        <li>Shared and unknown meters are excluded.</li>
-        <li>
-          A published group must contain at least <span className="analytics-number">10</span>{" "}
-          stations.
-        </li>
-        <li>No station may account for more than one third of the group’s total.</li>
-        <li>Groups that fail these checks show “Not enough data yet”, never a number.</li>
-      </ul>
-      <Preparation>
-        Detailed source methods, model validation and limitations will be added alongside the first
-        published datasets. No usage model results have been published here yet.
-      </Preparation>
-      <h2 id="corrections">Corrections</h2>
-      <p>
-        No corrections have been published yet. Future changes will record what changed, when and
-        why.
-      </p>
+      <Methodology />
     </DocumentPage>
   );
 }
-
 function SourcesPage() {
   return (
     <DocumentPage title="Sources">
-      <p>Every dataset will have a source link, retrieval date, reporting period and licence.</p>
-      {publicCatalogue.datasets.map((dataset) => (
-        <section className="analytics-section" key={dataset.id}>
-          <h2>{dataset.metadata.title}</h2>
-          <p>
-            <a href={dataset.metadata.source_url}>{dataset.metadata.source_name}</a>
-          </p>
-          <p>
-            Retrieved <time>{dataset.metadata.retrieved_on}</time>. {dataset.metadata.time_coverage}
-            .
-          </p>
-          <p>Licence: {dataset.metadata.licence}.</p>
-          <p>{dataset.metadata.notes}</p>
-        </section>
-      ))}
-      <Preparation>
-        Remaining public datasets are being prepared. Entries will appear once their datasets and
-        metadata have been verified.
-      </Preparation>
-      <p>
-        Our original explanations are licensed under{" "}
-        <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Third-party datasets
-        keep their own licences, which will be shown alongside each source and download.
-      </p>
+      <Sources />
     </DocumentPage>
   );
 }
@@ -270,7 +223,7 @@ function UnpublishedPage() {
 }
 
 export function AnalyticsApp() {
-  const { pathname, search } = useLocation();
+  const { pathname, search, hash } = useLocation();
   const [fixtureCsv, setFixtureCsv] = useState<string | null>(null);
   useEffect(() => {
     let active = true;
@@ -286,8 +239,11 @@ export function AnalyticsApp() {
     };
   }, [search]);
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (window.location.hash) {
+      const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+      target?.scrollIntoView?.();
+    } else window.scrollTo(0, 0);
+  }, [pathname, hash]);
   useEffect(() => {
     const previousTitle = document.title;
     const selectors = [

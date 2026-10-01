@@ -19,3 +19,8 @@ declare module "virtual:analytics-content" {
   const articles: import("../content/model").Article[];
   export default articles;
 }
+
+declare module "virtual:analytics-method" {
+  const reviewed: import("../method/reviewed").ReviewedMethod;
+  export default reviewed;
+}

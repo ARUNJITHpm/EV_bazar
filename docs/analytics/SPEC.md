@@ -1,6 +1,6 @@
 # Chargeworthy Data: specification
 
-Status: Parts 0–3 complete; Part 4 implementation complete with live indicators pending sources; Part 5 working draft unpublished; Part 6 content implementation complete. Reviewed 2026-10-01.
+Status: Parts 0–3 complete; Part 4 implementation complete with live indicators pending sources; Part 5 working draft unpublished; Part 6 content implementation complete; Part 7 implementation complete with owner-confirmed affiliation and ownership disclosure. Reviewed 2026-10-01.
 Implementation brief: `chargeworthy-data-section-antigravity.md`.
 Read this file before every subsequent analytics part, alongside `AGENTS.md`,
 `OVERVIEW.md`, `STACK.md`, `PLAN.md` and `FINDINGS.md`.
@@ -162,13 +162,12 @@ validation reports through the frontend.
 
 ## Conflicts, resolutions and dependencies
 
-1. **Independence is factually inconsistent.** `OVERVIEW.md` section 6.3 says we
-   are affiliated with an operating CPO; `PLAN.md` G.0 leaves the decision open.
-   `Landing.tsx` and `report/Disclosure.tsx` say Chargeworthy is not a CPO and
-   owns no stakes. The brief repeats the latter as required public copy.
-   Ask the owner which statement is current. Until clarified, record this as
-   unresolved and do not add absolute independence or ownership claims. Do not
-   edit existing disclosures in Part 0.
+1. **Affiliation and ownership clarified by the owner.** The owner confirms
+   Chargeworthy currently has no CPO affiliation, owns no charging stations and
+   does not plan to own them. This supersedes the earlier OVERVIEW section 6.3
+   affiliation statement for analytics copy. The fee model is site assessments
+   and operator matching; current versus planned income is not asserted.
+   Existing unrelated OVERVIEW edits are preserved.
 
 2. **No-JavaScript pages require work absent from today's SPA.** The current
    entry point mounts into an empty root; a successful Vite build does not meet
@@ -356,3 +355,19 @@ The initial insight and weekly post use the verified archived district reference
 Validation: isolated public build and strict TypeScript checks; content schema/source/length/date tests; component, search and prerender checks; production artifact privacy scan; browser checks with JavaScript enabled and disabled at 375, 768 and 1440 pixels, including chart tables, CSV download and vertical filters. Authoring and review rules are in `WRITING.md`.
 
 ESLint could not run: the repository does not provide an `eslint.config.*` file. Strict TypeScript, scoped Prettier and the checks above passed.
+
+
+## Part 7 checkpoint — 2026-10-01
+
+Implemented plain-language methodology with a separately labelled technical draft, exact privacy rules and volunteer-bias limitations. Real validation remains pending: the build reads only an approved aggregate summary, never a private LOO report. The review export extracts saved run metrics and versions, refusing demos and incomplete runs. Sources are generated from validated metadata with reporting periods, dates, licences, attribution, downloads and published article chart links.
+
+Every analytics page retains the original-content CC BY 4.0 footer. Source and chart CSVs carry a reserved licence comment; third-party licences remain distinct. Checksums cover the actual download bytes, the parser preserves row diagnostics and BOM handling, and export/content renderer versions are advanced to v2. Chart captions and citations support source attribution. The corrections registry validates dates, unique IDs and published chart references; affected charts link to their entry and entries link back. No correction history was invented.
+
+Checks: production build and strict TypeScript, frontend tests, public-summary export tests, scoped Prettier/Ruff, fixture/build-refusal scan, and browser checks with JavaScript enabled and disabled at mobile/tablet/desktop widths. Source links, correction anchors and licensed/checksummed downloads passed. Existing ESLint configuration remains absent.
+
+The owner confirmed no current CPO affiliation, no station ownership and no
+plans to own stations. The disclosure states those facts and describes the
+site-assessment/operator-matching fee model without asserting when income began.
+Part 7 implementation and acceptance checks are complete. No real validation
+run, private data export, production migration or deployment occurred.
+Workflow details are in METHODOLOGY.md.

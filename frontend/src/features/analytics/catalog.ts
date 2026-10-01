@@ -133,6 +133,8 @@ export function analyticsMetadata(pathname: string) {
     // Shells contain no published indicators yet. Remove only as real
     // datasets/content are published, including the district-specific gate.
     noindex:
+      path === "/data/methodology" ||
+      path === "/data/sources" ||
       article ||
       ((path === "/data/insights" || path === "/data/weekly") &&
         articles.some((a) => path === `/data/${a.format}`))

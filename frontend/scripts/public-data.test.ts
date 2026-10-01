@@ -28,6 +28,20 @@ afterEach(async () => {
 });
 
 describe("CSV grammar and diagnostics", () => {
+  it("skips the reserved licence preamble without losing BOM support or row diagnostics", () => {
+    expect(
+      parseCsv(
+        '# Chargeworthy Data: {"licence":"CC BY 4.0"}\r\n\uFEFFname,count\r\nx,1\r\n',
+        "licensed.csv",
+      ),
+    ).toEqual([
+      { row: 2, values: ["name", "count"] },
+      { row: 3, values: ["x", "1"] },
+    ]);
+    expect(() => parseCsv('# Chargeworthy Data: {}\nname\n"unfinished', "licensed.csv")).toThrow(
+      /row 3/,
+    );
+  });
   it("reads BOM, escaped quotes, CRLF and embedded lines without splitting a quoted field", () => {
     expect(
       parseCsv('\uFEFFname,note\r\n"Test Station 01","one, ""two""\nthree"\r\n', "sample.csv"),
