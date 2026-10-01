@@ -138,10 +138,17 @@ def test_pending_production_sources_return_no_invented_values(tmp_path):
     )
     digest = hashlib.sha256(snapshot.read_bytes()).hexdigest()
     reference = PublicReference.load(snapshot, sources, expected_sha256=digest)
-    for dataset in EXPANSION_DATASETS:
+    for dataset in (item for item in EXPANSION_DATASETS if item != "osm_power"):
         result = reference.lookup(dataset, state="Kerala")
         assert result.status == "pending"
         assert result.rows == () and result.provenance is None
+    mapped = reference.lookup("osm_power")
+    assert mapped.status == "available"
+    assert len(mapped.rows) == 7726
+    assert all(row["lgd_code"] is None for row in mapped.rows)
+    assert reference.lookup("osm_power", state="Kerala").status == "no_matching_observations"
+    assert reference.lookup("osm_power", lgd_code=544).rows == ()
+    assert mapped.provenance["licence"] == "ODbL-1.0"
 
 
 def test_activation_after_export_is_refused(release):

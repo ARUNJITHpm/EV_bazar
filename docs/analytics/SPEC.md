@@ -488,3 +488,20 @@ preserved. No API/report payload, database, model run or deployment changed.
 See [PUBLIC_REFERENCE.md](PUBLIC_REFERENCE.md) for export, release pins, lookup
 semantics and acceptance commands. Source-backed Parts 13-16 still need the
 respective acquisition gates to pass.
+
+## Part 12 source acquisition checkpoint — 2026-10-01
+
+Activated 7,726 OSM power observations from the checksum-verified Geofabrik
+Southern Zone snapshot (2026-09-30T20:22:42Z), retaining ODbL attribution,
+unverified voltage tags and unresolved district joins. Nodes retain mapped
+positions; ways use their first perimeter vertex. Seven relations are excluded.
+The reproducible offline extractor has isolated osmium regression tests.
+
+Archived three genuine PFC editions, CEA supply data, three state policy PDFs,
+the historical NHAI directory and dated current tender evidence. Four expansion
+datasets remain pending: PFC requires written commercial reuse permission;
+CEA methodology/reuse and NHAI reuse/status require confirmation; policy
+proposals require notified-order/amendment and human verification. No policy,
+subsidy, ROI input, production database, report payload or archived PDF changed.
+See PART12_SOURCE_REVIEW.md and PART12_SOURCE_INDEX.json for evidence and owner
+actions. Full Part 12 acquisition and source-dependent Parts 13–16 remain open.

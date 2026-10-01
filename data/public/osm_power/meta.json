@@ -1,0 +1,70 @@
+{
+  "id": "osm_power",
+  "title": "OSM power equipment: Southern Zone snapshot",
+  "description": "Mapped substations and transformers in the Geofabrik India Southern Zone extract; incomplete community mapping, not verified utility equipment",
+  "source_name": "OpenStreetMap contributors via Geofabrik",
+  "source_url": "https://download.geofabrik.de/asia/india/southern-zone-260930.osm.pbf",
+  "retrieved_on": "2026-10-01",
+  "licence": "ODbL-1.0",
+  "geography_level": "district",
+  "time_coverage": "OSM snapshot 2026-09-30T20:22:42Z; district codes unresolved",
+  "update_frequency": "Manual reviewed regional refresh",
+  "notes": "Regional extract, not exhaustive national coverage. All LGD codes unresolved. 2398 mapped nodes and 5328 mapped ways; 7 power relations excluded. Ways use their first mapped perimeter vertex, not a surveyed center. Voltage is an unverified OSM tag. No capacity, ownership, availability or connection-feasibility inference. No usernames, user IDs or changeset metadata. See docs/analytics/PART12_SOURCE_REVIEW.md.",
+  "columns": [
+    {
+      "name": "osm_id",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "OSM object type and identifier"
+    },
+    {
+      "name": "kind",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "OSM power tag: substation or transformer"
+    },
+    {
+      "name": "voltage",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Voltage tag verbatim; unverified, may contain multiple values",
+      "nullable": true
+    },
+    {
+      "name": "lat",
+      "type": "number",
+      "unit": "EPSG:4326",
+      "description": "Mapped node latitude or first way vertex latitude"
+    },
+    {
+      "name": "lon",
+      "type": "number",
+      "unit": "EPSG:4326",
+      "description": "Mapped node longitude or first way vertex longitude"
+    },
+    {
+      "name": "lgd_code",
+      "type": "integer",
+      "unit": "LGD district code",
+      "description": "Unresolved; no district or state assignment inferred",
+      "nullable": true
+    },
+    {
+      "name": "extract_date",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "UTC date of PBF replication timestamp"
+    },
+    {
+      "name": "point_derivation",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "node as mapped; representative_point is first way vertex"
+    }
+  ],
+  "source_sha256": "24f97508305830d91483723c06fdc5c705c49c75ad81a46db51cdb74094879a7",
+  "licence_url": "https://www.openstreetmap.org/copyright",
+  "review_ref": "docs/analytics/PART12_SOURCE_REVIEW.md#osm-power",
+  "transformation_version": "osm_power_first_vertex_v1",
+  "attribution": "© OpenStreetMap contributors. Data available under the Open Database Licence (ODbL-1.0). Extract provided by Geofabrik."
+}

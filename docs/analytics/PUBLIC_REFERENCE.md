@@ -1,8 +1,10 @@
 # Shared public reference data
 
 Part 12 implementation: five expansion schemas, pending templates, development
-fixtures, production validation and read-only backend lookup. **Live expansion
-acquisition is still pending.** Source gates remain in
+fixtures, production validation and read-only backend lookup. **OSM power is
+available: 7,726 regional mapped observations; district joins unresolved.**
+The other four expansion datasets remain pending. See the acquisition evidence
+and owner actions in [PART12_SOURCE_REVIEW.md](PART12_SOURCE_REVIEW.md). Source gates remain in
 [DATA_SOURCES_TODO.md](DATA_SOURCES_TODO.md). Toll traffic stays conditional and
 is not registered until an acceptable licensed count is found.
 
@@ -15,7 +17,8 @@ assets and the offline backend export. Adding a source does not require another
 parser or independently acquired backend copy.
 
 Each expansion directory contains `data.template.csv` and
-`meta.template.json`; no active `data.csv` or `meta.json` is invented. Complete
+`meta.template.json`; reviewed OSM observations also have active `data.csv` and
+`meta.json`. Complete
 source checksum, licence URL, review reference and transformation version before
 activation. The review reference identifies a review record, not private owner
 data. The checksum identifies the upstream artifact; raw CSV and metadata
