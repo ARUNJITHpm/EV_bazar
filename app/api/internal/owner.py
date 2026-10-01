@@ -42,6 +42,7 @@ from fastapi import (
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
+from app.api.internal.owner_privacy import NoStoreRoute
 from app.api.internal.ratelimit import (
     check_phone_attempts,
     owner_auth_limit,
@@ -51,8 +52,18 @@ from app.config import Settings, get_settings
 from app.db import get_session
 from app.domain.owner import password as owner_password
 from app.domain.owner import session as owner_session
+from app.domain.owner.area import OwnerAreaOut, area_context
 from app.domain.owner.bill import BillExtractor, BillFields, ManualExtractor, resolve_meter
 from app.domain.owner.erasure import delete_image, erase_account
+from app.domain.owner.grid import (
+    GridDetailsIn,
+    OutageIn,
+    OwnerGridOut,
+    read_grid,
+    save_grid,
+    save_outage,
+    withdraw_grid,
+)
 from app.domain.owner.home import PortfolioRow, StationHome, portfolio, station_home
 from app.domain.owner.otp import mask_phone, normalise_phone
 from app.domain.owner.service import (
@@ -513,3 +524,75 @@ def home(
     if station is None:
         raise HTTPException(404, "No such station.")
     return station_home(session, station)
+
+
+# --- Private grid display and public area context (Part 14) ------------------
+private_grid_router = APIRouter(route_class=NoStoreRoute)
+@private_grid_router.get("/stations/{station_id}/area", response_model=OwnerAreaOut)
+def owner_area(
+    station_id: int,
+    response: Response,
+    account: OwnerAccount = Depends(current_owner),
+    session: Session = Depends(get_session),
+) -> OwnerAreaOut:
+    response.headers["Cache-Control"] = "no-store"
+    return area_context(session, account.id, station_id)
+
+
+@private_grid_router.get("/stations/{station_id}/grid", response_model=OwnerGridOut)
+def owner_grid(
+    station_id: int,
+    response: Response,
+    account: OwnerAccount = Depends(current_owner),
+    session: Session = Depends(get_session),
+) -> OwnerGridOut:
+    response.headers["Cache-Control"] = "no-store"
+    return read_grid(session, account.id, station_id)
+
+
+@private_grid_router.post(
+    "/stations/{station_id}/grid",
+    response_model=OwnerGridOut,
+    dependencies=[Depends(owner_submit_limit)],
+)
+def owner_grid_save(
+    station_id: int,
+    body: GridDetailsIn,
+    response: Response,
+    account: OwnerAccount = Depends(current_owner),
+    session: Session = Depends(get_session),
+) -> OwnerGridOut:
+    response.headers["Cache-Control"] = "no-store"
+    return save_grid(session, account.id, station_id, body)
+
+
+@private_grid_router.post(
+    "/stations/{station_id}/outages",
+    response_model=OwnerGridOut,
+    dependencies=[Depends(owner_submit_limit)],
+)
+def owner_outage_save(
+    station_id: int,
+    body: OutageIn,
+    response: Response,
+    account: OwnerAccount = Depends(current_owner),
+    session: Session = Depends(get_session),
+) -> OwnerGridOut:
+    response.headers["Cache-Control"] = "no-store"
+    return save_outage(session, account.id, station_id, body)
+
+
+@private_grid_router.delete("/stations/{station_id}/grid", status_code=204)
+def owner_grid_withdraw(
+    station_id: int,
+    response: Response,
+    account: OwnerAccount = Depends(current_owner),
+    session: Session = Depends(get_session),
+) -> Response:
+    withdraw_grid(session, account.id, station_id)
+    response.headers["Cache-Control"] = "no-store"
+    response.status_code = 204
+    return response
+
+
+router.include_router(private_grid_router)

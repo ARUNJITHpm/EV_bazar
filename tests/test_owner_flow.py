@@ -29,6 +29,7 @@ from app.models.owner import (
     OwnerForecastRecord,
     OwnerStationRecord,
 )
+from app.models.owner_grid import GRID_MODELS
 
 TABLES = [
     m.__table__  # type: ignore[attr-defined]
@@ -41,6 +42,8 @@ TABLES = [
         OwnerForecastRecord,
     )
 ]
+TABLES.extend(m.__table__ for m in GRID_MODELS)
+
 PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
 LIVE = dt.date(2025, 1, 1)
 PHONE = "98765 43210"

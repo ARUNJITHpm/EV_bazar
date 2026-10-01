@@ -523,3 +523,33 @@ twelve-section report rebuild is preserved: local section 08 carries the grid
 condition; published legacy reports carry it inside the verdict section until the
 rebuild is separately published. Production reference configuration/deployment
 is still required; this checkpoint does not claim deployment completion.
+
+
+## Part 14 available-source checkpoint ? 2026-10-02
+
+The station page now includes ?Your area? with six explicit missing/source states,
+plus optional private grid details (kVA versus kW), transformer ownership/rating
+and a separate approximate monthly outage log. Reviewed statewide supply rows
+can be displayed from the pinned Part 12 reference with period, rural/urban
+scope, definition and provenance. Current CEA acquisition is still pending.
+
+Private writes append revisions with optimistic conflict checks and station
+locking. Explicit private consent records carry the manual ownership-review
+reference. Collection defaults to blocked: deployment staff must verify station
+ownership evidence and configure the ID-to-evidence register; phone/password
+login alone is not ownership verification. Withdrawal deletes every private
+revision/consent while retaining bills; account/inactivity erasure includes them.
+Browser cache clearing and public build privacy refusal are tested. Grid values
+remain outside public analytics, prediction inputs and reports.
+
+The clean migration chain adds 0022 after published 0020; existing unrelated
+local migration drafts are preserved. The migration has not been applied to
+production. Live database migration/trigger acceptance, ownership-review release
+setup and backup-erasure operations remain release tasks. See
+[PART14_OWNER_PRIVACY.md](PART14_OWNER_PRIVACY.md).
+
+Parts 12/13 remaining acquisition is deferred as requested. Part 14 live
+registrations/growth/charger ratios, reviewed serving-utility tariff/ToD and
+human-verified policy consumers remain deferred until source gates pass. This
+checkpoint completes the available-data UI and private storage infrastructure;
+it does not claim those live metrics or source-dependent consumers are complete.

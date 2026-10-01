@@ -43,6 +43,7 @@ from app.models.owner import (
     OwnerStationRecord,
     OwnerSubmission,
 )
+from app.models.owner_grid import OwnerGridConsent, OwnerGridRevision, OwnerOutageRevision
 from app.models.predictions import Prediction
 from app.models.price_cards import ProviderPriceCard
 from app.models.reference import (
@@ -81,6 +82,9 @@ __all__ = [
     "Pincode",
     "PollOutcome",
     "PollRawPayload",
+    "OwnerGridConsent",
+    "OwnerGridRevision",
+    "OwnerOutageRevision",
     "OwnerAccount",
     "OwnerBill",
     "OwnerBillImage",

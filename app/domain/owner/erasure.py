@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 
+from app.domain.owner.grid import erase_grid_for_stations
 from app.models.owner import (
     OwnerAccount,
     OwnerBill,
@@ -41,9 +42,13 @@ def erase_account(session: Session, account_id: int) -> None:
     """Delete the account and everything it holds, phone number included."""
     station_ids = list(
         session.scalars(
-            select(OwnerStationRecord.id).where(OwnerStationRecord.account_id == account_id)
+            select(OwnerStationRecord.id)
+            .where(OwnerStationRecord.account_id == account_id)
+            .order_by(OwnerStationRecord.id)
+            .with_for_update()
         )
     )
+    erase_grid_for_stations(session, station_ids)
     if station_ids:
         for model in (OwnerForecastRecord, OwnerBill, OwnerConnectorRecord):
             session.execute(delete(model).where(model.station_id.in_(station_ids)))

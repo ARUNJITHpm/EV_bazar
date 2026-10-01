@@ -4,6 +4,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "../../api/client";
 
+import { clearPrivateGridCache } from "./grid-cache";
+
 export const inputCls =
   "min-h-[56px] w-full border border-cw-line bg-cw-surface px-5 text-[18px] text-cw-text placeholder:text-cw-muted focus:border-cw-slate focus:outline-none";
 
@@ -49,6 +51,7 @@ export function Shell({
   const client = useQueryClient();
   const signOut = async () => {
     await api.POST("/api/internal/owner/logout");
+    await clearPrivateGridCache(client);
     client.setQueryData(["owner-me"], null);
     navigate("/owner", { replace: true });
   };
