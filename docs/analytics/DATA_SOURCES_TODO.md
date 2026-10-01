@@ -1,7 +1,8 @@
 # Public analytics: source acquisition checklist
 
 Part 2 prepares the data contract; it does not manufacture missing observations.
-Sources were checked on 2026-09-30. Portal availability can vary. Never record
+Sources were checked on 2026-09-30, with acquisition on 2026-10-01 recorded in
+[PART12_SOURCE_REVIEW.md](PART12_SOURCE_REVIEW.md). Portal availability can vary. Never record
 that date as a dataset's retrieval date unless the actual dataset was retrieved.
 
 ## How to add a dataset
@@ -351,24 +352,24 @@ No raw file or extracted dataset has been published in Part 11.
 Do not geocode chainage, invent coordinates, imply every amenity has charging,
 or treat planned/awarded sites as operational stations or gap-closing evidence.
 
-## OSM power - extraction pending, ODbL confirmed
+## OSM power - active regional snapshot, district joins unresolved
 
 Source: [Geofabrik India extracts](https://download.geofabrik.de/asia/india.html)
 or the existing Overpass client in `app/domain/context/poi.py`. Licence:
 [ODbL / OpenStreetMap attribution](https://www.openstreetmap.org/copyright).
 
-- [ ] Select a bounded extract/query; archive checksum, exact extract timestamp,
+- [x] Select a bounded extract/query; archive checksum, exact extract timestamp,
   query and transformation versions. Do not call today's date the extract date.
-- [ ] Extract `power=substation` and `power=transformer`; preserve osm_id with
+- [x] Extract `power=substation` and `power=transformer`; preserve osm_id with
   object type, kind, voltage as tagged (nullable), lat/lon, nullable lgd_code,
   extract_date and point_derivation. A representative point from a way/relation
   is derived geometry, not a surveyed equipment location.
 - [ ] Review state/LGD joins against a dated reference, retaining unresolved
   joins. Key: OSM object type/ID + extract. Coordinates are EPSG:4326.
-- [ ] Save `data/public/osm_power/data.csv` and `meta.json`; attribute
+- [x] Save `data/public/osm_power/data.csv` and `meta.json`; attribute
   OpenStreetMap contributors and satisfy applicable derived-database obligations.
   Exclude usernames, user IDs and changeset metadata from public observations.
-- [ ] Document missing/uneven mapping coverage and query limits. Any metered
+- [x] Document missing/uneven mapping coverage and query limits. Any metered
   provider still needs the existing quota and usage-event guarantees.
 
 Mapped proximity proves neither available load, equipment health, voltage,

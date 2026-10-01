@@ -47,7 +47,12 @@ it("generates each source with dates, licence, attribution, downloads and chart 
     );
     expect(
       source.getAllByRole("link").filter((a) => a.getAttribute("href")?.includes("#")),
-    ).toHaveLength(3);
+    ).toHaveLength(dataset.id === "district_reference" ? 3 : 0);
+    if (dataset.id === "osm_power") {
+      expect(source.getByText("No published article charts use this source yet.")).toBeTruthy();
+      expect(source.getByText(/Attribution:.*OpenStreetMap contributors/)).toBeTruthy();
+      expect(source.getByText(/All LGD codes unresolved/)).toBeTruthy();
+    }
   }
   expect(analyticsMetadata("/data/sources").noindex).toBe(false);
 });

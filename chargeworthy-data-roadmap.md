@@ -28,7 +28,7 @@ or overwrite the existing implementation.
 | 9 | Open | Performance, accessibility, SEO, complete privacy/build checks, required tests and launch gaps. Run a baseline before expansion; run full final acceptance again after Part 16. |
 | 10 | Source-dependent backlog | Publish only questions supported by verified public data. |
 | 11 | Complete and pushed | Source register, consumer mapping and constraints published in `5aab63b`. Live source acquisition remains gated. |
-| 12 | Infrastructure implemented; acquisition pending | Five schemas, fixtures, validation, pinned shared backend lookups and review-only policy comparison are implemented. Acquire reviewed live observations and reuse permissions before source-backed Parts 13-16. See `docs/analytics/PUBLIC_REFERENCE.md`. |
+| 12 | Infrastructure complete; acquisition partially complete | OSM power is active: 7,726 regional observations, unresolved district joins. Three PFC editions, CEA supply table, three policy PDFs and NHAI evidence are archived. Four expansion datasets await permission, methodology or human verification. See `docs/analytics/PART12_SOURCE_REVIEW.md`. |
 | 13 | Not started | Report context and provenance; preserve old stored payloads and archived PDFs. |
 | 14 | Not started | Owner area context and private grid details, with verified erasure behavior. |
 | 15 | Not started | Electricity/Corridors content and district grid/policy blocks. |

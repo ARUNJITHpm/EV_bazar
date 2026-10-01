@@ -1,0 +1,186 @@
+{
+  "reviewed_on": "2026-10-01",
+  "archive": "local_scratch/source_review/part12_20261001",
+  "artifacts": {
+    "cea_supply": {
+      "requested_url": "https://cea.nic.in/wp-content/uploads/dm/2025/09/State_wise_Average_hours_of_Supply_in_a_day_HHhh_for_FY_2018_19_to_FY_2023_2024_as_per_NPP_Portal.pdf",
+      "retrieved_at": "2026-10-01T12:01:50.638671+00:00",
+      "file": "cea_supply.pdf",
+      "final_url": "https://cea.nic.in/wp-content/uploads/dm/2025/09/State_wise_Average_hours_of_Supply_in_a_day_HHhh_for_FY_2018_19_to_FY_2023_2024_as_per_NPP_Portal.pdf",
+      "content_type": "application/pdf",
+      "is_pdf": true,
+      "bytes": 58147,
+      "sha256": "3d8ab6eac2a8594bd3cf5d598b7a2244926f79ba77ac9fe17ab051aa70b1575a"
+    },
+    "cea_terms": {
+      "requested_url": "https://cea.nic.in/website-policies/?lang=en",
+      "retrieved_at": "2026-10-01T12:01:51.223579+00:00",
+      "file": "cea_terms.html",
+      "final_url": "https://cea.nic.in/website-policies/?lang=en",
+      "content_type": "text/html; charset=UTF-8",
+      "is_pdf": false,
+      "bytes": 121749,
+      "sha256": "6d869c74c1d34edd764428a83039e68b057efb289193f173b71dfd8e9bc35612"
+    },
+    "cea_old_terms": {
+      "requested_url": "https://cea.nic.in/old/websitepolicy.html",
+      "retrieved_at": "2026-10-01T13:16:34.959611+00:00",
+      "file": "cea_old_terms.html",
+      "final_url": "https://cea.nic.in/old/websitepolicy.html",
+      "content_type": "text/html; charset=UTF-8",
+      "is_pdf": false,
+      "bytes": 8085,
+      "sha256": "51c779b2edd2bb4bd92b5f5ebab6fec733eabc875984deb8ec9bf9195427c31a"
+    },
+    "nhai_directory": {
+      "requested_url": "https://nhai.gov.in/nhai/sites/default/files/mix_file/NHAI_WSA_Site_Directory.pdf",
+      "retrieved_at": "2026-10-01T12:01:52.550924+00:00",
+      "file": "nhai_directory.pdf",
+      "final_url": "https://nhai.gov.in/nhai/sites/default/files/mix_file/NHAI_WSA_Site_Directory.pdf",
+      "content_type": "application/pdf",
+      "is_pdf": true,
+      "bytes": 3946448,
+      "sha256": "835b770c5f2fc3bf4a1b1aaa32c86838210093d8a8692def2f48761963592e0a"
+    },
+    "nhai_tenders": {
+      "requested_url": "https://www.etenders.gov.in/eprocure/app?component=%24DirectLink&page=FrontEndTendersByOrganisation&service=direct&sp=SBHgI013YJrPRYhqXDt5TRg%3D%3D",
+      "retrieved_at": "2026-10-01T12:32:00.788469+00:00",
+      "file": "nhai_tenders.html",
+      "final_url": "https://www.etenders.gov.in/eprocure/app?component=%24DirectLink&page=FrontEndTendersByOrganisation&service=direct&sp=SBHgI013YJrPRYhqXDt5TRg%3D%3D",
+      "content_type": "text/html;charset=UTF-8",
+      "is_pdf": false,
+      "bytes": 941187,
+      "sha256": "1a2decb9bb36d045d9c282f71809c59f2e9e07abf8d800c63fad02e0ad267ed8"
+    },
+    "kerala_policy": {
+      "requested_url": "https://www.nsws.gov.in/s3fs/2022-12/pdf_Electric-Vehicle-policy_2%20%284%29_0.pdf",
+      "retrieved_at": "2026-10-01T12:01:53.919541+00:00",
+      "file": "kerala_policy.pdf",
+      "final_url": "https://www.nsws.gov.in/s3fs/2022-12/pdf_Electric-Vehicle-policy_2%20%284%29_0.pdf",
+      "content_type": "application/pdf",
+      "is_pdf": true,
+      "bytes": 1696509,
+      "sha256": "722a8dfbf93e6246aca4f1d4815cde672f508ecf07af4c7ef19074df2283452f"
+    },
+    "karnataka_policy": {
+      "requested_url": "https://investkarnataka.co.in/wp-content/uploads/2025/12/Clean-mobility-policy.pdf",
+      "retrieved_at": "2026-10-01T12:01:54.553707+00:00",
+      "file": "karnataka_policy.pdf",
+      "final_url": "https://investkarnataka.co.in/wp-content/uploads/2025/12/Clean-mobility-policy.pdf",
+      "content_type": "application/pdf",
+      "is_pdf": true,
+      "bytes": 2157287,
+      "sha256": "121a1b16891ef017ecde1bae5ebc09745f7734e37d138c662e9d9f724033e835"
+    },
+    "tn_policy": {
+      "requested_url": "https://storage.investingintamilnadu.com/Guidance/Uploads/Others/tn_electric_vehicles_policy_2023.pdf",
+      "retrieved_at": "2026-10-01T12:05:40.680363+00:00",
+      "file": "tn_policy.pdf",
+      "final_url": "https://storage.investingintamilnadu.com/Guidance/Uploads/Others/tn_electric_vehicles_policy_2023.pdf",
+      "content_type": "application/pdf",
+      "is_pdf": true,
+      "bytes": 1462736,
+      "sha256": "522b06e6dd428b01c06071df2448d9232d8626ba4953b3e3ee819d1fe18601f6"
+    },
+    "pfc_current_0": {
+      "requested_url": "https://cms.pfcindia.co.in/media/documents/Report%20on%20Performance%20of%20Power%20Utilities%202024-25.pdf",
+      "retrieved_at": "2026-10-01T13:16:28.989079+00:00",
+      "file": "pfc_current_0.pdf",
+      "final_url": "https://cms.pfcindia.co.in/media/documents/Report%20on%20Performance%20of%20Power%20Utilities%202024-25.pdf",
+      "content_type": "application/pdf",
+      "is_pdf": true,
+      "bytes": 4692716,
+      "sha256": "a4be4a9861618fa3a2d68504ea225859ed48e2c80abf51f6937a8bb2a4ad5aef"
+    },
+    "pfc_current_1": {
+      "requested_url": "https://cms.pfcindia.co.in/media/documents/Report%20on%20Perfromance%20of%20Power%20Utilities%202023-24(1).pdf",
+      "retrieved_at": "2026-10-01T13:16:30.459276+00:00",
+      "file": "pfc_current_1.pdf",
+      "final_url": "https://cms.pfcindia.co.in/media/documents/Report%20on%20Perfromance%20of%20Power%20Utilities%202023-24(1).pdf",
+      "content_type": "application/pdf",
+      "is_pdf": true,
+      "bytes": 8786114,
+      "sha256": "3fd2326ca110f409516552aa31711bb9f65ead7b60a24295c88923190f04e68c"
+    },
+    "pfc_current_2": {
+      "requested_url": "https://cms.pfcindia.co.in/media/documents/Report%20Database%202022-23%20-%20updated%20up%20to%20April%202024EntityApr.pdf",
+      "retrieved_at": "2026-10-01T13:16:32.590477+00:00",
+      "file": "pfc_current_2.pdf",
+      "final_url": "https://cms.pfcindia.co.in/media/documents/Report%20Database%202022-23%20-%20updated%20up%20to%20April%202024EntityApr.pdf",
+      "content_type": "application/pdf",
+      "is_pdf": true,
+      "bytes": 4229443,
+      "sha256": "31a888d6c3b8d9c1ed3c20c2ee92db37df2c805a4f93389df9c329fb124cf15c"
+    },
+    "osm_pbf": {
+      "requested_url": "https://download.geofabrik.de/asia/india/southern-zone-260930.osm.pbf",
+      "retrieved_at": "2026-10-01T12:05:42.254316+00:00",
+      "file": "southern-zone-260930.osm.pbf",
+      "final_url": "https://download.geofabrik.de/asia/india/southern-zone-260930.osm.pbf",
+      "bytes": 557841652,
+      "sha256": "24f97508305830d91483723c06fdc5c705c49c75ad81a46db51cdb74094879a7",
+      "md5": "9e9b9cb449c52a5a3d9cbb152cffaee3"
+    },
+    "osm_md5": {
+      "requested_url": "https://download.geofabrik.de/asia/india/southern-zone-260930.osm.pbf.md5",
+      "retrieved_at": "2026-10-01T12:05:41.500434+00:00",
+      "file": "osm_md5.txt",
+      "final_url": "https://download.geofabrik.de/asia/india/southern-zone-260930.osm.pbf.md5",
+      "content_type": "application/octet-stream",
+      "is_pdf": false,
+      "bytes": 63,
+      "sha256": "94fb874858e802c474f8a0d81e6bd952306599c2be759150572bd785347cd458"
+    },
+    "geofabrik_entry": {
+      "requested_url": "https://download.geofabrik.de/asia/india/southern-zone.html",
+      "retrieved_at": "2026-10-01T12:01:57.271418+00:00",
+      "file": "geofabrik_entry.html",
+      "final_url": "https://download.geofabrik.de/asia/india/southern-zone.html",
+      "content_type": "text/html",
+      "is_pdf": false,
+      "bytes": 19431,
+      "sha256": "4b21bf2550ac7478cd188bae9cd8085045ef1a635748e2af9f47240ac37bbe7e"
+    },
+    "osm_licence": {
+      "requested_url": "https://www.openstreetmap.org/copyright",
+      "retrieved_at": "2026-10-01T12:01:58.858526+00:00",
+      "file": "osm_licence.html",
+      "final_url": "https://www.openstreetmap.org/copyright",
+      "content_type": "text/html; charset=utf-8",
+      "is_pdf": false,
+      "bytes": 21314,
+      "sha256": "1689c494a0c48d880728f3249c796e7f4dc89455c62faca395c737f8e2be6f6d"
+    },
+    "pfc_performance_page": {
+      "requested_url": "https://cms.pfcindia.co.in/en/api/v2/pages/performance-report-of-power-utilities/",
+      "retrieved_at": "2026-10-01T13:15:48.976194+00:00",
+      "file": "pfc_performance_page.html",
+      "final_url": "https://cms.pfcindia.co.in/en/api/v2/pages/performance-report-of-power-utilities/",
+      "content_type": "application/json",
+      "is_pdf": false,
+      "bytes": 7025,
+      "sha256": "403f213c4aacaa6c1e35fe311eb912069ef8cb1b193d61db952fc1e54a65d736"
+    }
+  },
+  "osm_extraction": {
+    "source_sha256": "24f97508305830d91483723c06fdc5c705c49c75ad81a46db51cdb74094879a7",
+    "extract_timestamp": "2026-09-30T20:22:42Z",
+    "rows": 7726,
+    "statistics": {
+      "nodes": 2398,
+      "ways": 5328,
+      "relations_excluded": 7,
+      "invalid_nodes_excluded": 0,
+      "unresolved_ways_excluded": 0
+    },
+    "lgd_mapping": "unresolved; no boundary inference",
+    "point_derivation": "nodes as mapped; ways use first mapped perimeter vertex",
+    "transformation_version": "osm_power_first_vertex_v1"
+  },
+  "pending_datasets": [
+    "discom_performance",
+    "supply_hours",
+    "state_ev_policies",
+    "nhai_wayside_amenities"
+  ]
+}
