@@ -13,7 +13,18 @@ export interface ChartRow {
   status: "observed" | "estimate" | "missing" | "suppressed";
   sample_size?: number | null;
 }
+export interface ChartAnnotation {
+  date: string;
+  label: string;
+  source_url: string;
+}
+export interface ChartReference {
+  value: number;
+  label: string;
+}
 export interface ChartData {
+  annotations?: readonly ChartAnnotation[];
+  reference?: ChartReference;
   id: string;
   title: string;
   subtitle: string;
@@ -56,6 +67,19 @@ export function selectRows(rows: readonly ChartRow[], filters: ChartFilters) {
   );
 }
 export function validateChart(data: ChartData) {
+  if (data.reference && (!Number.isFinite(data.reference.value) || !data.reference.label))
+    throw new Error("Reference needs a finite value and label");
+  for (const marker of data.annotations ?? []) {
+    const parsed = new Date(`${marker.date}T00:00:00Z`);
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(marker.date) ||
+      !Number.isFinite(parsed.getTime()) ||
+      parsed.toISOString().slice(0, 10) !== marker.date ||
+      !marker.label ||
+      !/^https?:\/\//.test(marker.source_url)
+    )
+      throw new Error("Policy marker needs a valid date, label and notification URL");
+  }
   if (!/^[a-z][a-z0-9-]*$/.test(data.id)) throw new Error("Chart id must be a stable slug");
   if (data.type !== "small-multiples" && new Set(data.rows.map((row) => row.series)).size > 3)
     throw new Error("Use small multiples for more than three series");
@@ -155,6 +179,9 @@ export function chartCsv(
       original_content_licence: "CC BY 4.0",
       licence_url: "https://creativecommons.org/licenses/by/4.0/",
       source_data: data.sources,
+      measure_notes: data.notes,
+      policy_markers: data.annotations ?? [],
+      reference: data.reference ?? null,
       citation: citation(data, url, accessed),
       notes: "Third-party data retains its own licence. Credit the source and identify changes.",
     }) +

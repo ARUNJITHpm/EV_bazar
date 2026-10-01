@@ -24,3 +24,8 @@ declare module "virtual:analytics-method" {
   const reviewed: import("../method/reviewed").ReviewedMethod;
   export default reviewed;
 }
+
+declare module "virtual:analytics-expansion" {
+  const data: import("../expansion/model").Expansion;
+  export default data;
+}

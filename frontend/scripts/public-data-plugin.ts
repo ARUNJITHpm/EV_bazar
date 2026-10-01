@@ -3,6 +3,7 @@ import { loadAnalyticsContent } from "./analytics-content.ts";
 import { resolve } from "node:path";
 import type { Plugin } from "vite";
 import { loadPublicData } from "./public-data.ts";
+import { buildExpansion } from "./expansion.ts";
 import { buildAtlas } from "./atlas.ts";
 
 export function publicDataPlugin(): Plugin {
@@ -39,6 +40,7 @@ export function publicDataPlugin(): Plugin {
     resolveId(id) {
       if (
         [
+          "virtual:analytics-expansion",
           "virtual:analytics-method",
           "virtual:analytics-content",
           "virtual:analytics-public-data",
@@ -49,6 +51,18 @@ export function publicDataPlugin(): Plugin {
         return `\0${id}`;
     },
     async load(id) {
+      if (id === "\0virtual:analytics-expansion") {
+        loaded ??= await loadPublicData(resolve(root, "public"));
+        const parts = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Kolkata",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).formatToParts(new Date());
+        const part = (name: string) => parts.find((p) => p.type === name)!.value;
+        const asOf = `${part("year")}-${part("month")}-${part("day")}`;
+        return `export default ${JSON.stringify(buildExpansion(loaded, asOf))};`;
+      }
       if (id === "\0virtual:analytics-method") {
         loaded ??= await loadPublicData(resolve(root, "public"));
         const contentRoot = resolve(root, "../frontend/content/analytics");

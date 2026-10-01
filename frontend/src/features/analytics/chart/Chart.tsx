@@ -175,6 +175,26 @@ export function Chart({ data }: { data: ChartData }) {
     <figure id={data.id} className="analytics-chart" aria-labelledby={`${uid}-title`}>
       <h2 id={`${uid}-title`}>{data.title}</h2>
       <p>{data.subtitle}</p>
+      {data.reference && (
+        <p>
+          Reference line: {data.reference.label},{" "}
+          <span className="analytics-number">{numberLabel(data.reference.value)}</span> {data.unit}.
+        </p>
+      )}
+      {!!data.annotations?.length && (
+        <details>
+          <summary>Policy dates shown on this chart</summary>
+          <ul>
+            {data.annotations.map((m, i) => (
+              <li key={i}>
+                <time>{m.date}</time>: <a href={m.source_url}>{m.label}</a>. Markers outside the
+                selected months are not drawn.
+              </li>
+            ))}
+          </ul>
+          <p>Dates are context; the chart does not show that a policy caused a change.</p>
+        </details>
+      )}
       <fieldset className="analytics-chart-filters">
         <legend>Filter this chart</legend>
         <label htmlFor={`${uid}-region`}>
@@ -209,6 +229,8 @@ export function Chart({ data }: { data: ChartData }) {
       ) : (
         <>
           <Plot
+            annotations={data.annotations}
+            reference={data.reference}
             rows={rows}
             type={data.type}
             summary={`${data.summary} Selection: ${rows.length.toLocaleString("en-IN")} observations. ${rows.map((row) => `${row.label}: ${rowValue(row)}`).join("; ")}`}

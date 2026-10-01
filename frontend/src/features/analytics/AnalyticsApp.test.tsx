@@ -45,7 +45,9 @@ describe("public analytics shell", () => {
   it.each(verticals)("renders $title with an honest preparation state", ({ slug, title }) => {
     at(`/data/${slug}`);
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(title);
-    expect(screen.getByText("Being prepared")).toBeTruthy();
+    if (slug === "corridors")
+      expect(screen.getByText(/No corridor coverage or gap length is claimed/)).toBeTruthy();
+    else expect(screen.getByText("Being prepared")).toBeTruthy();
     if (["vehicles", "charging-network", "usage"].includes(slug)) {
       expect(screen.getByRole("table")).toBeTruthy();
       expect(screen.getByText(/Verified district boundaries are not available yet/)).toBeTruthy();

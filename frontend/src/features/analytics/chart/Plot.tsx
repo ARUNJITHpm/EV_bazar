@@ -3,6 +3,8 @@ import {
   numberLabel,
   rowValue,
   valueDomain,
+  type ChartAnnotation,
+  type ChartReference,
   type ChartRow,
   type ChartType,
 } from "./model";
@@ -20,11 +22,17 @@ export function Plot({
   rows,
   type,
   summary,
-  domain = valueDomain(rows),
+  annotations = [],
+  reference,
+  domain = valueDomain(
+    reference ? [...rows, { ...rows[0]!, value: reference.value, status: "observed" }] : rows,
+  ),
 }: {
   rows: readonly ChartRow[];
   type: ChartType;
   summary: string;
+  annotations?: readonly ChartAnnotation[];
+  reference?: ChartReference;
   domain?: [number, number];
 }) {
   const series = [...new Set(rows.map((row) => row.series))];
@@ -40,6 +48,8 @@ export function Plot({
               type="line"
               summary={`${name}. ${summary}`}
               domain={domain}
+              annotations={annotations}
+              reference={reference}
             />
           </section>
         ))}
@@ -110,6 +120,44 @@ export function Plot({
                 <title>{label}</title>
               </text>
             ))}
+          {reference && (
+            <g className="analytics-reference">
+              <title>{`${reference.label}: ${numberLabel(reference.value)}`}</title>
+              {horizontal ? (
+                <line
+                  x1={scale(reference.value)}
+                  x2={scale(reference.value)}
+                  y1={top}
+                  y2={bottom}
+                  strokeDasharray="8 4"
+                />
+              ) : (
+                <line
+                  x1={left}
+                  x2={right}
+                  y1={scale(reference.value)}
+                  y2={scale(reference.value)}
+                  strokeDasharray="8 4"
+                />
+              )}
+            </g>
+          )}
+          {!horizontal &&
+            type === "line" &&
+            annotations
+              .filter((m) => labels.includes(m.date.slice(0, 7)))
+              .map((m, i) => (
+                <g key={i} className="analytics-axis">
+                  <title>{`${m.date}: ${m.label}. Dates are context, not evidence of causation.`}</title>
+                  <line
+                    x1={category(m.date.slice(0, 7))}
+                    x2={category(m.date.slice(0, 7))}
+                    y1={top}
+                    y2={bottom}
+                    strokeDasharray="3 5"
+                  />
+                </g>
+              ))}
           {series.map((name, seriesIndex) => {
             const group = rows.filter((row) => row.series === name);
             // Separate paths at every null so missing observations never become zero or an interpolated line.
@@ -169,7 +217,8 @@ export function Plot({
                         </text>
                         {horizontal && (
                           <text x={left - 12} y={y} textAnchor="end">
-                            {row.label}
+                            {row.label.length > 14 ? `${row.label.slice(0, 12)}…` : row.label}
+                            <title>{row.label}</title>
                           </text>
                         )}
                       </g>
@@ -185,7 +234,8 @@ export function Plot({
                             y={y + 5}
                             textAnchor="end"
                           >
-                            {row.label}
+                            {row.label.length > 14 ? `${row.label.slice(0, 12)}…` : row.label}
+                            <title>{row.label}</title>
                           </text>
                           <rect
                             x={Math.min(scale(0), scale(row.value))}
@@ -234,6 +284,20 @@ export function Plot({
         </svg>
       </div>
       <ul className="analytics-chart-legend" aria-label="Series legend">
+        {reference && (
+          <li>
+            <svg
+              className="analytics-reference"
+              width="24"
+              height="12"
+              viewBox="0 0 24 12"
+              aria-hidden="true"
+            >
+              <line x1="0" x2="24" y1="6" y2="6" strokeDasharray="8 4" />
+            </svg>{" "}
+            Reference: {reference.label}, {numberLabel(reference.value)}
+          </li>
+        )}
         {series.map((name, index) => (
           <li key={name}>
             <span className={`analytics-series-key analytics-series-${index % 3}`}>
