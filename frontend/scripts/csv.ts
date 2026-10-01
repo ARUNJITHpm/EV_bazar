@@ -5,14 +5,22 @@ export interface CsvRecord {
 
 /** RFC 4180 quotes, escaped quotes, BOM, CRLF and embedded newlines. */
 export function parseCsv(source: string, file: string): CsvRecord[] {
-  const input = source.replace(/^\uFEFF/, "");
+  let input = source.replace(/^\uFEFF/, "");
+  let preambleLines = 0;
+  while (input.startsWith("# Chargeworthy Data: ")) {
+    const end = input.indexOf("\n");
+    if (end < 0) throw new Error(`${file}: licence comment has no column header`);
+    input = input.slice(end + 1);
+    preambleLines++;
+  }
+  input = input.replace(/^\uFEFF/, "");
   const records: CsvRecord[] = [];
   let values: string[] = [],
     cell = "",
     quoted = false,
     closed = false,
-    line = 1,
-    row = 1;
+    line = 1 + preambleLines,
+    row = 1 + preambleLines;
   const fail = (message: string): never => {
     throw new Error(`${file}: row ${line}, column ${values.length + 1}: ${message}`);
   };

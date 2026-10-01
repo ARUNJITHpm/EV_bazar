@@ -1,0 +1,44 @@
+.analytics-method {
+  max-inline-size: 72ch;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.analytics-method section {
+  margin-block: var(--s-8);
+  scroll-margin-top: var(--s-8);
+}
+.analytics-method nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-6);
+}
+.analytics-method nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.analytics-method h2,
+.analytics-method h3 {
+  text-wrap: balance;
+}
+.analytics-method li {
+  margin-block: var(--s-2);
+}
+.analytics-method dl > div {
+  margin-block: var(--s-3);
+}
+.analytics-method dt {
+  font-weight: var(--fw-bold);
+}
+.analytics-method dd {
+  margin-inline-start: 0;
+}
+.analytics-method-metrics dd {
+  font-family: var(--cw-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.analytics-method time {
+  font-family: var(--cw-mono);
+  font-variant-numeric: tabular-nums;
+}

@@ -23,7 +23,14 @@ const data: ChartData = {
   type: "line",
   unit: "kWh",
   updated: "2026-09-30",
-  sources: [{ name: "Test source", url: "https://example.invalid/test", licence: "Test licence" }],
+  sources: [
+    {
+      name: "Test source",
+      url: "https://example.invalid/test",
+      licence: "Test licence",
+      attribution: "Test source attribution",
+    },
+  ],
   notes: ["Test notes"],
   versions: { ...publicDataVersions, renderer_version: "analytics_svg_v1" },
   rows: [
@@ -191,6 +198,7 @@ describe("shared analytics charts", () => {
     const citation = (screen.getByLabelText("Copy citation text") as HTMLTextAreaElement).value;
     expect(citation).toContain("test-chart.period=2026-01#test-chart");
     expect(citation).toContain("Test licence");
+    expect(citation).toContain("Test source attribution");
   });
   it("shows an empty selection and disables its CSV without disabling the all-data download", () => {
     at("?test-chart.region=absent");

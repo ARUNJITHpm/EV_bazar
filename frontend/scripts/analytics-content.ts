@@ -86,6 +86,8 @@ function referenceChart(
         name: source.metadata.source_name,
         url: source.metadata.source_url,
         licence: source.metadata.licence,
+        licence_url: source.metadata.licence_url,
+        attribution: source.metadata.attribution,
       },
     ],
     updated: source.metadata.retrieved_on,
@@ -93,7 +95,7 @@ function referenceChart(
       source.metadata.notes,
       "Local Government Directory (LGD) codes identify the entries. Names and boundaries may have changed since this archive.",
     ],
-    versions: { ...catalogue.versions, renderer_version: "analytics_content_chart_v1" },
+    versions: { ...catalogue.versions, renderer_version: "analytics_content_chart_v2" },
   };
   return data;
 }

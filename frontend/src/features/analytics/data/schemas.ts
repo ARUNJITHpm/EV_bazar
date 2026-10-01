@@ -170,7 +170,7 @@ export const publicDataVersions = {
   schema_version: "public_analytics_v1",
   archetype_version: "not_applicable:public_data",
   tariff_effective_date: "per_row:effective_from_for_tariffs;not_applicable_otherwise",
-  renderer_version: "public_data_export_v1",
+  renderer_version: "public_data_export_v2",
 } as const;
 export interface DatasetDescriptor {
   id: DatasetId;

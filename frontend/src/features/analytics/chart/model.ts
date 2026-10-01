@@ -21,7 +21,13 @@ export interface ChartData {
   type: ChartType;
   unit: string;
   rows: readonly ChartRow[];
-  sources: readonly { name: string; url: string; licence: string }[];
+  sources: readonly {
+    name: string;
+    url: string;
+    licence: string;
+    licence_url?: string;
+    attribution?: string;
+  }[];
   updated: string;
   notes: readonly string[];
   versions: Record<keyof typeof publicDataVersions, string>;
@@ -106,7 +112,7 @@ export function validateChart(data: ChartData) {
   }
 }
 export function citation(data: ChartData, url: string, accessed: string) {
-  return `Chargeworthy Data, ${data.title}, ${url}, accessed ${accessed}. Original chart: CC BY 4.0. Source data: ${data.sources.map((source) => `${source.name} (${source.licence})`).join("; ")}.`;
+  return `Chargeworthy Data, ${data.title}, ${url}, accessed ${accessed}. Original chart: CC BY 4.0. Source data: ${data.sources.map((source) => `${source.name} (${source.licence})${source.attribution ? `; ${source.attribution}` : ""}`).join("; ")}.`;
 }
 const csvCell = (value: unknown) => {
   // Neutralise spreadsheet formulas in text cells, retaining raw numeric cells.
@@ -144,7 +150,15 @@ export function chartCsv(
     ...versions,
   ];
   return (
-    "\uFEFF" +
+    "\uFEFF# Chargeworthy Data: " +
+    JSON.stringify({
+      original_content_licence: "CC BY 4.0",
+      licence_url: "https://creativecommons.org/licenses/by/4.0/",
+      source_data: data.sources,
+      citation: citation(data, url, accessed),
+      notes: "Third-party data retains its own licence. Credit the source and identify changes.",
+    }) +
+    "\r\n" +
     [
       header,
       ...rows.map((row) => [

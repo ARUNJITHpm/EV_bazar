@@ -1,3 +1,5 @@
+import reviewed from "virtual:analytics-method";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { Plot } from "./Plot";
@@ -220,7 +222,13 @@ export function Chart({ data }: { data: ChartData }) {
           {data.sources.map((source, index) => (
             <span key={source.url}>
               {index ? "; " : ""}
-              <a href={source.url}>{source.name}</a> ({source.licence})
+              <a href={source.url}>{source.name}</a> (
+              {source.licence_url ? (
+                <a href={source.licence_url}>{source.licence}</a>
+              ) : (
+                source.licence
+              )}
+              ){source.attribution ? ` · ${source.attribution}` : ""}
             </span>
           ))}
           . Last updated: <time dateTime={data.updated}>{data.updated}</time>.
@@ -234,6 +242,18 @@ export function Chart({ data }: { data: ChartData }) {
             with uncertainty.
           </p>
         )}
+        <p>
+          <Link to="/data/methodology#corrections">Corrections log</Link>
+        </p>
+        {reviewed.corrections
+          .filter((c) => c.charts.includes(data.id))
+          .map((c) => (
+            <p key={c.id}>
+              <Link to={`/data/methodology#correction-${c.id}`}>
+                Correction: {c.date} — {c.changed}
+              </Link>
+            </p>
+          ))}
         <details>
           <summary>Output versions</summary>
           <dl>

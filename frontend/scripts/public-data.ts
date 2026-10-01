@@ -337,7 +337,10 @@ export async function loadPublicData(root: string, fixtures = false): Promise<Lo
       fail(metaFile, 1, "attribution", "geometry requires explicit attribution");
     rowsById.set(id, { ...loaded, file });
     const prefix = `analytics-data/${id}`;
-    const sha256 = createHash("sha256").update(source).digest("hex");
+    const exported = isCsv
+      ? `# Chargeworthy Data: ${JSON.stringify({ original_content_licence: "CC BY 4.0", licence_url: "https://creativecommons.org/licenses/by/4.0/", source_name: meta.source_name, source_url: meta.source_url, source_data_licence: meta.licence, attribution: meta.attribution ?? meta.source_name, notes: "Third-party data retains its own licence; CC BY 4.0 applies only to original Chargeworthy content." })}\r\n${source}`
+      : source;
+    const sha256 = createHash("sha256").update(exported).digest("hex");
     catalogue.datasets.push({
       id,
       metadata: meta,
@@ -346,7 +349,7 @@ export async function loadPublicData(root: string, fixtures = false): Promise<Lo
       sha256,
     });
     artifacts.push(
-      { name: `${prefix}/${datasetFiles[id]}`, source },
+      { name: `${prefix}/${datasetFiles[id]}`, source: exported },
       {
         name: `${prefix}/meta.json`,
         source: JSON.stringify(
@@ -357,7 +360,7 @@ export async function loadPublicData(root: string, fixtures = false): Promise<Lo
       },
       {
         name: `${prefix}/README.txt`,
-        source: `${meta.title}\nSource: ${meta.source_name}\n${meta.source_url}\nRetrieved: ${meta.retrieved_on}\nLicence: ${meta.licence}\n${meta.licence_url ?? ""}\n${meta.attribution ?? ""}\n${meta.notes}\nThird-party data retains its source licence.\n`,
+        source: `${meta.title}\nSource: ${meta.source_name}\n${meta.source_url}\nRetrieved: ${meta.retrieved_on}\nLicence: ${meta.licence}\n${meta.licence_url ?? ""}\n${meta.attribution ?? ""}\n${meta.notes}\nOriginal Chargeworthy content: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).\nCredit Chargeworthy Data and the original source; identify changes.\nThird-party data retains its source licence.\n`,
       },
     );
   }
