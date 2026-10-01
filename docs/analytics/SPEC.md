@@ -371,3 +371,89 @@ site-assessment/operator-matching fee model without asserting when income began.
 Part 7 implementation and acceptance checks are complete. No real validation
 run, private data export, production migration or deployment occurred.
 Workflow details are in METHODOLOGY.md.
+
+## Expansion source register (Part 11) - 2026-10-01
+
+These are acquisition contracts, not active datasets. Source discovery and
+publication are separate gates. The acquisition checklist, exact URLs and
+remaining rights/vintage checks are in [DATA_SOURCES_TODO.md](DATA_SOURCES_TODO.md).
+Reuse the existing validated `data/public/<id>/` layer and reviewed backend
+lookups in Part 12; do not introduce another loader or a runtime scraper.
+
+| Dataset | Report | Owner | Data section | Main page / assessment |
+| --- | --- | --- | --- | --- |
+| `discom_performance` | Dated utility AT&C loss and ACS-ARR gap context | Area/verified-provider context | Electricity and district grid context | Source labels and sourced-check coverage; no site loss claim |
+| `supply_hours` | Published area-average supply, with interval and rural/urban coverage | Area comparison, separate from private outage log | Electricity and district context only at the published geography | Source labels / area context; never a site uptime assertion |
+| `state_ev_policies` | Dated applicable policy context, separate from ROI inputs | Charging-policy context with eligibility caveats | Electricity, vehicle-policy notes and district/state context | District policy context and source labels |
+| `nhai_wayside_amenities` | Dated announced amenities; charging only when explicitly listed | No new Part 14 card planned | Corridors, historical/current status separately labelled | Announced-site source labels and Corridors link |
+| `osm_power` | Nearest mapped equipment, clearly unverified for capacity/access | No new Part 14 card planned | Sources register; no extra power-equipment map promised | Transformer-distance source label and truthful sourced/unverified count |
+| `toll_plaza_traffic` | Conditional measured traffic context only after licence/unit gates | No consumer planned | Conditional future Corridors analysis, not required for Part 15 | Conditional traffic source label only when actual count evidence exists |
+
+District, state and DISCOM averages are never presented as facts about one site.
+No planned source upgrades a check from Unverified merely because a lookup exists.
+All five required expansion datasets remain pending acquisition; toll traffic
+is conditional and does not block Part 12's five-dataset contract.
+
+### Decisions and corrections for Parts 12-16
+
+- **Utility identity:** maintain stable DISCOM IDs, historical aliases, dates and
+  reviewed service-area/billing evidence. A state-to-utility list cannot assign
+  a provider to a site. Districts can have several providers; show possible
+  providers or withhold assignment when the jurisdiction is unverified.
+- **Supply periods:** retain the actual month, fiscal year, calendar year or
+  other interval and rural/urban/all coverage. Never manufacture monthly or
+  district observations from a state annual average. Do not calculate site
+  outages as 24 minus area supply. Keep the source's units and definition.
+- **WSA evidence:** the reviewed NHAI PDF contains a March 2021 bidding schedule;
+  its publication date is unverified. Current planned/awarded claims need dated
+  current evidence. Keep status as printed and charging flags true/false/unknown:
+  silence means unknown. Require both coordinates or neither; never geocode
+  chainage. Announced amenities never count as operational chargers.
+- **Owner privacy:** normal edits supersede private grid revisions. Before an
+  Alembic migration, define and test verified-owner consent withdrawal/erasure
+  across all revisions, derived private caches and any retained audit records.
+  Do not UPDATE/DELETE `charger_status_events`, `predictions`, `tariffs` or
+  `sites`. Unverified phone login alone is not verified ownership. Private grid
+  details stay out of public exports, other customers' reports and the current
+  demand model; model changes require separate validation.
+- **Corridor gaps:** measure along connected NH routes with distances on
+  geography, EPSG:4326, reviewed charger access and inventory coverage. Straight
+  line proximity and missing mapped stations do not establish a measured gap.
+  Planned amenities cannot close a fast-charger gap.
+- **Policy versus economics:** a notification is dated context, not an approved
+  subsidy or entitlement. Unknown expiry does not mean currently valid. Preserve
+  amendment/supersession and eligibility. The comparison with `subsidy_rules`
+  is an offline human-review diff that writes to neither register nor rules.
+  Only verified economics inputs reach the pure ROI engine; no LLM writes a
+  tariff or financial prediction. LLM proposals carry model/prompt_version and
+  an explicit human verification record before acceptance.
+- **Actual counts:** inspect the current assembler and `PROMISED_SITE_FACTS` in
+  `app/domain/report/coverage.py` before changing counts. Do not blindly add two
+  to an old count. Pin the real 12-section report structure and verify coverage
+  and the ReportBuild test together. Pending sources remain Unverified.
+- **Shared provenance:** preserve edition, table/page, source URL, checksum,
+  represented period, retrieval date, licence and transformations. Carry all
+  six version stamps on outputs. Stored report JSON and archived PDF bytes stay
+  immutable; new context must not rewrite old reports. Generate API types from
+  OpenAPI when fields are added. New context needs null-handling tests.
+
+The roadmap's raw schemas need identity and methodology refinements before
+implementation: DISCOM identifiers/jurisdiction evidence; supply definition and
+area type in the natural key; policy amendment/eligibility and verification;
+OSM point-derivation provenance; WSA unknown document dates and paired nullable
+coordinates. Geographic joins must allow missing/unresolved LGD codes rather
+than guessing. Monetary observations are sourced integer paise, never model
+outputs; predictive user-facing values retain P10/P50/P90 or labelled scenarios.
+These refinements resolve the roadmap/AGENTS constraints without relaxing them.
+
+### Part 11 checkpoint
+
+Completed six source checklists and the four-surface consumer matrix. Verified
+primary source entry points, CEA's annual supply table, policy notification
+evidence and the NHAI PDF checksum. NFMS public export/reuse, PFC downloads,
+current WSA status, policy amendments and several licences remain acquisition
+gates. No openly licensed per-plaza vehicle-count resource was verified.
+Only SPEC.md and DATA_SOURCES_TODO.md are published for this part. No datasets,
+application code, database, predictions or deployment were changed. Part 12
+can proceed with validation/templates and independently verified acquisitions;
+pending sources must not be activated as live data.
