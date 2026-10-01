@@ -192,6 +192,39 @@ export function Methodology() {
           </li>
         </ul>
       </section>
+      <section id="grid-policy-corridors">
+        <h2>Grid, policies and corridors</h2>
+        <p>
+          AT&C loss combines technical loss with billing and collection gaps; it is not an outage or
+          voltage measure. National references must match the utility observations in edition, year
+          and metric basis. Conflicting editions and changed definitions are withheld rather than
+          averaged.
+        </p>
+        <p>
+          Supply hours retain their published geography, reporting period, rural or urban coverage
+          and definition. Statewide context is not district or feeder reliability; 24 minus an area
+          average is not a station outage log. No serving utility is assigned without a verified
+          geographic mapping.
+        </p>
+        <p>
+          Policy status is evaluated at the page build date from human-reviewed notifications and
+          validity dates. The register includes expired policies and does not infer ongoing validity
+          from an absent end date. Policy dates on registrations are context, not evidence that a
+          policy caused a change. Descriptive policy text never changes financial inputs.
+        </p>
+        <p>
+          Corridor gaps require verified operating DC fast chargers on connected highway geometry, a
+          reviewed snap tolerance and distance along that route calculated on geography in
+          EPSG:4326. Straight-line proximity is insufficient. Planned or awarded amenities appear
+          separately as hollow markers only when dated evidence explicitly lists EV charging; they
+          never close a gap. Gap analysis remains unavailable until these inputs and checks exist.
+        </p>
+        <p>
+          Monthly new registrations are not the total EV fleet. An EVs-per-public-charger comparison
+          needs a compatible fleet count and a reviewed charger counting unit; it cannot be
+          reconstructed from a single year of registrations.
+        </p>
+      </section>
       <section id="editorial-policy">
         <h2>How we publish</h2>
         <p>
@@ -317,7 +350,9 @@ export function Sources() {
           <h2>Still being prepared</h2>
           <ul>
             {catalogue.pending.map((id) => (
-              <li key={id}>{id.replaceAll("_", " ")}: awaiting verified data and metadata.</li>
+              <li key={id} id={`source-${id}`}>
+                {id.replaceAll("_", " ")}: awaiting verified data and metadata.
+              </li>
             ))}
           </ul>
         </section>

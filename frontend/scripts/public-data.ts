@@ -467,9 +467,20 @@ export async function loadPublicData(root: string, fixtures = false): Promise<Lo
         if (
           "state" in row &&
           !(id === "state_ev_policies" && row.state === "central") &&
+          !(id === "discom_performance" && row.state === "India" && row.discom_id === "national") &&
           !catalogue.districts.some((d) => d.state_name === row.state)
         )
           fail(loaded.file, line, "state", "state is absent from district reference");
+        if (
+          id === "discom_performance" &&
+          (row.state === "India") !== (row.discom_id === "national")
+        )
+          fail(
+            loaded.file,
+            line,
+            "discom_id",
+            "national reference must use state India and discom_id national together",
+          );
         if (id === "discom_performance")
           key = JSON.stringify([
             row.discom_id,

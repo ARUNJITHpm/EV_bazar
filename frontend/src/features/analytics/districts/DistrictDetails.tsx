@@ -1,3 +1,6 @@
+import { DistrictGrid } from "../expansion/Expansion";
+import expansion from "virtual:analytics-expansion";
+import { policyMarkers, policyNote } from "../expansion/model";
 import { Link } from "react-router-dom";
 import atlas from "virtual:analytics-atlas";
 import catalogue from "virtual:analytics-public-data";
@@ -49,12 +52,14 @@ export function DistrictDetails({ district }: { district: District }) {
   const registrationChart = chart(
     {
       id: `registrations-${code}`,
+      annotations: policyMarkers(expansion.policies, district.state_name, expansion.asOf),
       title: "How have EV registrations changed?",
       subtitle: "Recorded registrations by month and vehicle class, in vehicles.",
       summary: "Monthly registration observations; absent periods are labelled gaps.",
       type: "small-multiples",
       unit: "vehicles",
       notes: [
+        policyNote,
         "A twelve-month total is available only when every vehicle class has explicit observations for all twelve months. These are new registrations, not the district's complete EV fleet.",
       ],
       rows: months.length
@@ -209,6 +214,7 @@ export function DistrictDetails({ district }: { district: District }) {
           </div>
         </dl>
       </section>
+      <DistrictGrid district={district} />
       <h2>Locator</h2>
       {atlas.shapes.some((shape) => shape.lgd_code === code) ? (
         <DistrictMap

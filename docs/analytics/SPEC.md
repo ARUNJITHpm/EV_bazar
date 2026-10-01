@@ -553,3 +553,27 @@ registrations/growth/charger ratios, reviewed serving-utility tariff/ToD and
 human-verified policy consumers remain deferred until source gates pass. This
 checkpoint completes the available-data UI and private storage infrastructure;
 it does not claim those live metrics or source-dependent consumers are complete.
+
+
+## Part 15 available-source checkpoint — 2026-10-02
+
+Public Electricity now consumes reviewed AT&C observations with a same-edition,
+year and metric-basis national reference and per-state trends; all charts retain
+the outage/voltage warning. Supply hours retain separate geography, definitions
+and rural/urban coverage. Policy tables retain notifications, validity, expired
+and superseded states; registration charts include sourced policy date markers
+and a causation warning. Metadata-driven source links and methodology explain
+these limits, including CSV context and all six version stamps.
+
+District pages add Grid and policy without inferring a serving utility. Fleet-
+to-charger ratios remain unavailable rather than substituting new registrations.
+Corridors separately display eligible dated planned/awarded EV amenities with
+hollow symbols; they never establish or shorten a gap. Corridor gap computation
+and its map still require verified operating DC-fast records, connected NH
+geometry and reviewed snap metadata, and remain unimplemented.
+
+The four relevant acquisition sources are still pending under Part 12, so current
+production sections show explicit missing states. Source acquisition, serving-
+DISCOM crosswalks, compatible fleet/inventory counts, real-data acceptance and
+final Part 9 launch checks remain. See [PART15_PUBLIC_CONTEXT.md](PART15_PUBLIC_CONTEXT.md).
+No private data, demand/ROI inputs, persisted reports or production database changed.

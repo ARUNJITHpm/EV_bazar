@@ -1,3 +1,5 @@
+import { ElectricityContext, CorridorsContext } from "./expansion/Expansion";
+import { StateRegistrations } from "./expansion/StateRegistrations";
 import { Methodology, Sources } from "./method/Method";
 import {
   ContentIndex,
@@ -366,7 +368,12 @@ export function AnalyticsApp() {
               element={
                 <DocumentPage title={vertical.title}>
                   <p className="analytics-lead">{vertical.description}</p>
-                  <Preparation>{vertical.preparation}</Preparation>
+                  {vertical.slug !== "corridors" && (
+                    <Preparation>{vertical.preparation}</Preparation>
+                  )}
+                  {vertical.slug === "electricity" && <ElectricityContext />}
+                  {vertical.slug === "corridors" && <CorridorsContext />}
+                  {vertical.slug === "vehicles" && <StateRegistrations />}
                   {["vehicles", "charging-network", "usage"].includes(vertical.slug) && (
                     <DistrictMap
                       atlas={atlas}

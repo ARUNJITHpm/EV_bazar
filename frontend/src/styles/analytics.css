@@ -536,3 +536,29 @@
     break-inside: avoid;
   }
 }
+
+/* Public grid/policy notes often contain long notification URLs. */
+.analytics-context,
+.analytics-document {
+  overflow-wrap: anywhere;
+}
+.analytics-context h3 {
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+.analytics-multiples > section {
+  min-width: 0;
+}
+
+.analytics-policy-table {
+  min-width: 640px;
+  overflow-wrap: normal;
+}
+.analytics-reference line {
+  stroke: var(--cw-paper-slate);
+  stroke-width: 2;
+}
+.analytics-chart-legend .analytics-reference {
+  display: inline-block;
+  vertical-align: middle;
+}
