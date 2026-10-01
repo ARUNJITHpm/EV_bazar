@@ -1,0 +1,114 @@
+{
+  "id": "state_ev_policies",
+  "title": "Test state_ev_policies",
+  "description": "Complete with scope and definitions",
+  "source_name": "Test source",
+  "source_url": "https://example.invalid/test-source",
+  "retrieved_on": "2020-01-31",
+  "licence": "CC0-1.0 (test only)",
+  "geography_level": "state",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Invented test data. Never publish.",
+  "columns": [
+    {
+      "name": "state",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of state"
+    },
+    {
+      "name": "policy_name",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of policy_name"
+    },
+    {
+      "name": "notification_ref",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of notification_ref"
+    },
+    {
+      "name": "clause_ref",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of clause_ref"
+    },
+    {
+      "name": "notified_on",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of notified_on"
+    },
+    {
+      "name": "valid_from",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of valid_from"
+    },
+    {
+      "name": "valid_to",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of valid_to",
+      "nullable": true
+    },
+    {
+      "name": "incentive_type",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of incentive_type"
+    },
+    {
+      "name": "vehicle_scope",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of vehicle_scope"
+    },
+    {
+      "name": "amount_text",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of amount_text",
+      "nullable": true
+    },
+    {
+      "name": "eligibility",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of eligibility"
+    },
+    {
+      "name": "supersedes_ref",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of supersedes_ref",
+      "nullable": true
+    },
+    {
+      "name": "source_url",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of source_url"
+    },
+    {
+      "name": "recorded_on",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of recorded_on"
+    },
+    {
+      "name": "notes",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of notes"
+    }
+  ],
+  "attribution": "Test attribution only",
+  "fixture": true,
+  "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "licence_url": "https://example.invalid/test-licence",
+  "review_ref": "Test human review",
+  "transformation_version": "test-v1"
+}

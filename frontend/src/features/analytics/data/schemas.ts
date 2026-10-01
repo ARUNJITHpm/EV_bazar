@@ -33,6 +33,14 @@ const stringArray = z.string().transform((value, context): string[] => {
   }
 });
 
+export const expansionDatasetIds = [
+  "discom_performance",
+  "supply_hours",
+  "state_ev_policies",
+  "nhai_wayside_amenities",
+  "osm_power",
+] as const;
+
 export const rowSchemas = {
   district_reference: z
     .object({
@@ -96,6 +104,107 @@ export const rowSchemas = {
       notes: z.string(),
     })
     .strict(),
+
+  discom_performance: z
+    .object({
+      state: text,
+      discom_id: text,
+      discom: text,
+      fiscal_year: text
+        .regex(/^\d{4}-\d{2}$/)
+        .refine(
+          (v) => Number(v.slice(5)) === (Number(v.slice(0, 4)) + 1) % 100,
+          "invalid fiscal year",
+        ),
+      atc_loss_pct: number.refine((v) => v >= 0 && v <= 100, "AT&C must be 0-100 percent"),
+      acs_arr_gap_paise_per_kwh: nullable(
+        z
+          .string()
+          .regex(/^-?\d+$/)
+          .transform(Number)
+          .refine(Number.isSafeInteger),
+      ),
+      metric_basis: text,
+      source_edition: text,
+      source_table_ref: text,
+      notes: z.string(),
+    })
+    .strict(),
+  supply_hours: z
+    .object({
+      state: text,
+      discom_id: nullable(text),
+      discom: nullable(text),
+      lgd_code: nullable(code),
+      period_type: z.enum(["month", "fiscal_year", "calendar_year", "other"]),
+      period_start: date,
+      period_end: date,
+      published_period_label: text,
+      area_type: z.enum(["rural", "urban", "all"]),
+      avg_supply_hours_per_day: number.refine((v) => v >= 0 && v <= 24, "hours must be 0-24/day"),
+      supply_definition: text,
+      source_name: text,
+      source_url: url,
+      retrieved_on: date,
+      notes: z.string(),
+    })
+    .strict(),
+  state_ev_policies: z
+    .object({
+      state: text,
+      policy_name: text,
+      notification_ref: text,
+      clause_ref: text,
+      notified_on: date,
+      valid_from: date,
+      valid_to: nullable(date),
+      incentive_type: z.enum([
+        "purchase_subsidy",
+        "road_tax_waiver",
+        "registration_fee_waiver",
+        "charging_capex_subsidy",
+        "concessional_ev_tariff",
+        "land_or_permit",
+        "other",
+      ]),
+      vehicle_scope: z.enum(["2W", "3W", "4W", "bus", "goods", "charging", "all"]),
+      amount_text: nullable(text),
+      eligibility: text,
+      supersedes_ref: nullable(text),
+      source_url: url,
+      recorded_on: date,
+      notes: z.string(),
+    })
+    .strict(),
+  nhai_wayside_amenities: z
+    .object({
+      wsa_id: text,
+      nh_ref: text.regex(/^NH[ -]?\d+[A-Z]?$/),
+      state: text,
+      lgd_code: nullable(code),
+      chainage_km: nullable(number.refine((v) => v >= 0)),
+      lat: nullable(number.refine((v) => v >= -90 && v <= 90)),
+      lon: nullable(number.refine((v) => v >= -180 && v <= 180)),
+      status: text,
+      status_as_of: nullable(date),
+      ev_charging_listed: z.enum(["true", "false", "unknown"]),
+      source_doc_date: nullable(date),
+      source_page: text,
+      notes: z.string(),
+    })
+    .strict(),
+  osm_power: z
+    .object({
+      osm_id: text.regex(/^(node|way|relation)\/\d+$/),
+      kind: z.enum(["substation", "transformer"]),
+      voltage: nullable(text),
+      lat: number.refine((v) => v >= -90 && v <= 90),
+      lon: number.refine((v) => v >= -180 && v <= 180),
+      lgd_code: nullable(code),
+      extract_date: date,
+      point_derivation: z.enum(["node", "representative_point"]),
+    })
+    .strict(),
 } as const;
 
 export type CsvDatasetId = keyof typeof rowSchemas;
@@ -116,6 +225,11 @@ export const datasetFiles: Record<DatasetId, string> = {
   ev_registrations: "data.csv",
   public_chargers: "data.csv",
   ev_tariffs: "data.csv",
+  discom_performance: "data.csv",
+  supply_hours: "data.csv",
+  state_ev_policies: "data.csv",
+  nhai_wayside_amenities: "data.csv",
+  osm_power: "data.csv",
   district_boundaries: "data.topojson",
   highways: "data.geojson",
 };
@@ -128,6 +242,7 @@ export const metadataSchema = z
       "ev_registrations",
       "public_chargers",
       "ev_tariffs",
+      ...expansionDatasetIds,
       "district_boundaries",
       "highways",
     ]),
@@ -137,7 +252,7 @@ export const metadataSchema = z
     source_url: url,
     retrieved_on: date,
     licence: text,
-    geography_level: z.enum(["district", "state", "rto", "station", "corridor"]),
+    geography_level: z.enum(["district", "state", "rto", "station", "corridor", "discom", "mixed"]),
     time_coverage: text,
     update_frequency: text,
     notes: z.string(),
@@ -161,13 +276,15 @@ export const metadataSchema = z
       .optional(),
     licence_url: url.optional(),
     attribution: text.optional(),
+    review_ref: text.optional(),
+    transformation_version: text.optional(),
   })
   .strict();
 export type DatasetMetadata = z.infer<typeof metadataSchema>;
 export const publicDataVersions = {
   model_version: "not_applicable:observed_public_data",
   economics_version: "not_applicable:no_economics_computation",
-  schema_version: "public_analytics_v1",
+  schema_version: "public_analytics_v2",
   archetype_version: "not_applicable:public_data",
   tariff_effective_date: "per_row:effective_from_for_tariffs;not_applicable_otherwise",
   renderer_version: "public_data_export_v2",
@@ -184,4 +301,51 @@ export interface PublicCatalogue {
   districts: District[];
   datasets: DatasetDescriptor[];
   pending: DatasetId[];
+}
+
+export function columnNullable(id: DatasetId, name: string): boolean {
+  if (!(id in rowSchemas)) return false;
+  const shape = rowSchemas[id as CsvDatasetId].shape as Record<string, z.ZodTypeAny>;
+  const result = shape[name]?.safeParse("");
+  return Boolean(result?.success && result.data === null);
+}
+export function columnType(
+  name: string,
+): "integer" | "number" | "json" | "boolean" | "month" | "date" | "string" {
+  if (
+    [
+      "lgd_code",
+      "count",
+      "energy_charge_paise_per_kwh",
+      "demand_or_fixed_charge_paise",
+      "acs_arr_gap_paise_per_kwh",
+    ].includes(name)
+  )
+    return "integer";
+  if (
+    ["lat", "lon", "power_kw", "atc_loss_pct", "avg_supply_hours_per_day", "chainage_km"].includes(
+      name,
+    )
+  )
+    return "number";
+  if (["geometry", "former_names"].includes(name)) return "json";
+  if (name === "covers_multiple_districts") return "boolean";
+  if (["month", "opened_month"].includes(name)) return "month";
+  if (
+    [
+      "recorded_on",
+      "effective_from",
+      "notified_on",
+      "valid_from",
+      "valid_to",
+      "period_start",
+      "period_end",
+      "retrieved_on",
+      "status_as_of",
+      "source_doc_date",
+      "extract_date",
+    ].includes(name)
+  )
+    return "date";
+  return "string";
 }

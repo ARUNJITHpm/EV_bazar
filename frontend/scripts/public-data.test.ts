@@ -69,7 +69,7 @@ describe("CSV grammar and diagnostics", () => {
 describe("public data gate", () => {
   it("validates every fixture schema including geometry and retains missing values as null", async () => {
     const { catalogue } = await loadPublicData(fixtureRoot, true);
-    expect(catalogue.datasets).toHaveLength(7);
+    expect(catalogue.datasets).toHaveLength(12);
     expect(catalogue.pending).toEqual([]);
     const charger = loadCsv(
       "public_chargers",

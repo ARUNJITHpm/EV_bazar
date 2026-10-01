@@ -1,0 +1,2 @@
+state,discom_id,discom,lgd_code,period_type,period_start,period_end,published_period_label,area_type,avg_supply_hours_per_day,supply_definition,source_name,source_url,retrieved_on,notes
+Test State,,,,fiscal_year,2020-04-01,2021-03-31,2020-21,rural,20.5,Test annual feeder average,Test source,https://example.invalid/test-source,2021-04-30,Invented

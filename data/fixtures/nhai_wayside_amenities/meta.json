@@ -1,0 +1,105 @@
+{
+  "id": "nhai_wayside_amenities",
+  "title": "Test nhai_wayside_amenities",
+  "description": "Complete with scope and definitions",
+  "source_name": "Test source",
+  "source_url": "https://example.invalid/test-source",
+  "retrieved_on": "2020-01-31",
+  "licence": "CC0-1.0 (test only)",
+  "geography_level": "mixed",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Invented test data. Never publish.",
+  "columns": [
+    {
+      "name": "wsa_id",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of wsa_id"
+    },
+    {
+      "name": "nh_ref",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of nh_ref"
+    },
+    {
+      "name": "state",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of state"
+    },
+    {
+      "name": "lgd_code",
+      "type": "integer",
+      "unit": "LGD district code",
+      "description": "Document the source definition of lgd_code",
+      "nullable": true
+    },
+    {
+      "name": "chainage_km",
+      "type": "number",
+      "unit": "km",
+      "description": "Document the source definition of chainage_km",
+      "nullable": true
+    },
+    {
+      "name": "lat",
+      "type": "number",
+      "unit": "EPSG:4326",
+      "description": "Document the source definition of lat",
+      "nullable": true
+    },
+    {
+      "name": "lon",
+      "type": "number",
+      "unit": "EPSG:4326",
+      "description": "Document the source definition of lon",
+      "nullable": true
+    },
+    {
+      "name": "status",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of status"
+    },
+    {
+      "name": "status_as_of",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of status_as_of",
+      "nullable": true
+    },
+    {
+      "name": "ev_charging_listed",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of ev_charging_listed"
+    },
+    {
+      "name": "source_doc_date",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of source_doc_date",
+      "nullable": true
+    },
+    {
+      "name": "source_page",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of source_page"
+    },
+    {
+      "name": "notes",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of notes"
+    }
+  ],
+  "attribution": "Test attribution only",
+  "fixture": true,
+  "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "licence_url": "https://example.invalid/test-licence",
+  "review_ref": "Test human review",
+  "transformation_version": "test-v1"
+}
