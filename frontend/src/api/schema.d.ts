@@ -1542,6 +1542,47 @@ export interface components {
       /** Value */
       value: string;
     };
+    /** PublicContextPayload */
+    PublicContextPayload: {
+      /**
+       * Grid Conditions
+       * @default []
+       */
+      grid_conditions: string[];
+      /** Snapshot Sha256 */
+      snapshot_sha256: string;
+      /** Sources */
+      sources: components["schemas"]["PublicSourceContext"][];
+      /**
+       * Version
+       * @default public_context_v1
+       * @constant
+       */
+      version: "public_context_v1";
+    };
+    /** PublicSourceContext */
+    PublicSourceContext: {
+      /** Dataset */
+      dataset: string;
+      /** Licence */
+      licence?: string | null;
+      /** Licence Url */
+      licence_url?: string | null;
+      /** Retrieved On */
+      retrieved_on?: string | null;
+      /** Source Name */
+      source_name: string;
+      /** Source Sha256 */
+      source_sha256?: string | null;
+      /** Source Url */
+      source_url?: string | null;
+      /** Status */
+      status: string;
+      /** Time Coverage */
+      time_coverage?: string | null;
+      /** Transformation Version */
+      transformation_version?: string | null;
+    };
     /** QueueItemOut */
     QueueItemOut: {
       /**
@@ -1609,6 +1650,7 @@ export interface components {
       predicted: components["schemas"]["UtilisationBand"];
       /** Provenance */
       provenance: components["schemas"]["ProvenanceRow"][];
+      public_context?: components["schemas"]["PublicContextPayload"] | null;
       /** Report Id */
       report_id: string;
       site: components["schemas"]["SitePayload"];

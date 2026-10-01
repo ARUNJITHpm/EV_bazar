@@ -29,7 +29,7 @@ or overwrite the existing implementation.
 | 10 | Source-dependent backlog | Publish only questions supported by verified public data. |
 | 11 | Complete and pushed | Source register, consumer mapping and constraints published in `5aab63b`. Live source acquisition remains gated. |
 | 12 | Infrastructure complete; acquisition partially complete | OSM power is active: 7,726 regional observations, unresolved district joins. Three PFC editions, CEA supply table, three policy PDFs and NHAI evidence are archived. Four expansion datasets await permission, methodology or human verification. See `docs/analytics/PART12_SOURCE_REVIEW.md`. |
-| 13 | Not started | Report context and provenance; preserve old stored payloads and archived PDFs. |
+| 13 | Available-source checkpoint implemented; remainder deferred | OSM proximity, ledger/provenance and DISCOM capacity condition. Remaining source checks and deployed release setup are tracked in `docs/analytics/PART13_REPORT_CONTEXT.md`. |
 | 14 | Not started | Owner area context and private grid details, with verified erasure behavior. |
 | 15 | Not started | Electricity/Corridors content and district grid/policy blocks. |
 | 16 | Not started | Truthful source labels, counts and district context in landing/assessment screens. |
@@ -37,7 +37,7 @@ or overwrite the existing implementation.
 
 ## What to do next, in order
 
-1. **Complete live acquisition for Part 12.** Part 11 is published and the shared
+1. **Parts 12 and 13 remaining work is deferred at the owner's request.** Resume the source gates and report consumers in `docs/analytics/PART13_REPORT_CONTEXT.md` later. **Complete live acquisition for Part 12** when resuming. Part 11 is published and the shared
    data infrastructure is implemented. Use the source register to resolve reuse,
    download, methodology and current-status gates; activate only reviewed inputs.
 2. **Finish Part 8 separately while sources are researched.** Ask for the actual

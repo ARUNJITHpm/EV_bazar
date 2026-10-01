@@ -145,7 +145,28 @@ class ProvenanceRow(BaseModel):
     unverified: bool = False
 
 
+class PublicSourceContext(BaseModel):
+    dataset: str
+    status: str
+    source_name: str
+    retrieved_on: str | None = None
+    source_url: str | None = None
+    source_sha256: str | None = None
+    transformation_version: str | None = None
+    time_coverage: str | None = None
+    licence: str | None = None
+    licence_url: str | None = None
+
+
+class PublicContextPayload(BaseModel):
+    version: Literal["public_context_v1"] = "public_context_v1"
+    snapshot_sha256: str
+    sources: list[PublicSourceContext]
+    grid_conditions: list[str] = []
+
+
 class ReportPayload(BaseModel):
+    public_context: PublicContextPayload | None = None
     report_id: str
     demo: bool
     site: SitePayload

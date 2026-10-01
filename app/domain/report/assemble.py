@@ -40,6 +40,7 @@ from app.domain.demand.synthetic import (
     SyntheticWeights,
     predict,
 )
+from app.domain.public_reference import PublicReference
 from app.domain.report.payload import (
     AnchorNote,
     BreakevenPayload,
@@ -60,6 +61,7 @@ from app.domain.report.payload import (
     UtilisationBand,
     VerdictPayload,
 )
+from app.domain.report.public_context import enrich_public_context, load_report_reference
 from app.domain.roi.engine import (
     Capex,
     ChargerSpec,
@@ -303,6 +305,7 @@ def assemble_report(
     vahan: VahanContext | None = None,
     competitors: CompetitorContext | None = None,
     on: dt.date | None = None,
+    public_reference: PublicReference | None = None,
 ) -> AssembledReport:
     """Compose the payload. Raises when a layer the report cannot exist
     without (VAHAN, tariff) is missing - a report with no demand data and no
@@ -555,6 +558,8 @@ def assemble_report(
         ledger=_ledger(spec, prediction, tariff_row, roads, vahan, competitors, managed.kva),
         provenance=_provenance(spec, prediction, p50_run, vahan, competitors, tariff_row),
     )
+    reference = public_reference if public_reference is not None else load_report_reference()
+    payload = enrich_public_context(session, payload, reference)
     return AssembledReport(payload=payload, prediction=prediction)
 
 

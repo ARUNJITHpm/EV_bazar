@@ -11,15 +11,16 @@ The report id is the capability - customer ids are UUID strings that do not
 enumerate (the same reasoning as ``sites.site_id``); the demo id is readable
 because the demo is public by design.
 
-The response is validated against ``ReportPayload`` on the way out. Stored
-payloads ARE ``model_dump()`` outputs of that same model, so validation is an
-identity - it exists to publish the shape into the OpenAPI schema the
-frontend's generated types are built from, not to rewrite data.
+The stored payload is validated against ``ReportPayload`` for the API contract,
+then returned directly as JSON. Optional fields on old reports are never filled
+into the response, and no context or financial calculation runs on this path.
+The response model continues to publish the generated OpenAPI client shape.
 """
 
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.db import get_session
@@ -30,8 +31,9 @@ router = APIRouter()
 
 
 @router.get("/reports/{report_id}", response_model=ReportPayload)
-def report(report_id: str, session: Session = Depends(get_session)) -> ReportPayload:
+def report(report_id: str, session: Session = Depends(get_session)) -> JSONResponse:
     payload = get_payload(session, report_id)
     if payload is None:
         raise HTTPException(status_code=404, detail="no such report")
-    return ReportPayload.model_validate(payload)
+    ReportPayload.model_validate(payload)
+    return JSONResponse(content=payload)

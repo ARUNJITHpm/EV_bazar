@@ -1,3 +1,4 @@
+import type { components } from "../../api/schema";
 import type { Paise } from "../../lib/money";
 
 /**
@@ -68,6 +69,7 @@ export interface LedgerRow {
 }
 
 export interface ReportPayload {
+  public_context?: components["schemas"]["PublicContextPayload"] | null;
   report_id: string;
   demo: boolean;
   site: {

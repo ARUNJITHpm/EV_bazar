@@ -1,0 +1,21 @@
+{
+  "version": "public_context_v1",
+  "snapshot_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "sources": [
+    {
+      "dataset": "osm_power",
+      "status": "available",
+      "source_name": "Synthetic fixture: OSM power",
+      "retrieved_on": "2026-10-01",
+      "licence": "ODbL-1.0"
+    },
+    {
+      "dataset": "supply_hours",
+      "status": "pending",
+      "source_name": "source pending"
+    }
+  ],
+  "grid_conditions": [
+    "DISCOM confirms transformer spare capacity of at least 120 kVA for the advised managed peak; connection feasibility remains unverified."
+  ]
+}

@@ -131,3 +131,9 @@ allow planned amenities to shorten verified charger gaps.
 
 Part 12's full five-source delivery is not complete. Parts 13–16 must use only
 available reviewed sources and preserve explicit missing/unverified context.
+
+## Deferred follow-up
+
+The owner requested that the remaining Parts 12 and 13 work be kept for later.
+The resume checklist is in [PART13_REPORT_CONTEXT.md](PART13_REPORT_CONTEXT.md).
+OSM report integration does not complete the four pending source acquisitions.
