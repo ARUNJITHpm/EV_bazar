@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run data:validate && tsc -b && vite build && node scripts/prerender-analytics.mjs",
+    "build": "npm run data:validate && tsc -b && vite build && node scripts/prerender-analytics.mjs && node scripts/check-owner-grid-public.ts",
     "data:validate": "node scripts/validate-public-data.ts",
     "data:check-build": "node scripts/check-public-build.ts",
     "preview": "vite preview",

@@ -484,6 +484,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/internal/owner/stations/{station_id}/area": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Owner Area */
+    get: operations["owner_area_api_internal_owner_stations__station_id__area_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/owner/stations/{station_id}/bills": {
     parameters: {
       query?: never;
@@ -501,6 +518,25 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/internal/owner/stations/{station_id}/grid": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Owner Grid */
+    get: operations["owner_grid_api_internal_owner_stations__station_id__grid_get"];
+    put?: never;
+    /** Owner Grid Save */
+    post: operations["owner_grid_save_api_internal_owner_stations__station_id__grid_post"];
+    /** Owner Grid Withdraw */
+    delete: operations["owner_grid_withdraw_api_internal_owner_stations__station_id__grid_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/owner/stations/{station_id}/home": {
     parameters: {
       query?: never;
@@ -512,6 +548,23 @@ export interface paths {
     get: operations["home_api_internal_owner_stations__station_id__home_get"];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/owner/stations/{station_id}/outages": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Owner Outage Save */
+    post: operations["owner_outage_save_api_internal_owner_stations__station_id__outages_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -697,6 +750,27 @@ export interface components {
       kwh_year: number;
       /** Npv Paise */
       npv_paise: number;
+    };
+    /** AreaItem */
+    AreaItem: {
+      /** Key */
+      key: string;
+      /** Label */
+      label: string;
+      /** Note */
+      note: string;
+      /** Reporting Period */
+      reporting_period?: string | null;
+      /** Retrieved On */
+      retrieved_on?: string | null;
+      /** Scope */
+      scope?: string | null;
+      /** Source Name */
+      source_name: string;
+      /** Source Url */
+      source_url?: string | null;
+      /** Value */
+      value?: string | null;
     };
     /** AssessIn */
     AssessIn: {
@@ -1163,6 +1237,61 @@ export interface components {
       /** Spend */
       spend: components["schemas"]["SpendOut"][];
     };
+    /** GridDetailsIn */
+    GridDetailsIn: {
+      /** Connected Load Kw */
+      connected_load_kw?: number | null;
+      /**
+       * Consent Private
+       * @constant
+       */
+      consent_private: true;
+      /**
+       * Effective On
+       * Format: date
+       */
+      effective_on: string;
+      /** Expected Revision Id */
+      expected_revision_id?: number | null;
+      /** Sanctioned Load Kva */
+      sanctioned_load_kva?: number | null;
+      /**
+       * Transformer Ownership
+       * @default unknown
+       * @enum {string}
+       */
+      transformer_ownership: "own" | "shared" | "unknown";
+      /** Transformer Rating Kva */
+      transformer_rating_kva?: number | null;
+    };
+    /** GridDetailsOut */
+    GridDetailsOut: {
+      /** Connected Load Kw */
+      connected_load_kw: number | null;
+      /**
+       * Effective On
+       * Format: date
+       */
+      effective_on: string;
+      /** Id */
+      id: number;
+      /**
+       * Recorded At
+       * Format: date-time
+       */
+      recorded_at: string;
+      /** Sanctioned Load Kva */
+      sanctioned_load_kva: number | null;
+      /** Supersedes Id */
+      supersedes_id: number | null;
+      /**
+       * Transformer Ownership
+       * @enum {string}
+       */
+      transformer_ownership: "own" | "shared" | "unknown";
+      /** Transformer Rating Kva */
+      transformer_rating_kva: number | null;
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
@@ -1388,6 +1517,85 @@ export interface components {
       operator: string;
       /** Stations */
       stations: number;
+    };
+    /** OutageIn */
+    OutageIn: {
+      /** Approximate Hours */
+      approximate_hours?: number | null;
+      /**
+       * Consent Private
+       * @constant
+       */
+      consent_private: true;
+      /** Expected Revision Id */
+      expected_revision_id?: number | null;
+      /**
+       * Month
+       * Format: date
+       */
+      month: string;
+    };
+    /** OutageOut */
+    OutageOut: {
+      /** Approximate Hours */
+      approximate_hours: number | null;
+      /** Id */
+      id: number;
+      /**
+       * Month
+       * Format: date
+       */
+      month: string;
+      /**
+       * Recorded At
+       * Format: date-time
+       */
+      recorded_at: string;
+      /** Supersedes Id */
+      supersedes_id: number | null;
+    };
+    /** OwnerAreaOut */
+    OwnerAreaOut: {
+      /** District */
+      district: string | null;
+      /** Items */
+      items: components["schemas"]["AreaItem"][];
+      /** Snapshot Sha256 */
+      snapshot_sha256: string | null;
+      /** State */
+      state: string | null;
+      /**
+       * Version
+       * @default owner_area_v1
+       * @constant
+       */
+      version: "owner_area_v1";
+      /** Versions */
+      versions?: {
+        [key: string]: string;
+      };
+    };
+    /** OwnerGridOut */
+    OwnerGridOut: {
+      /** Consent Private */
+      consent_private: boolean;
+      details: components["schemas"]["GridDetailsOut"] | null;
+      /** Outages */
+      outages: components["schemas"]["OutageOut"][];
+      /** Storage Available */
+      storage_available: boolean;
+      /** Storage Reason */
+      storage_reason?: string | null;
+      /**
+       * Version
+       * @default owner_grid_v1
+       * @constant
+       */
+      version: "owner_grid_v1";
+      /** Versions */
+      versions?: {
+        [key: string]: string;
+      };
     };
     /** PeerBandPoint */
     PeerBandPoint: {
@@ -2984,6 +3192,39 @@ export interface operations {
       };
     };
   };
+  owner_area_api_internal_owner_stations__station_id__area_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        station_id: number;
+      };
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OwnerAreaOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   save_bill_api_internal_owner_stations__station_id__bills_post: {
     parameters: {
       query?: never;
@@ -3021,6 +3262,107 @@ export interface operations {
       };
     };
   };
+  owner_grid_api_internal_owner_stations__station_id__grid_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        station_id: number;
+      };
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OwnerGridOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  owner_grid_save_api_internal_owner_stations__station_id__grid_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        station_id: number;
+      };
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GridDetailsIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OwnerGridOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  owner_grid_withdraw_api_internal_owner_stations__station_id__grid_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        station_id: number;
+      };
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   home_api_internal_owner_stations__station_id__home_get: {
     parameters: {
       query?: never;
@@ -3041,6 +3383,43 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["StationHome"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  owner_outage_save_api_internal_owner_stations__station_id__outages_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        station_id: number;
+      };
+      cookie?: {
+        evsite_owner?: string | null;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OutageIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OwnerGridOut"];
         };
       };
       /** @description Validation Error */

@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../api/client";
 import { formatRupees } from "../../lib/money";
 import { formatKva, formatKw, kva, kw } from "../../lib/units";
+import { AreaGrid } from "./AreaGrid";
 import { BillForm, BillImage } from "./BillForm";
 import { BillUpload } from "./BillUpload";
 import { TrendChart } from "./TrendChart";
@@ -424,6 +425,7 @@ export function StationPage() {
               </p>
             </header>
             <LastMonth home={h} />
+            <AreaGrid key={h.station.id} stationId={h.station.id} />
             <Card title="Trend">
               <TrendChart home={h} />
             </Card>
@@ -476,8 +478,9 @@ function DeleteData() {
   return (
     <Card title="Delete my data">
       <p>
-        This erases your phone number, every station, bill, bill image and forecast on your account.
-        It cannot be undone.
+        This erases your phone number, every station, bill, bill image and forecast on your account,
+        including all private grid and outage revisions and their consent records. It cannot be
+        undone.
       </p>
       {error && (
         <p role="alert" className="text-cw-negative">
