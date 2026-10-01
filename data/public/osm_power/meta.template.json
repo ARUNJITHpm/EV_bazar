@@ -1,0 +1,69 @@
+{
+  "id": "osm_power",
+  "title": "osm_power — complete with sourced title",
+  "description": "Complete with scope and definitions",
+  "source_name": "Complete with publisher",
+  "source_url": null,
+  "retrieved_on": null,
+  "licence": null,
+  "geography_level": "district",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Template only: not a retrieved or published dataset",
+  "columns": [
+    {
+      "name": "osm_id",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of osm_id"
+    },
+    {
+      "name": "kind",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of kind"
+    },
+    {
+      "name": "voltage",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of voltage",
+      "nullable": true
+    },
+    {
+      "name": "lat",
+      "type": "number",
+      "unit": "EPSG:4326",
+      "description": "Document the source definition of lat"
+    },
+    {
+      "name": "lon",
+      "type": "number",
+      "unit": "EPSG:4326",
+      "description": "Document the source definition of lon"
+    },
+    {
+      "name": "lgd_code",
+      "type": "integer",
+      "unit": "LGD district code",
+      "description": "Document the source definition of lgd_code",
+      "nullable": true
+    },
+    {
+      "name": "extract_date",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of extract_date"
+    },
+    {
+      "name": "point_derivation",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of point_derivation"
+    }
+  ],
+  "source_sha256": null,
+  "licence_url": null,
+  "review_ref": null,
+  "transformation_version": null
+}

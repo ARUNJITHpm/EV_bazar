@@ -1,0 +1,2 @@
+state,policy_name,notification_ref,clause_ref,notified_on,valid_from,valid_to,incentive_type,vehicle_scope,amount_text,eligibility,supersedes_ref,source_url,recorded_on,notes
+Test State,Test policy,TEST-GO,Test clause 1,2020-01-01,2020-01-01,,charging_capex_subsidy,charging,,Test eligibility,,https://example.invalid/test-source,2020-01-31,Invented

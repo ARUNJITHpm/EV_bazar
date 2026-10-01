@@ -1,0 +1,2 @@
+osm_id,kind,voltage,lat,lon,lgd_code,extract_date,point_derivation
+node/999999999,transformer,,10,75,999001,2020-01-31,node

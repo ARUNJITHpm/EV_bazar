@@ -1,0 +1,2 @@
+state,discom_id,discom,fiscal_year,atc_loss_pct,acs_arr_gap_paise_per_kwh,metric_basis,source_edition,source_table_ref,notes
+Test State,test-discom,Test DISCOM,2020-21,12.5,-10,Test accrual basis,Test edition,Test table p1,Invented

@@ -27,8 +27,8 @@ or overwrite the existing implementation.
 | 8 | Implemented locally; not committed or pushed | Confirm the public HTTPS origin, configure image URLs and deployment build environment, publish scoped changes, then verify a deployed WhatsApp preview. Local checks passed: build, 123 frontend tests, three PNG formats, provenance, font/bounds checks, responsive controls and OG metadata. |
 | 9 | Open | Performance, accessibility, SEO, complete privacy/build checks, required tests and launch gaps. Run a baseline before expansion; run full final acceptance again after Part 16. |
 | 10 | Source-dependent backlog | Publish only questions supported by verified public data. |
-| 11 | Next implementation part | Update only SPEC.md and DATA_SOURCES_TODO.md with the source register, consumers and decisions below. |
-| 12 | Not started | Extend the existing validated data layer and shared backend lookups. |
+| 11 | Complete and pushed | Source register, consumer mapping and constraints published in `5aab63b`. Live source acquisition remains gated. |
+| 12 | Infrastructure implemented; acquisition pending | Five schemas, fixtures, validation, pinned shared backend lookups and review-only policy comparison are implemented. Acquire reviewed live observations and reuse permissions before source-backed Parts 13-16. See `docs/analytics/PUBLIC_REFERENCE.md`. |
 | 13 | Not started | Report context and provenance; preserve old stored payloads and archived PDFs. |
 | 14 | Not started | Owner area context and private grid details, with verified erasure behavior. |
 | 15 | Not started | Electricity/Corridors content and district grid/policy blocks. |
@@ -37,16 +37,16 @@ or overwrite the existing implementation.
 
 ## What to do next, in order
 
-1. **Implement Part 11 next.** Document exact sources, reuse permissions,
-   reporting periods, consumers, schemas and acquisition blockers. Record the
-   corrections below before implementing the expanded datasets.
+1. **Complete live acquisition for Part 12.** Part 11 is published and the shared
+   data infrastructure is implemented. Use the source register to resolve reuse,
+   download, methodology and current-status gates; activate only reviewed inputs.
 2. **Finish Part 8 separately while sources are researched.** Ask for the actual
    public HTTPS origin. Set `VITE_ANALYTICS_SITE_ORIGIN`, with no trailing slash
    or path, and pass it into the deployed frontend build. Existing localhost
    preview images do not prove that WhatsApp previews work. See
    `docs/analytics/SOCIAL_IMAGES.md` for checks. Publish only Part 8 changes;
    preserve the unpublished Part 5 work and unrelated edits.
-3. **Implement Part 12 in reviewable stages.** Start with DISCOM performance and
+3. **Acquire Part 12 sources in reviewable stages.** Start with DISCOM performance and
    notified EV policies, subject to actual acquisition and reuse permissions.
    Add OSM power, supply hours and current wayside-amenity evidence as their
    sources become usable. Toll traffic is optional and conditional. Missing

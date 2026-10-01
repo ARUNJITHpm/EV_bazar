@@ -36,6 +36,11 @@ data/public/*
 !data/public/ev_tariffs/
 !data/public/district_boundaries/
 !data/public/highways/
+!data/public/discom_performance/
+!data/public/supply_hours/
+!data/public/state_ev_policies/
+!data/public/nhai_wayside_amenities/
+!data/public/osm_power/
 data/public/*/*
 !data/public/*/.gitkeep
 !data/public/*/data.csv

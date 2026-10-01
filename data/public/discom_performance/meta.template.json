@@ -1,0 +1,80 @@
+{
+  "id": "discom_performance",
+  "title": "discom_performance — complete with sourced title",
+  "description": "Complete with scope and definitions",
+  "source_name": "Complete with publisher",
+  "source_url": null,
+  "retrieved_on": null,
+  "licence": null,
+  "geography_level": "discom",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Template only: not a retrieved or published dataset",
+  "columns": [
+    {
+      "name": "state",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of state"
+    },
+    {
+      "name": "discom_id",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of discom_id"
+    },
+    {
+      "name": "discom",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of discom"
+    },
+    {
+      "name": "fiscal_year",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of fiscal_year"
+    },
+    {
+      "name": "atc_loss_pct",
+      "type": "number",
+      "unit": "percent",
+      "description": "Document the source definition of atc_loss_pct"
+    },
+    {
+      "name": "acs_arr_gap_paise_per_kwh",
+      "type": "integer",
+      "unit": "paise/kWh",
+      "description": "Document the source definition of acs_arr_gap_paise_per_kwh",
+      "nullable": true
+    },
+    {
+      "name": "metric_basis",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of metric_basis"
+    },
+    {
+      "name": "source_edition",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of source_edition"
+    },
+    {
+      "name": "source_table_ref",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of source_table_ref"
+    },
+    {
+      "name": "notes",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of notes"
+    }
+  ],
+  "source_sha256": null,
+  "licence_url": null,
+  "review_ref": null,
+  "transformation_version": null
+}

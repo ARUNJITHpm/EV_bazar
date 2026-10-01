@@ -5,6 +5,9 @@ import { z } from "zod";
 
 import {
   datasetFiles,
+  columnType,
+  columnNullable,
+  expansionDatasetIds,
   datasetIds,
   metadataSchema,
   publicDataVersions,
@@ -23,6 +26,14 @@ export interface PublicArtifact {
 export interface LoadedPublicData {
   catalogue: PublicCatalogue;
   artifacts: PublicArtifact[];
+  reference: {
+    catalogue: PublicCatalogue;
+    fixture: boolean;
+    datasets: Record<
+      string,
+      { rows: Row[]; metadata: unknown; raw_sha256: string; metadata_sha256: string }
+    >;
+  };
 }
 type Row = Record<string, unknown>;
 function fail(file: string, row: number, column: string, message: string): never {
@@ -225,6 +236,7 @@ export async function loadPublicData(root: string, fixtures = false): Promise<Lo
     pending: [],
   };
   const artifacts: PublicArtifact[] = [];
+  const snapshot: LoadedPublicData["reference"] = { catalogue, fixture: fixtures, datasets: {} };
   const rowsById = new Map<DatasetId, { rows: Row[]; lines: number[]; file: string }>();
   let entries;
   try {
@@ -309,32 +321,37 @@ export async function loadPublicData(root: string, fixtures = false): Promise<Lo
         fail(metaFile, 1, `columns.${column}`, "unexpected metadata column");
     for (const column of meta.columns) {
       const name = column.name;
-      const type = [
-        "lgd_code",
-        "count",
-        "energy_charge_paise_per_kwh",
-        "demand_or_fixed_charge_paise",
-      ].includes(name)
-        ? "integer"
-        : ["lat", "lon", "power_kw"].includes(name)
-          ? "number"
-          : ["geometry", "former_names"].includes(name)
-            ? "json"
-            : name === "covers_multiple_districts"
-              ? "boolean"
-              : ["month", "opened_month"].includes(name)
-                ? "month"
-                : ["recorded_on", "effective_from"].includes(name)
-                  ? "date"
-                  : "string";
+      const type = columnType(name);
       if (column.type !== type) fail(metaFile, 1, `columns.${name}.type`, `must be ${type}`);
+      if (
+        expansionDatasetIds.includes(id as (typeof expansionDatasetIds)[number]) &&
+        Boolean(column.nullable) !== columnNullable(id, name)
+      )
+        fail(metaFile, 1, `columns.${name}.nullable`, "must match the row schema");
       if (name.includes("paise") && !column.unit.startsWith("paise"))
         fail(metaFile, 1, `columns.${name}.unit`, "money must be documented in paise");
     }
-    if (id === "highways" && !meta.licence.includes("ODbL"))
+    if (["highways", "osm_power"].includes(id) && !meta.licence.includes("ODbL"))
       fail(metaFile, 1, "licence", "OSM highways must retain ODbL attribution");
-    if ((id === "highways" || id === "district_boundaries") && !meta.attribution)
+    if (["highways", "district_boundaries", "osm_power"].includes(id) && !meta.attribution)
       fail(metaFile, 1, "attribution", "geometry requires explicit attribution");
+    if (expansionDatasetIds.includes(id as (typeof expansionDatasetIds)[number])) {
+      for (const field of [
+        "source_sha256",
+        "licence_url",
+        "review_ref",
+        "transformation_version",
+      ] as const)
+        if (!meta[field]) fail(metaFile, 1, field, "expansion sources require verified provenance");
+      if (/pending|unknown|template/i.test(meta.licence))
+        fail(metaFile, 1, "licence", "unresolved licence cannot activate a dataset");
+    }
+    snapshot.datasets[id] = {
+      rows: loaded.rows,
+      metadata: meta,
+      raw_sha256: createHash("sha256").update(source).digest("hex"),
+      metadata_sha256: createHash("sha256").update(metaSource).digest("hex"),
+    };
     rowsById.set(id, { ...loaded, file });
     const prefix = `analytics-data/${id}`;
     const exported = isCsv
@@ -384,7 +401,7 @@ export async function loadPublicData(root: string, fixtures = false): Promise<Lo
     const seen = new Set<string>();
     for (const [index, row] of loaded.rows.entries()) {
       const line = loaded.lines[index] ?? index + 1;
-      if ("lgd_code" in row) {
+      if ("lgd_code" in row && row.lgd_code !== null) {
         const district = byCode.get(row.lgd_code as number);
         if (!district)
           fail(loaded.file, line, "lgd_code", "code is absent from district_reference");
@@ -445,6 +462,77 @@ export async function loadPublicData(root: string, fixtures = false): Promise<Lo
         if (!catalogue.districts.some((district) => district.state_name === row.state))
           fail(loaded.file, line, "state", "state is absent from district reference");
       }
+
+      if (expansionDatasetIds.includes(id as (typeof expansionDatasetIds)[number])) {
+        if (
+          "state" in row &&
+          !(id === "state_ev_policies" && row.state === "central") &&
+          !catalogue.districts.some((d) => d.state_name === row.state)
+        )
+          fail(loaded.file, line, "state", "state is absent from district reference");
+        if (id === "discom_performance")
+          key = JSON.stringify([
+            row.discom_id,
+            row.fiscal_year,
+            row.metric_basis,
+            row.source_edition,
+          ]);
+        if (id === "supply_hours") {
+          if (String(row.period_start) > String(row.period_end))
+            fail(loaded.file, line, "period_end", "period end precedes start");
+          if ((row.discom_id === null) !== (row.discom === null))
+            fail(loaded.file, line, "discom_id", "utility ID and name must be paired");
+          const start = String(row.period_start),
+            end = String(row.period_end);
+          const year = Number(start.slice(0, 4));
+          const endOfMonth = new Date(Date.UTC(year, Number(start.slice(5, 7)), 0))
+            .toISOString()
+            .slice(0, 10);
+          if (row.period_type === "month" && (start.slice(8) !== "01" || end !== endOfMonth))
+            fail(loaded.file, line, "period_type", "month must cover one complete calendar month");
+          if (
+            row.period_type === "fiscal_year" &&
+            (start !== `${year}-04-01` || end !== `${year + 1}-03-31`)
+          )
+            fail(loaded.file, line, "period_type", "fiscal year must be April-March");
+          if (
+            row.period_type === "calendar_year" &&
+            (start !== `${year}-01-01` || end !== `${year}-12-31`)
+          )
+            fail(loaded.file, line, "period_type", "calendar year must be January-December");
+          key = JSON.stringify([
+            row.state,
+            row.discom_id,
+            row.lgd_code,
+            row.period_start,
+            row.period_end,
+            row.area_type,
+            row.supply_definition,
+          ]);
+        }
+        if (id === "state_ev_policies") {
+          if (row.valid_to !== null && String(row.valid_to) < String(row.valid_from))
+            fail(loaded.file, line, "valid_to", "validity end precedes start");
+          key = JSON.stringify([
+            row.state,
+            row.notification_ref,
+            row.clause_ref,
+            row.incentive_type,
+            row.vehicle_scope,
+            row.valid_from,
+          ]);
+        }
+        if (id === "nhai_wayside_amenities") {
+          if ((row.lat === null) !== (row.lon === null))
+            fail(loaded.file, line, "lat/lon", "coordinates must be paired or both unknown");
+          key = JSON.stringify([row.wsa_id, row.source_doc_date, row.status_as_of, row.status]);
+        }
+        if (id === "osm_power") {
+          if (String(row.osm_id).startsWith("node/") !== (row.point_derivation === "node"))
+            fail(loaded.file, line, "point_derivation", "object type must match point derivation");
+          key = JSON.stringify([row.osm_id, row.extract_date]);
+        }
+      }
       if (id === "district_boundaries") key = String(row.lgd_code);
       if (key !== undefined && seen.has(key))
         fail(loaded.file, line, "key", "duplicate observation; resolve before publication");
@@ -456,5 +544,5 @@ export async function loadPublicData(root: string, fixtures = false): Promise<Lo
     name: "analytics-data/catalogue.json",
     source: JSON.stringify(catalogue, null, 2),
   });
-  return { catalogue, artifacts };
+  return { catalogue, artifacts, reference: snapshot };
 }

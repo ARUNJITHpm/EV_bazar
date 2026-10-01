@@ -2,6 +2,9 @@ import { mkdir, writeFile, access } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import {
   datasetFiles,
+  columnType,
+  columnNullable,
+  expansionDatasetIds,
   datasetIds,
   rowSchemas,
   type CsvDatasetId,
@@ -40,14 +43,70 @@ const fields = {
     "",
     "Invented test rates; never publish",
   ],
+
+  discom_performance: [
+    "Test State",
+    "test-discom",
+    "Test DISCOM",
+    "2020-21",
+    "12.5",
+    "-10",
+    "Test accrual basis",
+    "Test edition",
+    "Test table p1",
+    "Invented",
+  ],
+  supply_hours: [
+    "Test State",
+    "",
+    "",
+    "",
+    "fiscal_year",
+    "2020-04-01",
+    "2021-03-31",
+    "2020-21",
+    "rural",
+    "20.5",
+    "Test annual feeder average",
+    "Test source",
+    "https://example.invalid/test-source",
+    "2021-04-30",
+    "Invented",
+  ],
+  state_ev_policies: [
+    "Test State",
+    "Test policy",
+    "TEST-GO",
+    "Test clause 1",
+    "2020-01-01",
+    "2020-01-01",
+    "",
+    "charging_capex_subsidy",
+    "charging",
+    "",
+    "Test eligibility",
+    "",
+    "https://example.invalid/test-source",
+    "2020-01-31",
+    "Invented",
+  ],
+  nhai_wayside_amenities: [
+    "test-wsa-01",
+    "NH999",
+    "Test State",
+    "",
+    "12",
+    "",
+    "",
+    "Test historical announced",
+    "",
+    "unknown",
+    "",
+    "Test page 1",
+    "Invented",
+  ],
+  osm_power: ["node/999999999", "transformer", "", "10", "75", "999001", "2020-01-31", "node"],
 } as const;
-const integerFields = new Set([
-  "lgd_code",
-  "count",
-  "energy_charge_paise_per_kwh",
-  "demand_or_fixed_charge_paise",
-]);
-const numberFields = new Set(["lat", "lon", "power_kw"]);
 function columns(id: (typeof datasetIds)[number]) {
   const names =
     id in rowSchemas
@@ -57,34 +116,28 @@ function columns(id: (typeof datasetIds)[number]) {
         : ["lgd_code", "geometry"];
   return names.map((name) => ({
     name,
-    type: integerFields.has(name)
-      ? "integer"
-      : numberFields.has(name)
-        ? "number"
-        : name === "former_names" || name === "geometry"
-          ? "json"
-          : name === "covers_multiple_districts"
-            ? "boolean"
-            : name === "month" || name === "opened_month"
-              ? "month"
-              : name === "recorded_on" || name === "effective_from"
-                ? "date"
-                : "string",
+    type: columnType(name),
     unit: name.includes("paise")
       ? name.includes("kwh")
         ? "paise/kWh"
         : "paise (basis in unit)"
-      : name === "power_kw"
-        ? "kW"
-        : name === "count"
-          ? "vehicles"
-          : name === "lgd_code"
-            ? "LGD district code"
-            : name === "geometry" || name === "lat" || name === "lon"
-              ? "EPSG:4326"
-              : "not applicable",
+      : name === "atc_loss_pct"
+        ? "percent"
+        : name === "avg_supply_hours_per_day"
+          ? "hours/day"
+          : name === "chainage_km"
+            ? "km"
+            : name === "power_kw"
+              ? "kW"
+              : name === "count"
+                ? "vehicles"
+                : name === "lgd_code"
+                  ? "LGD district code"
+                  : name === "geometry" || name === "lat" || name === "lon"
+                    ? "EPSG:4326"
+                    : "not applicable",
     description: `Document the source definition of ${name}`,
-    ...(["opened_month", "demand_or_fixed_charge_paise"].includes(name) ? { nullable: true } : {}),
+    ...(columnNullable(id, name) ? { nullable: true } : {}),
   }));
 }
 const cell = (value: string) =>
@@ -109,11 +162,23 @@ for (const id of datasetIds) {
     source_url: null,
     retrieved_on: null,
     licence: null,
-    geography_level: id === "ev_tariffs" ? "state" : id === "highways" ? "corridor" : "district",
+    geography_level:
+      id === "discom_performance"
+        ? "discom"
+        : ["supply_hours", "nhai_wayside_amenities"].includes(id)
+          ? "mixed"
+          : ["ev_tariffs", "state_ev_policies"].includes(id)
+            ? "state"
+            : id === "highways"
+              ? "corridor"
+              : "district",
     time_coverage: "Complete with actual reporting period",
     update_frequency: "Complete with refresh schedule",
     notes: "Template only: not a retrieved or published dataset",
     columns: columns(id),
+    ...(expansionDatasetIds.includes(id as (typeof expansionDatasetIds)[number])
+      ? { source_sha256: null, licence_url: null, review_ref: null, transformation_version: null }
+      : {}),
   };
   await writeNew(`${publicDirectory}meta.template.json`, JSON.stringify(metadata, null, 2) + "\n");
   const fixture = {
@@ -122,10 +187,16 @@ for (const id of datasetIds) {
     source_name: "Test source",
     source_url: "https://example.invalid/test-source",
     retrieved_on: "2020-01-31",
-    licence: id === "highways" ? "ODbL-1.0 (test only)" : "CC0-1.0 (test only)",
+    licence: ["highways", "osm_power"].includes(id)
+      ? "ODbL-1.0 (test only)"
+      : "CC0-1.0 (test only)",
     notes: "Invented test data. Never publish.",
     attribution: "Test attribution only",
     fixture: true,
+    source_sha256: "0".repeat(64),
+    licence_url: "https://example.invalid/test-licence",
+    review_ref: "Test human review",
+    transformation_version: "test-v1",
   };
   await writeNew(`${fixtureDirectory}meta.json`, JSON.stringify(fixture, null, 2) + "\n");
   if (id in rowSchemas) {

@@ -457,3 +457,34 @@ Only SPEC.md and DATA_SOURCES_TODO.md are published for this part. No datasets,
 application code, database, predictions or deployment were changed. Part 12
 can proceed with validation/templates and independently verified acquisitions;
 pending sources must not be activated as live data.
+
+## Part 12 checkpoint - 2026-10-01
+
+Implemented the five expansion schemas, pending public templates and clearly
+marked development fixtures using the existing loader. Validation enforces
+allowlisted fields, ranges, signed integer paise, dates/reporting intervals,
+natural keys, nulls, state/LGD joins, ODbL and reviewed source provenance.
+The expanded public schema is `public_analytics_v2`; all six stamps remain.
+
+The offline export uses this same validator. Backend `PublicReference` lookups
+verify a release-pinned snapshot digest against the exact CSV/metadata bytes,
+refuse fixtures/stale activations/path escapes and return explicit pending or
+no-match results. District lookups preserve wider context at its published
+scope and never assign a serving utility. The subsidy comparison is an offline
+human-review diff with no database writes or monetary text parsing.
+
+Checks: production build and TypeScript; 150 frontend tests in the publication
+checkout before the final export-path test, followed by the 51 scoped loader/
+expansion tests; 19 backend tests; Ruff, strict mypy and scoped Prettier. Actual
+npm builds refused a bad row in each of the five expansion datasets and the
+reference dataset; fixture/artifact scan passed. Existing large-chunk warnings
+and missing ESLint configuration remain recorded launch work.
+
+Implementation is ready, but live acquisition is not complete. The Part 11
+source/reuse gates remain open and all five expansion datasets stay pending;
+fixtures do not satisfy acquisition. Toll traffic remains conditional. Only
+owned Part 12 files are published; unfinished Parts 5/8 and unrelated work are
+preserved. No API/report payload, database, model run or deployment changed.
+See [PUBLIC_REFERENCE.md](PUBLIC_REFERENCE.md) for export, release pins, lookup
+semantics and acceptance commands. Source-backed Parts 13-16 still need the
+respective acquisition gates to pass.

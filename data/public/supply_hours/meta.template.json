@@ -1,0 +1,112 @@
+{
+  "id": "supply_hours",
+  "title": "supply_hours — complete with sourced title",
+  "description": "Complete with scope and definitions",
+  "source_name": "Complete with publisher",
+  "source_url": null,
+  "retrieved_on": null,
+  "licence": null,
+  "geography_level": "mixed",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Template only: not a retrieved or published dataset",
+  "columns": [
+    {
+      "name": "state",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of state"
+    },
+    {
+      "name": "discom_id",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of discom_id",
+      "nullable": true
+    },
+    {
+      "name": "discom",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of discom",
+      "nullable": true
+    },
+    {
+      "name": "lgd_code",
+      "type": "integer",
+      "unit": "LGD district code",
+      "description": "Document the source definition of lgd_code",
+      "nullable": true
+    },
+    {
+      "name": "period_type",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of period_type"
+    },
+    {
+      "name": "period_start",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of period_start"
+    },
+    {
+      "name": "period_end",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of period_end"
+    },
+    {
+      "name": "published_period_label",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of published_period_label"
+    },
+    {
+      "name": "area_type",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of area_type"
+    },
+    {
+      "name": "avg_supply_hours_per_day",
+      "type": "number",
+      "unit": "hours/day",
+      "description": "Document the source definition of avg_supply_hours_per_day"
+    },
+    {
+      "name": "supply_definition",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of supply_definition"
+    },
+    {
+      "name": "source_name",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of source_name"
+    },
+    {
+      "name": "source_url",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of source_url"
+    },
+    {
+      "name": "retrieved_on",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of retrieved_on"
+    },
+    {
+      "name": "notes",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of notes"
+    }
+  ],
+  "source_sha256": null,
+  "licence_url": null,
+  "review_ref": null,
+  "transformation_version": null
+}
