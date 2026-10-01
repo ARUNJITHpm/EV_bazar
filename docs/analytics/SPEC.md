@@ -1,7 +1,7 @@
 # Chargeworthy Data: specification
 
 Status: Parts 0–3 complete; Part 4 implementation complete with live indicators pending sources; Part 5 working draft unpublished; Part 6 content implementation complete; Part 7 implementation complete with owner-confirmed affiliation and ownership disclosure. Reviewed 2026-10-01.
-Implementation brief: `chargeworthy-data-section-antigravity.md`.
+Implementation brief: `chargeworthy-data-roadmap.md`.
 Read this file before every subsequent analytics part, alongside `AGENTS.md`,
 `OVERVIEW.md`, `STACK.md`, `PLAN.md` and `FINDINGS.md`.
 
