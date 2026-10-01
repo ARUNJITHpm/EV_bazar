@@ -205,3 +205,201 @@ After a clean frontend build, run `npm run data:check-build --prefix frontend`
 with no concurrent build. It temporarily breaks one reference CSV cell, proves
 the actual build refuses it, restores the original bytes in a finally block,
 and scans production artifacts for the fixture observations.
+
+## Expansion acquisition gates (Part 11)
+
+Source-register review date: **2026-10-01**. This date is not a dataset retrieval
+date or publication date. All expansion datasets remain inactive. Checkboxes
+below track acquisition, not merely discovery of a website.
+
+For each accepted source, archive original bytes outside the public tree under
+`local_scratch/source_review/<id>/`, compute SHA256, and record actual retrieval,
+publisher date (unknown if absent), represented period, edition, table/page,
+units, definitions, licence evidence and human reviewer. Publish only reviewed
+allowlisted observations in `data/public/<id>/data.csv` with `meta.json` through
+the existing validator. Preserve the upstream licence; Chargeworthy's CC BY 4.0
+text licence does not relicense third-party data. Public accessibility alone is
+not commercial reuse permission. Reject HTML/error/login pages saved as PDFs.
+Never use demo/sandbox records as live observations. Missing means null, not zero.
+
+## DISCOM performance - PFC acquisition pending
+
+Publisher: [PFC](https://www.pfcindia.co.in/). Target the latest three report
+editions; the following 2024-25, 2023-24 and 2022-23 candidates were identified.
+Recheck the publisher index for newer editions at acquisition; direct download
+verification remains blocked (2024-25 returned HTML; 2022-23 fetch failed).
+
+- [2024-25 report candidate](https://www.pfcindia.co.in/ensite/DocumentRepository/ckfinder/files/Operations/Performance_Reports_of_State_Power_Utilities/Report%20on%20Performance%20of%20Power%20Utilities%202024-25.pdf)
+- [2023-24 report candidate](https://www.pfcindia.co.in/ensite/DocumentRepository/ckfinder/files/Operations/Performance_Reports_of_State_Power_Utilities/Report_on_Performance_of_Power_Utilities_2023-24.pdf)
+- [2022-23 database candidate, updated through April 2024](https://pfcindia.com/ensite/DocumentRepository/ckfinder/files/Operations/Performance_Reports_of_State_Power_Utilities/Report%20Database%202022-23%20-%20updated%20up%20to%20April%202024EntityApr.pdf)
+
+- [ ] Obtain genuine publisher PDFs for the newest three editions, archive and
+  checksum them; record printed release dates and each represented fiscal year.
+- [ ] Verify rights for publishing extracted observations; licence is pending,
+  not assumed GODL, CC0 or Chargeworthy CC BY 4.0.
+- [ ] Extract state, stable discom_id, published utility name, fiscal_year,
+  atc_loss_pct, acs_arr_gap_paise_per_kwh (nullable integer), source_edition,
+  source_table_ref and notes. Preserve cash/accrual and subsidy treatment,
+  utility cohort and any restatement; do not splice incompatible series.
+- [ ] Human-check every value against its table/page, and verify aliases and
+  service-area evidence separately. Key: utility + year + definition/edition;
+  select reviewed canonical observations without hiding revisions.
+- [ ] Save `data/public/discom_performance/data.csv` and `meta.json`; validate
+  AT&C 0-100, signed gap, integer paise and unresolved geography handling.
+
+Do not infer site voltage, transformer capacity, outages, tariff, or charging
+profitability from utility losses/gaps. Do not unweight-average utility metrics
+into a state figure. A utility in a state is not proof it serves a selected pin.
+
+## Supply hours - public annual candidate; NFMS export pending
+
+Official entry points: [National Power Portal](https://npp.gov.in/),
+[NPP sitemap](https://npp.gov.in/sitemap),
+[NFMS](https://nfms.powermin.gov.in/) and
+[CEA Distribution Monitoring](https://cea.nic.in/distribution-monitoring-division/?lang=en).
+The NPP landing page's NFMS link handler explicitly targets the NFMS URL above;
+the NFMS page was reachable, but a human-exportable public aggregate and its
+reuse terms were not verified. Do not use authenticated endpoints or invent an
+export URL. [NPP policy](https://npp.gov.in/help_policy) excludes third-party
+material from its reproduction provision; it does not establish NFMS rights.
+
+Public candidate: [CEA state-wise daily average supply for FY 2018-19 through
+2023-24, attributed to NPP](https://cea.nic.in/wp-content/uploads/dm/2025/09/State_wise_Average_hours_of_Supply_in_a_day_HHhh_for_FY_2018_19_to_FY_2023_2024_as_per_NPP_Portal.pdf).
+This one-page table distinguishes rural/urban 11 kV feeders and labels units
+HH.hh, with values whose fractional part exceeds 59. Do not interpret them as
+minutes; verify decimal-hour methodology before accepting conversions. The
+2025/09 upload path is not the coverage date or a verified publication date.
+
+- [ ] Archive/checksum the CEA file; visually check headers, blank cells and
+  column alignment. Confirm units and how averages were calculated.
+- [ ] Verify CEA/NPP reuse, including third-party rights, against
+  [CEA policies](https://cea.nic.in/website-policies/?lang=en); licence pending.
+- [ ] Inspect NFMS/NPP manually for publicly exportable aggregate tables. Record
+  the exact export URL, definition, represented interval and reuse evidence if
+  found; otherwise keep that acquisition pending without bypassing login.
+- [ ] Preserve state, nullable discom_id and lgd_code, period_type, period_start,
+  period_end, published_period_label, area_type, avg_supply_hours_per_day,
+  supply_definition, source_name, source_url, retrieved_on and notes. Key includes
+  actual geography, interval, area type and definition. Accept 0-24 hours/day.
+- [ ] Save `data/public/supply_hours/data.csv` and `meta.json` after review.
+
+Never downscale annual state data into months/districts or treat area averages
+as feeder/site uptime. Do not infer outages as 24 minus published area supply.
+
+## State EV policies - notifications identified, applicability pending
+
+Starting sources:
+
+- Kerala: [government order hosted by the National Single Window System](https://www.nsws.gov.in/s3fs/2022-12/pdf_Electric-Vehicle-policy_2%20%284%29_0.pdf),
+  GO(Ms) No.24/2019/Trans, 10 March 2019. Distinguish approval from the 2018
+  draft mentioned in [Invest Kerala's overview](https://invest.kerala.gov.in/doing-business-in-kerala/investment-avenue/electric-vehicles/).
+- Tamil Nadu: [Guidance Tamil Nadu policy entry, 2023](https://investingintamilnadu.com/business-in-tamil-nadu/policy-notifications?policy=tn-electric-vehicles-policy-2023&tab=state-policies).
+  Follow its original notification/download. Check subsequent orders against
+  the [official 2025 Gazette index](https://www.stationeryprinting.tn.gov.in/extra_ordinary_lists.php?id=MjAyNQ%3D%3D),
+  including the 29 December 2025 entry for GO Ms No.674, Home (Transport-I),
+  notification II(2)/HO/1344(d)/2025; inspect the actual gazette before asserting
+  any current tax benefit.
+- Karnataka: [Clean Mobility Policy 2025-30](https://investkarnataka.co.in/wp-content/uploads/2025/12/Clean-mobility-policy.pdf),
+  GO CI 117 SPI 2024(e), 11 February 2025. The order's date, not the upload
+  folder, controls notification provenance; its five-year/new-policy condition
+  requires checking supersession.
+- Central: [MoRTH](https://morth.gov.in/), [official eGazette](https://egazette.gov.in/),
+  [MHI PM E-DRIVE](https://pmedrive.heavyindustries.gov.in/) and its
+  [press releases](https://pmedrive.heavyindustries.gov.in/press_release).
+  Check operational/component guidelines and amendments, including the August
+  2025 extension; an old homepage end date is not current eligibility evidence.
+
+- [ ] Download original notified orders, amendments and applicable component
+  guidelines; record page, checksum, issuing authority and notification date.
+- [ ] Verify current validity, eligibility, geography, vehicle/charging scope,
+  supersession and any budget/application conditions; unknown expiry is unknown.
+- [ ] Verify reuse of notification text/extracts. No blanket licence confirmed.
+- [ ] Preserve state (or central), policy_name, notification_ref, notified_on,
+  valid_from, nullable valid_to, incentive_type, vehicle_scope, amount_text,
+  source_url, recorded_on and notes; retain amendment and review provenance.
+  Key: notification + clause/incentive + scope + validity, not state alone.
+- [ ] Save `data/public/state_ev_policies/data.csv` and `meta.json`.
+- [ ] Add the offline read-only comparison with `subsidy_rules` in Part 12;
+  differences go to human review, never automatic writes or ROI inputs.
+
+Do not call a draft notified policy, manufacturing/purchase incentives charging
+grants, or a policy promise a customer's entitlement. LLM extraction proposals
+need model/prompt_version stamps and human verification before acceptance.
+
+## NHAI wayside amenities - historical directory reviewed
+
+Sources: [NHAI WSA entry](https://nhai.gov.in/nhai/taxonomy/term/553) and
+[NHAI WSA site directory](https://nhai.gov.in/nhai/sites/default/files/mix_file/NHAI_WSA_Site_Directory.pdf).
+Downloaded into memory for verification on 2026-10-01: 3,946,448 bytes,
+SHA256 `835b770c5f2fc3bf4a1b1aaa32c86838210093d8a8692def2f48761963592e0a`.
+The PDF is 21 pages and contains a March 2021 bidding schedule. Printed
+publication date was not verified: record unknown, not the download date.
+No raw file or extracted dataset has been published in Part 11.
+
+- [ ] Archive the actual PDF and recompute checksum; retain this reviewed digest
+  as a comparison, not a guarantee that the mutable URL stays unchanged.
+- [ ] Verify reuse permission for the directory; licence remains pending.
+- [ ] Obtain dated current award/planning evidence before current-status claims.
+- [ ] Human-transcribe wsa_id, nh_ref, state, nullable lgd_code and chainage_km,
+  paired nullable lat/lon, status as printed, ev_charging_listed
+  (true/false/unknown), nullable source_doc_date, source_page and notes.
+  Preserve document checksum/source URL in metadata and per-status provenance.
+- [ ] Review each row and charging flag; absence of a charging mention is unknown,
+  not false. Key: site ID + source/status effective evidence, preserving history.
+- [ ] Save `data/public/nhai_wayside_amenities/data.csv` and `meta.json`.
+
+Do not geocode chainage, invent coordinates, imply every amenity has charging,
+or treat planned/awarded sites as operational stations or gap-closing evidence.
+
+## OSM power - extraction pending, ODbL confirmed
+
+Source: [Geofabrik India extracts](https://download.geofabrik.de/asia/india.html)
+or the existing Overpass client in `app/domain/context/poi.py`. Licence:
+[ODbL / OpenStreetMap attribution](https://www.openstreetmap.org/copyright).
+
+- [ ] Select a bounded extract/query; archive checksum, exact extract timestamp,
+  query and transformation versions. Do not call today's date the extract date.
+- [ ] Extract `power=substation` and `power=transformer`; preserve osm_id with
+  object type, kind, voltage as tagged (nullable), lat/lon, nullable lgd_code,
+  extract_date and point_derivation. A representative point from a way/relation
+  is derived geometry, not a surveyed equipment location.
+- [ ] Review state/LGD joins against a dated reference, retaining unresolved
+  joins. Key: OSM object type/ID + extract. Coordinates are EPSG:4326.
+- [ ] Save `data/public/osm_power/data.csv` and `meta.json`; attribute
+  OpenStreetMap contributors and satisfy applicable derived-database obligations.
+  Exclude usernames, user IDs and changeset metadata from public observations.
+- [ ] Document missing/uneven mapping coverage and query limits. Any metered
+  provider still needs the existing quota and usage-event guarantees.
+
+Mapped proximity proves neither available load, equipment health, voltage,
+connection feasibility, ownership nor utility permission. Missing mapping is
+not proof no transformer exists. Do not ship raw PBF files to the frontend.
+
+## Toll plaza traffic - conditional, no licensed vehicle count verified
+
+Review result on 2026-10-01: **no openly licensed per-plaza vehicle-count
+resource verified in this review**. This is not a claim that none exists.
+[NHAI plaza 417](https://tis.nhai.gov.in/TollInformation?TollPlazaID=417) and
+[plaza 4588](https://tis.nhai.gov.in/TollInformation?TollPlazaID=4588) expose
+dated Traffic (PCU/day), not raw vehicle counts; reuse was not confirmed.
+The [OGD catalogue](https://data.gov.in/catalogs) did not yield a verified live
+licensed per-plaza count in the review, and displayed a sandbox/demo warning.
+Do not ingest those example records.
+
+- [ ] Find a genuine live NHAI/OGD per-plaza resource; record exact dataset/export
+  URL, plaza identifiers, method, observation date/interval and counting units.
+- [ ] Verify the individual resource's licence, against
+  [OGD terms](https://www.data.gov.in/terms-of-use) and
+  [GODL](https://ap.data.gov.in/godl) where actually applicable. GODL does not
+  automatically cover every NHAI webpage. Licence and acquisition stay pending.
+- [ ] If accepted, define a separate reviewed schema for plaza_id, location,
+  period bounds, traffic_value, traffic_unit, vehicle_class, method, source_url
+  and notes; natural key includes period, class, unit and method.
+- [ ] Only then save `data/public/toll_plaza_traffic/data.csv` and `meta.json`
+  and activate validation/consumers. Otherwise keep the dataset absent/inactive.
+
+Fees, toll revenue, FASTag transaction counts and PCU/day are not interchangeable
+with vehicles/day. Do not relabel PCU as vehicles or ADT as AADT without the
+published method. Historical observations and future target traffic are never
+current measured counts. Toll traffic is optional; the other five contracts
+can progress independently.
