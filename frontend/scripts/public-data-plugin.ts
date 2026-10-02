@@ -8,6 +8,7 @@ import { buildAtlas } from "./atlas.ts";
 
 export function publicDataPlugin(): Plugin {
   let root = "",
+    contentRoot = "",
     development = false;
   let loaded: Awaited<ReturnType<typeof loadPublicData>> | undefined;
   return {
@@ -17,6 +18,7 @@ export function publicDataPlugin(): Plugin {
     },
     configResolved(config) {
       root = resolve(config.root, "../data");
+      contentRoot = resolve(config.root, "content/analytics");
     },
     async buildStart() {
       loaded = await loadPublicData(resolve(root, "public"));
@@ -65,13 +67,12 @@ export function publicDataPlugin(): Plugin {
       }
       if (id === "\0virtual:analytics-method") {
         loaded ??= await loadPublicData(resolve(root, "public"));
-        const contentRoot = resolve(root, "../frontend/content/analytics");
         const articles = await loadAnalyticsContent(contentRoot, loaded.catalogue);
         return `export default ${JSON.stringify(await loadAnalyticsMethod(contentRoot, articles))};`;
       }
       if (id === "\0virtual:analytics-content") {
         loaded ??= await loadPublicData(resolve(root, "public"));
-        return `export default ${JSON.stringify(await loadAnalyticsContent(resolve(root, "../frontend/content/analytics"), loaded.catalogue))};`;
+        return `export default ${JSON.stringify(await loadAnalyticsContent(contentRoot, loaded.catalogue))};`;
       }
       if (id === "\0virtual:analytics-atlas") {
         loaded ??= await loadPublicData(resolve(root, "public"));
