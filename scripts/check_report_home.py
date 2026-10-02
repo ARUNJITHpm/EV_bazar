@@ -93,6 +93,8 @@ def main() -> None:
                 expect(page.get_by_role("heading", level=1)).to_have_text(
                     "Is your land suitable for EV charging?"
                 )
+                if width < 1024:
+                    page.get_by_role("button", name="Open navigation").click()
                 page.screenshot(path=str(args.output / f"viewport-{width}.png"))
                 overflow = page.evaluate(
                     "() => Array.from(document.querySelectorAll('body *'))"
@@ -114,6 +116,15 @@ def main() -> None:
                     expect(
                         navigation.get_by_role("link", name=label, exact=True)
                     ).to_have_attribute("href", href)
+                if width < 1024:
+                    navigation.get_by_role("link", name="Home", exact=True).focus()
+                    page.keyboard.press("Escape")
+                    expect(navigation).not_to_be_visible()
+                    expect(page.get_by_role("button", name="Open navigation")).to_be_focused()
+                header_geometry = page.locator(".public-header-row").evaluate(
+                    "e => ({x:e.querySelector('.public-wordmark').getBoundingClientRect().x,"
+                    "height:e.getBoundingClientRect().height})"
+                )
                 page.evaluate("document.fonts.ready")
                 axe = args.axe_script.read_text(encoding="utf-8")
                 page.add_script_tag(content=axe)
@@ -197,6 +208,8 @@ def main() -> None:
                     pdf = page.pdf(print_background=True, prefer_css_page_size=True)
                     assert pdf.startswith(b"%PDF") and len(pdf) > 10_000
                     (args.output / "sample-report.pdf").write_bytes(pdf)
+                if width < 1024:
+                    page.get_by_role("button", name="Open navigation").click()
                 page.get_by_role("link", name="Home", exact=True).click()
                 expect(page).to_have_url(url + "/")
                 page.reload()
@@ -207,14 +220,35 @@ def main() -> None:
                 page.locator("[data-report-ready]").wait_for()
                 page.goto(url + "/data")
                 expect(page.get_by_role("heading", level=1)).to_be_visible()
+                assert (
+                    page.locator(".public-header-row").evaluate(
+                        "e => ({x:e.querySelector('.public-wordmark').getBoundingClientRect().x,"
+                        "height:e.getBoundingClientRect().height})"
+                    )
+                    == header_geometry
+                )
                 page.goto(url + "/assess")
                 expect(
                     page.get_by_role("textbox", name="Search for the site location")
                 ).to_be_visible()
+                assert (
+                    page.locator(".public-header-row").evaluate(
+                        "e => ({x:e.querySelector('.public-wordmark').getBoundingClientRect().x,"
+                        "height:e.getBoundingClientRect().height})"
+                    )
+                    == header_geometry
+                )
                 page.goto(url + "/owner")
                 expect(
                     page.get_by_role("heading", name="Welcome. Are you new here?")
                 ).to_be_visible()
+                assert (
+                    page.locator(".public-header-row").evaluate(
+                        "e => ({x:e.querySelector('.public-wordmark').getBoundingClientRect().x,"
+                        "height:e.getBoundingClientRect().height})"
+                    )
+                    == header_geometry
+                )
                 page.goto(url + "/not-a-real-route")
                 expect(page.get_by_role("heading", name="Page not found")).to_be_visible()
                 assert not errors, errors

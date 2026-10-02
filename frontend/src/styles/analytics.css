@@ -90,9 +90,9 @@
   text-decoration: underline;
 }
 .analytics-document {
-  max-width: 1080px;
+  max-width: var(--cw-public-width);
   margin: 0 auto;
-  padding: clamp(40px, 7vw, 88px) 24px 80px;
+  padding: clamp(40px, 7vw, 88px) var(--cw-public-gutter) 80px;
 }
 .analytics-label {
   font: 400 13px/1.6 var(--cw-mono);

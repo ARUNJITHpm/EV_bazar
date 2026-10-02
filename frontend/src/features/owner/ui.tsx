@@ -1,11 +1,11 @@
 import { useEffect, type ReactNode } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "../../api/client";
 
 import { clearPrivateGridCache } from "./grid-cache";
-import { PublicNavigation } from "../public/PublicNavigation";
+import { PublicHeader } from "../public/PublicHeader";
 
 export const inputCls =
   "min-h-[56px] w-full border border-cw-line bg-cw-surface px-5 text-[18px] text-cw-text placeholder:text-cw-muted focus:border-cw-slate focus:outline-none";
@@ -58,36 +58,29 @@ export function Shell({
   };
   return (
     <div className="cw-surface-root relative flex min-h-dvh flex-col bg-cw-ground font-cw-sans text-[17px] leading-[1.6] text-cw-text antialiased">
-      <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 px-[clamp(24px,7vw,112px)] py-5">
-        <Link
-          to="/"
-          className="inline-flex min-h-[44px] items-center font-cw-mono text-[clamp(18px,1.6vw,21px)] font-medium tracking-[0.08em] text-cw-text uppercase"
-        >
-          Chargeworthy
-        </Link>
-        <span className="flex items-center gap-5 font-cw-mono text-[14px] tracking-[0.04em] text-cw-muted">
-          {progress && (
-            <span className="tracking-[0.08em]">
-              {String(progress.at).padStart(2, "0")} / {String(progress.of).padStart(2, "0")}
-            </span>
-          )}
-          {me.data && (
-            <>
-              <span className="tabular-nums">{me.data.phone_masked}</span>
-              <button
-                type="button"
-                onClick={() => void signOut()}
-                className="inline-flex min-h-[44px] items-center text-cw-slate"
-              >
-                Sign out
-              </button>
-            </>
-          )}
-        </span>
-        <div className="w-full">
-          <PublicNavigation />
-        </div>
-      </header>
+      <PublicHeader>
+        {(progress || me.data) && (
+          <span className="flex items-center gap-5 font-cw-mono text-[14px] tracking-[0.04em] text-cw-muted">
+            {progress && (
+              <span className="tracking-[0.08em]">
+                {String(progress.at).padStart(2, "0")} / {String(progress.of).padStart(2, "0")}
+              </span>
+            )}
+            {me.data && (
+              <>
+                <span className="tabular-nums">{me.data.phone_masked}</span>
+                <button
+                  type="button"
+                  onClick={() => void signOut()}
+                  className="inline-flex min-h-[44px] items-center text-cw-slate"
+                >
+                  Sign out
+                </button>
+              </>
+            )}
+          </span>
+        )}
+      </PublicHeader>
       {progress && (
         <div className="h-0.5 bg-cw-line">
           <div
@@ -97,7 +90,7 @@ export function Shell({
         </div>
       )}
       {back && (
-        <div className="px-[clamp(24px,7vw,112px)] pt-3.5">
+        <div className="public-container pt-3.5">
           <button
             type="button"
             onClick={back}
@@ -107,7 +100,7 @@ export function Shell({
           </button>
         </div>
       )}
-      <main className="flex flex-grow flex-col px-[clamp(24px,7vw,112px)] pt-[clamp(24px,5vw,56px)] pb-[clamp(96px,10vw,120px)]">
+      <main className="public-container flex flex-grow flex-col pt-[clamp(24px,5vw,56px)] pb-[clamp(96px,10vw,120px)]">
         {children}
       </main>
     </div>

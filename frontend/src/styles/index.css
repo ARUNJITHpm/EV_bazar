@@ -13,6 +13,7 @@
 @import "./analytics.css";
 /* The /animation review surface. Scoped by a cwa- prefix; see the file. */
 @import "./animation.css";
+@import "./public.css";
 @import "./print.css";
 
 /* Diagram text keeps its authored size; narrow screens scroll rather than shrink labels. */

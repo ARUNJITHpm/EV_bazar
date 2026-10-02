@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { api } from "../../../api/client";
 import { BackgroundMap } from "./BackgroundMap";
@@ -16,7 +16,7 @@ import {
   type FlowState,
 } from "./state";
 import { Working } from "./Working";
-import { PublicNavigation } from "../PublicNavigation";
+import { PublicHeader } from "../PublicHeader";
 
 /**
  * The public assessment flow, built to the design (design/flow-images/).
@@ -343,20 +343,9 @@ export function Flow() {
 
   return (
     <div className="cw-surface-root relative flex min-h-dvh flex-col bg-cw-ground font-cw-sans text-[17px] leading-[1.6] text-cw-text antialiased">
-      <header className="relative z-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 bg-cw-ground px-[clamp(24px,7vw,112px)] py-5">
-        <Link
-          to="/"
-          className="inline-flex min-h-[44px] items-center font-cw-mono text-[clamp(18px,1.6vw,21px)] font-medium tracking-[0.08em] text-cw-text uppercase"
-        >
-          Chargeworthy
-        </Link>
-        <span className="font-cw-mono text-[14px] tracking-[0.08em] text-cw-muted">
-          {meta.label}
-        </span>
-        <div className="w-full">
-          <PublicNavigation />
-        </div>
-      </header>
+      <PublicHeader>
+        <span>{meta.label}</span>
+      </PublicHeader>
 
       {/* A quiet hairline. Never a percentage in text. */}
       <div className="relative z-10 h-0.5 bg-cw-line">
@@ -367,7 +356,7 @@ export function Flow() {
       </div>
 
       {step !== "locate" && step !== "result" && (
-        <div className="relative z-10 px-[clamp(24px,7vw,112px)] pt-3.5">
+        <div className="public-container relative z-10 pt-3.5">
           <button
             type="button"
             onClick={() => navigate(-1)}
@@ -381,9 +370,7 @@ export function Flow() {
 
       <div
         className={`relative z-10 flex flex-grow flex-col justify-center ${
-          bare
-            ? ""
-            : "px-[clamp(24px,7vw,112px)] pt-[clamp(24px,5vw,56px)] pb-[clamp(48px,7vw,72px)]"
+          bare ? "" : "public-container pt-[clamp(24px,5vw,56px)] pb-[clamp(48px,7vw,72px)]"
         }`}
       >
         {!bare && state.pin && <BackgroundMap pin={state.pin} />}

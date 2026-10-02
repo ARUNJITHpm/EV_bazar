@@ -86,7 +86,13 @@ const BLOCKS = [
   "M805 397h105v53H805z M814 406h87v35H814z",
 ];
 
-export function RouteToCharge({ label = SITE_LABEL }: { label?: string }) {
+export function RouteToCharge({
+  label = SITE_LABEL,
+  background = false,
+}: {
+  label?: string;
+  background?: boolean;
+}) {
   return (
     // The border matters: the substrate is --cw-ground, the same colour as
     // the page, so without a frame this reads as loose shapes floating in
@@ -363,51 +369,55 @@ export function RouteToCharge({ label = SITE_LABEL }: { label?: string }) {
           Where the reference put SITE FIT 92 / 100 this counts the checks
           in. The counter is the same device; what it counts is a number the
           product actually produces. */}
-      <div
-        className="cwa-card absolute top-[6%] left-[4.5%] w-[clamp(164px,32cqw,300px)] border bg-cw-ground/92 px-[2.2cqw] py-[2cqw]"
-        aria-hidden="true"
-      >
-        <div className="font-cw-mono text-[clamp(8px,1.15cqw,12px)] font-semibold tracking-[0.14em] text-cw-accent uppercase">
-          Recommended site
+      {!background && (
+        <div
+          className="cwa-card absolute top-[6%] left-[4.5%] w-[clamp(164px,32cqw,300px)] border bg-cw-ground/92 px-[2.2cqw] py-[2cqw]"
+          aria-hidden="true"
+        >
+          <div className="font-cw-mono text-[clamp(8px,1.15cqw,12px)] font-semibold tracking-[0.14em] text-cw-accent uppercase">
+            Recommended site
+          </div>
+
+          <div className="mt-[1.4cqw] mb-[1.8cqw] flex items-baseline gap-[0.8cqw]">
+            <span className="mr-auto font-cw-mono text-[clamp(9px,1.35cqw,15px)] tracking-[0.08em] text-cw-text uppercase">
+              Assessed
+            </span>
+            <span className="cwa-count font-cw-mono text-[clamp(20px,3.6cqw,40px)] leading-none font-medium tracking-[-0.02em] text-cw-text tabular-nums" />
+            <span className="font-cw-mono text-[clamp(8px,1.15cqw,12px)] text-cw-muted">
+              /{TOTAL_CHECKS}
+            </span>
+          </div>
+
+          <dl className="m-0 border-y border-cw-line">
+            {HERO_METRICS.map((m, i) => (
+              <div
+                key={m.label}
+                className={`flex items-baseline justify-between gap-[1.4cqw] py-[0.9cqw] font-cw-mono text-[clamp(7px,1.05cqw,11px)] tracking-[0.05em] text-cw-muted uppercase ${
+                  i > 0 ? "border-t border-cw-line" : ""
+                }`}
+              >
+                <dt>{m.label}</dt>
+                <dd className="m-0 font-medium whitespace-nowrap text-cw-text tabular-nums">
+                  {illustrative(m.value)}
+                </dd>
+              </div>
+            ))}
+          </dl>
+
+          <div className="mt-[1.2cqw] font-cw-mono text-[clamp(6px,0.86cqw,9px)] tracking-[0.11em] text-cw-muted uppercase">
+            {label} · illustrative
+          </div>
         </div>
+      )}
 
-        <div className="mt-[1.4cqw] mb-[1.8cqw] flex items-baseline gap-[0.8cqw]">
-          <span className="mr-auto font-cw-mono text-[clamp(9px,1.35cqw,15px)] tracking-[0.08em] text-cw-text uppercase">
-            Assessed
-          </span>
-          <span className="cwa-count font-cw-mono text-[clamp(20px,3.6cqw,40px)] leading-none font-medium tracking-[-0.02em] text-cw-text tabular-nums" />
-          <span className="font-cw-mono text-[clamp(8px,1.15cqw,12px)] text-cw-muted">
-            /{TOTAL_CHECKS}
-          </span>
+      {!background && (
+        <div
+          className="absolute right-[2.8%] bottom-[3.5%] font-cw-mono text-[clamp(7px,1cqw,11px)] tracking-[0.13em] text-cw-muted uppercase opacity-60"
+          aria-hidden="true"
+        >
+          Site viability · route access
         </div>
-
-        <dl className="m-0 border-y border-cw-line">
-          {HERO_METRICS.map((m, i) => (
-            <div
-              key={m.label}
-              className={`flex items-baseline justify-between gap-[1.4cqw] py-[0.9cqw] font-cw-mono text-[clamp(7px,1.05cqw,11px)] tracking-[0.05em] text-cw-muted uppercase ${
-                i > 0 ? "border-t border-cw-line" : ""
-              }`}
-            >
-              <dt>{m.label}</dt>
-              <dd className="m-0 font-medium whitespace-nowrap text-cw-text tabular-nums">
-                {illustrative(m.value)}
-              </dd>
-            </div>
-          ))}
-        </dl>
-
-        <div className="mt-[1.2cqw] font-cw-mono text-[clamp(6px,0.86cqw,9px)] tracking-[0.11em] text-cw-muted uppercase">
-          {label} · illustrative
-        </div>
-      </div>
-
-      <div
-        className="absolute right-[2.8%] bottom-[3.5%] font-cw-mono text-[clamp(7px,1cqw,11px)] tracking-[0.13em] text-cw-muted uppercase opacity-60"
-        aria-hidden="true"
-      >
-        Site viability · route access
-      </div>
+      )}
     </div>
   );
 }

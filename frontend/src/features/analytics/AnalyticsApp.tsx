@@ -19,7 +19,7 @@ import { developmentFixtures } from "./data/client";
 import { parseCsv } from "../../../scripts/csv";
 import { datasetStructuredData } from "../../../scripts/analytics-seo";
 
-import { PublicNavigation } from "../public/PublicNavigation";
+import { PublicHeader } from "../public/PublicHeader";
 
 import { analyticsMetadata, searchPublicContent, verticals } from "./catalog";
 
@@ -333,11 +333,7 @@ export function AnalyticsApp() {
       <a className="analytics-skip" href="#data-main">
         Skip to content
       </a>
-      <header className="analytics-header">
-        <Link to="/" className="analytics-wordmark">
-          Chargeworthy
-        </Link>
-        <PublicNavigation />
+      <PublicHeader>
         <nav aria-label="Data navigation">
           <Link
             to="/data"
@@ -348,7 +344,7 @@ export function AnalyticsApp() {
           <Link to="/data/methodology">Methodology</Link>
           <Link to="/data/sources">Sources</Link>
         </nav>
-      </header>
+      </PublicHeader>
       <main id="data-main" tabIndex={-1} className="analytics-document">
         {fixtureCsv && (
           <aside aria-label="Test data" className="analytics-preparation">

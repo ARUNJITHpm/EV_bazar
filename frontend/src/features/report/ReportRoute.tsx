@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { Report } from "./Report";
 import { fetchReport } from "./payload";
-import { PublicNavigation } from "../public/PublicNavigation";
+import { PublicHeader } from "../public/PublicHeader";
 
 /**
  * `/report/:id` — fetch the stored payload and render it on paper. The
@@ -43,20 +43,16 @@ export function ReportRoute({ reportId }: { reportId?: string }) {
       >
         Skip to report
       </a>
-      <header className="no-print mx-auto flex max-w-[960px] flex-wrap items-center justify-between gap-4 px-[clamp(24px,6vw,64px)] py-4 font-cw-sans text-[15px] text-cw-paper-muted">
-        <Link to="/" className="font-semibold text-cw-ink">
-          Chargeworthy
-        </Link>
-        <PublicNavigation theme="paper" />
+      <PublicHeader>
         <button
           type="button"
           onClick={() => window.print()}
           disabled={!q.data}
-          className="inline-flex min-h-[44px] items-center transition-colors duration-200 hover:text-cw-ink disabled:cursor-wait disabled:opacity-50"
+          className="inline-flex min-h-[44px] items-center transition-colors duration-200 hover:text-cw-text disabled:cursor-wait disabled:opacity-50"
         >
           Print or save as PDF
         </button>
-      </header>
+      </PublicHeader>
 
       <main id="report-content">
         {q.isPending && (

@@ -152,4 +152,7 @@
   --cw-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --cw-enter: 520ms;
   --cw-state: 200ms;
+  /* Shared customer navigation and page alignment. */
+  --cw-public-width: 1200px;
+  --cw-public-gutter: clamp(24px, 4vw, 64px);
 }
