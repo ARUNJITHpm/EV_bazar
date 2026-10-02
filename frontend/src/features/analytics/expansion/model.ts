@@ -1,6 +1,6 @@
 import type { z } from "zod";
 import type { rowSchemas, PublicCatalogue, DatasetId } from "../data/schemas";
-import { publicDataVersions } from "../data/schemas";
+import { publicDataVersions } from "../data/versions";
 import type { ChartData, ChartRow } from "../chart/model";
 
 export type Performance = z.infer<typeof rowSchemas.discom_performance>;

@@ -1,4 +1,4 @@
-import { publicDataVersions } from "../data/schemas";
+import { publicDataVersions } from "../data/versions";
 
 export type ChartType = "line" | "bar" | "horizontal-bar" | "range" | "small-multiples";
 export interface ChartRow {

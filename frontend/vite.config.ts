@@ -6,9 +6,17 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 // vitest/config re-exports Vite's defineConfig with the `test` key added.
 import { defineConfig } from "vitest/config";
+import { loadEnv } from "vite";
 import { publicDataPlugin } from "./scripts/public-data-plugin";
 
 export default defineConfig({
+  define: {
+    "import.meta.env.PUBLIC_ANALYTICS_ORIGIN": JSON.stringify(
+      process.env.PUBLIC_ANALYTICS_ORIGIN ??
+        loadEnv("production", process.cwd(), "PUBLIC_").PUBLIC_ANALYTICS_ORIGIN ??
+        "",
+    ),
+  },
   plugins: [
     react(),
     tailwindcss(),
@@ -26,9 +34,8 @@ export default defineConfig({
             request.url = `${document}${url.search}`;
           } catch {
             const group = path.split("/")[2];
-            const fallback = group === "district"
-              ? `/data/${group}/index.html`
-              : "/data/fallback.html";
+            const fallback =
+              group === "district" ? `/data/${group}/index.html` : "/data/fallback.html";
             request.url = `${fallback}${url.search}`;
           }
           next();

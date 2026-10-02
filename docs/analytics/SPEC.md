@@ -588,3 +588,15 @@ LGD-linked district block, preserve pacing and omit unmatched older responses.
 Electricity/corridor promotion is gated on eligible reviewed observations.
 Fleet ratios, serving-DISCOM joins, source activation and complete 34-check
 report emission remain pending. See [PART16_PUBLIC_FLOW.md](PART16_PUBLIC_FLOW.md).
+
+
+## Part 9 launch acceptance checkpoint ? 2026-10-02
+
+Implemented progressive loading, local licensed fonts, viewport-only geometry,
+accessibility fixes, unique SEO metadata, source-licensed Dataset JSON-LD and
+origin-gated sitemap/canonicals. A pinned axe browser/SEO/PDF acceptance template and
+expanded all-artifact owner/grid scan are included. Workflow activation requires
+GitHub workflow scope. Frontend 178 and backend
+713 tests passed. Production URL, real Android/deployed-host acceptance,
+populated production-record comparison, container execution and source-dependent
+publication remain open. See [PART9_LAUNCH_ACCEPTANCE.md](PART9_LAUNCH_ACCEPTANCE.md).

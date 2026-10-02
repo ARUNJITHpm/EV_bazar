@@ -1,5 +1,3 @@
-import { ElectricityContext, CorridorsContext } from "./expansion/Expansion";
-import { StateRegistrations } from "./expansion/StateRegistrations";
 import { Methodology, Sources } from "./method/Method";
 import {
   ContentIndex,
@@ -7,15 +5,19 @@ import {
   LatestWeekly,
   RecentInsights,
   TopicList,
-} from "./content/Content";
+  ElectricityContext,
+  CorridorsContext,
+  StateRegistrations,
+  DistrictDetails,
+} from "./route-components";
 import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
 import publicCatalogue from "virtual:analytics-public-data";
 import atlas from "virtual:analytics-atlas";
-import { DistrictMap } from "./districts/DistrictMap";
-import { DistrictDetails } from "./districts/DistrictDetails";
+import { DeferredDistrictMap } from "./districts/DeferredDistrictMap";
 import { developmentFixtures } from "./data/client";
 import { parseCsv } from "../../../scripts/csv";
+import { datasetStructuredData } from "../../../scripts/analytics-seo";
 
 import { analyticsMetadata, searchPublicContent, verticals } from "./catalog";
 
@@ -260,6 +262,24 @@ export function AnalyticsApp() {
     const previousRobots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
     const previousRobotsContent = previousRobots?.content;
     const metadata = analyticsMetadata(pathname);
+    const origin = import.meta.env.PUBLIC_ANALYTICS_ORIGIN as string;
+    let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (origin) {
+      if (!canonical) {
+        canonical = document.createElement("link");
+        canonical.rel = "canonical";
+        document.head.append(canonical);
+      }
+      canonical.href = new URL(pathname, origin).href;
+    }
+    document.getElementById("analytics-datasets")?.remove();
+    if (pathname.replace(/\/+$/, "") === "/data/sources") {
+      const ld = document.createElement("script");
+      ld.id = "analytics-datasets";
+      ld.type = "application/ld+json";
+      ld.textContent = JSON.stringify(datasetStructuredData(publicCatalogue));
+      document.head.append(ld);
+    }
     document.title = metadata.title;
     document
       .querySelector('meta[name="description"]')
@@ -276,6 +296,8 @@ export function AnalyticsApp() {
       .querySelector('meta[property="og:description"]')
       ?.setAttribute("content", metadata.description);
     return () => {
+      canonical?.remove();
+      document.getElementById("analytics-datasets")?.remove();
       document.title = previousTitle;
       for (const previous of previousMeta)
         previous.element?.setAttribute("content", previous.content);
@@ -339,73 +361,75 @@ export function AnalyticsApp() {
             </ul>
           </aside>
         )}
-        <Routes>
-          {MapDemo && new URLSearchParams(search).get("fixtures") === "1" && (
-            <Route
-              path="map-demo"
-              element={
-                <Suspense fallback={<p>Loading map…</p>}>
-                  <MapDemo />
-                </Suspense>
-              }
-            />
-          )}
-          {ChartDemo && new URLSearchParams(search).get("fixtures") === "1" && (
-            <Route
-              path="chart-demo"
-              element={
-                <Suspense fallback={<p>Loading chart demo…</p>}>
-                  <ChartDemo />
-                </Suspense>
-              }
-            />
-          )}
-          <Route path="/" element={<Landing />} />
-          {verticals.map((vertical) => (
-            <Route
-              key={vertical.slug}
-              path={vertical.slug}
-              element={
-                <DocumentPage title={vertical.title}>
-                  <p className="analytics-lead">{vertical.description}</p>
-                  {vertical.slug !== "corridors" && (
-                    <Preparation>{vertical.preparation}</Preparation>
-                  )}
-                  {vertical.slug === "electricity" && <ElectricityContext />}
-                  {vertical.slug === "corridors" && <CorridorsContext />}
-                  {vertical.slug === "vehicles" && <StateRegistrations />}
-                  {["vehicles", "charging-network", "usage"].includes(vertical.slug) && (
-                    <DistrictMap
-                      atlas={atlas}
-                      districts={publicCatalogue.districts}
-                      initialIndicator={
-                        vertical.slug === "vehicles"
-                          ? "registrations"
-                          : vertical.slug === "usage"
-                            ? "usage"
-                            : "chargers"
-                      }
-                    />
-                  )}
-                  {vertical.slug === "method" && (
-                    <Link className="analytics-text-link" to="/data/methodology">
-                      Read the methodology →
-                    </Link>
-                  )}
-                </DocumentPage>
-              }
-            />
-          ))}
-          <Route path="district" element={<DistrictPage />} />
-          <Route path="district/:slug" element={<DistrictPage />} />
-          <Route path="insights" element={<InsightsPage />} />
-          <Route path="insights/:slug" element={<ContentArticle format="insights" />} />
-          <Route path="weekly" element={<WeeklyPage />} />
-          <Route path="weekly/:slug" element={<ContentArticle format="weekly" />} />
-          <Route path="methodology" element={<MethodologyPage />} />
-          <Route path="sources" element={<SourcesPage />} />
-          <Route path="*" element={<UnpublishedPage />} />
-        </Routes>
+        <Suspense fallback={<p role="status">Loading data page…</p>}>
+          <Routes>
+            {MapDemo && new URLSearchParams(search).get("fixtures") === "1" && (
+              <Route
+                path="map-demo"
+                element={
+                  <Suspense fallback={<p>Loading map…</p>}>
+                    <MapDemo />
+                  </Suspense>
+                }
+              />
+            )}
+            {ChartDemo && new URLSearchParams(search).get("fixtures") === "1" && (
+              <Route
+                path="chart-demo"
+                element={
+                  <Suspense fallback={<p>Loading chart demo…</p>}>
+                    <ChartDemo />
+                  </Suspense>
+                }
+              />
+            )}
+            <Route path="/" element={<Landing />} />
+            {verticals.map((vertical) => (
+              <Route
+                key={vertical.slug}
+                path={vertical.slug}
+                element={
+                  <DocumentPage title={vertical.title}>
+                    <p className="analytics-lead">{vertical.description}</p>
+                    {vertical.slug !== "corridors" && (
+                      <Preparation>{vertical.preparation}</Preparation>
+                    )}
+                    {vertical.slug === "electricity" && <ElectricityContext />}
+                    {vertical.slug === "corridors" && <CorridorsContext />}
+                    {vertical.slug === "vehicles" && <StateRegistrations />}
+                    {["vehicles", "charging-network", "usage"].includes(vertical.slug) && (
+                      <DeferredDistrictMap
+                        atlas={atlas}
+                        districts={publicCatalogue.districts}
+                        initialIndicator={
+                          vertical.slug === "vehicles"
+                            ? "registrations"
+                            : vertical.slug === "usage"
+                              ? "usage"
+                              : "chargers"
+                        }
+                      />
+                    )}
+                    {vertical.slug === "method" && (
+                      <Link className="analytics-text-link" to="/data/methodology">
+                        Read the methodology →
+                      </Link>
+                    )}
+                  </DocumentPage>
+                }
+              />
+            ))}
+            <Route path="district" element={<DistrictPage />} />
+            <Route path="district/:slug" element={<DistrictPage />} />
+            <Route path="insights" element={<InsightsPage />} />
+            <Route path="insights/:slug" element={<ContentArticle format="insights" />} />
+            <Route path="weekly" element={<WeeklyPage />} />
+            <Route path="weekly/:slug" element={<ContentArticle format="weekly" />} />
+            <Route path="methodology" element={<MethodologyPage />} />
+            <Route path="sources" element={<SourcesPage />} />
+            <Route path="*" element={<UnpublishedPage />} />
+          </Routes>
+        </Suspense>
       </main>
       <footer className="analytics-footer">
         <div>

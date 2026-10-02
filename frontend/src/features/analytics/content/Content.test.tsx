@@ -1,9 +1,20 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { afterEach, expect, it } from "vitest";
+import { afterEach, expect, it, vi } from "vitest";
 import { ContentArticle, ContentIndex } from "./Content";
 import { analyticsMetadata, searchPublicContent, staticAnalyticsPaths } from "../catalog";
 import { renderAnalytics } from "../prerender";
+// Test synchronous content/SSR markup here. Browser chunk loading is exercised
+// against the actual production build in check_analytics_launch.py.
+vi.mock("../route-components", async () => ({
+  ...(await import("./Content")),
+  ...(await import("../expansion/Expansion")),
+  ...(await import("../expansion/StateRegistrations")),
+  ...(await import("../districts/DistrictDetails")),
+}));
+vi.mock("../chart/ProgressiveChart", async () => ({
+  ProgressiveChart: (await import("../chart/Chart")).Chart,
+}));
 afterEach(cleanup);
 it("renders a sourced insight, its update and changelog", () => {
   render(

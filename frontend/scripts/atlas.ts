@@ -6,7 +6,7 @@ import {
   type Topology,
 } from "../src/features/analytics/districts/model.ts";
 import type { LoadedPublicData } from "./public-data.ts";
-export function buildAtlas(loaded: LoadedPublicData): Atlas {
+export function buildAtlas(loaded: LoadedPublicData, includeGeometry = true): Atlas {
   function rows<T extends CsvDatasetId>(id: T) {
     const artifact = loaded.artifacts.find((file) => file.name === `analytics-data/${id}/data.csv`);
     if (!artifact) return [];
@@ -25,6 +25,7 @@ export function buildAtlas(loaded: LoadedPublicData): Atlas {
     registrations: rows("ev_registrations") as Atlas["registrations"],
     chargers: rows("public_chargers") as Atlas["chargers"],
     tariffs: rows("ev_tariffs") as Atlas["tariffs"],
-    shapes: geometry ? decodeTopology(JSON.parse(geometry.source) as Topology) : [],
+    shapes:
+      includeGeometry && geometry ? decodeTopology(JSON.parse(geometry.source) as Topology) : [],
   };
 }

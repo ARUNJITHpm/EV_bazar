@@ -1,6 +1,6 @@
 import expansion from "virtual:analytics-expansion";
 import catalogue from "virtual:analytics-public-data";
-import { Chart } from "../chart/Chart";
+import { ProgressiveChart as Chart } from "../chart/ProgressiveChart";
 import { numberLabel } from "../chart/model";
 import type { DatasetId, District } from "../data/schemas";
 import {

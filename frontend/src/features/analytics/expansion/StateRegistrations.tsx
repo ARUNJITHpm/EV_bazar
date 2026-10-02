@@ -2,7 +2,7 @@ import atlas from "virtual:analytics-atlas";
 import catalogue from "virtual:analytics-public-data";
 import expansion from "virtual:analytics-expansion";
 import { monthOffset } from "../districts/model";
-import { Chart } from "../chart/Chart";
+import { ProgressiveChart as Chart } from "../chart/ProgressiveChart";
 import type { ChartRow } from "../chart/model";
 import { SourceLine } from "./Expansion";
 import { policyMarkers, policyNote, sourceChart } from "./model";

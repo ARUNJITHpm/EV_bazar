@@ -117,7 +117,9 @@ export function analyticsMetadata(pathname: string) {
   const article = articles.find((a) => articleHref(a) === path);
   const title =
     article?.title ??
-    district?.district_name ??
+    (district
+      ? `${district.district_name}, ${district.state_name} (LGD ${district.lgd_code})`
+      : undefined) ??
     vertical?.title ??
     titles[path] ??
     "Data being prepared";
@@ -128,8 +130,11 @@ export function analyticsMetadata(pathname: string) {
         : `${title} — Chargeworthy Data`,
     description:
       article?.summary ??
+      (district
+        ? `Available EV charging context for ${district.district_name}, ${district.state_name}, LGD ${district.lgd_code}. Sources, coverage and missing data are listed explicitly.`
+        : undefined) ??
       vertical?.description ??
-      "Free public data on EV charging in India, explained with transparent sources and methods.",
+      `${titles[path] ?? "Unpublished page"}: public EV charging data for India, with transparent sources, coverage and methods.`,
     // Shells contain no published indicators yet. Remove only as real
     // datasets/content are published, including the district-specific gate.
     noindex:

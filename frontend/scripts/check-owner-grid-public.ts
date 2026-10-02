@@ -1,35 +1,17 @@
-import { readFile, readdir } from "node:fs/promises";
-import { resolve, relative } from "node:path";
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { scanPrivateBuild } from "./private-build.ts";
 
 const root = resolve(process.argv[2] ?? "dist");
-const privateFields =
-  /owner_grid_revisions|owner_grid_consents|owner_outage_revisions|sanctioned_load_kva|connected_load_kw|transformer_rating_kva|approximate_hours/;
-let checked = 0;
-async function walk(directory: string): Promise<void> {
-  for (const entry of await readdir(directory, { withFileTypes: true })) {
-    const path = resolve(directory, entry.name);
-    if (entry.isDirectory()) {
-      await walk(path);
-      continue;
-    }
-    if (!/\.(html|json|csv|js|map|txt)$/.test(entry.name)) continue;
-    const body = await readFile(path, "utf8");
-    const name = relative(root, path).replaceAll("\\", "/");
-    if (body.includes("PrivateOwnerGridCanary")) throw new Error(`Private grid canary in ${name}`);
-    // The shared SPA necessarily contains owner form/schema code. Inspect only
-    // public data payloads and pre-rendered /data HTML for private field names.
-    if (
-      (name.startsWith("data/") ||
-        name.startsWith("analytics-data/") ||
-        /\.(json|csv)$/.test(name)) &&
-      privateFields.test(body)
-    ) {
-      throw new Error(`Private owner grid field in public artifact ${name}`);
-    }
-    checked++;
-  }
-}
-await walk(root);
+const snapshot = process.argv[3];
+const records: unknown = snapshot
+  ? JSON.parse(await readFile(resolve(snapshot), "utf8"))
+  : undefined;
+const result = await scanPrivateBuild(root, records);
 console.log(
-  `PASS: ${checked} built artifacts contain no private grid canary; public payloads contain no grid fields.`,
+  `PASS: ${result.artifacts} artifacts scanned; public payloads contain no private owner/grid fields; ${result.private_record_values} private snapshot values checked.`,
 );
+if (!result.live_records_checked)
+  console.log(
+    "Live private-record comparison not run: supply a local JSON snapshot as the second argument.",
+  );
