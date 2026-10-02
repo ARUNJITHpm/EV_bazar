@@ -35,6 +35,10 @@ creates the two public fonts before Vite runs. No font download or new dependenc
 is required at build time. Source TTFs remain local for the unpublished social
 image work and are referenced by immutable provenance, not deployed in git.
 The three pre-existing backend blank-line format errors seen in CI were fixed.
+The final CI type-check follow-up narrows nullable public-source metadata without
+coercing invalid values, distinguishes source rows from site facts, and matches
+FastAPI's coroutine return type for private no-store responses. Null metadata
+remains null; malformed values fail before a geography query.
 
 Docker's four existing image tags now carry verified registry manifest digests.
 uv.lock fixes Playwright and therefore its Chromium revision. The origin is wired
@@ -47,6 +51,9 @@ execution has not been tested here because Docker is unavailable.
   Dataset metadata/licences, sitemap origin validation and viewport/null/retry.
 - Backend: all 713 tests passed using the existing isolated osmium 4.2.0 tools.
   Without that optional acquisition environment the OSM extraction module skips.
+- Follow-up: locked Python 3.11 mypy passed all 114 source files; Ruff lint and
+  formatting passed all 258 files, and all four import-layer contracts passed.
+  The 33 public-context/private-grid tests passed, including four new metadata cases.
 - Strict production build/typecheck passed; 797 public documents were prerendered.
 - Axe 4.11.0: zero violations on Data, Electricity, district, insight, weekly and
   Sources pages at 390px and 1440px. No horizontal overflow or page errors.
@@ -166,3 +173,7 @@ store mutation, prediction or persisted-report rewrite is part of this change.
 | `app/api/internal/owner.py` | CI-required blank lines only. |
 | `app/domain/report/coverage.py` | CI-required blank line only; local adapter preserved. |
 | `app/domain/report/public_coverage.py` | CI-required blank line only. |
+
+| `app/domain/report/public_context.py` | Explicit nullable metadata types and distinct source-row variable; invalid metadata refused. |
+| `app/api/internal/owner_privacy.py` | Match FastAPI route-handler coroutine annotation; no runtime cache-policy change. |
+| `tests/test_report_public_context.py` | Null metadata and invalid-type refusal before any context query. |

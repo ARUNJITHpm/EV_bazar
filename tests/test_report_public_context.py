@@ -236,3 +236,18 @@ def test_invalid_site_points_refused_before_a_query(lat, lng):
     with pytest.raises(ValueError, match="EPSG"):
         nearest_power(db, reference(), lat=lat, lng=lng)
     assert db.calls == []
+
+
+@pytest.mark.parametrize("metadata_value", [None, False, 42, {"url": "unexpected"}])
+def test_nullable_source_metadata_is_preserved_or_refused(session, metadata_value):
+    public_reference = reference()
+    public_reference._snapshot["datasets"]["osm_power"]["metadata"]["licence_url"] = metadata_value
+    db = GeographySession()
+    payload = _assemble(session)
+    if metadata_value is None:
+        enriched = enrich_public_context(db, payload, public_reference)
+        assert enriched.public_context.sources[-1].licence_url is None
+    else:
+        with pytest.raises(ValueError, match="metadata must be text or null"):
+            enrich_public_context(db, payload, public_reference)
+        assert db.calls == []
