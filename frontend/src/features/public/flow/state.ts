@@ -1,3 +1,4 @@
+import type { SiteLocation } from "../LocationSearch";
 import type { components } from "../../../api/schema";
 
 /**
@@ -27,6 +28,7 @@ export interface Answers {
 }
 
 export interface FlowState {
+  location?: SiteLocation;
   pin?: { lat: number; lng: number };
   /** The locate step's confirmation - the bare POST /assess response. */
   confirmed?: AssessOut;

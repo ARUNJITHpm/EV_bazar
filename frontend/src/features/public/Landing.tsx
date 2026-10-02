@@ -1,10 +1,11 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { GROUPS, OPERATOR_GROUPS } from "../animation/data";
 import { DEMO_REPORT_ID } from "../report/payload";
 import { PublicHeader } from "./PublicHeader";
 import { HeroJourney } from "./HeroJourney";
+import { LocationSearch } from "./LocationSearch";
 import { ReportPaper } from "./ReportPaper";
 
 const PAGE = "public-container";
@@ -15,14 +16,9 @@ const LINK =
 /** A short customer introduction; detailed evidence stays in the report and optional checks. */
 export function Landing() {
   const navigate = useNavigate();
-  const [location, setLocation] = useState("");
   useEffect(() => {
     document.title = "Chargeworthy — is your land suitable for EV charging?";
   }, []);
-  function start(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    navigate("/assess", { state: { q: location.trim() } });
-  }
   return (
     <div className="cw-surface-root home-root min-h-dvh bg-cw-ground font-cw-sans text-[17px] leading-[1.6] text-cw-text antialiased">
       <a href="#home-content" className="sr-only focus:not-sr-only focus:block focus:p-4">
@@ -44,31 +40,13 @@ export function Landing() {
                 We assess your location, compare costs and possible returns, and help you compare
                 charging operators.
               </p>
-              <form onSubmit={start} className="mt-7 max-w-[760px]">
-                <label htmlFor="home-location" className="mb-2 block font-medium">
-                  Site location
-                </label>
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <input
-                    id="home-location"
-                    value={location}
-                    onChange={(event) => setLocation(event.target.value)}
-                    placeholder="Enter an address or area"
-                    aria-describedby="location-help"
-                    autoComplete="street-address"
-                    className="min-h-[58px] min-w-0 flex-1 border border-cw-line bg-cw-surface px-5 text-cw-text placeholder:text-cw-muted"
-                  />
-                  <button
-                    type="submit"
-                    className="inline-flex min-h-[58px] items-center justify-center bg-cw-accent px-7 font-semibold text-cw-ground transition-[filter] hover:brightness-107"
-                  >
-                    Check my location
-                  </button>
-                </div>
-                <p id="location-help" className="mt-3 text-[15px] text-cw-muted">
-                  Next, place a pin on the map. You can also start without typing.
-                </p>
-              </form>
+              <div className="mt-7 max-w-[760px]">
+                <LocationSearch
+                  id="home-location"
+                  onSelect={(site) => navigate("/assess", { state: { site } })}
+                  onChooseMap={() => navigate("/assess", { state: { chooseMap: true } })}
+                />
+              </div>
               <p className="mt-3 text-[15px] text-cw-muted">
                 Coverage varies by district. If verified data is missing, we will tell you.
               </p>

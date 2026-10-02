@@ -1,67 +1,43 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-
+import { MapPin, Minus, Plus } from "lucide-react";
 import { api } from "../../../api/client";
-import { MAPBOX_TOKEN, MAP_STYLE, autoResize, createPinElement, mapboxgl } from "../mapCore";
-import { placeName, toBody, type AssessOut } from "./state";
+import { MAPBOX_TOKEN, MAP_STYLE, autoResize, mapboxgl } from "../mapCore";
+import { LocationSearch, type SiteLocation } from "../LocationSearch";
+import { toBody, type AssessOut } from "./state";
 
-/**
- * Step one: the map IS the interface, not a backdrop.
- *
- * The search box is NAVIGATION ONLY - it flies the map to a typed place so
- * the customer can then click or drag the pin to the exact spot. Nothing
- * from the search is recorded or trusted: the pin is the sole input. That
- * is why this box is allowed here while the console's Geocoding panel
- * forbids one (there it would be a fourth geocoder quietly influencing a
- * resolution of record; here it only moves the viewport). Nominatim's
- * public search is keyless and free - explicit one-shot lookups on a
- * button press, well inside its fair-use policy.
- *
- * "Check this spot" is a deliberate tap, not a drag side-effect: each press
- * is one POST /assess, which logs the pin as a lead FIRST (the shipped
- * doctrine) and returns our own resolver's district - so an owner who
- * abandons after this point is still a captured lead, and the confirmation
- * card never needs a third-party reverse geocode.
- */
-
-/** Kerala/Tamil Nadu, the covered states - where most pins will land. */
-const DEFAULT_CENTRE = { lng: 77.2, lat: 10.2 };
-
-interface Place {
-  display_name: string;
-  lat: string;
-  lon: string;
-}
-
+/** Only explicit confirmation records the customer’s pin; search results are previews. */
 export function Locate({
   pin,
+  location,
   onPin,
+  onSelect,
   confirmed,
   onChecked,
   onContinue,
 }: {
   pin: { lat: number; lng: number } | null;
+  location?: SiteLocation;
   onPin: (pin: { lat: number; lng: number }) => void;
+  onSelect: (site: SiteLocation) => void;
   confirmed: AssessOut | null;
   onChecked: (out: AssessOut) => void;
   onContinue: (out: AssessOut) => void;
 }) {
-  // The landing's location field hands its text here so nothing typed is lost.
   const seeded = (useLocation().state as { q?: string } | null)?.q ?? "";
-  const [query, setQuery] = useState(seeded);
-  const [searching, setSearching] = useState(false);
-  const [results, setResults] = useState<Place[] | null>(null);
+  const [searchOpen, setSearchOpen] = useState(!pin);
+  const [adjusting, setAdjusting] = useState(!pin || !!location?.area);
   const [checking, setChecking] = useState(false);
+  const [moving, setMoving] = useState(false);
   const [failed, setFailed] = useState(false);
-
+  const [mapReady, setMapReady] = useState(false);
+  const [mapFailed, setMapFailed] = useState(!MAPBOX_TOKEN);
+  const [satellite, setSatellite] = useState(false);
   const mapEl = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
-  const markerRef = useRef<mapboxgl.Marker | null>(null);
-  // Latest callback for map event handlers, which outlive any one render.
-  const onPinRef = useRef(onPin);
-  onPinRef.current = onPin;
-  // Construction-time view only: a returning visitor opens on their pin.
   const initial = useRef(pin);
+  const current = useRef({ onPin, pin, adjusting, checking });
+  current.current = { onPin, pin, adjusting, checking };
 
   useEffect(() => {
     if (!mapEl.current || !MAPBOX_TOKEN) return;
@@ -70,210 +46,223 @@ export function Locate({
       map = new mapboxgl.Map({
         container: mapEl.current,
         style: MAP_STYLE,
-        center: initial.current
-          ? { lng: initial.current.lng, lat: initial.current.lat }
-          : DEFAULT_CENTRE,
-        zoom: initial.current ? 15 : 6,
+        center: initial.current ?? { lng: 77.2, lat: 10.2 },
+        zoom: initial.current ? 17 : 6,
       });
     } catch {
+      setMapFailed(true);
       return;
     }
     mapRef.current = map;
     const stopResize = autoResize(map, mapEl.current);
-    map.on("click", (e) => onPinRef.current({ lat: e.lngLat.lat, lng: e.lngLat.lng }));
+    map.on("style.load", () => {
+      setMapFailed(false);
+    });
+    map.on("idle", () => {
+      setMapReady(true);
+      setMapFailed(false);
+    });
+    map.on("error", () => {
+      if (!map.loaded()) setMapFailed(true);
+    });
+    map.on("movestart", () => setMoving(true));
+    map.on("moveend", () => {
+      setMoving(false);
+      const { pin: selected, checking: pending, adjusting: editable } = current.current;
+      if (pending || (!selected && !editable)) return;
+      const centre = map.getCenter();
+      if (
+        !selected ||
+        Math.abs(selected.lat - centre.lat) > 1e-8 ||
+        Math.abs(selected.lng - centre.lng) > 1e-8
+      )
+        current.current.onPin({ lat: centre.lat, lng: centre.lng });
+    });
+    map.on("click", (e) => {
+      if (current.current.adjusting && !current.current.checking)
+        map.easeTo({ center: e.lngLat, duration: 0 });
+    });
     return () => {
       stopResize();
       mapRef.current = null;
-      markerRef.current = null;
       map.remove();
     };
   }, []);
 
-  // The pin is owned by flow state; the marker only mirrors it.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !pin) return;
-    const at = { lng: pin.lng, lat: pin.lat };
-    if (!markerRef.current) {
-      const marker = new mapboxgl.Marker({
-        element: createPinElement({ draggable: true }),
-        draggable: true,
-        anchor: "bottom",
-      })
-        .setLngLat(at)
-        .addTo(map);
-      marker.on("dragend", () => {
-        const p = marker.getLngLat();
-        onPinRef.current({ lat: p.lat, lng: p.lng });
-      });
-      markerRef.current = marker;
+    if (!map) return;
+    if (adjusting && !checking) {
+      map.dragPan.enable();
+      map.keyboard.enable();
     } else {
-      markerRef.current.setLngLat(at);
+      map.dragPan.disable();
+      map.keyboard.disable();
     }
-  }, [pin]);
+  }, [adjusting, checking, mapReady]);
 
-  async function search() {
-    const q = query.trim();
-    if (!q) return;
-    setSearching(true);
-    try {
-      const res = await fetch(
-        "https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=in&limit=5&q=" +
-          encodeURIComponent(q),
-      );
-      setResults(res.ok ? ((await res.json()) as Place[]) : []);
-    } catch {
-      setResults([]);
-    } finally {
-      setSearching(false);
-    }
+  function select(site: SiteLocation) {
+    onSelect(site);
+    setSearchOpen(false);
+    setFailed(false);
+    setAdjusting(site.area);
+    mapRef.current?.jumpTo({ center: { lat: site.lat, lng: site.lng }, zoom: 17 });
   }
 
-  function goTo(p: Place) {
-    const at = { lat: Number(p.lat), lng: Number(p.lon) };
-    onPin(at);
-    mapRef.current?.flyTo({ center: { lng: at.lng, lat: at.lat }, zoom: 15, duration: 1200 });
-    setResults(null);
-  }
-
-  async function check() {
-    if (!pin) return;
+  async function confirm() {
+    if (!pin || checking || moving || !mapReady || mapFailed) return;
     setChecking(true);
     setFailed(false);
-    const { data } = await api.POST("/api/internal/assess", { body: toBody(pin, {}) });
-    setChecking(false);
-    if (data) onChecked(data);
-    else setFailed(true);
+    try {
+      if (confirmed) {
+        onContinue(confirmed);
+        return;
+      }
+      const { data } = await api.POST("/api/internal/assess", { body: toBody(pin, {}) });
+      if (!data) {
+        setFailed(true);
+        return;
+      }
+      onChecked(data);
+      onContinue(data);
+    } catch {
+      setFailed(true);
+    } finally {
+      setChecking(false);
+    }
   }
 
   return (
-    <div className="relative min-h-[60vh] flex-grow">
-      {/* Mapbox's own CSS forces position:relative on the element it mounts
-          into, which would cancel `absolute inset-0` and collapse the map to
-          zero height. So the absolute fill layer is the WRAPPER, and Mapbox
-          mounts into a plain h-full child. */}
-      <div className="absolute inset-0 bg-cw-surface">
-        <div ref={mapEl} className="h-full w-full" />
-      </div>
-
-      <div className="absolute top-8 left-1/2 z-[1000] w-[min(620px,calc(100%-40px))] -translate-x-1/2">
-        <div className="flex min-h-[58px] items-center gap-3 border border-cw-line bg-cw-surface px-5 text-cw-muted">
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") void search();
-            }}
-            placeholder="Drop a pin, or type the location"
-            aria-label="Search for the site location"
-            autoComplete="off"
-            className="min-w-0 flex-grow bg-transparent text-[17px] text-cw-text outline-none placeholder:text-cw-muted"
-          />
-          <button
-            type="button"
-            onClick={() => void search()}
-            disabled={searching || !query.trim()}
-            className="inline-flex min-h-[44px] items-center text-[15px] text-cw-slate disabled:opacity-40"
-          >
-            {searching ? "…" : "Find"}
-          </button>
-        </div>
-        {results &&
-          (results.length ? (
-            <ul className="max-h-[46vh] overflow-y-auto border border-t-0 border-cw-line bg-cw-surface">
-              {/* Large rows, never a compact dropdown. */}
-              {results.map((r) => (
-                <li key={`${r.lat},${r.lon}`}>
-                  <button
-                    type="button"
-                    onClick={() => goTo(r)}
-                    className="block min-h-[56px] w-full border-b border-cw-line px-5 py-3.5 text-left text-[17px] text-cw-text transition-colors duration-200 hover:bg-cw-surface-2"
-                  >
-                    {r.display_name}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="border border-t-0 border-cw-line bg-cw-surface px-5 py-3.5 text-[15px] text-cw-muted">
-              Nothing found — try a nearby town, then drag the pin to the spot.
-            </p>
-          ))}
-      </div>
-
-      {pin && (
-        <div className="absolute bottom-8 left-1/2 z-[1000] flex max-h-[62vh] w-[min(720px,calc(100%-40px))] -translate-x-1/2 flex-col gap-6 overflow-y-auto border border-cw-line bg-cw-surface p-6 sm:p-8">
-          <div className="flex flex-col gap-1.5">
-            <div className="font-cw-mono text-[13px] tracking-[0.14em] text-cw-muted uppercase">
-              {checking ? "Checking…" : confirmed ? "Is this the spot?" : "The pin decides"}
-            </div>
-            <h2 className="text-[clamp(21px,3vw,27px)] font-medium">
-              {confirmed?.district
-                ? placeName(confirmed.district, confirmed.state)
-                : "Drag the pin to the exact spot"}
-            </h2>
-          </div>
-
-          <div
-            className="grid gap-5"
-            style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}
-          >
-            <Field
-              label="Coordinates"
-              mono
-              value={`${pin.lat.toFixed(4)}, ${pin.lng.toFixed(4)}`}
+    <section
+      className="site-locate"
+      data-search={searchOpen}
+      aria-labelledby="site-location-heading"
+    >
+      <div className="site-location-panel">
+        <h1 id="site-location-heading" className="text-[28px] leading-[1.2] font-medium">
+          {pin ? "Is this your site?" : "Find your site"}
+        </h1>
+        {searchOpen ? (
+          <fieldset disabled={checking} className="mt-5 min-w-0">
+            <LocationSearch
+              id="assess-location"
+              initialQuery={seeded}
+              onSelect={select}
+              onChooseMap={() => {
+                setSearchOpen(false);
+                setAdjusting(true);
+                if (!pin && mapRef.current) {
+                  const p = mapRef.current.getCenter();
+                  onPin({ lat: p.lat, lng: p.lng });
+                }
+              }}
             />
-            <Field
-              label="District"
-              value={
-                confirmed
-                  ? (confirmed.district ?? "Not resolved — a human will look")
-                  : "Check the spot to find out"
-              }
-            />
-            <Field label="Road class" value="Not yet determined" />
-          </div>
-
-          {failed && (
-            <p className="text-[15px] text-cw-negative">
-              The check failed — nothing was recorded. Try again.
-            </p>
-          )}
-
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-cw-line pt-5">
-            <span className="inline-flex min-h-[56px] items-center text-cw-muted">
-              Not quite? Drag the pin, or tap the map.
-            </span>
-            {confirmed ? (
+            {pin && (
               <button
                 type="button"
-                onClick={() => onContinue(confirmed)}
-                className="inline-flex min-h-[58px] items-center justify-center bg-cw-accent px-7 text-[17px] font-semibold text-cw-ground transition-[filter] duration-200 hover:brightness-107"
+                onClick={() => setSearchOpen(false)}
+                className="mt-2 min-h-[44px] underline underline-offset-4"
               >
-                Yes, continue
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void check()}
-                disabled={checking}
-                className="inline-flex min-h-[58px] items-center justify-center bg-cw-accent px-7 text-[17px] font-semibold text-cw-ground transition-[filter] duration-200 hover:brightness-107 disabled:cursor-wait disabled:opacity-50"
-              >
-                Check this spot
+                Back to selected site
               </button>
             )}
+          </fieldset>
+        ) : (
+          <>
+            <p className="mt-3 text-cw-muted">{location?.name ?? "Your selected site"}</p>
+            <p className="mt-4 text-[15px]">
+              {adjusting
+                ? location?.area
+                  ? "Choose your property within this area. Move the map so the pin sits on your site."
+                  : "Move the map under the pin, or tap your property."
+                : "Check that the pin is on your property. You can adjust it before continuing."}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-x-6">
+              {!adjusting && (
+                <button
+                  type="button"
+                  disabled={checking || !mapReady}
+                  onClick={() => setAdjusting(true)}
+                  className="min-h-[44px] underline underline-offset-4"
+                >
+                  Adjust pin
+                </button>
+              )}
+              <button
+                type="button"
+                disabled={checking}
+                onClick={() => setSearchOpen(true)}
+                className="min-h-[44px] text-cw-muted underline underline-offset-4"
+              >
+                Search another place
+              </button>
+            </div>
+          </>
+        )}
+        {mapFailed && (
+          <p role="alert" className="mt-4 text-[15px] text-cw-negative">
+            The map could not load. Reload to check the pin before continuing.
+          </p>
+        )}
+        {failed && (
+          <p role="alert" className="mt-4 text-[15px] text-cw-negative">
+            We could not confirm the location. Your pin is saved; please try again.
+          </p>
+        )}
+        {!searchOpen && (
+          <button
+            type="button"
+            onClick={() => void confirm()}
+            disabled={!pin || checking || moving || !mapReady || mapFailed}
+            className="location-primary mt-5 w-full"
+          >
+            {checking ? "Confirming…" : "Confirm location"}
+          </button>
+        )}
+      </div>
+      <div className="site-map" aria-label="Site location map">
+        <div ref={mapEl} className="h-full w-full" />
+        {!searchOpen && (
+          <div className="site-centre-pin" aria-hidden="true">
+            <MapPin size={42} fill="var(--cw-accent)" stroke="var(--cw-ground)" strokeWidth={1.5} />
           </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Field({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div className="text-[15px] text-cw-muted">{label}</div>
-      <div className={mono ? "font-cw-mono text-[17px] tabular-nums" : "text-[17px]"}>{value}</div>
-    </div>
+        )}
+        {mapReady && !mapFailed && (
+          <div className="site-map-controls">
+            <button
+              type="button"
+              disabled={checking}
+              aria-pressed={satellite}
+              onClick={() => {
+                const next = !satellite;
+                setSatellite(next);
+                setMapReady(false);
+                mapRef.current?.setStyle(
+                  next ? "mapbox://styles/mapbox/satellite-streets-v12" : MAP_STYLE,
+                );
+              }}
+            >
+              {satellite ? "Street view" : "Satellite view"}
+            </button>
+            <button
+              type="button"
+              disabled={checking}
+              aria-label="Zoom in"
+              onClick={() => mapRef.current?.zoomIn({ duration: 0 })}
+            >
+              <Plus size={20} />
+            </button>
+            <button
+              type="button"
+              disabled={checking}
+              aria-label="Zoom out"
+              onClick={() => mapRef.current?.zoomOut({ duration: 0 })}
+            >
+              <Minus size={20} />
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
   );
 }

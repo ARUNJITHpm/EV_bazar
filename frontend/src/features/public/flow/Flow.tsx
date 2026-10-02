@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { api } from "../../../api/client";
 import { BackgroundMap } from "./BackgroundMap";
 import { Locate } from "./Locate";
+import { type SiteLocation } from "../LocationSearch";
 import { Answer, Answers, Aside, Screen, Slider, StepFooter } from "./Question";
 import { Result } from "./Result";
 import {
@@ -85,8 +86,25 @@ export function Flow() {
   const raw = params.step ?? "locate";
   const step: StepId = isStep(raw) ? raw : "locate";
 
-  const [state, setState] = useState<FlowState>(loadState);
+  const entry = useLocation();
+  const handoff = entry.state as { site?: SiteLocation; chooseMap?: boolean } | null;
+  const [state, setState] = useState<FlowState>(() =>
+    handoff?.site
+      ? {
+          answers: {},
+          pin: { lat: handoff.site.lat, lng: handoff.site.lng },
+          location: handoff.site,
+        }
+      : handoff?.chooseMap
+        ? { answers: {} }
+        : loadState(),
+  );
   useEffect(() => saveState(state), [state]);
+  // Consume the homepage selection once so refresh restores the adjusted pin.
+  useEffect(() => {
+    if (handoff?.site || handoff?.chooseMap)
+      navigate(entry.pathname, { replace: true, state: null });
+  }, [handoff, entry.pathname, navigate]);
 
   const go = useCallback((id: StepId) => navigate(`/assess/${id}`), [navigate]);
   const set = useCallback(
@@ -95,7 +113,7 @@ export function Flow() {
   );
 
   // The finishing call: the same pin, now carrying the taps. The normalised
-  // key is unchanged, so this upserts the lead logged at 'Check this spot'
+  // key is unchanged, so this upserts the lead logged at 'Confirm location'
   // and bumps its request counter rather than creating a second row.
   const run = useCallback(async () => {
     if (!state.pin) return false;
@@ -122,6 +140,16 @@ export function Flow() {
         return (
           <Locate
             pin={state.pin ?? null}
+            location={state.location}
+            onSelect={(location) =>
+              setState((s) => ({
+                ...s,
+                location,
+                pin: { lat: location.lat, lng: location.lng },
+                confirmed: undefined,
+                result: undefined,
+              }))
+            }
             onPin={(pin) =>
               setState((s) => ({ ...s, pin, confirmed: undefined, result: undefined }))
             }

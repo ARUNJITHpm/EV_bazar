@@ -151,10 +151,25 @@ def main() -> None:
                 )
                 page.screenshot(path=str(args.output / f"home-{width}.png"), full_page=True)
                 page.get_by_label("Site location", exact=True).first.fill("Ernakulam")
-                page.get_by_role("button", name="Check my location", exact=True).first.click()
+                page.route(
+                    "**/nominatim.openstreetmap.org/search?**",
+                    lambda route: route.fulfill(
+                        json=[
+                            {
+                                "display_name": "Ernakulam, Kerala, India",
+                                "lat": "9.9816",
+                                "lon": "76.2999",
+                                "addresstype": "city",
+                            }
+                        ]
+                    ),
+                )
+                page.get_by_role("button", name="Find location", exact=True).first.click()
+                page.get_by_role("button", name="Ernakulam Kerala, India").click()
+                expect(page.get_by_role("heading", name="Is this your site?")).to_be_visible()
                 expect(
-                    page.get_by_role("textbox", name="Search for the site location")
-                ).to_have_value("Ernakulam")
+                    page.get_by_text("Choose your property within this area.", exact=False)
+                ).to_be_visible()
                 page.goto(url + "/about")
                 expect(page).to_have_url(url + "/")
                 expect(page.get_by_role("heading", level=1)).to_have_text(
@@ -228,9 +243,7 @@ def main() -> None:
                     == header_geometry
                 )
                 page.goto(url + "/assess")
-                expect(
-                    page.get_by_role("textbox", name="Search for the site location")
-                ).to_be_visible()
+                expect(page.locator("#site-location-heading")).to_be_visible()
                 assert (
                     page.locator(".public-header-row").evaluate(
                         "e => ({x:e.querySelector('.public-wordmark').getBoundingClientRect().x,"

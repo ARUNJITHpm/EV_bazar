@@ -187,3 +187,108 @@
     display: none;
   }
 }
+
+.location-primary {
+  display: inline-flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 28px;
+  background: var(--cw-accent);
+  color: var(--cw-ground);
+  font-weight: 600;
+}
+.location-primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.location-search input:focus-visible,
+.site-locate button:focus-visible,
+.location-search button:focus-visible {
+  outline: 2px solid var(--cw-text);
+  outline-offset: 3px;
+}
+.location-results {
+  margin-top: 16px;
+  border: 1px solid var(--cw-line);
+  max-height: 320px;
+  overflow: auto;
+  background: var(--cw-surface);
+}
+.location-results li + li {
+  border-top: 1px solid var(--cw-line);
+}
+.location-results button {
+  width: 100%;
+  min-height: 64px;
+  text-align: left;
+  padding: 12px 20px;
+}
+.location-results button:hover {
+  background: var(--cw-surface-2);
+}
+.site-locate {
+  display: grid;
+  grid-template-columns: minmax(300px, 420px) 1fr;
+  flex-grow: 1;
+  min-height: 620px;
+}
+.site-location-panel {
+  padding: 32px 28px;
+  background: var(--cw-ground);
+}
+.site-location-panel .location-search form > div {
+  flex-direction: column;
+}
+.site-map {
+  position: relative;
+  min-height: 420px;
+}
+.site-centre-pin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+.site-map-controls {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+}
+.site-map-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding-inline: 12px;
+  background: var(--cw-surface);
+  color: var(--cw-text);
+  border: 1px solid var(--cw-line);
+  font-size: 15px;
+}
+@media (max-width: 767px) {
+  .site-locate {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .site-location-panel {
+    padding: 24px;
+  }
+  .site-map {
+    height: 48dvh;
+    min-height: 360px;
+    order: -1;
+  }
+  .site-map-controls {
+    top: 12px;
+    right: 12px;
+  }
+  .site-locate[data-search="true"] .site-map {
+    order: 0;
+  }
+}
