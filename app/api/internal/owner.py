@@ -528,6 +528,8 @@ def home(
 
 # --- Private grid display and public area context (Part 14) ------------------
 private_grid_router = APIRouter(route_class=NoStoreRoute)
+
+
 @private_grid_router.get("/stations/{station_id}/area", response_model=OwnerAreaOut)
 def owner_area(
     station_id: int,

@@ -29,6 +29,13 @@ classifier or OCR scan. The local read-only database snapshot has zero owner
 accounts, stations and bill images. This cannot prove a populated production
 store comparison. Snapshot files stay in local_scratch, outside git/build output.
 
+The HF orphan mirror rejects font binary blobs. `frontend/font-assets.json`
+stores the identical WOFF2 bytes as build-only text; the hash-checking materializer
+creates the two public fonts before Vite runs. No font download or new dependency
+is required at build time. Source TTFs remain local for the unpublished social
+image work and are referenced by immutable provenance, not deployed in git.
+The three pre-existing backend blank-line format errors seen in CI were fixed.
+
 Docker's four existing image tags now carry verified registry manifest digests.
 uv.lock fixes Playwright and therefore its Chromium revision. The origin is wired
 as a Docker build argument and a GitHub Actions repository variable. Container
@@ -48,7 +55,7 @@ execution has not been tested here because Docker is unavailable.
   passed. Header/home Data links, keyboard skip link, no-JS article tables,
   district suppression and production fixture exclusion passed.
 - Public build gates refused malformed rows in the reference and all five
-  expansion datasets. All 907 built artifacts passed the private-field/canary
+  expansion datasets. All 905 built artifacts passed the private-field/canary
   scan, including a comparison with the empty local private-store snapshot.
 - The existing labelled stored demo report renders through its lazy route and
   the PDF-ready marker. Playwright produced a PDF without rerunning a model or
@@ -152,3 +159,10 @@ store mutation, prediction or persisted-report rewrite is part of this change.
 | `frontend/public/analytics-fonts/IBMPlexMono.woff2` | Full-font WOFF2 encoding or conversion hash/tool provenance; OFL retained. |
 | `frontend/public/analytics-fonts/SourceSerif4.woff2` | Full-font WOFF2 encoding or conversion hash/tool provenance; OFL retained. |
 | `frontend/public/analytics-fonts/woff2-provenance.json` | Full-font WOFF2 encoding or conversion hash/tool provenance; OFL retained. |
+
+| `.gitignore` | Ignore materialized public font bytes; retain local source TTFs. |
+| `frontend/font-assets.json` | Hash-verified WOFF2 bytes in text form for the HF mirror. |
+| `frontend/scripts/materialize-analytics-fonts.mjs` | Generate exact public font files before each production build. |
+| `app/api/internal/owner.py` | CI-required blank lines only. |
+| `app/domain/report/coverage.py` | CI-required blank line only; local adapter preserved. |
+| `app/domain/report/public_coverage.py` | CI-required blank line only. |
