@@ -121,7 +121,9 @@ export function Flow() {
         return (
           <Locate
             pin={state.pin ?? null}
-            onPin={(pin) => setState((s) => ({ ...s, pin, confirmed: undefined }))}
+            onPin={(pin) =>
+              setState((s) => ({ ...s, pin, confirmed: undefined, result: undefined }))
+            }
             confirmed={state.confirmed ?? null}
             onChecked={(out) => setState((s) => ({ ...s, confirmed: out }))}
             onContinue={(out) => {
@@ -316,7 +318,13 @@ export function Flow() {
         );
 
       case "working":
-        return <Working run={run} onDone={() => navigate("/assess/result", { replace: true })} />;
+        return (
+          <Working
+            out={state.result ?? state.confirmed}
+            run={run}
+            onDone={() => navigate("/assess/result", { replace: true })}
+          />
+        );
 
       case "result":
         return state.result ? (

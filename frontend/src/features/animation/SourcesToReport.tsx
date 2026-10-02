@@ -248,7 +248,7 @@ export function SourcesToReport() {
                         open ? "text-cw-caution" : "text-cw-ink"
                       }`}
                     >
-                      {String(c.count).padStart(2, "0")}
+                      {c.count}
                     </div>
                     <div
                       className={`mt-1 font-cw-mono text-[8px] tracking-[0.08em] uppercase ${

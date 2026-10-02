@@ -1,3 +1,4 @@
+import { FactCoverage } from "./FactCoverage";
 import { CpoTable } from "./CpoTable";
 import { Financials } from "./Financials";
 import { HeroNumber } from "./HeroNumber";
@@ -42,6 +43,7 @@ export function Report({ payload }: { payload: ReportPayload }) {
       <main className="mt-8">
         <HeroNumber payload={payload} />
         <Verdict payload={payload} />
+        <FactCoverage facts={payload.site_facts} />
         <SiteProfile payload={payload} />
         <Financials payload={payload} />
         <CpoTable payload={payload} />

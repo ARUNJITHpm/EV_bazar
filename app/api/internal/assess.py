@@ -89,6 +89,7 @@ class AssessOut(BaseModel):
     #: How many times this exact pin has been asked about - the counter that
     #: makes waitlisted demand visible.
     requests: int
+    lgd_district_code: int | None = None
     district: str | None
     state: str | None
     #: high | medium | low - 1.4's confidence in the district.
@@ -147,6 +148,7 @@ def assess(body: AssessIn, session: Session = Depends(get_session)) -> AssessOut
     out = AssessOut(
         site_id=site.site_id,
         requests=site.requests,
+        lgd_district_code=district.lgd_district_code if district else None,
         district=district.name if district else None,
         state=district.state_name if district else None,
         confidence=resolution.confidence.value,
