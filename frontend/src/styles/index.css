@@ -13,6 +13,7 @@
 @import "./analytics.css";
 /* The /animation review surface. Scoped by a cwa- prefix; see the file. */
 @import "./animation.css";
+@import "./print.css";
 
 /* `inline` lets the theme reference other custom properties rather than
  * copying literal values - so tokens.css stays authoritative. */
@@ -70,6 +71,14 @@
   --color-cw-verdict-negative: var(--cw-verdict-negative);
   --color-cw-verdict-positive: var(--cw-verdict-positive);
   --color-cw-caution: var(--cw-caution);
+  --color-cw-caution-tint: var(--cw-caution-tint);
+  --color-cw-caution-text: var(--cw-caution-text);
+  --color-cw-band: var(--c-band);
+  --color-cw-desk: var(--cw-desk);
+  --color-cw-paper-head: var(--cw-paper-head);
+  --color-cw-paper-head-dim: var(--cw-paper-head-dim);
+  --color-cw-paper-zebra: var(--cw-paper-zebra);
+  --color-cw-paper-tint: var(--cw-paper-tint);
 
   --font-cw-sans: var(--cw-sans);
   --font-cw-serif: var(--cw-serif);
@@ -228,4 +237,46 @@
   border-radius: 0;
   background: var(--cw-text);
   border: 1px solid var(--cw-line);
+}
+
+/* =========================================================================
+ * The report, on paper (features/report/ only).
+ * ========================================================================= */
+
+.cw-report-root {
+  color-scheme: light;
+}
+
+/* The tinted grounds - the dark table head, the stat cards, the callouts,
+ * the zebra rows - are not decoration: white mono on a dark head is
+ * unreadable if the ground is dropped, and Chromium drops backgrounds by
+ * default from the browser's own print dialog. The archived PDF is rendered
+ * with print_background=True, but a customer printing the page themselves is
+ * not, so the document forces the issue rather than depending on a checkbox
+ * in someone else's print sheet. */
+.cw-report-root {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* The instrument-panel base sets every table in monospace. On paper the
+ * prose cells (a factor's name, a source, a reason) are serif like the rest
+ * of the document; only the cells that carry a number opt back into mono. */
+.cw-report-root table {
+  font-family: var(--cw-serif);
+  font-variant-numeric: normal;
+}
+
+.cw-report-root ::selection {
+  background: var(--cw-paper-slate);
+  color: var(--cw-paper);
+}
+
+.cw-report-root :is(h1, h2, h3, p, dd) {
+  text-wrap: pretty;
+}
+
+.cw-report-root :focus-visible {
+  outline: 2px solid var(--cw-paper-slate);
+  outline-offset: 3px;
 }

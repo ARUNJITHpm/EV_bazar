@@ -894,8 +894,34 @@ export interface components {
       /** File */
       file: string;
     };
-    /** BreakevenPayload */
+    /**
+     * BreakevenPayload
+     * @description Two thresholds, and they answer different questions.
+     *
+     *     The first three fields are the RUNNING-BILL breakeven: how busy the site
+     *     must be to stop losing money month to month, build cost excluded - and
+     *     the line the VERDICT is measured against. The ``full_cost_*`` trio is the
+     *     harder one: the steady-state volume at which the ten-year NPV is zero, so
+     *     it recovers the build cost at the same rate the rest of the document
+     *     discounts at.
+     *
+     *     They are separate numbers rather than one relabelled, because a site can
+     *     clear the first, earn a BUILD verdict, and still be short over ten years
+     *     (Track B - R0 found it in the fixtures, R5 decided it). The definition is
+     *     discounted rather than straight-line for a measured reason recorded in
+     *     ``roi/engine.py``: the cheaper definition disagreed with the NPV printed
+     *     four pages away. Optional so a payload stored by economics 0.1.0 still
+     *     validates; the sections that print it omit the row when it is absent.
+     */
     BreakevenPayload: {
+      /** Full Cost Kwh Day */
+      full_cost_kwh_day?: number | null;
+      /** Full Cost Kwh Year */
+      full_cost_kwh_year?: number | null;
+      /** Full Cost Recovery Paise Year */
+      full_cost_recovery_paise_year?: number | null;
+      /** Full Cost Utilisation */
+      full_cost_utilisation?: number | null;
       /** Kwh Day */
       kwh_day: number;
       /** Kwh Year */
@@ -960,12 +986,16 @@ export interface components {
     };
     /** CompetitorsPayload */
     CompetitorsPayload: {
+      /** Dc Fast Within 3Km */
+      dc_fast_within_3km?: number | null;
       /** Nearest */
       nearest: components["schemas"]["CompetitorRow"][];
       /** Source */
       source: string;
       /** Within 3Km */
       within_3km: number;
+      /** Within 5Km */
+      within_5km?: number | null;
     };
     /** ConnectorIn */
     ConnectorIn: {
@@ -994,6 +1024,17 @@ export interface components {
       power_kw: number;
       /** Standard */
       standard: string;
+    };
+    /**
+     * CostLine
+     * @description One line of a breakdown. Per year in ``fixed_costs``, one-off in
+     *     ``capex_lines``, per unit in ``unit_economics``.
+     */
+    CostLine: {
+      /** Label */
+      label: string;
+      /** Paise */
+      paise: number;
     };
     /** Counts */
     Counts: {
@@ -1028,8 +1069,10 @@ export interface components {
     };
     /** CpoRow */
     CpoRow: {
+      /** Cash P50 Paise Year */
+      cash_p50_paise_year?: number | null;
       /** Irr P50 Pct */
-      irr_p50_pct: number;
+      irr_p50_pct: number | null;
       /** Margin Of Safety Pp */
       margin_of_safety_pp: number;
       /** Ocpi Roaming */
@@ -1038,10 +1081,27 @@ export interface components {
       operator: string;
       /** Ours */
       ours: boolean;
+      /** Own Within 10Km */
+      own_within_10km?: number | null;
+      /** Own Within 3Km */
+      own_within_3km?: number | null;
       /** Platform Fee Paise Year */
       platform_fee_paise_year: number;
+      /**
+       * Presence Note
+       * @default
+       */
+      presence_note: string;
+      /** Repair Hours */
+      repair_hours?: number | null;
       /** Revenue Share Pct */
       revenue_share_pct: number;
+      /** Stations District */
+      stations_district?: number | null;
+      /** Stations State */
+      stations_state?: number | null;
+      /** Tie In Years */
+      tie_in_years?: number | null;
       /** Uptime */
       uptime: string;
     };
@@ -1183,10 +1243,13 @@ export interface components {
     /** FinancialsPayload */
     FinancialsPayload: {
       anchor_note: components["schemas"]["AnchorNote"];
+      /** Capex Lines */
+      capex_lines?: components["schemas"]["CostLine"][] | null;
       /** Capex Paise */
       capex_paise: number;
       /** Energy Tariff Paise Kwh */
       energy_tariff_paise_kwh: number;
+      fixed_costs?: components["schemas"]["FixedCosts"] | null;
       /** Price Sensitivity */
       price_sensitivity: components["schemas"]["PriceSensitivityPoint"][];
       sanctioned_load: components["schemas"]["SanctionedLoad"];
@@ -1194,6 +1257,20 @@ export interface components {
       scenarios: components["schemas"]["Scenario"][];
       /** Selling Price Paise Kwh */
       selling_price_paise_kwh: number;
+      unit_economics?: components["schemas"]["UnitEconomics"] | null;
+    };
+    /**
+     * FixedCosts
+     * @description ``annual_fixed_paise``, itemised. The lines sum to the total, and zero
+     *     lines are omitted rather than printed.
+     */
+    FixedCosts: {
+      /** Lines */
+      lines: components["schemas"]["CostLine"][];
+      /** Total Paise Month */
+      total_paise_month: number;
+      /** Total Paise Year */
+      total_paise_year: number;
     };
     /** ForecastView */
     ForecastView: {
@@ -1629,6 +1706,42 @@ export interface components {
       /** Reason */
       reason: string | null;
     };
+    /**
+     * PlainMoney
+     * @description The same case again, in money an owner can check against a bank
+     *     statement (Track B - R6).
+     *
+     *     NPV, IRR and payback are all still above this - R5 kept them - but none
+     *     of them is a number a landowner has ever been handed before. These are:
+     *     what comes in, what goes out, what is left, and the running total against
+     *     the setup cost.
+     *
+     *     The annual figures are the STEADY year - the last year of the demand ramp
+     *     - which is the same year ``Scenario.kwh_year`` reports. The earlier years
+     *     are lower, and ``cumulative_paise`` is where that shows: it is the
+     *     engine's own year-by-year cashflow, ramp and all, from year 0 (the build,
+     *     always negative) to the end of the horizon.
+     *
+     *     Optional on the parent for the usual reason: a payload stored by
+     *     economics 0.2.0 has none of this, and the sections omit the blocks rather
+     *     than invent them.
+     */
+    PlainMoney: {
+      /** Cash Paise Month */
+      cash_paise_month: number;
+      /** Cash Paise Year */
+      cash_paise_year: number;
+      /** Cumulative Paise */
+      cumulative_paise: number[];
+      /** Fixed Cost Paise Year */
+      fixed_cost_paise_year: number;
+      /** Revenue Paise Month */
+      revenue_paise_month: number;
+      /** Revenue Paise Year */
+      revenue_paise_year: number;
+      /** Running Cost Paise Year */
+      running_cost_paise_year: number;
+    };
     /** PointOut */
     PointOut: {
       /** Boundary Ambiguous */
@@ -1852,11 +1965,18 @@ export interface components {
       /** Demo */
       demo: boolean;
       financials: components["schemas"]["FinancialsPayload"];
+      /** Generated At */
+      generated_at?: string | null;
       hardware: components["schemas"]["HardwarePayload"];
       /** Ledger */
       ledger: components["schemas"]["LedgerRow"][];
       /** Margin Of Safety Pp */
       margin_of_safety_pp: number;
+      /**
+       * Model Assumptions
+       * @default []
+       */
+      model_assumptions: string[];
       predicted: components["schemas"]["UtilisationBand"];
       /** Provenance */
       provenance: components["schemas"]["ProvenanceRow"][];
@@ -1912,6 +2032,7 @@ export interface components {
       npv_paise: number;
       /** Payback Years */
       payback_years: number | null;
+      plain?: components["schemas"]["PlainMoney"] | null;
       /** Utilisation */
       utilisation: number;
     };
@@ -1929,8 +2050,14 @@ export interface components {
     };
     /** SiteFact */
     SiteFact: {
+      /** Direction */
+      direction?: ("favours" | "against" | "neutral") | null;
+      /** Group */
+      group?: string | null;
       /** Label */
       label: string;
+      /** Means */
+      means?: string | null;
       /** Source */
       source: string;
       /** Unverified */
@@ -2287,6 +2414,23 @@ export interface components {
        * Format: date
        */
       target_month: string;
+    };
+    /**
+     * UnitEconomics
+     * @description One unit's price, and everyone who takes a piece before the site does.
+     *
+     *     ``selling_paise_kwh`` minus every deduction is exactly
+     *     ``margin_paise_kwh``, which is the margin both breakevens divide by. The
+     *     engine guarantees it (``roi/engine.py``, ``_reconcile``) so section 05
+     *     can print it as a sentence the reader checks in their head.
+     */
+    UnitEconomics: {
+      /** Deductions */
+      deductions: components["schemas"]["CostLine"][];
+      /** Margin Paise Kwh */
+      margin_paise_kwh: number;
+      /** Selling Paise Kwh */
+      selling_paise_kwh: number;
     };
     /** UtilisationBand */
     UtilisationBand: {

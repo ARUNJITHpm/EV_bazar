@@ -170,7 +170,7 @@ def test_scenarios_order_with_utilisation(session: Session) -> None:
 def test_cpo_table_ranks_on_irr_and_keeps_ours_unprivileged(session: Session) -> None:
     p = _assemble(session)
     irrs = [c.irr_p50_pct for c in p.cpo]
-    assert irrs == sorted(irrs, reverse=True)
+    assert irrs == sorted(irrs, key=lambda value: (value is not None, value or 0), reverse=True)
     assert any(c.ours for c in p.cpo)
 
 

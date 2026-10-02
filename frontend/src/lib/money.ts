@@ -60,7 +60,40 @@ export function formatRupeesCompact(paise: Paise): string {
   return INR.format(rupees);
 }
 
+/**
+ * Lakh with no unit and no symbol - "15.44", "-24.00".
+ *
+ * ONLY for a table whose head already declares the unit ("10-year working,
+ * Rs lakh"). Forty-five cells each repeating "Rs" and " L" is noise that
+ * hides the one number the reader came for; a bare column of two-decimal
+ * figures lines up and subtracts by eye. A minus sign is the real one
+ * (U+2212), not a hyphen, so a negative year is legible at 15px.
+ */
+export function formatLakhPlain(paise: Paise): string {
+  assertInteger(paise);
+  const lakh = paise / 100 / 1_00_000;
+  return `${lakh < 0 ? "\u2212" : ""}${Math.abs(lakh).toFixed(2)}`;
+}
+
 /** Rupees in, paise out. For form input only - never for arithmetic on API values. */
 export function rupeesToPaise(rupees: number): Paise {
   return Math.round(rupees * 100);
+}
+
+/**
+ * A loss reads as "−₹62,067", never "-₹62,067" or "₹-62,067".
+ *
+ * The minus is the real one (U+2212), and it sits OUTSIDE the symbol, which
+ * is where a reader looks for it. Two sections print losses — 02's monthly
+ * cash and 06's cash per operator — and a document that signs the same
+ * quantity two ways on two pages is the drift Track B exists to remove, so
+ * the rule lives here rather than in either of them.
+ */
+export function formatRupeesSigned(paise: Paise): string {
+  return paise < 0 ? `−${formatRupees(-paise)}` : formatRupees(paise);
+}
+
+/** The same rule, in lakh and crore. */
+export function formatRupeesCompactSigned(paise: Paise): string {
+  return paise < 0 ? `−${formatRupeesCompact(-paise)}` : formatRupeesCompact(paise);
 }

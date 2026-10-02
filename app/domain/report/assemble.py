@@ -407,7 +407,7 @@ def assemble_report(
                 ours=option.ours,
                 revenue_share_pct=round(option.terms.revenue_share_pct * 100, 1),
                 platform_fee_paise_year=option.terms.network_fee_paise_per_month * 12,
-                irr_p50_pct=round((run.irr_pct or 0) * 100, 1),
+                irr_p50_pct=round(run.irr_pct * 100, 1) if run.irr_pct is not None else None,
                 margin_of_safety_pp=round(
                     (util["P10 · downside"] - run.breakeven_utilisation) * 100, 1
                 ),
@@ -415,7 +415,7 @@ def assemble_report(
                 ocpi_roaming=option.ocpi_roaming,
             )
         )
-    cpo_rows.sort(key=lambda r: r.irr_p50_pct, reverse=True)
+    cpo_rows.sort(key=lambda r: (r.irr_p50_pct is not None, r.irr_p50_pct or 0.0), reverse=True)
 
     # --- verdict: from P10, stated as an argument -------------------------
     verdict_value: Literal["build", "conditional", "dont"]

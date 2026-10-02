@@ -82,3 +82,8 @@ jobs:
 
       - name: Build
         run: npm run build --prefix frontend
+
+      - name: Homepage routes and sample report PDF
+        run: |
+          uv run playwright install --with-deps chromium
+          uv run python scripts/check_report_home.py

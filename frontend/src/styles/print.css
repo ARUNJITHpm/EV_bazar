@@ -7,15 +7,32 @@
 
 @page {
   size: A4;
-  margin: 18mm 16mm 22mm 16mm;
-
-  @bottom-left {
-    content: "EV Site Intelligence — generated report";
-  }
-  @bottom-right {
-    content: counter(page) " / " counter(pages);
-  }
+  /* The running head and foot are IN the content area (they repeat as table
+   * header/footer groups, below), so these are ordinary page margins. */
+  margin: 14mm;
 }
+
+/* TWO THINGS CHROMIUM DOES NOT DO, both found by rendering and counting.
+ *
+ * 1. `@page` margin boxes. An earlier version of this file put the footer in
+ *    `@bottom-left` / `@bottom-right` with `counter(page)`. Chromium does not
+ *    implement @page margin at-rules, so none of it ever reached the PDF -
+ *    and a missing footer looks exactly like a footer nobody noticed, so it
+ *    sat there being decorative.
+ * 2. Repeating `position: fixed`. The usual advice is that a fixed element
+ *    paints on every printed page. It does not, in current Chromium: a
+ *    12-page render put the head on 0 pages and the foot on 1.
+ *
+ * So the running chrome uses the mechanism Chromium DOES implement for
+ * repetition, the one already relied on for `thead`: table header and footer
+ * groups. The report root becomes `display: table` in print only, and the
+ * head and foot become its header and footer groups; everything between them
+ * is wrapped in an anonymous row group by the CSS table algorithm. No markup
+ * changes, and the screen layout is untouched.
+ *
+ * The page NUMBER still has no honest home: `counter(page)` resolves only
+ * inside an @page margin box, so it needs Playwright's `footer_template`,
+ * which is R11. */
 
 @media print {
   /* Nothing interactive survives onto paper. */
@@ -25,42 +42,165 @@
     display: none !important;
   }
 
-  body {
+  body,
+  .cw-report-root {
     background: #fff;
     color: #000;
   }
 
-  /* One report section per page break boundary. The 7 sections of the
-   * OVERVIEW.md anatomy map 1:1 onto these. */
+  /* The sheet fills the page; the desk ground and its margins go. */
+  [data-report-ready] {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    font-size: 11pt;
+  }
+
+  /* --- the running head and foot, repeated on every sheet ---------------
+   * The wrapper table exists only to get `thead` repeated (see Report.tsx
+   * for what was measured and rejected). Its single row holds the entire
+   * document, so it must be the one row in the file that is allowed to
+   * break - the `tr { break-inside: avoid }` rule below is for data rows and
+   * would otherwise force the whole report onto one enormous page. */
+  [data-report-page] > tbody > tr,
+  [data-report-page] > tbody > tr > td {
+    break-inside: auto;
+  }
+  /* Clearance, not decoration. A section that happens to start at the top of
+   * a page puts its own top rule directly under the head's hairline, and two
+   * rules 3pt apart read as a mistake. This is the gap that keeps them
+   * legible as chrome-then-content. Whether the section rule survives the
+   * print pass at all is R11's call - the sample document has none. */
+  [data-page-head] > tr > td {
+    padding-bottom: 20pt;
+  }
+  [data-page-foot] > tr > td {
+    padding-top: 10pt;
+  }
+
+  /* Do not split a short section across a page, and never orphan a table
+   * header. The long sections (the site factors, the ledger) are allowed to
+   * break between rows, else they would each push to a fresh page. */
   [data-report-section] {
     break-inside: avoid;
-    break-before: page;
+    margin-top: 22pt;
   }
-
+  /* Section 01 follows the title block, not another section, so it does not
+   * need the gap that separates two sections from each other. The eight
+   * points bought here are what let the verdict page close with YOUR NEXT
+   * MOVE on it rather than pushing the reader's one instruction to page 2. */
+  [data-report-section="verdict"] {
+    margin-top: 14pt;
+  }
+  /* `verdict` is here for a different reason than the long sections. It is
+   * short, but it sits directly under the title block, and R3 made it tall
+   * enough that holding it whole pushed it to a fresh page - leaving page 1
+   * as a title and four lines. The title and the verdict belong together on
+   * page 1, which is what the sample document does; the block itself still
+   * refuses to split.
+   *
+   * THE REST OF THIS LIST WAS EVERY SECTION TALLER THAN ONE PAGE, and R8 is
+   * how it was found - by measuring section heights in print media at the
+   * 688px printable width rather than trusting the rule above.
+   *
+   * `break-inside: avoid` on a block that cannot fit a page is INERT:
+   * Chromium drops it and breaks wherever the break lands. What it does
+   * still do is push the block to a fresh page first - so a section 1.05
+   * pages tall leaves most of the previous page blank AND breaks anyway,
+   * which is the worst of both. money grew past a page in R6, statistical in
+   * R7, judged in R8, and nothing said so, because a silently dropped rule
+   * looks exactly like a rule that is working.
+   *
+   * R11 CHANGED WHAT DECIDES MEMBERSHIP, because "taller than a page" was
+   * the wrong test - it only catches the rule that has already failed. A
+   * held section costs, on average, half its own height in blank paper on
+   * the sheet before it, every time it does not happen to fit. That is a
+   * fine price for a short section and a bad one for a tall one, and the
+   * threshold is not one page, it is about a third of one.
+   *
+   * Measured at 688px: `change` 769px, `disclosure` 647px, `provenance`
+   * 568px - between half and three quarters of a page each, and every one of
+   * them was buying a whole-section guarantee at the cost of most of a sheet.
+   * `competitors` at 375px is the only section still worth holding, and it is
+   * the only one left out of this list.
+   *
+   * What holds all of these together instead is the inner protections: the
+   * section head travels whole, `thead` repeats, `tr` and `figure` and
+   * `[data-callout]` refuse to split. Anything added here that must not be
+   * cut belongs in a `figure`. */
   [data-report-section="verdict"],
-  [data-report-section="hero"] {
-    break-before: auto; /* verdict + hero number share page one */
+  [data-report-section="money"],
+  [data-report-section="judged"],
+  [data-report-section="site"],
+  [data-report-section="financials"],
+  [data-report-section="operators"],
+  [data-report-section="change"],
+  [data-report-section="statistical"],
+  [data-report-section="ledger"],
+  [data-report-section="provenance"],
+  [data-report-section="disclosure"] {
+    break-inside: auto;
   }
-
-  /* A table split across a page boundary loses its header, and a financial
-   * table without a header is unreadable. */
   table {
     break-inside: auto;
+  }
+  /* The verdict block is one object: the word and the line that says what the
+   * word licenses. A break between them ends a page on a shout. */
+  [data-verdict-block] {
+    break-inside: avoid;
+  }
+  /* Same argument for a callout: its label is a promise the sentence keeps,
+   * and a page that ends on YOUR NEXT MOVE with no move on it is worse than
+   * a slightly short page. */
+  [data-callout] {
+    break-inside: avoid;
   }
   thead {
     display: table-header-group;
   }
-  tr {
+  tr,
+  figure {
     break-inside: avoid;
+  }
+
+  /* A section heading alone at the foot of a page is the one break that
+   * makes a document look unedited.
+   *
+   * `break-after` alone was not enough, and R6 is how that was found: as
+   * section 05 grew, the break landed INSIDE the head block, stranding
+   * "05 / FINANCIAL WORKING" at the foot of page 11 with the heading it
+   * names on page 12. The eyebrow, the heading and the standfirst are one
+   * object; they travel together or the number belongs to nothing. */
+  [data-report-section] > div:first-child {
+    break-inside: avoid;
+    break-after: avoid;
+  }
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  /* Provenance and the disclosure close the document on their own sheets.
+   *
+   * ON THEIR OWN *SHEETS*, plural, since R10. They fitted one page together
+   * while 11 was eight version stamps and 12 was two paragraphs; 11 now
+   * carries a document record and what the report was NOT built from, and 12
+   * carries the before-real-use list, which is about 1.4 pages between them.
+   * Both still fit a page each, so `break-inside: avoid` is doing real work
+   * on both rather than being inert (R8's trap) - measured, not assumed. */
+  [data-report-section="provenance"] {
+    break-before: page;
   }
 
   /* Provenance must be legible on every page of a printed copy. */
   [data-provenance] {
-    font-size: 8pt;
+    font-size: 8.5pt;
   }
 
-  a[href]::after {
-    content: " (" attr(href) ")";
-    font-size: 8pt;
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 }
