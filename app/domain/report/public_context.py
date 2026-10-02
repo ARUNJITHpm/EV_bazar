@@ -16,7 +16,7 @@ from typing import Any
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.domain.public_reference import EXPANSION_DATASETS, PublicReference
+from app.domain.public_reference import EXPANSION_DATASETS, Json, PublicReference
 from app.domain.report.payload import (
     LedgerRow,
     ProvenanceRow,
@@ -104,6 +104,12 @@ def nearest_power(
     return None if row is None else dict(row)
 
 
+def _optional_text(value: Json) -> str | None:
+    if value is None or isinstance(value, str):
+        return value
+    raise ValueError("Public source metadata must be text or null")
+
+
 def enrich_public_context(
     session: Session, payload: ReportPayload, reference: PublicReference | None
 ) -> ReportPayload:
@@ -124,13 +130,13 @@ def enrich_public_context(
                 dataset=dataset,
                 status=status,
                 source_name=str(meta.get("source_name", "source pending")),
-                retrieved_on=meta.get("retrieved_on"),
-                source_url=meta.get("source_url"),
-                source_sha256=meta.get("source_sha256"),
-                transformation_version=meta.get("transformation_version"),
-                time_coverage=meta.get("time_coverage"),
-                licence=meta.get("licence"),
-                licence_url=meta.get("licence_url"),
+                retrieved_on=_optional_text(meta.get("retrieved_on")),
+                source_url=_optional_text(meta.get("source_url")),
+                source_sha256=_optional_text(meta.get("source_sha256")),
+                transformation_version=_optional_text(meta.get("transformation_version")),
+                time_coverage=_optional_text(meta.get("time_coverage")),
+                licence=_optional_text(meta.get("licence")),
+                licence_url=_optional_text(meta.get("licence_url")),
             )
         )
 
@@ -139,6 +145,7 @@ def enrich_public_context(
         value = "not assessed"
         source = "OSM power source pending"
     else:
+        assert osm.provenance is not None
         nearest = nearest_power(session, reference, lat=payload.site.lat, lng=payload.site.lng)
         source = (
             f"{osm.provenance['source_name']} · {osm.provenance['time_coverage']} · "
@@ -243,16 +250,16 @@ def enrich_public_context(
     provenance.append(
         ProvenanceRow(label="public reference snapshot SHA256", value=osm.snapshot_sha256)
     )
-    for item in sources:
+    for public_source in sources:
         provenance.append(
             ProvenanceRow(
-                label=f"public source: {item.dataset}",
+                label=f"public source: {public_source.dataset}",
                 value=(
-                    f"{item.status} · {item.source_name} · "
-                    f"{item.time_coverage or 'period pending'} · "
-                    f"retrieved {item.retrieved_on or 'pending'} · "
-                    f"transformation {item.transformation_version or 'pending'} · "
-                    f"{item.source_url or 'source URL pending'}"
+                    f"{public_source.status} · {public_source.source_name} · "
+                    f"{public_source.time_coverage or 'period pending'} · "
+                    f"retrieved {public_source.retrieved_on or 'pending'} · "
+                    f"transformation {public_source.transformation_version or 'pending'} · "
+                    f"{public_source.source_url or 'source URL pending'}"
                 ),
                 unverified=True,
             )
