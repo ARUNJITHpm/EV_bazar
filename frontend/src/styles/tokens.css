@@ -116,7 +116,7 @@
   --cw-positive: #3fa37f; /* semantic only */
   --cw-negative: #c4564a; /* semantic only */
 
-  /* --- Report: paper (reserved for the report reskin; unused until then) */
+  /* --- Report: paper - the report itself, and its previews on the site --- */
   --cw-paper: #faf8f4;
   --cw-ink: #12171a;
   --cw-paper-slate: #1c3a4f;
@@ -133,6 +133,15 @@
   --cw-caution: #a65b1f;
   --cw-caution-tint: #f5e6d3;
   --cw-caution-text: #7a4113;
+  --cw-desk: #e8e4dc; /* the ground the paper sheet sits on, screen only */
+  /* Report chrome (Track B, R1-R2). The dark ground carries table heads and
+     the verdict block: one ink, used twice, so a heading and a verdict never
+     look like two different systems. Zebra and tint are deliberately weak -
+     they must survive a photocopier as "slightly grey", not as a band. */
+  --cw-paper-head: #1b2a30;
+  --cw-paper-head-dim: #a8b6bc; /* secondary text ON the dark ground */
+  --cw-paper-zebra: #f2efe9;
+  --cw-paper-tint: #eceee9;
 
   /* --- Type - webfonts are progressive enhancement over these stacks ---- */
   --cw-sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;

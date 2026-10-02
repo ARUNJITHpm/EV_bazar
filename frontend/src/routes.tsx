@@ -1,5 +1,6 @@
 import { lazy, Suspense, type ReactNode } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Link, Navigate } from "react-router-dom";
+import { DEMO_REPORT_ID } from "./features/report/payload";
 import { AnalyticsApp } from "./features/analytics/AnalyticsApp";
 
 const Concept = lazy(() =>
@@ -38,6 +39,9 @@ const Landing = lazy(() =>
 );
 const ReportRoute = lazy(() =>
   import("./features/report/ReportRoute").then((m) => ({ default: m.ReportRoute })),
+);
+const SampleReport = lazy(() =>
+  import("./features/report/SampleRoute").then((m) => ({ default: m.SampleRoute })),
 );
 
 /**
@@ -101,11 +105,28 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
       <Deferred>
+        <ReportRoute reportId={DEMO_REPORT_ID} homepage />
+      </Deferred>
+    ),
+  },
+  {
+    path: "/about",
+    element: (
+      <Deferred>
         <Landing />
       </Deferred>
     ),
   },
+  { path: "/report/sample", element: <Navigate to={`/report/${DEMO_REPORT_ID}`} replace /> },
   { path: "/data/*", element: <AnalyticsApp /> },
+  {
+    path: "/report/sample/:which",
+    element: (
+      <Deferred>
+        <SampleReport />
+      </Deferred>
+    ),
+  },
   /**
    * Every step is a real URL, which is what makes the browser back button
    * work through the flow without a history shim.
@@ -211,5 +232,17 @@ export const router = createBrowserRouter([
       { path: "spend/llm", element: <SpendLlm /> },
       { path: "reports", element: <Reports /> },
     ],
+  },
+  {
+    path: "*",
+    element: (
+      <main className="cw-report-root min-h-dvh bg-cw-paper px-6 py-16 font-cw-sans text-cw-ink">
+        <h1 className="font-cw-serif text-3xl">Page not found</h1>
+        <p className="mt-4">This address does not match a Chargeworthy page.</p>
+        <Link to="/" className="mt-6 inline-block underline underline-offset-4">
+          View the sample report
+        </Link>
+      </main>
+    ),
   },
 ]);

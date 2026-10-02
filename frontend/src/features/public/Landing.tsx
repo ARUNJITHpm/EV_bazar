@@ -259,12 +259,12 @@ const STEPS: [string, string, ReactNode][] = [
   [
     "02",
     "Match the operator",
-    "A highway site and an apartment basement need different operators. We rank our partners on charger type, revenue share and how fast they reach you for a fault, then name one.",
+    "A highway site and an apartment basement need different operators. We compare documented terms and fit. We are not currently affiliated with a charge point operator.",
   ],
   [
     "03",
     "Install and run",
-    "The operator supplies the charger, the installation and the management software. We stay with you through commissioning.",
+    "If you proceed, confirm equipment, installation, service responsibilities and commercial terms directly with the selected operator.",
   ],
 ];
 
@@ -386,11 +386,11 @@ function Cards() {
             <Eyebrow>Why trust the answer</Eyebrow>
           </div>
           <h2 data-reveal="1" className="text-[clamp(27px,3.5vw,36px)] leading-[1.15] font-medium">
-            We have no stake in you building.
+            Know how we earn.
           </h2>
           <p data-reveal="2" className="max-w-[620px] text-[18px] text-cw-muted">
-            Chargeworthy is not a charge point operator. We own no stations, take no margin on
-            hardware, and charge the same assessment fee whether the answer is yes or no.
+            Chargeworthy earns assessment and operator-matching fees. We are not affiliated with a
+            charge point operator, and we do not own or operate charging stations.
           </p>
         </div>
 
@@ -398,14 +398,12 @@ function Cards() {
           <Card span={8} reveal={3}>
             <div className="flex flex-col justify-center gap-6 p-[clamp(28px,4vw,48px)]">
               <h3 className="text-[26px] font-medium">We tell people not to build.</h3>
-              <div className="font-cw-mono text-[clamp(56px,8vw,96px)] leading-none font-medium tracking-[-0.03em] text-cw-accent">
-                [38%]
+              <div className="font-cw-mono text-[clamp(24px,4vw,40px)] leading-none font-medium tracking-[-0.03em] text-cw-accent">
+                Not published
               </div>
               <p className="max-w-[540px] text-[18px] text-cw-muted">
-                Of <span className="font-cw-mono">[340]</span> sites assessed in{" "}
-                <span className="font-cw-mono">2025</span>, we advised{" "}
-                <span className="font-cw-mono">[129]</span> owners to walk away. We were paid the
-                same either way.
+                We have no verified assessment counts or rejection rate to publish yet. The sample
+                report demonstrates how a decision is explained; it is not a customer track record.
               </p>
             </div>
           </Card>
@@ -414,11 +412,11 @@ function Cards() {
             <div className="flex h-full flex-col justify-center gap-[18px] p-[clamp(24px,3vw,40px)]">
               <Eyebrow>Prediction accuracy</Eyebrow>
               <div className="font-cw-mono text-[clamp(38px,5vw,56px)] leading-none font-medium">
-                [XX%]
+                Not measured
               </div>
               <p className="text-cw-muted">
-                Of the sites we cleared that went on to be built, this share landed inside our
-                projected utilisation band after twelve months.
+                Forecast accuracy against built sites is not yet established. Modelled demand is
+                labelled in the report, with downside, central and upside cases.
               </p>
             </div>
           </Card>
@@ -429,8 +427,8 @@ function Cards() {
                 Matched to the right operator, not our own.
               </h3>
               <p className="text-cw-muted">
-                Partner operators appear here named, with each one&rsquo;s written permission —
-                never before.
+                We have no current CPO affiliation. An operator comparison is not a partnership or
+                endorsement; written terms must be confirmed before a site proceeds.
               </p>
             </div>
           </Card>
@@ -450,11 +448,12 @@ function Cards() {
           <Card span={4} reveal={7}>
             <div className="flex h-full flex-col justify-center gap-[18px] p-[clamp(24px,3vw,40px)]">
               <div className="font-cw-mono text-[clamp(38px,5vw,56px)] leading-none font-medium">
-                [1,000+]
+                Owner submissions
               </div>
               <p className="text-cw-muted">
-                Station owners in our network across India, and the reason our operator comparisons
-                are grounded in what actually happens after commissioning.
+                Station owners can contribute consented usage data. Published comparisons require
+                enough comparable submissions to protect privacy. Participation does not mean we own
+                or operate a station.
               </p>
             </div>
           </Card>
@@ -603,9 +602,9 @@ function Close() {
             Chargeworthy
           </span>
           <p className="text-[16px] text-cw-muted">
-            Chargeworthy is not a charge point operator and holds no stake in any station or charger
-            brand. We earn a fee when a site proceeds to installation with a partner operator.
-            Assessment fees are not contingent on a positive verdict.
+            Chargeworthy earns assessment and operator-matching fees. We have no current CPO
+            affiliation and do not own or operate charging stations. Operator-matching fees create a
+            potential commercial conflict that must be disclosed.
           </p>
         </div>
         <nav className="flex gap-8">
@@ -634,6 +633,9 @@ function Close() {
 }
 
 export function Landing() {
+  useEffect(() => {
+    document.title = "About Chargeworthy — site assessments and operator matching";
+  }, []);
   return (
     <div className="cw-surface-root min-h-dvh bg-cw-ground font-cw-sans text-[17px] leading-[1.6] text-cw-text antialiased">
       <Header />
