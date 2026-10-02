@@ -3,6 +3,7 @@
 Old reports are inspected without defaults or reassembly. This module deliberately
 does not import or depend on the unpublished twelve-section console rebuild.
 """
+
 from collections.abc import Mapping
 from typing import Any
 

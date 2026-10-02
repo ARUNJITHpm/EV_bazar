@@ -77,3 +77,7 @@ desktop.ini
 openapi.json
 frontend/dist/
 frontend/node_modules/
+
+# Font bytes are materialized from verified text assets at build time (HF mirror).
+/frontend/public/analytics-fonts/*.ttf
+/frontend/public/analytics-fonts/*.woff2
