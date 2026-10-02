@@ -33,7 +33,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", help="Existing preview server; otherwise start one")
     parser.add_argument("--browser-channel", help="Use an installed browser for local review")
-    parser.add_argument("--axe-script", type=Path, default=REPO / "frontend/node_modules/axe-core/axe.min.js")
+    parser.add_argument(
+        "--axe-script", type=Path, default=REPO / "frontend/node_modules/axe-core/axe.min.js"
+    )
     parser.add_argument(
         "--output", type=Path, default=REPO / "frontend/node_modules/.cache/report-home"
     )
@@ -83,9 +85,14 @@ def main() -> None:
                 )
                 page = context.new_page()
                 errors: list[str] = []
-                page.on("pageerror", lambda error, errors=errors: errors.append(str(error) + "\n" + error.stack))
+                page.on(
+                    "pageerror",
+                    lambda error, errors=errors: errors.append(str(error) + "\n" + error.stack),
+                )
                 page.goto(url)
-                expect(page.get_by_role("heading", level=1)).to_have_text("Is your land suitable for EV charging?")
+                expect(page.get_by_role("heading", level=1)).to_have_text(
+                    "Is your land suitable for EV charging?"
+                )
                 page.screenshot(path=str(args.output / f"viewport-{width}.png"))
                 overflow = page.evaluate(
                     "() => Array.from(document.querySelectorAll('body *'))"
@@ -98,12 +105,23 @@ def main() -> None:
                     page.get_by_role("link", name="Assess my site", exact=True)
                 ).to_have_attribute("href", "/assess")
                 navigation = page.get_by_role("navigation", name="Main navigation")
-                for label, href in [("Home", "/"), ("Sample report", f"/report/{DEMO}"), ("Data", "/data"), ("Station owners", "/owner")]:
-                    expect(navigation.get_by_role("link", name=label, exact=True)).to_have_attribute("href", href)
+                for label, href in [
+                    ("Home", "/"),
+                    ("Sample report", f"/report/{DEMO}"),
+                    ("Data", "/data"),
+                    ("Station owners", "/owner"),
+                ]:
+                    expect(
+                        navigation.get_by_role("link", name=label, exact=True)
+                    ).to_have_attribute("href", href)
                 page.evaluate("document.fonts.ready")
                 axe = args.axe_script.read_text(encoding="utf-8")
                 page.add_script_tag(content=axe)
-                home_violations = page.evaluate("async () => (await axe.run(document, {runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v => ({id:v.id,nodes:v.nodes.map(n=>n.target)}))")
+                home_violations = page.evaluate(
+                    "async () => (await axe.run(document, {runOnly:{type:'tag',"
+                    "values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v => "
+                    "({id:v.id,nodes:v.nodes.map(n=>n.target)}))"
+                )
                 assert not home_violations, home_violations
                 visible_words = len(page.locator("body").inner_text().split())
                 assert visible_words < 600, visible_words
@@ -115,29 +133,57 @@ def main() -> None:
                 checklist.locator("summary").click()
                 page.locator("h1").scroll_into_view_if_needed()
                 page.screenshot(path=str(args.output / f"viewport-{width}.png"))
-                print(f"Homepage {width}px: {visible_words} visible words; accessibility and full checklist passed", flush=True)
+                print(
+                    f"Homepage {width}px: {visible_words} visible words; "
+                    "accessibility and full checklist passed",
+                    flush=True,
+                )
                 page.screenshot(path=str(args.output / f"home-{width}.png"), full_page=True)
                 page.get_by_label("Site location", exact=True).first.fill("Ernakulam")
                 page.get_by_role("button", name="Check my location", exact=True).first.click()
-                expect(page.get_by_role("textbox", name="Search for the site location")).to_have_value("Ernakulam")
+                expect(
+                    page.get_by_role("textbox", name="Search for the site location")
+                ).to_have_value("Ernakulam")
                 page.goto(url + "/about")
                 expect(page).to_have_url(url + "/")
-                expect(page.get_by_role("heading", level=1)).to_have_text("Is your land suitable for EV charging?")
+                expect(page.get_by_role("heading", level=1)).to_have_text(
+                    "Is your land suitable for EV charging?"
+                )
                 page.goto(url + f"/report/{DEMO}")
                 page.locator("[data-report-ready]").wait_for()
                 expect(page.get_by_role("heading", level=1)).to_have_text(payload["site"]["name"])
-                assert page.locator("[data-report-section]").evaluate_all("nodes => nodes.map(n => n.dataset.reportSection)") == SECTIONS
+                assert (
+                    page.locator("[data-report-section]").evaluate_all(
+                        "nodes => nodes.map(n => n.dataset.reportSection)"
+                    )
+                    == SECTIONS
+                )
                 if width == 390:
                     page.locator("#statistical").scroll_into_view_if_needed()
-                    expect(page.get_by_text("Scroll sideways to read the full diagram.", exact=True).last).to_be_visible()
-                    labels = page.locator("#statistical svg text").evaluate_all("nodes => nodes.map(n=>n.getBoundingClientRect().height)")
+                    expect(
+                        page.get_by_text(
+                            "Scroll sideways to read the full diagram.", exact=True
+                        ).last
+                    ).to_be_visible()
+                    labels = page.locator("#statistical svg text").evaluate_all(
+                        "nodes => nodes.map(n=>n.getBoundingClientRect().height)"
+                    )
                     assert labels and min(labels) >= 12, labels
                     page.screenshot(path=str(args.output / "report-diagram-mobile.png"))
-                    expect(page.get_by_text("Scroll sideways to see all columns.", exact=True).first).to_be_attached()
+                    expect(
+                        page.get_by_text("Scroll sideways to see all columns.", exact=True).first
+                    ).to_be_attached()
                     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
                 page.emulate_media(media="print")
-                assert page.locator(".report-diagram svg").first.evaluate("n => getComputedStyle(n).minWidth") == "0px"
-                print_widths = page.locator(".report-diagram svg").evaluate_all("nodes => nodes.map(n => n.getBoundingClientRect().width)")
+                assert (
+                    page.locator(".report-diagram svg").first.evaluate(
+                        "n => getComputedStyle(n).minWidth"
+                    )
+                    == "0px"
+                )
+                print_widths = page.locator(".report-diagram svg").evaluate_all(
+                    "nodes => nodes.map(n => n.getBoundingClientRect().width)"
+                )
                 assert max(print_widths) <= 688, print_widths
                 page.emulate_media(media="screen")
                 page.add_script_tag(content=axe)
@@ -155,9 +201,7 @@ def main() -> None:
                 expect(page).to_have_url(url + "/")
                 page.reload()
                 expect(page.get_by_role("heading", level=1)).to_be_visible()
-                expect(page).to_have_title(
-                    "Chargeworthy — is your land suitable for EV charging?"
-                )
+                expect(page).to_have_title("Chargeworthy — is your land suitable for EV charging?")
                 page.goto(url + "/report/sample")
                 expect(page).to_have_url(url + f"/report/{DEMO}")
                 page.locator("[data-report-ready]").wait_for()
@@ -177,8 +221,10 @@ def main() -> None:
                 context.close()
             browser.close()
         print(
-            "PASS: landing homepage at 390/1440px, location handoff, about redirect, twelve report sections, nullable IRR, "
-            "route navigation/refresh, homepage and report accessibility, readable mobile diagrams and PDF"
+            "PASS: landing homepage at 390/1440px, location handoff, about redirect, "
+            "twelve report sections, nullable IRR, "
+            "route navigation/refresh, homepage and report accessibility, "
+            "readable mobile diagrams and PDF"
         )
     finally:
         if server is not None:

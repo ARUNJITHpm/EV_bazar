@@ -334,7 +334,9 @@ export function AnalyticsApp() {
         Skip to content
       </a>
       <header className="analytics-header">
-        <Link to="/" className="analytics-wordmark">Chargeworthy</Link>
+        <Link to="/" className="analytics-wordmark">
+          Chargeworthy
+        </Link>
         <PublicNavigation />
         <nav aria-label="Data navigation">
           <Link

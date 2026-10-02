@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { api } from "../../../api/client";
-import { MAP_STYLE, autoResize, createPinElement, mapboxgl } from "../mapCore";
+import { MAPBOX_TOKEN, MAP_STYLE, autoResize, createPinElement, mapboxgl } from "../mapCore";
 import { placeName, toBody, type AssessOut } from "./state";
 
 /**
@@ -64,7 +64,7 @@ export function Locate({
   const initial = useRef(pin);
 
   useEffect(() => {
-    if (!mapEl.current) return;
+    if (!mapEl.current || !MAPBOX_TOKEN) return;
     let map: mapboxgl.Map;
     try {
       map = new mapboxgl.Map({
