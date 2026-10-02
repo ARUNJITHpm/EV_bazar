@@ -1,3 +1,5 @@
+import { YourDistrict } from "./YourDistrict";
+import type { AssessOut } from "./state";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AssemblingReport } from "../../animation/AssemblingReport";
@@ -96,9 +98,11 @@ function Ring({ active }: { active: boolean }) {
 
 export function Working({
   run,
+  out,
   onDone,
 }: {
   /** The real assessment call. Resolves true when the answer is stored. */
+  out?: AssessOut;
   run: () => Promise<boolean>;
   onDone: () => void;
 }) {
@@ -215,12 +219,12 @@ export function Working({
         <div className="flex max-w-[640px] flex-col gap-3.5">
           <h1 className="text-[clamp(28px,4vw,40px)] leading-[1.15] font-medium">
             {finished
-              ? "Checked. Preparing your answer."
-              : `Checking ${TOTAL} factors against this location.`}
+              ? "Checklist reviewed. Preparing your answer."
+              : `Reviewing ${TOTAL} assessment questions.`}
           </h1>
           <p className="text-cw-muted">
-            This takes about fifteen seconds. We are reading the live sources now, not handing you a
-            stored answer.
+            This takes about fifteen seconds. The checklist below is a walkthrough; bracketed values
+            are examples. Your answer uses the available tariff and district records.
           </p>
         </div>
         <div
@@ -231,6 +235,8 @@ export function Working({
           <span className="text-cw-muted"> / {TOTAL}</span>
         </div>
       </div>
+
+      <YourDistrict out={out} />
 
       <div className="h-0.5 bg-cw-line" aria-hidden="true">
         <div
@@ -302,7 +308,7 @@ function GroupRow({
         <span className="flex-grow font-cw-mono text-[17px]">{group.name}</span>
         <span className="font-cw-mono text-[14px] text-cw-muted tabular-nums">
           {complete
-            ? `${group.checks.length} checked`
+            ? `${group.checks.length} reviewed`
             : active
               ? `${done - start} / ${group.checks.length}`
               : `${group.checks.length}`}
@@ -312,7 +318,9 @@ function GroupRow({
       {open && (
         <div className="cw-rise pb-4 pl-[35px]">
           <p className="m-0 mb-2 text-[14px] text-cw-muted">
-            {settled ? `Read ${group.source}.` : `Reading ${group.source}…`}
+            {settled
+              ? `Sources and pending checks: ${group.source}.`
+              : `Checklist sources: ${group.source}.`}
           </p>
           {/* One column, not two. With a value on each row the two-column
               form truncated the longer names ("Competitor densi…"), and a
@@ -333,7 +341,10 @@ function GroupRow({
                   <span className="flex w-[17px] shrink-0 justify-center">
                     {ticked ? <Tick animate={paced} /> : <Ring active={reading} />}
                   </span>
-                  <span className="min-w-0 flex-grow truncate font-cw-mono">{c.label}</span>
+                  <span className="min-w-0 flex-grow py-1">
+                    <span className="block">{c.label}</span>
+                    <span className="block text-[13px] text-cw-muted">{c.source}</span>
+                  </span>
                   {ticked && (
                     <span
                       className={`shrink-0 font-cw-mono text-[14px] tabular-nums ${

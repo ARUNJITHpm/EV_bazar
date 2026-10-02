@@ -996,6 +996,9 @@ does not mean.
 
 ## Part 16 — Main page and assessment flow
 
+**Checkpoint implemented (2026-10-02):** shared checklist sources, truthful stored-fact coverage, LGD-linked district summaries and source-gated home links. Deferred source joins/activation and complete report checklist emission remain pending; see `docs/analytics/PART16_PUBLIC_FLOW.md`.
+
+
 ```
 Read frontend/src/features/public/Landing.tsx, features/animation/data.ts,
 features/public/flow/ and app/domain/report/coverage.py first. The 34

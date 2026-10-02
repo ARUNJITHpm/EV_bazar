@@ -1,3 +1,6 @@
+import expansion from "virtual:analytics-expansion";
+import catalogue from "virtual:analytics-public-data";
+import { expansionLinks } from "./expansion/home-links";
 import { Link } from "react-router-dom";
 
 export function HomeDataSection() {
@@ -20,6 +23,16 @@ export function HomeDataSection() {
           >
             Explore the data <span aria-hidden="true">→</span>
           </Link>
+          {expansionLinks(expansion, catalogue).map((link) => (
+            <p key={link.to} className="mt-2">
+              <Link
+                to={link.to}
+                className="inline-flex min-h-[44px] items-center underline underline-offset-4"
+              >
+                {link.label}
+              </Link>
+            </p>
+          ))}
         </div>
         <div className="border-l border-cw-line pl-6">
           <p className="font-cw-mono text-[14px] text-cw-muted uppercase">The weekly chart</p>

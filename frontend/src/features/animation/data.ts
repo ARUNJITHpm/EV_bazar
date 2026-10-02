@@ -33,6 +33,7 @@ export function illustrative(value: string): string {
 
 export type Check = {
   /** Verbatim from Landing.tsx's FACTORS. */
+  readonly source?: string;
   readonly label: string;
   /** Illustrative. Rendered through `illustrative()` at the point of use. */
   readonly value: string;
@@ -45,8 +46,7 @@ export type Group = {
   /** Shown in the category strip - short enough to sit in five columns. */
   readonly short: string;
   readonly name: string;
-  /** What is read for this group - a source, never a result. ONE group is
-   *  ONE fetch, which is what makes this grouping the true one. */
+  /** What is read for this group - a source, never a result. Grouping is owner-approved; this does not assert one live fetch per group. */
   readonly source: string;
   readonly checks: readonly Check[];
 };
@@ -59,7 +59,7 @@ export type Group = {
  * marketing page and was wrong everywhere else: a visitor met one taxonomy
  * on the landing page and a different one ten seconds into their own
  * assessment. Owner's call - the source grouping wins, because one group is
- * one real fetch and flow/Working.tsx walks it against a live request.
+ * a walkthrough; individual checks can have pending or manual sources.
  *
  * flow/Working.tsx imports these rather than declaring its own, so the two
  * cannot drift apart again.
@@ -69,76 +69,158 @@ export const GROUPS: readonly Group[] = [
     key: "access",
     short: "Access",
     name: "Access and geometry",
-    source: "OpenStreetMap road layer",
+    source: "OSM roads; geometry and traffic survey pending",
     checks: [
-      { label: "Road class", value: "NH arterial" },
-      { label: "Distance from main road", value: "0.4 km" },
-      { label: "Carriageway direction served", value: "Eastbound" },
-      { label: "Sub-road access", value: "2 points" },
-      { label: "Median or divider", value: "Divided" },
-      { label: "Sight line", value: "180 m" },
-      { label: "Turning radius", value: "12.5 m" },
-      { label: "Entry and exit width", value: "8.2 m" },
-      { label: "Frontage width", value: "46 m" },
-      { label: "AADT traffic count", value: "18,400 /day" },
-      { label: "Dominant flow direction", value: "Inbound AM" },
-      { label: "Peak hour timing", value: "08:00–10:00" },
+      { source: "OpenStreetMap road layer", label: "Road class", value: "NH arterial" },
+      { source: "OpenStreetMap road layer", label: "Distance from main road", value: "0.4 km" },
+      {
+        source: "Site survey; direction matching pending",
+        label: "Carriageway direction served",
+        value: "Eastbound",
+      },
+      {
+        source: "OpenStreetMap roads; access survey confirms",
+        label: "Sub-road access",
+        value: "2 points",
+      },
+      {
+        source: "OpenStreetMap roads; median access survey confirms",
+        label: "Median or divider",
+        value: "Divided",
+      },
+      { source: "Site survey pending", label: "Sight line", value: "180 m" },
+      { source: "Site survey pending", label: "Turning radius", value: "12.5 m" },
+      { source: "Site survey pending", label: "Entry and exit width", value: "8.2 m" },
+      { source: "Site survey pending", label: "Frontage width", value: "46 m" },
+      {
+        source: "No verified AADT count; traffic survey pending",
+        label: "AADT traffic count",
+        value: "18,400 /day",
+      },
+      { source: "Traffic survey pending", label: "Dominant flow direction", value: "Inbound AM" },
+      { source: "Traffic survey pending", label: "Peak hour timing", value: "08:00–10:00" },
     ],
   },
   {
     key: "demand",
     short: "Demand",
     name: "Demand",
-    source: "VAHAN registrations, this district",
+    source: "VAHAN records where loaded; fleet inventory pending",
     checks: [
-      { label: "EV registrations", value: "12,540" },
-      { label: "Registration mix", value: "68% 4W" },
-      { label: "Fleet operators within 10 km", value: "14" },
-      { label: "Distance to nearest city", value: "6.8 km" },
+      {
+        source: "VAHAN district records where loaded; otherwise pending",
+        label: "EV registrations",
+        value: "12,540",
+      },
+      {
+        source: "VAHAN vehicle classes where loaded; otherwise pending",
+        label: "Registration mix",
+        value: "68% 4W",
+      },
+      {
+        source: "Verified fleet inventory pending",
+        label: "Fleet operators within 10 km",
+        value: "14",
+      },
+      {
+        source: "OpenStreetMap places; reviewed distance pending",
+        label: "Distance to nearest city",
+        value: "6.8 km",
+      },
     ],
   },
   {
     key: "power",
     short: "Power",
     name: "Power and tariff",
-    source: "State regulator’s EV tariff order",
+    source: "Verified tariff where available; OSM power; confirmations pending",
     checks: [
-      { label: "Tariff order", value: "TOU C&I" },
-      { label: "Demand charges", value: "₹390 /kVA" },
-      { label: "Sanctioned load", value: "75 kVA" },
-      { label: "Transformer distance", value: "140 m" },
-      { label: "Transformer spare capacity", value: "180 kVA" },
+      {
+        source: "Human-verified SERC EV tariff order where available; otherwise pending",
+        label: "Tariff order",
+        value: "TOU C&I",
+      },
+      {
+        source: "Human-verified SERC EV tariff order where available; otherwise pending",
+        label: "Demand charges",
+        value: "₹390 /kVA",
+      },
+      {
+        source: "Customer input or labelled archetype assumption",
+        label: "Sanctioned load",
+        value: "75 kVA",
+      },
+      {
+        source: "Geofabrik / OpenStreetMap power; site survey confirms",
+        label: "Transformer distance",
+        value: "140 m",
+      },
+      {
+        source: "Serving DISCOM confirmation pending",
+        label: "Transformer spare capacity",
+        value: "180 kVA",
+      },
       /* The one copper value on the whole surface. Its meaning is the
          product's argument: a gap is reported, never quietly filled. */
-      { label: "Grid outage hours", value: "unverified", unverified: true },
-      { label: "New connection cost", value: "₹8.4 lakh" },
-      { label: "State subsidy applicability", value: "Applicable" },
+      {
+        source: "NFMS / NPP area supply context pending; not site outage measurements",
+        label: "Grid outage hours",
+        value: "unverified",
+        unverified: true,
+      },
+      { source: "DISCOM quotation pending", label: "New connection cost", value: "₹8.4 lakh" },
+      {
+        source: "Reviewed policy register pending; site eligibility unverified",
+        label: "State subsidy applicability",
+        value: "Applicable",
+      },
     ],
   },
   {
     key: "site",
     short: "Site",
     name: "Site and amenities",
-    source: "OpenStreetMap places within 1 km",
+    source: "OSM places; site survey and owner documents pending",
     checks: [
-      { label: "Plot area", value: "3,420 m²" },
-      { label: "Parking bays", value: "12" },
-      { label: "Canopy feasibility", value: "680 m²" },
-      { label: "Amenities within walking distance", value: "6" },
-      { label: "Mobile network coverage", value: "−79 dBm" },
-      { label: "Night lighting", value: "18 lux" },
-      { label: "Land or lease cost", value: "₹1.8 lakh/mo" },
+      {
+        source: "Customer documents or site survey pending",
+        label: "Plot area",
+        value: "3,420 m²",
+      },
+      { source: "Site survey pending", label: "Parking bays", value: "12" },
+      { source: "Site survey pending", label: "Canopy feasibility", value: "680 m²" },
+      {
+        source: "OpenStreetMap places within 1 km; walking access unverified",
+        label: "Amenities within walking distance",
+        value: "6",
+      },
+      { source: "Site measurement pending", label: "Mobile network coverage", value: "−79 dBm" },
+      { source: "Site measurement pending", label: "Night lighting", value: "18 lux" },
+      { source: "Customer agreement pending", label: "Land or lease cost", value: "₹1.8 lakh/mo" },
     ],
   },
   {
     key: "competition",
     short: "Competition",
     name: "Competition",
-    source: "Competitor inventory, 10 km radius",
+    source: "Dated inventory; announced-charger evidence pending",
     checks: [
-      { label: "Competitor distance", value: "2.4 km" },
-      { label: "Competitor density at 3 / 5 / 10 km", value: "1 / 3 / 5" },
-      { label: "Announced stations", value: "2" },
+      {
+        source: "Dated competitor inventory; geodesic distance",
+        label: "Competitor distance",
+        value: "2.4 km",
+      },
+      {
+        source: "Dated competitor inventory; radius counts",
+        label: "Competitor density at 3 / 5 / 10 km",
+        value: "1 / 3 / 5",
+      },
+      {
+        source:
+          "Dated charging inventory / NHAI WSA evidence pending; amenities are not open chargers",
+        label: "Announced stations",
+        value: "2",
+      },
     ],
   },
 ];
@@ -155,11 +237,11 @@ export const SOURCES: readonly { readonly name: string; readonly stamp: string }
   (g) => ({ name: g.source, stamp: g.name }),
 );
 
-/** Counts across the 34. measured + sourced + unverified must equal TOTAL_CHECKS. */
+/** Counts require a stored report. The illustrative walkthrough has no verification counts. */
 export const COVERAGE = [
-  { count: 27, label: "Measured" },
-  { count: 6, label: "Sourced" },
-  { count: 1, label: "Unverified", unverified: true },
+  { count: "—", label: "Measured" },
+  { count: "—", label: "Sourced" },
+  { count: "—", label: "Unverified", unverified: true },
 ] as const;
 
 /** Real vocabulary - see VerdictPayload. The band is illustrative. */

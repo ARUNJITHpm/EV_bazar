@@ -66,7 +66,7 @@ export function AssemblingReport({
             >
               <dt className="min-w-0 flex-auto truncate font-cw-serif text-[14px]">{line.name}</dt>
               <dd className="m-0 shrink-0 font-cw-mono text-[12px] text-cw-paper-muted tabular-nums">
-                {String(line.count).padStart(2, "0")} checked
+                {String(line.count).padStart(2, "0")} reviewed
               </dd>
             </div>
           );
@@ -77,7 +77,10 @@ export function AssemblingReport({
           until then. Holding the row rather than hiding it keeps the sheet
           from jumping when the last line lands - and an empty reserved gap
           looked like a rendering fault. */}
-      <div className="mt-4 flex gap-5">
+      <p className="mt-4 text-[12px] text-cw-paper-muted">
+        Coverage counts come from the stored report.
+      </p>
+      <div className="mt-3 flex gap-5">
         {COVERAGE.map((c) => (
           <div key={c.label}>
             <div
@@ -89,7 +92,7 @@ export function AssemblingReport({
                     : "text-cw-ink"
               }`}
             >
-              {complete ? String(c.count).padStart(2, "0") : "··"}
+              {complete ? c.count : "··"}
             </div>
             <div className="mt-1 font-cw-mono text-[9px] tracking-[0.12em] text-cw-paper-muted uppercase">
               {c.label}

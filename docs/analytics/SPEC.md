@@ -577,3 +577,14 @@ production sections show explicit missing states. Source acquisition, serving-
 DISCOM crosswalks, compatible fleet/inventory counts, real-data acceptance and
 final Part 9 launch checks remain. See [PART15_PUBLIC_CONTEXT.md](PART15_PUBLIC_CONTEXT.md).
 No private data, demand/ROI inputs, persisted reports or production database changed.
+
+
+## Part 16 available-source checkpoint — 2026-10-02
+
+The 34-question checklist now labels each source or missing evidence. Example
+walkthrough values are explicit and fixed verification counts are removed;
+report coverage counts only stored facts. Working and result share a sourced
+LGD-linked district block, preserve pacing and omit unmatched older responses.
+Electricity/corridor promotion is gated on eligible reviewed observations.
+Fleet ratios, serving-DISCOM joins, source activation and complete 34-check
+report emission remain pending. See [PART16_PUBLIC_FLOW.md](PART16_PUBLIC_FLOW.md).

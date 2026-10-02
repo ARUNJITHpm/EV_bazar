@@ -1,3 +1,4 @@
+import { YourDistrict } from "./YourDistrict";
 import { Link } from "react-router-dom";
 
 import { formatRupeesPrecise, type Paise } from "../../../lib/money";
@@ -32,6 +33,7 @@ export function Result({ out, onRestart }: { out: AssessOut; onRestart: () => vo
             </p>
           )}
         </div>
+        <YourDistrict out={out} />
         <Footer onRestart={onRestart} />
       </Shell>
     );
@@ -70,6 +72,8 @@ export function Result({ out, onRestart }: { out: AssessOut; onRestart: () => vo
           </>
         )}
       </div>
+
+      <YourDistrict out={out} />
 
       <div
         className="grid gap-7 border-y border-cw-line py-8"

@@ -795,6 +795,8 @@ export interface components {
       confidence: string | null;
       /** District */
       district: string | null;
+      /** Lgd District Code */
+      lgd_district_code?: number | null;
       /** Requests */
       requests: number;
       /**

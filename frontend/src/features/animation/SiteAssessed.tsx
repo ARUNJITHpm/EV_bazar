@@ -52,7 +52,7 @@ export function SiteAssessed({ headless = false }: { headless?: boolean } = {}) 
     step === 0
       ? "Connecting sources"
       : step === SUMMARY
-        ? "Assessment complete"
+        ? "Illustrative walkthrough"
         : `Reading ${group?.source ?? ""}`;
 
   return (
@@ -141,7 +141,7 @@ export function SiteAssessed({ headless = false }: { headless?: boolean } = {}) 
               <div className="mb-2.5 flex items-baseline justify-between gap-4 font-cw-mono text-[11px] font-semibold tracking-[0.12em] text-cw-slate uppercase">
                 <span className="min-w-0 truncate">{group.name}</span>
                 <span className="shrink-0 font-normal text-cw-muted tabular-nums">
-                  {String(group.checks.length).padStart(2, "0")} checks
+                  {String(group.checks.length).padStart(2, "0")} questions
                 </span>
               </div>
               <dl className="m-0 grid grid-cols-1 gap-x-[18px] min-[900px]:grid-cols-2">
@@ -187,12 +187,15 @@ function Summary() {
   return (
     <div className="cwa-fade">
       <div className="mb-2.5 flex items-baseline justify-between gap-4 font-cw-mono text-[11px] font-semibold tracking-[0.12em] text-cw-slate uppercase">
-        <span>Assessment complete</span>
+        <span>Illustrative walkthrough</span>
         <span className="font-normal text-cw-muted tabular-nums">
-          {TOTAL_CHECKS} / {TOTAL_CHECKS} checks
+          {TOTAL_CHECKS} / {TOTAL_CHECKS} questions
         </span>
       </div>
 
+      <p className="mb-3 text-[13px] text-cw-muted">
+        Coverage counts appear in each stored report.
+      </p>
       <div className="grid grid-cols-3 gap-2">
         {COVERAGE.map((c) => (
           <div key={c.label} className="border border-cw-line bg-cw-surface px-2.5 py-3">
@@ -201,7 +204,7 @@ function Summary() {
                 "unverified" in c && c.unverified ? "text-cw-accent" : "text-cw-text"
               }`}
             >
-              {String(c.count).padStart(2, "0")}
+              {c.count}
             </div>
             <div
               className={`mt-1.5 font-cw-mono text-[9px] tracking-[0.1em] uppercase ${

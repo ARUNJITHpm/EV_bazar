@@ -1,3 +1,4 @@
+import { GROUPS } from "../animation/data";
 import { lazy, Suspense, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { HomeDataSection } from "../analytics/HomeDataSection";
@@ -68,42 +69,7 @@ function NearViewport({ children, minHeight }: { children: ReactNode; minHeight:
   );
 }
 
-const FACTORS = [
-  "Road class",
-  "Distance from main road",
-  "Carriageway direction served",
-  "Sub-road access",
-  "Median or divider",
-  "Sight line",
-  "Turning radius",
-  "Entry and exit width",
-  "Frontage width",
-  "AADT traffic count",
-  "Dominant flow direction",
-  "Peak hour timing",
-  "EV registrations",
-  "Registration mix",
-  "Fleet operators within 10 km",
-  "Distance to nearest city",
-  "Tariff order",
-  "Demand charges",
-  "Sanctioned load",
-  "Transformer distance",
-  "Transformer spare capacity",
-  "Grid outage hours",
-  "New connection cost",
-  "State subsidy applicability",
-  "Plot area",
-  "Parking bays",
-  "Canopy feasibility",
-  "Amenities within walking distance",
-  "Mobile network coverage",
-  "Night lighting",
-  "Land or lease cost",
-  "Competitor distance",
-  "Competitor density at 3 / 5 / 10 km",
-  "Announced stations",
-];
+const FACTORS = GROUPS.flatMap((group) => group.checks);
 
 function Eyebrow({ children }: { children: ReactNode }) {
   return (
@@ -348,11 +314,12 @@ function WhatWeCheck() {
             <Eyebrow>What a full assessment checks</Eyebrow>
           </div>
           <h2 data-reveal="1" className="text-[clamp(27px,3.5vw,36px)] leading-[1.15] font-medium">
-            Nothing here is a guess.
+            34 questions, with the gaps in view.
           </h2>
           <p data-reveal="2" className="max-w-[580px] text-cw-muted">
-            Each one is measured or sourced, and the unverified ones are marked, not buried —
-            including the factors that argue in the site&rsquo;s favour.
+            This is the full assessment checklist. Some checks still need a site survey or a
+            verified source; the stored report lists the facts it has and marks unverified inputs.
+            The walkthrough uses bracketed examples, not measurements of your site.
           </p>
         </div>
 
@@ -371,11 +338,12 @@ function WhatWeCheck() {
         <div className="flex flex-wrap gap-3">
           {FACTORS.map((f, i) => (
             <span
-              key={f}
+              key={f.label}
               data-reveal={i + 4}
               className="border border-cw-line bg-cw-surface px-[17px] py-[11px] text-[16px]"
             >
-              {f}
+              {f.label}
+              <span className="mt-1 block max-w-[34ch] text-[13px] text-cw-muted">{f.source}</span>
             </span>
           ))}
         </div>
