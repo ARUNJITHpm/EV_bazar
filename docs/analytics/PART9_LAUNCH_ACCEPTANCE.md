@@ -86,7 +86,16 @@ GitHub rejected the workflow push because the connected OAuth app has repo
 but no workflow scope. The complete job is saved at
 [ci/analytics-acceptance.yml](ci/analytics-acceptance.yml). After enabling workflow
 scope, install that file as .github/workflows/analytics-acceptance.yml (omit the
-first template comment if preferred). No workflow is active from this checkpoint.
+first template comment if preferred). No new workflow is active from this checkpoint.
+
+The final existing CI run passed the frontend job and backend lint, formatting,
+layer contracts and mypy. Its backend tests failed at the offline TypeScript
+exporter: that job does not install the exporter's `zod` dependency or pin Node.
+The same public-reference tests pass locally with Node 24 and `npm ci` installed.
+[ci/ci.yml](ci/ci.yml) is the complete replacement for the existing CI workflow,
+adding Node 24 and `npm ci --prefix frontend` before backend tests. Install both
+workflow templates after granting workflow access, then rerun CI; the current
+backend CI run is not green.
 
 
 1. Set the verified HTTPS origin in the build shell/.env.local and the deployed
@@ -177,3 +186,5 @@ store mutation, prediction or persisted-report rewrite is part of this change.
 | `app/domain/report/public_context.py` | Explicit nullable metadata types and distinct source-row variable; invalid metadata refused. |
 | `app/api/internal/owner_privacy.py` | Match FastAPI route-handler coroutine annotation; no runtime cache-policy change. |
 | `tests/test_report_public_context.py` | Null metadata and invalid-type refusal before any context query. |
+
+| `docs/analytics/ci/ci.yml` | Existing CI replacement with Node 24 and frontend dependencies for backend offline exporter tests; activation blocked on workflow access. |
