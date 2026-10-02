@@ -26,7 +26,6 @@ export function Locate({
 }) {
   const seeded = (useLocation().state as { q?: string } | null)?.q ?? "";
   const [searchOpen, setSearchOpen] = useState(!pin);
-  const [adjusting, setAdjusting] = useState(!pin || !!location?.area);
   const [checking, setChecking] = useState(false);
   const [moving, setMoving] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -36,8 +35,8 @@ export function Locate({
   const mapEl = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const initial = useRef(pin);
-  const current = useRef({ onPin, pin, adjusting, checking });
-  current.current = { onPin, pin, adjusting, checking };
+  const current = useRef({ onPin, pin, searchOpen, checking });
+  current.current = { onPin, pin, searchOpen, checking };
 
   useEffect(() => {
     if (!mapEl.current || !MAPBOX_TOKEN) return;
@@ -68,8 +67,8 @@ export function Locate({
     map.on("movestart", () => setMoving(true));
     map.on("moveend", () => {
       setMoving(false);
-      const { pin: selected, checking: pending, adjusting: editable } = current.current;
-      if (pending || (!selected && !editable)) return;
+      const { pin: selected, checking: pending, searchOpen: searching } = current.current;
+      if (pending || (!selected && searching)) return;
       const centre = map.getCenter();
       if (
         !selected ||
@@ -79,7 +78,7 @@ export function Locate({
         current.current.onPin({ lat: centre.lat, lng: centre.lng });
     });
     map.on("click", (e) => {
-      if (current.current.adjusting && !current.current.checking)
+      if (!current.current.searchOpen && !current.current.checking)
         map.easeTo({ center: e.lngLat, duration: 0 });
     });
     return () => {
@@ -92,20 +91,19 @@ export function Locate({
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    if (adjusting && !checking) {
+    if (!checking) {
       map.dragPan.enable();
       map.keyboard.enable();
     } else {
       map.dragPan.disable();
       map.keyboard.disable();
     }
-  }, [adjusting, checking, mapReady]);
+  }, [checking, mapReady]);
 
   function select(site: SiteLocation) {
     onSelect(site);
     setSearchOpen(false);
     setFailed(false);
-    setAdjusting(site.area);
     mapRef.current?.jumpTo({ center: { lat: site.lat, lng: site.lng }, zoom: 17 });
   }
 
@@ -150,7 +148,6 @@ export function Locate({
               onSelect={select}
               onChooseMap={() => {
                 setSearchOpen(false);
-                setAdjusting(true);
                 if (!pin && mapRef.current) {
                   const p = mapRef.current.getCenter();
                   onPin({ lat: p.lat, lng: p.lng });
@@ -171,23 +168,11 @@ export function Locate({
           <>
             <p className="mt-3 text-cw-muted">{location?.name ?? "Your selected site"}</p>
             <p className="mt-4 text-[15px]">
-              {adjusting
-                ? location?.area
-                  ? "Choose your property within this area. Move the map so the pin sits on your site."
-                  : "Move the map under the pin, or tap your property."
-                : "Check that the pin is on your property. You can adjust it before continuing."}
+              {location?.area
+                ? "Choose your property within this area. Move the map so the pin sits on your site."
+                : "Move the map under the pin, or tap your property."}
             </p>
             <div className="mt-3 flex flex-wrap gap-x-6">
-              {!adjusting && (
-                <button
-                  type="button"
-                  disabled={checking || !mapReady}
-                  onClick={() => setAdjusting(true)}
-                  className="min-h-[44px] underline underline-offset-4"
-                >
-                  Adjust pin
-                </button>
-              )}
               <button
                 type="button"
                 disabled={checking}

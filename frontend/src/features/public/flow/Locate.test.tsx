@@ -9,6 +9,7 @@ const map = vi.hoisted(() => ({
   events: {} as Record<string, () => void>,
   centre: { lat: 9.98, lng: 76.3 },
   fail: false,
+  enablePan: vi.fn(),
 }));
 vi.mock("../../../api/client", () => ({ api: { POST: vi.fn() } }));
 vi.mock("../mapCore", () => ({
@@ -30,7 +31,7 @@ vi.mock("../mapCore", () => ({
         return true;
       }
       remove() {}
-      dragPan = { enable() {}, disable() {} };
+      dragPan = { enable: map.enablePan, disable() {} };
       keyboard = { enable() {}, disable() {} };
     },
   },
@@ -96,9 +97,10 @@ it("keeps the pin and permits retry when confirmation fails", async () => {
   );
 });
 
-it("blocks confirmation while the map is moving and records the final centre", () => {
+it("allows immediate adjustment of a property result and blocks confirmation during movement", () => {
   const { onPin } = mount();
-  fireEvent.click(screen.getByRole("button", { name: "Adjust pin" }));
+  expect(map.enablePan).toHaveBeenCalled();
+  expect(screen.queryByRole("button", { name: "Adjust pin" })).toBeNull();
   act(() => map.events.movestart!());
   expect(screen.getByRole("button", { name: "Confirm location" }).hasAttribute("disabled")).toBe(
     true,
