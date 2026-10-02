@@ -2,21 +2,43 @@ import { lazy, Suspense, type ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import { AnalyticsApp } from "./features/analytics/AnalyticsApp";
 
-import { Concept } from "./features/console/Concept";
-import { ConsoleLayout } from "./features/console/ConsoleLayout";
-import { Competitors } from "./features/console/Competitors";
-import { Cpo } from "./features/console/Cpo";
-import { Data } from "./features/console/Data";
-import { Lookup } from "./features/console/Lookup";
-import { Network } from "./features/console/Network";
-import { Overview } from "./features/console/Overview";
-import { Progress } from "./features/console/Progress";
-import { Reports } from "./features/console/Reports";
-import { SpendLlm } from "./features/console/SpendLlm";
-import { SpendMaps } from "./features/console/SpendMaps";
-import { Vahan } from "./features/console/Vahan";
-import { Landing } from "./features/public/Landing";
-import { ReportRoute } from "./features/report/ReportRoute";
+const Concept = lazy(() =>
+  import("./features/console/Concept").then((m) => ({ default: m.Concept })),
+);
+const ConsoleLayout = lazy(() =>
+  import("./features/console/ConsoleLayout").then((m) => ({ default: m.ConsoleLayout })),
+);
+const Competitors = lazy(() =>
+  import("./features/console/Competitors").then((m) => ({ default: m.Competitors })),
+);
+const Cpo = lazy(() => import("./features/console/Cpo").then((m) => ({ default: m.Cpo })));
+const Data = lazy(() => import("./features/console/Data").then((m) => ({ default: m.Data })));
+const Lookup = lazy(() => import("./features/console/Lookup").then((m) => ({ default: m.Lookup })));
+const Network = lazy(() =>
+  import("./features/console/Network").then((m) => ({ default: m.Network })),
+);
+const Overview = lazy(() =>
+  import("./features/console/Overview").then((m) => ({ default: m.Overview })),
+);
+const Progress = lazy(() =>
+  import("./features/console/Progress").then((m) => ({ default: m.Progress })),
+);
+const Reports = lazy(() =>
+  import("./features/console/Reports").then((m) => ({ default: m.Reports })),
+);
+const SpendLlm = lazy(() =>
+  import("./features/console/SpendLlm").then((m) => ({ default: m.SpendLlm })),
+);
+const SpendMaps = lazy(() =>
+  import("./features/console/SpendMaps").then((m) => ({ default: m.SpendMaps })),
+);
+const Vahan = lazy(() => import("./features/console/Vahan").then((m) => ({ default: m.Vahan })));
+const Landing = lazy(() =>
+  import("./features/public/Landing").then((m) => ({ default: m.Landing })),
+);
+const ReportRoute = lazy(() =>
+  import("./features/report/ReportRoute").then((m) => ({ default: m.ReportRoute })),
+);
 
 /**
  * One SPA, three surfaces.
@@ -75,7 +97,14 @@ const flow = (
 );
 
 export const router = createBrowserRouter([
-  { path: "/", element: <Landing /> },
+  {
+    path: "/",
+    element: (
+      <Deferred>
+        <Landing />
+      </Deferred>
+    ),
+  },
   { path: "/data/*", element: <AnalyticsApp /> },
   /**
    * Every step is a real URL, which is what makes the browser back button
@@ -133,7 +162,14 @@ export const router = createBrowserRouter([
    * rule 9). The demo report is /report/KL-TVM-DEMO-001; customer ids are
    * UUID strings.
    */
-  { path: "/report/:id", element: <ReportRoute /> },
+  {
+    path: "/report/:id",
+    element: (
+      <Deferred>
+        <ReportRoute />
+      </Deferred>
+    ),
+  },
   /**
    * Unlinked on purpose - a review surface, not a page. Nothing on it is
    * real data; see features/animation/data.ts.
@@ -148,7 +184,11 @@ export const router = createBrowserRouter([
   },
   {
     path: "/console",
-    element: <ConsoleLayout />,
+    element: (
+      <Deferred>
+        <ConsoleLayout />
+      </Deferred>
+    ),
     children: [
       { index: true, element: <Overview /> },
       { path: "concept", element: <Concept /> },

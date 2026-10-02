@@ -5,10 +5,32 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AnalyticsApp } from "./AnalyticsApp";
 import { analyticsMetadata, verticals } from "./catalog";
 
-beforeEach(() => vi.spyOn(window, "scrollTo").mockImplementation(() => {}));
+// Shell behavior is independent of network chunk timing. The production
+// Playwright launch audit exercises real lazy loading and SSR hydration.
+vi.mock("./route-components", async () => ({
+  ...(await import("./content/Content")),
+  ...(await import("./expansion/Expansion")),
+  ...(await import("./expansion/StateRegistrations")),
+  ...(await import("./districts/DistrictDetails")),
+}));
+vi.mock("./chart/ProgressiveChart", async () => ({
+  ProgressiveChart: (await import("./chart/Chart")).Chart,
+}));
+
+beforeEach(() => {
+  vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+  vi.stubGlobal(
+    "IntersectionObserver",
+    class {
+      observe() {}
+      disconnect() {}
+    },
+  );
+});
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 
 function at(path: string) {
@@ -49,8 +71,10 @@ describe("public analytics shell", () => {
       expect(screen.getByText(/No corridor coverage or gap length is claimed/)).toBeTruthy();
     else expect(screen.getByText("Being prepared")).toBeTruthy();
     if (["vehicles", "charging-network", "usage"].includes(slug)) {
-      expect(screen.getByRole("table")).toBeTruthy();
-      expect(screen.getByText(/Verified district boundaries are not available yet/)).toBeTruthy();
+      expect(screen.queryByRole("table")).toBeNull();
+      expect(
+        screen.getByText(/The interactive map loads when this section is in view/),
+      ).toBeTruthy();
     } else expect(screen.queryByRole("table")).toBeNull();
   });
 

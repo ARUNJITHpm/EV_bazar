@@ -75,7 +75,7 @@ export function publicDataPlugin(): Plugin {
       }
       if (id === "\0virtual:analytics-atlas") {
         loaded ??= await loadPublicData(resolve(root, "public"));
-        return `export default ${JSON.stringify(buildAtlas(loaded))};`;
+        return `export default ${JSON.stringify(buildAtlas(loaded, false))};`;
       }
       if (id === "\0virtual:analytics-public-data") {
         loaded ??= await loadPublicData(resolve(root, "public"));

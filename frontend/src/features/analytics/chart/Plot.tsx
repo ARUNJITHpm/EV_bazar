@@ -77,7 +77,12 @@ export function Plot({
   );
   return (
     <>
-      <div className="analytics-plot-scroll" role="region" aria-label="Chart graphic" tabIndex={0}>
+      <div
+        className="analytics-plot-scroll"
+        role="region"
+        aria-label={`Chart graphic: ${summary}`}
+        tabIndex={0}
+      >
         <svg
           className="analytics-plot"
           viewBox={`0 0 ${width} ${height}`}

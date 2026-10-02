@@ -1,5 +1,19 @@
 /* Public documents only. Existing landing, report and console styles stay scoped. */
+@font-face {
+  font-family: "CW Data Serif";
+  src: url("/analytics-fonts/SourceSerif4.woff2") format("woff2");
+  font-weight: 400 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "CW Data Mono";
+  src: url("/analytics-fonts/IBMPlexMono.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
 .analytics-root {
+  --cw-serif: "CW Data Serif", Georgia, serif;
+  --cw-mono: "CW Data Mono", monospace;
   min-height: 100dvh;
   color-scheme: light;
   background: var(--cw-paper);

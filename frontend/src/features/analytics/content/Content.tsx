@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import articles from "virtual:analytics-content";
-import { Chart } from "../chart/Chart";
+import { ProgressiveChart as Chart } from "../chart/ProgressiveChart";
 import { verticals } from "../catalog";
 import { articleHref, sortedArticles, type Article } from "./model";
 import "./content.css";

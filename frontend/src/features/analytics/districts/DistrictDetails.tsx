@@ -2,11 +2,13 @@ import { DistrictGrid } from "../expansion/Expansion";
 import expansion from "virtual:analytics-expansion";
 import { policyMarkers, policyNote } from "../expansion/model";
 import { Link } from "react-router-dom";
-import atlas from "virtual:analytics-atlas";
+import baseAtlas from "virtual:analytics-atlas";
+import { useViewportAtlas } from "./viewport-atlas";
 import catalogue from "virtual:analytics-public-data";
-import { Chart } from "../chart/Chart";
+import { ProgressiveChart as Chart } from "../chart/ProgressiveChart";
 import { numberLabel, type ChartData, type ChartRow } from "../chart/model";
-import { publicDataVersions, type DatasetId, type District } from "../data/schemas";
+import { publicDataVersions } from "../data/versions";
+import type { DatasetId, District } from "../data/schemas";
 import { formatRupeesPrecise } from "../../../lib/money";
 import { DistrictMap } from "./DistrictMap";
 import {
@@ -39,6 +41,7 @@ function chart(
     : null;
 }
 export function DistrictDetails({ district }: { district: District }) {
+  const { atlas, ref, error, retry } = useViewportAtlas(baseAtlas);
   const code = district.lgd_code,
     end = latestMonth(atlas),
     registrations = registrationTotal(atlas, code, end),
@@ -173,27 +176,29 @@ export function DistrictDetails({ district }: { district: District }) {
                 ? `${numberLabel(((registrations - previous) / previous) * 100)}%`
                 : "Not enough data yet"}
             </dd>
-            {sourceLine("ev_registrations")}
+            <dd>{sourceLine("ev_registrations")}</dd>
           </div>
           <div>
             <dt>Listed public chargers</dt>
             <dd className="analytics-number">
               {chargers.length ? numberLabel(chargers.length) : "Not enough data yet"}
             </dd>
-            {chargers.length > 0 && (
-              <p>
-                AC:{" "}
-                <span className="analytics-number">
-                  {chargers.filter((row) => row.ac_or_dc === "AC").length}
-                </span>
-                . DC:{" "}
-                <span className="analytics-number">
-                  {chargers.filter((row) => row.ac_or_dc === "DC").length}
-                </span>
-                . Counts describe source records, not connectors or exhaustive coverage.
-              </p>
-            )}
-            {sourceLine("public_chargers")}
+            <dd>
+              {chargers.length > 0 && (
+                <p>
+                  AC:{" "}
+                  <span className="analytics-number">
+                    {chargers.filter((row) => row.ac_or_dc === "AC").length}
+                  </span>
+                  . DC:{" "}
+                  <span className="analytics-number">
+                    {chargers.filter((row) => row.ac_or_dc === "DC").length}
+                  </span>
+                  . Counts describe source records, not connectors or exhaustive coverage.
+                </p>
+              )}
+            </dd>
+            <dd>{sourceLine("public_chargers")}</dd>
           </div>
           <div>
             <dt>Listed chargers per 1,000 EV registrations</dt>
@@ -202,31 +207,43 @@ export function DistrictDetails({ district }: { district: District }) {
                 ? "Not enough data yet"
                 : numberLabel(districtValue(atlas, code, "ratio").value!)}
             </dd>
-            <p>
-              Uses the latest complete twelve-month registrations as its denominator, not an EV
-              fleet estimate.
-            </p>
+            <dd>
+              <p>
+                Uses the latest complete twelve-month registrations as its denominator, not an EV
+                fleet estimate.
+              </p>
+            </dd>
           </div>
           <div>
             <dt>Estimated monthly kWh per charger</dt>
             <dd>Not enough data yet</dd>
-            <p>Only privacy-safe, validated Part 5 aggregates can appear here.</p>
+            <dd>
+              <p>Only privacy-safe, validated Part 5 aggregates can appear here.</p>
+            </dd>
           </div>
         </dl>
       </section>
       <DistrictGrid district={district} />
-      <h2>Locator</h2>
-      {atlas.shapes.some((shape) => shape.lgd_code === code) ? (
-        <DistrictMap
-          atlas={{ ...atlas, shapes: atlas.shapes.filter((shape) => shape.lgd_code === code) }}
-          districts={[district]}
-        />
-      ) : (
-        <p>
-          Verified boundary geometry is not available for this district. A locator will appear once
-          its LGD join and source licence are checked.
-        </p>
-      )}
+      <div ref={ref}>
+        <h2>Locator</h2>
+        {error && (
+          <p role="status">
+            The map boundaries could not load. <button onClick={retry}>Retry map</button>
+          </p>
+        )}
+        {atlas.shapes.some((shape) => shape.lgd_code === code) ? (
+          <DistrictMap
+            atlas={{ ...atlas, shapes: atlas.shapes.filter((shape) => shape.lgd_code === code) }}
+            districts={[district]}
+          />
+        ) : (
+          <p>
+            {catalogue.datasets.some((d) => d.id === "district_boundaries")
+              ? "The interactive locator and neighbouring districts load when this section is in view. JavaScript is needed for boundary geometry."
+              : "Verified boundary geometry is not available for this district. A locator will appear once its LGD join and source licence are checked."}
+          </p>
+        )}
+      </div>
       {registrationChart && regRows.length > 0 && <Chart data={registrationChart} />}
       {openingsChart && opened.length > 0 && <Chart data={openingsChart} />}
       <section className="analytics-section">

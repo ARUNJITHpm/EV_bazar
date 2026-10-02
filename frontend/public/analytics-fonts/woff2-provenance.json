@@ -1,0 +1,16 @@
+{
+  "SourceSerif4.woff2": {
+    "source": "SourceSerif4.ttf",
+    "source_sha256": "97b2d4da6e3cb494b5a1e66ae176914d852ccabef49e0c02c0df25f3e39aca0b",
+    "sha256": "57849db7c25ca5203efdec988687db40b3051a74bbf4fdb630ad29a792ff8a67",
+    "conversion": "lossless full-font WOFF2; no subset",
+    "fonttools_version": "4.51.0"
+  },
+  "IBMPlexMono.woff2": {
+    "source": "IBMPlexMono.ttf",
+    "source_sha256": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46",
+    "sha256": "15d36c5ca89bccd18432ffabe8cceec35a6c0b0a2b47c6a21798fa2938c7e7c4",
+    "conversion": "lossless full-font WOFF2; no subset",
+    "fonttools_version": "4.51.0"
+  }
+}

@@ -1,15 +1,16 @@
-import { z } from "zod";
+import type { z } from "zod";
 import catalogue from "virtual:analytics-public-data";
-import { rowSchemas, type CsvDatasetId, type DatasetId } from "./schemas";
+import type { rowSchemas as RowSchemaDefinitions, CsvDatasetId, DatasetId } from "./schemas";
 import { parseCsv } from "../../../../scripts/csv";
 
 export { catalogue as publicCatalogue };
 
 export async function loadPublicCsv<T extends CsvDatasetId>(
   id: T,
-): Promise<z.output<(typeof rowSchemas)[T]>[] | null> {
+): Promise<z.output<(typeof RowSchemaDefinitions)[T]>[] | null> {
   const dataset = catalogue.datasets.find((dataset) => dataset.id === id);
   if (!dataset) return null;
+  const { rowSchemas } = await import("./schemas");
   const response = await fetch(dataset.data_url);
   if (!response.ok) throw new Error(`Public dataset ${id} could not be loaded`);
   const csv = await response.text();

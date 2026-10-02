@@ -623,6 +623,8 @@ SVG-to-PNG); client-side "Save image" uses the same template.
 
 ## Part 9 — Performance, accessibility, SEO and final checks
 
+**Checkpoint implemented (2026-10-02):** progressive loading, accessibility, SEO and privacy checks are implemented. Deployed host/device, populated production records and origin-dependent acceptance remain. See `docs/analytics/PART9_LAUNCH_ACCEPTANCE.md`.
+
 ```
 Read docs/analytics/SPEC.md first and follow it.
 

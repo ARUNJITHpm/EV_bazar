@@ -1,5 +1,5 @@
 import type { PublicCatalogue } from "../../analytics/data/schemas";
-import { publicDataVersions } from "../../analytics/data/schemas";
+import { publicDataVersions } from "../../analytics/data/versions";
 import type { Atlas } from "../../analytics/districts/model";
 import { latestMonth, monthOffset, registrationTotal } from "../../analytics/districts/model";
 import type { Expansion } from "../../analytics/expansion/model";
