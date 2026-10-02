@@ -15,6 +15,22 @@
 @import "./animation.css";
 @import "./print.css";
 
+/* Diagram text keeps its authored size; narrow screens scroll rather than shrink labels. */
+.cw-report-root .report-diagram > svg {
+  min-width: 760px;
+}
+@media print {
+  .cw-report-root .report-diagram {
+    display: contents;
+  }
+  .cw-report-root .report-diagram > svg {
+    min-width: 0;
+    /* A4 less the two 14mm page margins; avoid intrinsic SVG sizing in print tables. */
+    width: 182mm;
+    max-width: 100%;
+  }
+}
+
 /* `inline` lets the theme reference other custom properties rather than
  * copying literal values - so tokens.css stays authoritative. */
 @theme inline {

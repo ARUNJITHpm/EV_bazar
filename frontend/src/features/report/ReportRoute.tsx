@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 
 import { Report } from "./Report";
 import { fetchReport } from "./payload";
+import { PublicNavigation } from "../public/PublicNavigation";
 
 /**
  * `/report/:id` — fetch the stored payload and render it on paper. The
@@ -15,13 +16,7 @@ import { fetchReport } from "./payload";
  * PDF path waits on) only once the payload is on screen — never race the
  * render (STACK.md §6).
  */
-export function ReportRoute({
-  reportId,
-  homepage = false,
-}: {
-  reportId?: string;
-  homepage?: boolean;
-}) {
+export function ReportRoute({ reportId }: { reportId?: string }) {
   const params = useParams();
   const id = reportId ?? params.id ?? "";
   const q = useQuery({
@@ -33,11 +28,11 @@ export function ReportRoute({
 
   useEffect(() => {
     if (q.data)
-      document.title = `Chargeworthy ${homepage ? "sample report" : "report"} — ${q.data.site.name}`;
+      document.title = `Chargeworthy ${q.data.demo ? "sample report" : "report"} — ${q.data.site.name}`;
     return () => {
       document.title = "Chargeworthy — will your land pay for a charger?";
     };
-  }, [q.data, homepage]);
+  }, [q.data]);
 
   return (
     <div className="cw-report-root min-h-dvh bg-cw-desk antialiased">
@@ -48,37 +43,20 @@ export function ReportRoute({
       >
         Skip to report
       </a>
-      <nav
-        aria-label="Main navigation"
-        className="no-print mx-auto flex max-w-[960px] flex-wrap items-center justify-between gap-4 px-[clamp(24px,6vw,64px)] py-4 font-cw-sans text-[15px] text-cw-paper-muted"
-      >
-        <Link
-          to="/"
-          aria-current={homepage ? "page" : undefined}
-          className="font-semibold text-cw-ink"
-        >
+      <header className="no-print mx-auto flex max-w-[960px] flex-wrap items-center justify-between gap-4 px-[clamp(24px,6vw,64px)] py-4 font-cw-sans text-[15px] text-cw-paper-muted">
+        <Link to="/" className="font-semibold text-cw-ink">
           Chargeworthy
         </Link>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-          <Link to="/about" className="hover:text-cw-ink">
-            About
-          </Link>
-          <Link to="/data" className="hover:text-cw-ink">
-            Data
-          </Link>
-          <Link to="/assess" className="bg-cw-paper-head px-4 py-2 text-cw-paper hover:underline">
-            Assess my site
-          </Link>
-        </div>
+        <PublicNavigation theme="paper" />
         <button
           type="button"
           onClick={() => window.print()}
           disabled={!q.data}
-          className="transition-colors duration-200 hover:text-cw-ink disabled:cursor-wait disabled:opacity-50"
+          className="inline-flex min-h-[44px] items-center transition-colors duration-200 hover:text-cw-ink disabled:cursor-wait disabled:opacity-50"
         >
           Print or save as PDF
         </button>
-      </nav>
+      </header>
 
       <main id="report-content">
         {q.isPending && (

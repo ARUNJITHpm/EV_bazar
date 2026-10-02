@@ -1,6 +1,6 @@
 import { formatKva, formatUtilisation, kva } from "../../lib/units";
 import { HORIZON_YEARS, type ReportPayload, type Verdict } from "./payload";
-import { Footnote, Note, Section, TD, TH, Table } from "./parts";
+import { Footnote, Note, Section, TD, TH, Table, ReportScroll } from "./parts";
 
 /**
  * 03 — the rules, stated BEFORE any site data appears. Placement is the
@@ -211,144 +211,153 @@ function ConceptPlot({
   const last = centres[n - 1] ?? mid;
 
   return (
-    <svg
-      viewBox="0 0 760 344"
-      role="img"
-      aria-label={`Schematic plan: a main road, an access lane, and a plot holding ${n} charging ${
-        n === 1 ? "bay" : "bays"
-      } of ${kwEach} kilowatts each, all drawing on one ${supplyKva} kVA grid connection. Concept only, not to scale.`}
-      className="mt-4 w-full"
-    >
-      {/* MAIN ROAD — two edges and a dashed centre line, read as a road. */}
-      <line x1="20" y1="18" x2="740" y2="18" className="stroke-cw-ink" strokeWidth="1.5" />
-      <line x1="20" y1="62" x2="740" y2="62" className="stroke-cw-ink" strokeWidth="1.5" />
-      {/* The centre line starts clear of the label; dashes running behind
-          "MAIN ROAD" read as a printing fault, not as a road. */}
-      <line
-        x1="130"
-        y1="40"
-        x2="640"
-        y2="40"
-        className="stroke-cw-rule"
-        strokeWidth="1"
-        strokeDasharray="12 10"
-      />
-      <text x="34" y="36" className="fill-cw-paper-muted font-cw-mono text-[11px]">
-        MAIN ROAD
-      </text>
-      <path
-        d="M 660 40 L 700 40 M 692 34 L 700 40 L 692 46"
-        className="stroke-cw-ink"
-        fill="none"
-        strokeWidth="1.5"
-      />
-
-      {/* ACCESS LANE — from the road down into the plot. */}
-      <line x1="190" y1="62" x2="190" y2={PLOT.y} className="stroke-cw-rule" strokeWidth="1.5" />
-      <line x1="240" y1="62" x2="240" y2={PLOT.y} className="stroke-cw-rule" strokeWidth="1.5" />
-      <path
-        d="M 215 74 L 215 106 M 209 98 L 215 106 L 221 98"
-        className="stroke-cw-ink"
-        fill="none"
-        strokeWidth="1.5"
-      />
-      <text x="256" y="96" className="fill-cw-paper-muted font-cw-mono text-[11px]">
-        ACCESS LANE
-      </text>
-
-      {/* CONCEPT PLOT */}
-      <rect
-        x={PLOT.x}
-        y={PLOT.y}
-        width={PLOT.w}
-        height={PLOT.h}
-        className="stroke-cw-ink"
-        fill="none"
-        strokeWidth="1.5"
-      />
-      <text
-        x={PLOT.x + 16}
-        y={PLOT.y + 24}
-        className="fill-cw-paper-muted font-cw-mono text-[11px]"
+    <ReportScroll label="Concept site plan" diagram>
+      <svg
+        viewBox="0 0 760 344"
+        role="img"
+        aria-label={`Schematic plan: a main road, an access lane, and a plot holding ${n} charging ${
+          n === 1 ? "bay" : "bays"
+        } of ${kwEach} kilowatts each, all drawing on one ${supplyKva} kVA grid connection. Concept only, not to scale.`}
+        className="mt-4 w-full"
       >
-        CONCEPT PLOT
-      </text>
+        {/* MAIN ROAD — two edges and a dashed centre line, read as a road. */}
+        <line x1="20" y1="18" x2="740" y2="18" className="stroke-cw-ink" strokeWidth="1.5" />
+        <line x1="20" y1="62" x2="740" y2="62" className="stroke-cw-ink" strokeWidth="1.5" />
+        {/* The centre line starts clear of the label; dashes running behind
+          "MAIN ROAD" read as a printing fault, not as a road. */}
+        <line
+          x1="130"
+          y1="40"
+          x2="640"
+          y2="40"
+          className="stroke-cw-rule"
+          strokeWidth="1"
+          strokeDasharray="12 10"
+        />
+        <text x="34" y="36" className="fill-cw-paper-muted font-cw-mono text-[11px]">
+          MAIN ROAD
+        </text>
+        <path
+          d="M 660 40 L 700 40 M 692 34 L 700 40 L 692 46"
+          className="stroke-cw-ink"
+          fill="none"
+          strokeWidth="1.5"
+        />
 
-      {centres.map((cx, i) => (
-        <g key={i}>
-          <rect
-            x={cx - width / 2}
-            y={BAY.y}
-            width={width}
-            height={BAY.h}
-            className="stroke-cw-rule"
-            fill="none"
-            strokeWidth="1.5"
-          />
-          <text
-            x={cx}
-            y={BAY.y + 28}
-            textAnchor="middle"
-            className="fill-cw-ink font-cw-mono text-[12px] font-medium"
-          >
-            BAY {i + 1}
-          </text>
-          <text
-            x={cx}
-            y={BAY.y + 50}
-            textAnchor="middle"
-            className="fill-cw-paper-muted font-cw-mono text-[11px]"
-          >
-            {kwEach} kW
-          </text>
-          {/* the cable down to the shared connection */}
+        {/* ACCESS LANE — from the road down into the plot. */}
+        <line x1="190" y1="62" x2="190" y2={PLOT.y} className="stroke-cw-rule" strokeWidth="1.5" />
+        <line x1="240" y1="62" x2="240" y2={PLOT.y} className="stroke-cw-rule" strokeWidth="1.5" />
+        <path
+          d="M 215 74 L 215 106 M 209 98 L 215 106 L 221 98"
+          className="stroke-cw-ink"
+          fill="none"
+          strokeWidth="1.5"
+        />
+        <text x="256" y="96" className="fill-cw-paper-muted font-cw-mono text-[11px]">
+          ACCESS LANE
+        </text>
+
+        {/* CONCEPT PLOT */}
+        <rect
+          x={PLOT.x}
+          y={PLOT.y}
+          width={PLOT.w}
+          height={PLOT.h}
+          className="stroke-cw-ink"
+          fill="none"
+          strokeWidth="1.5"
+        />
+        <text
+          x={PLOT.x + 16}
+          y={PLOT.y + 24}
+          className="fill-cw-paper-muted font-cw-mono text-[11px]"
+        >
+          CONCEPT PLOT
+        </text>
+
+        {centres.map((cx, i) => (
+          <g key={i}>
+            <rect
+              x={cx - width / 2}
+              y={BAY.y}
+              width={width}
+              height={BAY.h}
+              className="stroke-cw-rule"
+              fill="none"
+              strokeWidth="1.5"
+            />
+            <text
+              x={cx}
+              y={BAY.y + 28}
+              textAnchor="middle"
+              className="fill-cw-ink font-cw-mono text-[12px] font-medium"
+            >
+              BAY {i + 1}
+            </text>
+            <text
+              x={cx}
+              y={BAY.y + 50}
+              textAnchor="middle"
+              className="fill-cw-paper-muted font-cw-mono text-[11px]"
+            >
+              {kwEach} kW
+            </text>
+            {/* the cable down to the shared connection */}
+            <line
+              x1={cx}
+              y1={BAY.y + BAY.h}
+              x2={cx}
+              y2={BUS_Y}
+              className="stroke-cw-rule"
+              strokeWidth="1"
+            />
+          </g>
+        ))}
+        {n > 1 && (
           <line
-            x1={cx}
-            y1={BAY.y + BAY.h}
-            x2={cx}
+            x1={first}
+            y1={BUS_Y}
+            x2={last}
             y2={BUS_Y}
             className="stroke-cw-rule"
             strokeWidth="1"
           />
-        </g>
-      ))}
-      {n > 1 && (
+        )}
         <line
-          x1={first}
+          x1={mid}
           y1={BUS_Y}
-          x2={last}
-          y2={BUS_Y}
+          x2={mid}
+          y2={SUPPLY.y}
           className="stroke-cw-rule"
           strokeWidth="1"
         />
-      )}
-      <line x1={mid} y1={BUS_Y} x2={mid} y2={SUPPLY.y} className="stroke-cw-rule" strokeWidth="1" />
 
-      <rect
-        x={mid - SUPPLY.w / 2}
-        y={SUPPLY.y}
-        width={SUPPLY.w}
-        height={SUPPLY.h}
-        className="stroke-cw-ink"
-        fill="none"
-        strokeWidth="1.5"
-      />
-      <text
-        x={mid}
-        y={SUPPLY.y + 19}
-        textAnchor="middle"
-        className="fill-cw-ink font-cw-mono text-[12px] font-medium"
-      >
-        {formatKva(kva(supplyKva))}
-      </text>
-      <text
-        x={mid}
-        y={SUPPLY.y + 35}
-        textAnchor="middle"
-        className="fill-cw-paper-muted font-cw-mono text-[11px]"
-      >
-        one connection
-      </text>
-    </svg>
+        <rect
+          x={mid - SUPPLY.w / 2}
+          y={SUPPLY.y}
+          width={SUPPLY.w}
+          height={SUPPLY.h}
+          className="stroke-cw-ink"
+          fill="none"
+          strokeWidth="1.5"
+        />
+        <text
+          x={mid}
+          y={SUPPLY.y + 19}
+          textAnchor="middle"
+          className="fill-cw-ink font-cw-mono text-[12px] font-medium"
+        >
+          {formatKva(kva(supplyKva))}
+        </text>
+        <text
+          x={mid}
+          y={SUPPLY.y + 35}
+          textAnchor="middle"
+          className="fill-cw-paper-muted font-cw-mono text-[11px]"
+        >
+          one connection
+        </text>
+      </svg>
+    </ReportScroll>
   );
 }

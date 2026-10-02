@@ -290,3 +290,83 @@ export const HERO_METRICS: readonly { readonly label: string; readonly value: st
   const check = checkByLabel(m.from);
   return check ? [{ label: m.label, value: check.value }] : [];
 });
+
+// Factors shown in the optional homepage operator checklist.
+export type OperatorFactor = {
+  readonly label: string;
+  /** What it does to the answer, in one clause. Never a score. */
+  readonly effect: string;
+};
+
+export type OperatorGroup = {
+  readonly key: string;
+  readonly name: string;
+  readonly source: string;
+  readonly factors: readonly OperatorFactor[];
+};
+
+/** Twelve, grouped 4 / 2 / 2 / 2 / 2 by source. */
+export const OPERATOR_GROUPS: readonly OperatorGroup[] = [
+  {
+    key: "reach",
+    name: "Network reach",
+    source: "Our charger inventory, by operator",
+    factors: [
+      {
+        label: "Their stations in your district",
+        effect: "how many drivers nearby already carry their app",
+      },
+      {
+        label: "Their stations in your state",
+        effect: "how far the nearest engineer is when a charger fails",
+      },
+      {
+        label: "Their own stations within 3 km",
+        effect: "the split — their app can send those drivers there instead",
+      },
+      { label: "Their own stations within 10 km", effect: "the same split, wider and weaker" },
+    ],
+  },
+  {
+    key: "channel",
+    name: "Demand channel",
+    source: "VAHAN records where loaded; fleet inventory pending",
+    factors: [
+      {
+        label: "Registrations against their presence",
+        effect: "how much of the local demand their network plausibly reaches",
+      },
+      {
+        label: "Connector fit against the vehicle mix",
+        effect: "a two-wheeler district and a car-only network is a mismatch",
+      },
+    ],
+  },
+  {
+    key: "reachability",
+    name: "Interoperability",
+    source: "Roaming and interoperability registers",
+    factors: [
+      {
+        label: "Roaming with other apps",
+        effect: "a driver on a rival app can still find and pay at your plug",
+      },
+      {
+        label: "Reservation and in-app routing",
+        effect: "whether they send a driver to you or wait to be found",
+      },
+    ],
+  },
+  {
+    key: "terms",
+    name: "Commercial terms",
+    source: "Written terms, on file",
+    factors: [
+      { label: "Revenue share or fee per unit", effect: "what reaches you from each unit sold" },
+      {
+        label: "Platform fee, maintenance, tenure",
+        effect: "the fixed costs and how long you are tied in",
+      },
+    ],
+  },
+];

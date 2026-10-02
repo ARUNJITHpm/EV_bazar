@@ -1,652 +1,275 @@
-import { GROUPS } from "../animation/data";
-import { lazy, Suspense, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { HomeDataSection } from "../analytics/HomeDataSection";
 
-import { RouteToCharge } from "../animation/RouteToCharge";
-import { SiteAssessed } from "../animation/SiteAssessed";
+import { GROUPS, OPERATOR_GROUPS } from "../animation/data";
 import { DEMO_REPORT_ID } from "../report/payload";
+import { PublicNavigation } from "./PublicNavigation";
 import { ReportPaper } from "./ReportPaper";
-import { useReveal, useScrollProgress } from "./reveal";
 
-/**
- * The Chargeworthy landing - design/ implemented per design/DECISIONS.md.
- *
- * Copy comes from design/brand/copy-pass.md, the corrected pass, verbatim -
- * including the definition of "operator" in the hero and "Detailed enough
- * for your bank to lend against" (the claim describes the document, not the
- * bank's behaviour).
- *
- * Numbers the repo does not have render BRACKETED - [340] sites, [38%]
- * advised against, [XX%] accuracy - per IMPLEMENT.md's working rule: leave
- * it visibly bracketed rather than inventing one. Partner and hardware
- * names are not shipped at all until written permission exists; bracketed
- * slots hold their place. Un-bracketing any of these is a human step with
- * evidence, never an edit.
- */
+const PAGE = "mx-auto w-full max-w-[1200px] px-6 sm:px-10 lg:px-16";
+const SECTION = `${PAGE} py-12 sm:py-16`;
+const LINK =
+  "inline-flex min-h-[44px] items-center underline underline-offset-4 transition-colors hover:text-cw-text";
 
-const HeroMap = lazy(() => import("./HeroMap"));
-
-/**
- * Renders its children only once the viewport gets near them, then keeps
- * them forever.
- *
- * React.lazy defers PARSING, not fetching: a lazy component that renders on
- * mount still downloads on arrival. HeroMap pulls mapCore, and mapCore is
- * ~1.8 MB of Mapbox - which used to be on the critical path of every visit
- * because the map sat in the hero. It now sits above the closing call to
- * action, and this gate means a reader who never scrolls that far never
- * pays for it at all.
- *
- * No IntersectionObserver (an old browser, a disabled script) means show it
- * immediately. Degrading to "visible" costs bandwidth; degrading to
- * "hidden" would silently drop content.
- */
-function NearViewport({ children, minHeight }: { children: ReactNode; minHeight: string }) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [show, setShow] = useState(() => !("IntersectionObserver" in window));
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || show) return undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries[0]?.isIntersecting) return;
-        setShow(true);
-        observer.disconnect();
-      },
-      // A screen of lead time, so the map is painted by the time it arrives.
-      { rootMargin: "600px 0px" },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [show]);
-
-  return (
-    <div ref={ref} style={{ minHeight }}>
-      {show ? children : null}
-    </div>
-  );
-}
-
-const FACTORS = GROUPS.flatMap((group) => group.checks);
-
-function Eyebrow({ children }: { children: ReactNode }) {
-  return (
-    <div className="font-cw-mono text-[13px] tracking-[0.16em] text-cw-muted uppercase">
-      {children}
-    </div>
-  );
-}
-
-/** The pin-shaped input + copper CTA. The typed text rides to the flow's
- *  search box; the pin the customer finally places is what gets assessed. */
-function LocationCta({ id }: { id: string }) {
+/** A short customer introduction; detailed evidence stays in the report and optional checks. */
+export function Landing() {
   const navigate = useNavigate();
-  const [q, setQ] = useState("");
-
-  function submit(e: FormEvent) {
-    e.preventDefault();
-    navigate("/assess", { state: { q } });
+  const [location, setLocation] = useState("");
+  useEffect(() => {
+    document.title = "Chargeworthy — is your land suitable for EV charging?";
+  }, []);
+  function start(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    navigate("/assess", { state: { q: location.trim() } });
   }
-
   return (
-    <form onSubmit={submit} className="flex max-w-[720px] flex-wrap gap-3">
-      <label htmlFor={id} className="sr-only">
-        Site location
-      </label>
-      <div className="flex min-h-[58px] min-w-[260px] flex-grow items-center gap-3 border border-cw-line bg-cw-surface px-5 text-cw-muted">
-        <PinIcon />
-        <input
-          id={id}
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Drop a pin, or type the location"
-          autoComplete="off"
-          className="min-w-0 flex-grow bg-transparent text-[17px] text-cw-text outline-none placeholder:text-cw-muted"
-        />
-      </div>
-      <button
-        type="submit"
-        className="inline-flex min-h-[58px] items-center justify-center bg-cw-accent px-7 text-[17px] font-semibold text-cw-ground transition-[filter] duration-200 hover:brightness-107"
-      >
-        See the verdict
-      </button>
-    </form>
-  );
-}
-
-function PinIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M10 18s6-5.2 6-9.4A6 6 0 0 0 4 8.6C4 12.8 10 18 10 18z" />
-      <circle cx="10" cy="8.6" r="2.1" />
-    </svg>
-  );
-}
-
-const PAD_X = "px-[clamp(24px,7vw,112px)]";
-const SECTION = `${PAD_X} py-[clamp(72px,10vw,128px)]`;
-
-function Header() {
-  return (
-    <header
-      className={`flex items-center justify-between gap-8 border-b border-cw-line ${PAD_X} py-[26px]`}
-    >
-      {/* The wordmark is the identity (design C - Instrument, Plex Mono
-          caps); the reference build set it at 17px and it read as a nav
-          item, not a mark. Owner's call 2026-08-31: give it real presence. */}
-      <span className="font-cw-mono text-[clamp(20px,1.8vw,24px)] font-medium tracking-[0.08em] uppercase">
-        Chargeworthy
-      </span>
-      <nav className="flex flex-wrap items-center justify-end gap-x-[clamp(16px,3vw,32px)]">
-        <Link
-          to="/data"
-          className="inline-flex min-h-[44px] items-center text-cw-muted transition-colors duration-200 hover:text-cw-text"
-        >
-          Data
-        </Link>
-        {/* A station that already runs has its own way in: /owner is a
-            different question (how does mine compare?) from the site
-            assessment the rest of this page sells. */}
-        <Link
-          to="/owner"
-          className="inline-flex min-h-[44px] items-center text-cw-muted transition-colors duration-200 hover:text-cw-text"
-        >
-          Station owners
-        </Link>
-        <Link
-          to={`/report/${DEMO_REPORT_ID}`}
-          className="inline-flex min-h-[44px] items-center text-cw-muted transition-colors duration-200 hover:text-cw-text"
-        >
-          Sample report
-        </Link>
-      </nav>
-    </header>
-  );
-}
-
-function Hero() {
-  const ref = useReveal<HTMLElement>(60);
-  return (
-    <section ref={ref}>
-      <div
-        className={`grid items-center gap-[clamp(40px,6vw,80px)] ${PAD_X} py-[clamp(72px,10vw,128px)]`}
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 420px), 1fr))" }}
-      >
-        <div className="flex max-w-[560px] flex-col gap-[26px]">
-          <div data-reveal="0">
-            <Eyebrow>Right site. Right operator.</Eyebrow>
-          </div>
-          <h1
-            data-reveal="1"
-            className="text-[clamp(36px,5.5vw,68px)] leading-[1.1] font-semibold tracking-[-0.025em] text-pretty"
+    <div className="cw-surface-root min-h-dvh bg-cw-ground font-cw-sans text-[17px] leading-[1.6] text-cw-text antialiased">
+      <a href="#home-content" className="sr-only focus:not-sr-only focus:block focus:p-4">
+        Skip to content
+      </a>
+      <header className="border-b border-cw-line">
+        <div className={`${PAGE} flex flex-wrap items-center justify-between gap-x-8 gap-y-2 py-4`}>
+          <Link
+            to="/"
+            className="inline-flex min-h-[44px] items-center font-cw-mono text-[21px] font-medium tracking-[0.08em] uppercase"
           >
-            Will your land pay for a charger?
-          </h1>
-          <p data-reveal="2" className="text-[18px] text-cw-muted">
-            We assess the location, set the return against what a fixed deposit would pay on the
-            same money, and tell you plainly — including when the answer is no.
-          </p>
-          <p data-reveal="3" className="text-cw-muted">
-            Charging stations are built and run by operators. We are not one of them, and we hold no
-            stake in any of them.
-          </p>
-          <div data-reveal="4" className="flex flex-col gap-4">
-            <LocationCta id="hero-location" />
-            <p className="text-[16px] text-cw-muted">
-              Already run a charging station?{" "}
-              <Link
-                to="/owner"
-                className="underline underline-offset-4 transition-colors duration-200 hover:text-cw-text"
-              >
-                See how it compares →
-              </Link>
-            </p>
-          </div>
-        </div>
-
-        {/* The hero argues the product, not the geography: several candidate
-            locations are compared, one is chosen, and only then does a
-            vehicle reach it and charge. HeroMap used to sit here and showed
-            a real place, which was good - but it cost ~1.8 MB of Mapbox on
-            every arrival for a decorative panel. It now sits above the
-            closing CTA, where a reader has asked for it. */}
-        <div data-reveal="5">
-          <RouteToCharge />
-        </div>
-      </div>
-
-      <div
-        className={`flex flex-wrap gap-[clamp(16px,4vw,40px)] border-t border-cw-line ${PAD_X} pt-[26px] pb-[30px]`}
-      >
-        {/* Bracketed until the real ledger can publish them - see the module
-            docstring. Never animated: a count-up on a placeholder would
-            dress a gap as a fact. */}
-        <span className="font-cw-mono text-[15px] tracking-[0.03em] text-cw-muted">
-          [1,000+] station owners we work with
-        </span>
-        <span className="font-cw-mono text-[15px] tracking-[0.03em] text-cw-muted">
-          [340] sites assessed in 2025
-        </span>
-        <span className="font-cw-mono text-[15px] tracking-[0.03em] text-cw-muted">
-          [38%] advised against
-        </span>
-      </div>
-    </section>
-  );
-}
-
-const STEPS: [string, string, ReactNode][] = [
-  [
-    "01",
-    "Assess the site",
-    <>
-      We survey the location against <span className="font-cw-mono">34</span> fixed criteria and
-      model what it would earn. If it does not clear the bar, that is where it ends.
-    </>,
-  ],
-  [
-    "02",
-    "Match the operator",
-    "A highway site and an apartment basement need different operators. We compare documented terms and fit. We are not currently affiliated with a charge point operator.",
-  ],
-  [
-    "03",
-    "Install and run",
-    "If you proceed, confirm equipment, installation, service responsibilities and commercial terms directly with the selected operator.",
-  ],
-];
-
-function HowItWorks() {
-  const ref = useReveal<HTMLElement>(60);
-  return (
-    <section ref={ref} className={SECTION}>
-      <div className="flex flex-col gap-[clamp(40px,6vw,64px)]">
-        <div className="flex max-w-[620px] flex-col gap-[18px]">
-          <div data-reveal="0">
-            <Eyebrow>How it works</Eyebrow>
-          </div>
-          <h2 data-reveal="1" className="text-[clamp(27px,3.5vw,36px)] leading-[1.15] font-medium">
-            Three steps, and we stop at any of them.
-          </h2>
-        </div>
-        <div
-          className="grid"
-          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))" }}
-        >
-          {STEPS.map(([n, title, body], i) => (
-            <div
-              key={n}
-              data-reveal={i + 2}
-              className={`flex flex-col gap-4 pr-[clamp(24px,4vw,56px)] ${
-                i === 0 ? "" : "border-l border-cw-line pl-[clamp(24px,4vw,56px)]"
-              }`}
-            >
-              <span className="font-cw-mono text-[15px] tracking-[0.08em] text-cw-slate">{n}</span>
-              <h3 className="text-[22px] font-medium">{title}</h3>
-              <p className="text-cw-muted">{body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function WhatWeCheck() {
-  const ref = useReveal<HTMLElement>(30);
-  return (
-    <section ref={ref} className={SECTION}>
-      <div className="flex flex-col gap-[clamp(36px,5vw,52px)]">
-        <div className="flex max-w-[660px] flex-col gap-[18px]">
-          <div data-reveal="0">
-            <Eyebrow>What a full assessment checks</Eyebrow>
-          </div>
-          <h2 data-reveal="1" className="text-[clamp(27px,3.5vw,36px)] leading-[1.15] font-medium">
-            34 questions, with the gaps in view.
-          </h2>
-          <p data-reveal="2" className="max-w-[580px] text-cw-muted">
-            This is the full assessment checklist. Some checks still need a site survey or a
-            verified source; the stored report lists the facts it has and marks unverified inputs.
-            The walkthrough uses bracketed examples, not measurements of your site.
-          </p>
-        </div>
-
-        {/* The assessment, moving: a plan on the left, the same 34 factors
-            grouped 9/7/8/6/4 and walked one category at a time on the
-            right, ending on the verdict. Headless, because the section
-            above already carries the heading and the promise. */}
-        <div data-reveal="3">
-          <SiteAssessed headless />
-        </div>
-
-        {/* And the full list, still. The animation shows at most nine names
-            at once; these are all 34, in the DOM, scannable and crawlable.
-            Losing them to the animation would be a content regression, not
-            a tidy-up. */}
-        <div className="flex flex-wrap gap-3">
-          {FACTORS.map((f, i) => (
-            <span
-              key={f.label}
-              data-reveal={i + 4}
-              className="border border-cw-line bg-cw-surface px-[17px] py-[11px] text-[16px]"
-            >
-              {f.label}
-              <span className="mt-1 block max-w-[34ch] text-[13px] text-cw-muted">{f.source}</span>
-            </span>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Card({
-  children,
-  span,
-  reveal,
-}: {
-  children: ReactNode;
-  span: 4 | 8 | 12;
-  reveal: number;
-}) {
-  const cols = {
-    4: "min-[900px]:col-span-4",
-    8: "min-[900px]:col-span-8",
-    12: "min-[900px]:col-span-12",
-  };
-  return (
-    <div
-      data-reveal={reveal}
-      className={`min-w-0 border border-cw-line bg-cw-surface ${cols[span]}`}
-    >
-      {children}
-    </div>
-  );
-}
-
-function Cards() {
-  const ref = useReveal<HTMLElement>(50);
-  return (
-    <section ref={ref} className={SECTION}>
-      <div className="flex flex-col gap-[clamp(32px,4vw,48px)]">
-        <div className="flex max-w-[660px] flex-col gap-[18px]">
-          <div data-reveal="0">
-            <Eyebrow>Why trust the answer</Eyebrow>
-          </div>
-          <h2 data-reveal="1" className="text-[clamp(27px,3.5vw,36px)] leading-[1.15] font-medium">
-            Know how we earn.
-          </h2>
-          <p data-reveal="2" className="max-w-[620px] text-[18px] text-cw-muted">
-            Chargeworthy earns assessment and operator-matching fees. We are not affiliated with a
-            charge point operator, and we do not own or operate charging stations.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 min-[900px]:grid-cols-12">
-          <Card span={8} reveal={3}>
-            <div className="flex flex-col justify-center gap-6 p-[clamp(28px,4vw,48px)]">
-              <h3 className="text-[26px] font-medium">We tell people not to build.</h3>
-              <div className="font-cw-mono text-[clamp(24px,4vw,40px)] leading-none font-medium tracking-[-0.03em] text-cw-accent">
-                Not published
-              </div>
-              <p className="max-w-[540px] text-[18px] text-cw-muted">
-                We have no verified assessment counts or rejection rate to publish yet. The sample
-                report demonstrates how a decision is explained; it is not a customer track record.
-              </p>
-            </div>
-          </Card>
-
-          <Card span={4} reveal={4}>
-            <div className="flex h-full flex-col justify-center gap-[18px] p-[clamp(24px,3vw,40px)]">
-              <Eyebrow>Prediction accuracy</Eyebrow>
-              <div className="font-cw-mono text-[clamp(38px,5vw,56px)] leading-none font-medium">
-                Not measured
-              </div>
-              <p className="text-cw-muted">
-                Forecast accuracy against built sites is not yet established. Modelled demand is
-                labelled in the report, with downside, central and upside cases.
-              </p>
-            </div>
-          </Card>
-
-          <Card span={4} reveal={5}>
-            <div className="flex h-full flex-col gap-[22px] p-[clamp(24px,3vw,40px)]">
-              <h3 className="text-[20px] leading-[1.35] font-medium">
-                Matched to the right operator, not our own.
-              </h3>
-              <p className="text-cw-muted">
-                We have no current CPO affiliation. An operator comparison is not a partnership or
-                endorsement; written terms must be confirmed before a site proceeds.
-              </p>
-            </div>
-          </Card>
-
-          <Card span={4} reveal={6}>
-            <div className="flex h-full flex-col gap-[22px] p-[clamp(24px,3vw,40px)]">
-              <h3 className="text-[20px] leading-[1.35] font-medium">
-                Independent across hardware.
-              </h3>
-              <p className="text-cw-muted">
-                No stake in any charger brand, no margin on hardware. Makers appear named on the
-                same terms as operators.
-              </p>
-            </div>
-          </Card>
-
-          <Card span={4} reveal={7}>
-            <div className="flex h-full flex-col justify-center gap-[18px] p-[clamp(24px,3vw,40px)]">
-              <div className="font-cw-mono text-[clamp(38px,5vw,56px)] leading-none font-medium">
-                Owner submissions
-              </div>
-              <p className="text-cw-muted">
-                Station owners can contribute consented usage data. Published comparisons require
-                enough comparable submissions to protect privacy. Participation does not mean we own
-                or operate a station.
-              </p>
-            </div>
-          </Card>
-
-          <Card span={12} reveal={8}>
-            <div
-              className="grid items-center gap-[clamp(28px,4vw,56px)] p-[clamp(28px,4vw,48px)]"
-              style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))" }}
-            >
-              <div className="flex flex-col gap-[18px]">
-                <Eyebrow>See a full assessment</Eyebrow>
-                <h3 className="text-[24px] font-medium">
-                  Every site gets the same document, whatever the verdict.
-                </h3>
-                <p className="text-cw-muted">
-                  Read a real one end to end before you order your own.
-                </p>
-                <Link
-                  to={`/report/${DEMO_REPORT_ID}`}
-                  className="text-cw-muted underline underline-offset-4 transition-colors duration-200 hover:text-cw-text"
-                >
-                  The demonstration report →
-                </Link>
-              </div>
-              <Link
-                to={`/report/${DEMO_REPORT_ID}`}
-                className="block max-h-[236px] overflow-hidden"
-              >
-                <ReportPaper compact />
-              </Link>
-            </div>
-          </Card>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-const CALLOUTS: [string, string, string][] = [
-  ["01", "The verdict, first", "One word and one sentence, before any statistics."],
-  [
-    "02",
-    "The band, not a promise",
-    "Projected utilisation as a P10–P90 range against the breakeven line — never a single number.",
-  ],
-  [
-    "03",
-    "The assumptions ledger",
-    "Every input we used. The unverified ones are shown, not buried.",
-  ],
-];
-
-function ReportShowcase() {
-  const [ref, progress] = useScrollProgress<HTMLElement>();
-  return (
-    <section id="report" ref={ref} className={SECTION}>
-      <div
-        className="grid items-start gap-[clamp(36px,5vw,72px)]"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))" }}
-      >
-        <div className="flex max-w-[452px] flex-col gap-5">
-          <Eyebrow>The report</Eyebrow>
-          <h2 className="text-[clamp(27px,3.5vw,36px)] leading-[1.15] font-medium">
-            Detailed enough for your bank to lend against.
-          </h2>
-          <p className="text-cw-muted">
-            And written to be read in plain language first — the statistics verify, they do not
-            gatekeep.
-          </p>
-          <div className="flex flex-col pt-[18px]">
-            {CALLOUTS.map(([n, title, body], i) => {
-              // Scroll-linked: the one place it is justified, because the
-              // movement mirrors reading down a document.
-              const shown = progress > 0.22 + i * 0.16;
-              return (
-                <div
-                  key={n}
-                  className={`flex gap-[18px] border-t border-cw-line py-5 transition-[opacity,transform] duration-500 ease-(--cw-ease) ${
-                    i === CALLOUTS.length - 1 ? "border-b" : ""
-                  } ${shown ? "opacity-100" : "translate-y-2.5 opacity-25"}`}
-                >
-                  <span className="shrink-0 pt-0.5 font-cw-mono text-[14px] text-cw-slate">
-                    {n}
-                  </span>
-                  <div className="flex flex-col gap-1.5">
-                    <h3 className="text-[17px] font-medium">{title}</h3>
-                    <p className="text-cw-muted">{body}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <Link to={`/report/${DEMO_REPORT_ID}`} className="block">
-          <ReportPaper />
-        </Link>
-      </div>
-    </section>
-  );
-}
-
-function Close() {
-  const ref = useReveal<HTMLElement>(60);
-  return (
-    <section ref={ref}>
-      <div
-        className={`grid items-center gap-[clamp(36px,5vw,72px)] ${SECTION}`}
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))" }}
-      >
-        <div className="flex flex-col items-start gap-7">
-          <h2
-            data-reveal="0"
-            className="max-w-[660px] text-[clamp(28px,4vw,42px)] leading-[1.15] font-medium"
-          >
-            Start with the location. We will tell you the rest.
-          </h2>
-          <div data-reveal="1" className="w-full">
-            <LocationCta id="close-location" />
-          </div>
-        </div>
-
-        {/* The real map, next to the field that asks for a real pin - a
-            site we actually assessed, on the highway the demo report is
-            written about. Gated so its ~1.8 MB of Mapbox is fetched only
-            for a reader who gets this far. */}
-        <div data-reveal="2">
-          <NearViewport minHeight="clamp(260px,42vw,452px)">
-            <Suspense
-              fallback={
-                <div className="h-[clamp(260px,42vw,452px)] w-full border border-cw-line bg-cw-surface" />
-              }
-            >
-              <HeroMap />
-            </Suspense>
-          </NearViewport>
-        </div>
-      </div>
-
-      <HomeDataSection />
-      <footer
-        className={`flex flex-wrap items-start justify-between gap-10 border-t border-cw-line ${PAD_X} pt-10 pb-12`}
-      >
-        <div className="flex max-w-[620px] flex-col gap-4">
-          <span className="font-cw-mono text-[18px] font-medium tracking-[0.08em] uppercase">
             Chargeworthy
-          </span>
-          <p className="text-[16px] text-cw-muted">
+          </Link>
+          <PublicNavigation />
+        </div>
+      </header>
+      <main id="home-content">
+        <section
+          className={`${PAGE} pt-10 pb-12 sm:pt-16 sm:pb-16 lg:pt-20`}
+          aria-labelledby="home-heading"
+        >
+          <h1
+            id="home-heading"
+            className="max-w-[20ch] text-[clamp(34px,5vw,60px)] leading-[1.1] font-semibold tracking-[-0.025em] text-balance"
+          >
+            Is your land suitable for EV charging?
+          </h1>
+          <p className="mt-5 max-w-[60ch] text-[18px] text-cw-muted">
+            We assess your location, compare costs and possible returns, and help you compare
+            charging operators.
+          </p>
+          <form onSubmit={start} className="mt-7 max-w-[760px]">
+            <label htmlFor="home-location" className="mb-2 block font-medium">
+              Site location
+            </label>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                id="home-location"
+                value={location}
+                onChange={(event) => setLocation(event.target.value)}
+                placeholder="Enter an address or area"
+                aria-describedby="location-help"
+                autoComplete="street-address"
+                className="min-h-[58px] min-w-0 flex-1 border border-cw-line bg-cw-surface px-5 text-cw-text placeholder:text-cw-muted"
+              />
+              <button
+                type="submit"
+                className="inline-flex min-h-[58px] items-center justify-center bg-cw-accent px-7 font-semibold text-cw-ground transition-[filter] hover:brightness-107"
+              >
+                Check my location
+              </button>
+            </div>
+            <p id="location-help" className="mt-3 text-[15px] text-cw-muted">
+              Next, place a pin on the map. You can also start without typing.
+            </p>
+          </form>
+          <p className="mt-3 text-[15px] text-cw-muted">
+            Coverage varies by district. If verified data is missing, we will tell you.
+          </p>
+          <Link to={`/report/${DEMO_REPORT_ID}`} className={`${LINK} mt-4 text-cw-muted`}>
+            View sample report
+          </Link>
+        </section>
+        <section className="border-t border-cw-line" aria-labelledby="benefits-heading">
+          <div className={SECTION}>
+            <h2
+              id="benefits-heading"
+              className="text-[clamp(26px,3vw,36px)] leading-[1.2] font-medium"
+            >
+              Know what you are getting into.
+            </h2>
+            <div className="mt-7 grid gap-8 md:grid-cols-3">
+              <div>
+                <h3 className="text-[21px] font-medium">Understand your site</h3>
+                <p className="mt-2 text-cw-muted">
+                  See how access, nearby chargers, local demand and power availability affect the
+                  location.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-[21px] font-medium">See the money and the risk</h3>
+                <p className="mt-2 text-cw-muted">
+                  Compare setup costs and downside, central and upside scenarios. Estimates are not
+                  promises.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-[21px] font-medium">Compare charging operators</h3>
+                <p className="mt-2 text-cw-muted">
+                  Compare the companies that run charging stations. Missing commercial terms stay
+                  marked as missing.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="border-t border-cw-line" aria-labelledby="sample-heading">
+          <div className={`${SECTION} grid items-start gap-8 md:grid-cols-2 md:gap-12`}>
+            <div>
+              <h2
+                id="sample-heading"
+                className="text-[clamp(26px,3vw,36px)] leading-[1.2] font-medium"
+              >
+                See what an assessment looks like.
+              </h2>
+              <p className="mt-4 max-w-[50ch] text-cw-muted">
+                This demonstration uses a sample site and modelled demand. It is not an assessment
+                of your land.
+              </p>
+              <p className="mt-4 max-w-[50ch] text-cw-muted">
+                The report gives a clear decision, explains the risks and shows what could change
+                the answer — including when the advice is not to build.
+              </p>
+              <Link to={`/report/${DEMO_REPORT_ID}`} className={`${LINK} mt-4 text-cw-text`}>
+                Read the full sample report
+              </Link>
+            </div>
+            <div>
+              <p className="mb-3 text-[15px] font-medium text-cw-muted">
+                Example only · sample site and figures
+              </p>
+              <ReportPaper compact />
+            </div>
+          </div>
+        </section>
+        <section className="border-t border-cw-line" aria-labelledby="steps-heading">
+          <div className={SECTION}>
+            <h2
+              id="steps-heading"
+              className="text-[clamp(26px,3vw,36px)] leading-[1.2] font-medium"
+            >
+              Start with your location.
+            </h2>
+            <ol className="mt-6 grid list-inside list-decimal gap-5 text-cw-muted md:grid-cols-3">
+              <li>
+                <span className="font-medium text-cw-text">Place a pin.</span>
+                <p className="mt-1">Choose the exact spot on the map.</p>
+              </li>
+              <li>
+                <span className="font-medium text-cw-text">Tell us about the site.</span>
+                <p className="mt-1">
+                  Answer a few questions about power, space and your plans. Skip what you do not
+                  know.
+                </p>
+              </li>
+              <li>
+                <span className="font-medium text-cw-text">See the next step.</span>
+                <p className="mt-1">
+                  Get the available site check, or join the waitlist where verified data is not
+                  ready.
+                </p>
+              </li>
+            </ol>
+          </div>
+        </section>
+        <section className="border-t border-cw-line" aria-labelledby="questions-heading">
+          <div className={SECTION}>
+            <h2
+              id="questions-heading"
+              className="text-[clamp(26px,3vw,36px)] leading-[1.2] font-medium"
+            >
+              Want to know more?
+            </h2>
+            <div className="mt-6 max-w-[850px]">
+              <details className="border-t border-cw-line py-4">
+                <summary className="min-h-[44px] cursor-pointer py-2 text-[18px] font-medium">
+                  What do you check at a site?
+                </summary>
+                <p className="mt-3 text-cw-muted">
+                  This is the full checklist. Some checks need a site survey or a verified source;
+                  your report marks gaps and unverified inputs.
+                </p>
+                <div className="mt-5 grid gap-6 sm:grid-cols-2">
+                  {GROUPS.map((group) => (
+                    <div key={group.key}>
+                      <h3 className="font-medium">{group.name}</h3>
+                      <p className="mt-1 text-[15px] text-cw-muted">{group.source}</p>
+                      <ul className="mt-3 list-disc space-y-1 pl-5 text-cw-muted">
+                        {group.checks.map((check) => (
+                          <li key={check.label}>{check.label}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </details>
+              <details className="border-t border-cw-line py-4">
+                <summary className="min-h-[44px] cursor-pointer py-2 text-[18px] font-medium">
+                  How do you compare operators?
+                </summary>
+                <p className="mt-3 text-cw-muted">
+                  We show network fit beside the financial scenarios. Unverified uptime, occupancy
+                  and commercial terms are not guessed. Confirm the selected operator's terms in
+                  writing before you proceed.
+                </p>
+                <div className="mt-5 grid gap-6 sm:grid-cols-2">
+                  {OPERATOR_GROUPS.map((group) => (
+                    <div key={group.key}>
+                      <h3 className="font-medium">{group.source}</h3>
+                      <ul className="mt-3 space-y-3 text-cw-muted">
+                        {group.factors.map((factor) => (
+                          <li key={factor.label}>
+                            <span className="text-cw-text">{factor.label}</span>
+                            <p className="text-[15px]">{factor.effect}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </details>
+              <details className="border-t border-cw-line py-4">
+                <summary className="min-h-[44px] cursor-pointer py-2 text-[18px] font-medium">
+                  Already run a charging station?
+                </summary>
+                <p className="mt-3 text-cw-muted">
+                  Sign in or create an owner account to submit your station's electricity bill.
+                  Comparisons depend on enough consented, comparable submissions.
+                </p>
+                <Link to="/owner" className={`${LINK} mt-3`}>
+                  Go to station owners
+                </Link>
+              </details>
+              <details className="border-t border-cw-line py-4">
+                <summary className="min-h-[44px] cursor-pointer py-2 text-[18px] font-medium">
+                  Where does the data come from?
+                </summary>
+                <p className="mt-3 text-cw-muted">
+                  Your report lists sources and assumptions. Explore our public data pages for
+                  available references and their limits.
+                </p>
+                <Link to="/data" className={`${LINK} mt-3`}>
+                  Explore Chargeworthy Data
+                </Link>
+              </details>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer className="border-t border-cw-line">
+        <div className={`${PAGE} py-8`}>
+          <p className="max-w-[75ch] text-[15px] text-cw-muted">
             Chargeworthy earns assessment and operator-matching fees. We have no current CPO
             affiliation and do not own or operate charging stations. Operator-matching fees create a
             potential commercial conflict that must be disclosed.
           </p>
         </div>
-        <nav className="flex gap-8">
-          <Link
-            to="/owner"
-            className="inline-flex min-h-[44px] items-center text-[16px] text-cw-muted transition-colors duration-200 hover:text-cw-text"
-          >
-            Station owners
-          </Link>
-          <Link
-            to={`/report/${DEMO_REPORT_ID}`}
-            className="inline-flex min-h-[44px] items-center text-[16px] text-cw-muted transition-colors duration-200 hover:text-cw-text"
-          >
-            Sample report
-          </Link>
-          <Link
-            to="/console"
-            className="inline-flex min-h-[44px] items-center text-[16px] text-cw-muted transition-colors duration-200 hover:text-cw-text"
-          >
-            Console
-          </Link>
-        </nav>
       </footer>
-    </section>
-  );
-}
-
-export function Landing() {
-  useEffect(() => {
-    document.title = "About Chargeworthy — site assessments and operator matching";
-  }, []);
-  return (
-    <div className="cw-surface-root min-h-dvh bg-cw-ground font-cw-sans text-[17px] leading-[1.6] text-cw-text antialiased">
-      <Header />
-      <main>
-        <Hero />
-        <HowItWorks />
-        <WhatWeCheck />
-        <Cards />
-        <ReportShowcase />
-        <Close />
-      </main>
     </div>
   );
 }

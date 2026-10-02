@@ -105,18 +105,11 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
       <Deferred>
-        <ReportRoute reportId={DEMO_REPORT_ID} homepage />
-      </Deferred>
-    ),
-  },
-  {
-    path: "/about",
-    element: (
-      <Deferred>
         <Landing />
       </Deferred>
     ),
   },
+  { path: "/about", element: <Navigate to="/" replace /> },
   { path: "/report/sample", element: <Navigate to={`/report/${DEMO_REPORT_ID}`} replace /> },
   { path: "/data/*", element: <AnalyticsApp /> },
   {
@@ -240,7 +233,7 @@ export const router = createBrowserRouter([
         <h1 className="font-cw-serif text-3xl">Page not found</h1>
         <p className="mt-4">This address does not match a Chargeworthy page.</p>
         <Link to="/" className="mt-6 inline-block underline underline-offset-4">
-          View the sample report
+          Back to home
         </Link>
       </main>
     ),

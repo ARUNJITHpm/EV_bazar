@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import type { Direction as DirectionValue } from "./payload";
 
@@ -270,6 +270,50 @@ export const TD =
 export const NUM = "text-right font-cw-mono tabular-nums";
 export const SRC = "text-[15px] text-cw-paper-muted";
 
+/** Scroll hints appear only when content is wider than the available space. */
+export function ReportScroll({
+  children,
+  label,
+  diagram = false,
+}: {
+  children: ReactNode;
+  label: string;
+  diagram?: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [overflows, setOverflows] = useState(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const measure = () => setOverflows(element.scrollWidth > element.clientWidth + 1);
+    measure();
+    if (!("ResizeObserver" in window)) return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [children]);
+  return (
+    <div>
+      {overflows && (
+        <p className="no-print mb-2 text-[15px] text-cw-paper-muted">
+          {diagram
+            ? "Scroll sideways to read the full diagram."
+            : "Scroll sideways to see all columns."}
+        </p>
+      )}
+      <div
+        ref={ref}
+        tabIndex={0}
+        role="group"
+        aria-label={label}
+        className={`overflow-x-auto ${diagram ? "report-diagram" : ""}`}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /**
  * `minWidth` is the width below which the table scrolls on screen rather
  * than crushing its columns — and it is also a print constraint, because A4
@@ -287,7 +331,7 @@ export function Table({
   zebra?: boolean;
 }) {
   return (
-    <div tabIndex={0} role="group" aria-label="Scrollable report table" className="overflow-x-auto">
+    <ReportScroll label="Scrollable report table">
       <table
         className={`w-full border-collapse ${
           zebra ? "[&>tbody>tr:nth-child(even)]:bg-cw-paper-zebra" : ""
@@ -296,6 +340,6 @@ export function Table({
       >
         {children}
       </table>
-    </div>
+    </ReportScroll>
   );
 }

@@ -16,6 +16,7 @@ import {
   type FlowState,
 } from "./state";
 import { Working } from "./Working";
+import { PublicNavigation } from "../PublicNavigation";
 
 /**
  * The public assessment flow, built to the design (design/flow-images/).
@@ -342,7 +343,7 @@ export function Flow() {
 
   return (
     <div className="cw-surface-root relative flex min-h-dvh flex-col bg-cw-ground font-cw-sans text-[17px] leading-[1.6] text-cw-text antialiased">
-      <header className="relative z-10 flex items-center justify-between gap-6 bg-cw-ground px-[clamp(24px,7vw,112px)] py-5">
+      <header className="relative z-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 bg-cw-ground px-[clamp(24px,7vw,112px)] py-5">
         <Link
           to="/"
           className="inline-flex min-h-[44px] items-center font-cw-mono text-[clamp(18px,1.6vw,21px)] font-medium tracking-[0.08em] text-cw-text uppercase"
@@ -352,6 +353,9 @@ export function Flow() {
         <span className="font-cw-mono text-[14px] tracking-[0.08em] text-cw-muted">
           {meta.label}
         </span>
+        <div className="w-full">
+          <PublicNavigation />
+        </div>
       </header>
 
       {/* A quiet hairline. Never a percentage in text. */}

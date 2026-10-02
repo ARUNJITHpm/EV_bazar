@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../api/client";
 
 import { clearPrivateGridCache } from "./grid-cache";
+import { PublicNavigation } from "../public/PublicNavigation";
 
 export const inputCls =
   "min-h-[56px] w-full border border-cw-line bg-cw-surface px-5 text-[18px] text-cw-text placeholder:text-cw-muted focus:border-cw-slate focus:outline-none";
@@ -57,7 +58,7 @@ export function Shell({
   };
   return (
     <div className="cw-surface-root relative flex min-h-dvh flex-col bg-cw-ground font-cw-sans text-[17px] leading-[1.6] text-cw-text antialiased">
-      <header className="flex items-center justify-between gap-6 px-[clamp(24px,7vw,112px)] py-5">
+      <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 px-[clamp(24px,7vw,112px)] py-5">
         <Link
           to="/"
           className="inline-flex min-h-[44px] items-center font-cw-mono text-[clamp(18px,1.6vw,21px)] font-medium tracking-[0.08em] text-cw-text uppercase"
@@ -83,6 +84,9 @@ export function Shell({
             </>
           )}
         </span>
+        <div className="w-full">
+          <PublicNavigation />
+        </div>
       </header>
       {progress && (
         <div className="h-0.5 bg-cw-line">

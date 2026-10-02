@@ -19,20 +19,20 @@ function mount() {
       client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
     >
       <MemoryRouter>
-        <ReportRoute reportId={DEMO_REPORT_ID} homepage />
+        <ReportRoute reportId={DEMO_REPORT_ID} />
       </MemoryRouter>
     </QueryClientProvider>,
   );
 }
 
-it("loads the fixed stored demo at the homepage and renders all twelve sections", async () => {
+it("loads the stored demo report and renders all twelve sections", async () => {
   vi.mocked(fetchReport).mockResolvedValue(fixture);
   mount();
   await screen.findByRole("heading", { name: fixture.site.name, level: 1 });
   expect(fetchReport).toHaveBeenCalledWith(DEMO_REPORT_ID);
   expect(document.querySelectorAll("[data-report-section]")).toHaveLength(12);
   expect(screen.getByRole("link", { name: "Assess my site" }).getAttribute("href")).toBe("/assess");
-  expect(screen.getByRole("link", { name: "About" }).getAttribute("href")).toBe("/about");
+  expect(screen.getByRole("link", { name: "Home" }).getAttribute("href")).toBe("/");
   expect(document.title).toContain("sample report");
 });
 

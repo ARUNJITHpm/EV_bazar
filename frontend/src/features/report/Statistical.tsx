@@ -1,7 +1,7 @@
 import { formatRupeesCompact, formatRupeesPrecise } from "../../lib/money";
 import { formatPercentagePoints, formatUtilisation } from "../../lib/units";
 import { HORIZON_YEARS, type ReportPayload, type Verdict } from "./payload";
-import { Chip, Figure, Note, Section } from "./parts";
+import { Chip, Figure, Note, Section, ReportScroll } from "./parts";
 
 /**
  * 09 — for the accountant and the credit officer. The confidence band is the
@@ -213,142 +213,146 @@ export function Statistical({ payload }: { payload: ReportPayload }) {
           section outgrew a page in R7, and a chart cut in half at the axis
           is worse than a chart on the next page. */}
       <figure className="m-0">
-        <svg
-          viewBox="0 0 760 196"
-          role="img"
-          aria-label={`Utilisation scale from 0 to ${pct(scaleMax)} percent. Projected range ${formatUtilisation(
-            predicted.p10,
-          )} to ${formatUtilisation(predicted.p90)}, central ${formatUtilisation(
-            predicted.p50,
-          )}. The site covers its running bills at ${formatUtilisation(breakeven.utilisation)}${
-            fullCost == null ? "" : ` and returns its build cost at ${formatUtilisation(fullCost)}`
-          }.`}
-          className="mt-6 w-full"
-        >
-          <defs>
-            <pattern
-              id="modelled"
-              width="6"
-              height="6"
-              patternTransform="rotate(45)"
-              patternUnits="userSpaceOnUse"
-            >
-              <rect width="6" height="6" className="fill-cw-paper" />
-              <line x1="0" y1="0" x2="0" y2="6" className="stroke-cw-band" strokeWidth="3" />
-            </pattern>
-          </defs>
-
-          {/* axis */}
-          <line
-            x1={X0}
-            y1={AXIS_Y}
-            x2={X1}
-            y2={AXIS_Y}
-            className="stroke-cw-rule"
-            strokeWidth="1"
-          />
-          {ticks.map((t) => (
-            <g key={t}>
-              <line
-                x1={x(t)}
-                y1={AXIS_Y}
-                x2={x(t)}
-                y2={AXIS_Y + 6}
-                className="stroke-cw-rule"
-                strokeWidth="1"
-              />
-              <text
-                x={x(t)}
-                y="130"
-                textAnchor="middle"
-                className="fill-cw-paper-muted font-cw-mono text-[11px]"
-              >
-                {pct(t)}%
-              </text>
-            </g>
-          ))}
-          <text
-            x={X1}
-            y="148"
-            textAnchor="end"
-            className="fill-cw-paper-muted font-cw-mono text-[11px]"
+        <ReportScroll label="Utilisation diagram" diagram>
+          <svg
+            viewBox="0 0 760 196"
+            role="img"
+            aria-label={`Utilisation scale from 0 to ${pct(scaleMax)} percent. Projected range ${formatUtilisation(
+              predicted.p10,
+            )} to ${formatUtilisation(predicted.p90)}, central ${formatUtilisation(
+              predicted.p50,
+            )}. The site covers its running bills at ${formatUtilisation(breakeven.utilisation)}${
+              fullCost == null
+                ? ""
+                : ` and returns its build cost at ${formatUtilisation(fullCost)}`
+            }.`}
+            className="mt-6 w-full"
           >
-            utilisation, share of rated capacity
-          </text>
+            <defs>
+              <pattern
+                id="modelled"
+                width="6"
+                height="6"
+                patternTransform="rotate(45)"
+                patternUnits="userSpaceOnUse"
+              >
+                <rect width="6" height="6" className="fill-cw-paper" />
+                <line x1="0" y1="0" x2="0" y2="6" className="stroke-cw-band" strokeWidth="3" />
+              </pattern>
+            </defs>
 
-          {/* the band: P10 to P90, hatched because modelled */}
-          <rect
-            x={x(predicted.p10)}
-            y="62"
-            width={Math.max(x(predicted.p90) - x(predicted.p10), 2)}
-            height="34"
-            fill="url(#modelled)"
-            className="stroke-cw-band"
-            strokeWidth="1"
-          />
-          <line
-            x1={x(predicted.p50)}
-            y1="58"
-            x2={x(predicted.p50)}
-            y2="100"
-            className="stroke-cw-ink"
-            strokeWidth="1.5"
-          />
+            {/* axis */}
+            <line
+              x1={X0}
+              y1={AXIS_Y}
+              x2={X1}
+              y2={AXIS_Y}
+              className="stroke-cw-rule"
+              strokeWidth="1"
+            />
+            {ticks.map((t) => (
+              <g key={t}>
+                <line
+                  x1={x(t)}
+                  y1={AXIS_Y}
+                  x2={x(t)}
+                  y2={AXIS_Y + 6}
+                  className="stroke-cw-rule"
+                  strokeWidth="1"
+                />
+                <text
+                  x={x(t)}
+                  y="130"
+                  textAnchor="middle"
+                  className="fill-cw-paper-muted font-cw-mono text-[11px]"
+                >
+                  {pct(t)}%
+                </text>
+              </g>
+            ))}
+            <text
+              x={X1}
+              y="148"
+              textAnchor="end"
+              className="fill-cw-paper-muted font-cw-mono text-[11px]"
+            >
+              utilisation, share of rated capacity
+            </text>
 
-          {/* The two rules, on two rows so their labels cannot collide however
+            {/* the band: P10 to P90, hatched because modelled */}
+            <rect
+              x={x(predicted.p10)}
+              y="62"
+              width={Math.max(x(predicted.p90) - x(predicted.p10), 2)}
+              height="34"
+              fill="url(#modelled)"
+              className="stroke-cw-band"
+              strokeWidth="1"
+            />
+            <line
+              x1={x(predicted.p50)}
+              y1="58"
+              x2={x(predicted.p50)}
+              y2="100"
+              className="stroke-cw-ink"
+              strokeWidth="1.5"
+            />
+
+            {/* The two rules, on two rows so their labels cannot collide however
             close the thresholds sit. The dashed one is the harder line and
             the one no verdict is measured against. */}
-          {fullCost != null && (
+            {fullCost != null && (
+              <Threshold
+                x={x(fullCost)}
+                y={14}
+                label={`build cost back ${formatUtilisation(fullCost)}`}
+                dashed
+              />
+            )}
             <Threshold
-              x={x(fullCost)}
-              y={14}
-              label={`build cost back ${formatUtilisation(fullCost)}`}
-              dashed
+              x={bx}
+              y={36}
+              label={`covers the bills ${formatUtilisation(breakeven.utilisation)}`}
             />
-          )}
-          <Threshold
-            x={bx}
-            y={36}
-            label={`covers the bills ${formatUtilisation(breakeven.utilisation)}`}
-          />
 
-          {/* Margin of safety as a dimension line, P10 → the bills line. Its
+            {/* Margin of safety as a dimension line, P10 → the bills line. Its
             label sits BELOW its own end caps: the caps are vertical and the
             sentence is wider than a narrow span, so a centred label on the
             same row printed straight through both of them. */}
-          <line
-            x1={x(predicted.p10)}
-            y1="166"
-            x2={bx}
-            y2="166"
-            className="stroke-cw-paper-muted"
-            strokeWidth="1"
-          />
-          <line
-            x1={x(predicted.p10)}
-            y1="161"
-            x2={x(predicted.p10)}
-            y2="171"
-            className="stroke-cw-paper-muted"
-            strokeWidth="1"
-          />
-          <line
-            x1={bx}
-            y1="161"
-            x2={bx}
-            y2="171"
-            className="stroke-cw-paper-muted"
-            strokeWidth="1"
-          />
-          <text
-            x={(x(predicted.p10) + bx) / 2}
-            y="188"
-            textAnchor="middle"
-            className="fill-cw-ink font-cw-mono text-[11px]"
-          >
-            {formatPercentagePoints(margin_of_safety_pp)} at the downside
-          </text>
-        </svg>
+            <line
+              x1={x(predicted.p10)}
+              y1="166"
+              x2={bx}
+              y2="166"
+              className="stroke-cw-paper-muted"
+              strokeWidth="1"
+            />
+            <line
+              x1={x(predicted.p10)}
+              y1="161"
+              x2={x(predicted.p10)}
+              y2="171"
+              className="stroke-cw-paper-muted"
+              strokeWidth="1"
+            />
+            <line
+              x1={bx}
+              y1="161"
+              x2={bx}
+              y2="171"
+              className="stroke-cw-paper-muted"
+              strokeWidth="1"
+            />
+            <text
+              x={(x(predicted.p10) + bx) / 2}
+              y="188"
+              textAnchor="middle"
+              className="fill-cw-ink font-cw-mono text-[11px]"
+            >
+              {formatPercentagePoints(margin_of_safety_pp)} at the downside
+            </text>
+          </svg>
+        </ReportScroll>
       </figure>
 
       <p className="mt-3.5 mb-0 max-w-[64ch] text-[17px] text-cw-paper-muted">

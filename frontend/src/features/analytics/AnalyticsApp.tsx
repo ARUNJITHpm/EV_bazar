@@ -19,6 +19,8 @@ import { developmentFixtures } from "./data/client";
 import { parseCsv } from "../../../scripts/csv";
 import { datasetStructuredData } from "../../../scripts/analytics-seo";
 
+import { PublicNavigation } from "../public/PublicNavigation";
+
 import { analyticsMetadata, searchPublicContent, verticals } from "./catalog";
 
 const ChartDemo = import.meta.env.DEV ? lazy(() => import("./chart/ChartDemo")) : null;
@@ -332,7 +334,8 @@ export function AnalyticsApp() {
         Skip to content
       </a>
       <header className="analytics-header">
-        <span className="analytics-wordmark">Chargeworthy</span>
+        <Link to="/" className="analytics-wordmark">Chargeworthy</Link>
+        <PublicNavigation />
         <nav aria-label="Data navigation">
           <Link
             to="/data"
