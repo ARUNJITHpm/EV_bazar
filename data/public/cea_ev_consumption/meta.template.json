@@ -1,0 +1,95 @@
+{
+  "id": "cea_ev_consumption",
+  "title": "cea_ev_consumption — complete with sourced title",
+  "description": "Complete with scope and definitions",
+  "source_name": "Complete with publisher",
+  "source_url": null,
+  "retrieved_on": null,
+  "licence": null,
+  "geography_level": "state",
+  "time_coverage": "Complete with actual reporting period",
+  "update_frequency": "Complete with refresh schedule",
+  "notes": "Template only: not a retrieved or published dataset",
+  "columns": [
+    {
+      "name": "state",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of state"
+    },
+    {
+      "name": "cea_state_name",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of cea_state_name"
+    },
+    {
+      "name": "report_month",
+      "type": "month",
+      "unit": "not applicable",
+      "description": "Document the source definition of report_month"
+    },
+    {
+      "name": "span",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of span"
+    },
+    {
+      "name": "span_start",
+      "type": "date",
+      "unit": "not applicable",
+      "description": "Document the source definition of span_start"
+    },
+    {
+      "name": "pcs_kwh",
+      "type": "integer",
+      "unit": "not applicable",
+      "description": "Document the source definition of pcs_kwh",
+      "nullable": true
+    },
+    {
+      "name": "heavy_duty_pcs_kwh",
+      "type": "integer",
+      "unit": "not applicable",
+      "description": "Document the source definition of heavy_duty_pcs_kwh",
+      "nullable": true
+    },
+    {
+      "name": "other_kwh",
+      "type": "integer",
+      "unit": "not applicable",
+      "description": "Document the source definition of other_kwh",
+      "nullable": true
+    },
+    {
+      "name": "total_kwh",
+      "type": "integer",
+      "unit": "not applicable",
+      "description": "Document the source definition of total_kwh",
+      "nullable": true
+    },
+    {
+      "name": "source_url",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of source_url"
+    },
+    {
+      "name": "source_sha256",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of source_sha256"
+    },
+    {
+      "name": "notes",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Document the source definition of notes"
+    }
+  ],
+  "source_sha256": null,
+  "licence_url": null,
+  "review_ref": null,
+  "transformation_version": null
+}

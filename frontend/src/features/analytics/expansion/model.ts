@@ -7,12 +7,14 @@ export type Performance = z.infer<typeof rowSchemas.discom_performance>;
 export type Supply = z.infer<typeof rowSchemas.supply_hours>;
 export type Policy = z.infer<typeof rowSchemas.state_ev_policies>;
 export type Amenity = z.infer<typeof rowSchemas.nhai_wayside_amenities>;
+export type Consumption = z.infer<typeof rowSchemas.cea_ev_consumption>;
 export interface Expansion {
   asOf: string;
   performance: Performance[];
   supply: Supply[];
   policies: Policy[];
   amenities: Amenity[];
+  consumption: Consumption[];
 }
 export const outageNote =
   "AT&C loss is electricity that is not billed or not paid for, plus technical loss. It is not a measure of outages or voltage at any site.";
@@ -240,4 +242,141 @@ export function plannedAmenities(rows: Amenity[], asOf: string) {
       r.source_doc_date <= asOf &&
       /^(planned|awarded)$/i.test(r.status.trim()),
   );
+}
+
+export const consumptionNote =
+  "Electricity EV charging drew from the grid, as utilities report it to the Central Electricity Authority. More utilities report over time (17 states in mid 2024, 33 in 2026), so part of any rise is wider reporting.";
+
+/** "2024-04" -> "Apr 2024". */
+export function monthLabel(month: string) {
+  const [year, number] = month.split("-");
+  const names = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  return `${names[Number(number) - 1]} ${year}`;
+}
+
+/** Every month from the first to the last, so unreported months show as gaps. */
+export function monthRange(first: string, last: string) {
+  const out: string[] = [];
+  let [year, month] = first.split("-").map(Number) as [number, number];
+  const [endYear, endMonth] = last.split("-").map(Number) as [number, number];
+  while (year < endYear || (year === endYear && month <= endMonth)) {
+    out.push(`${year}-${String(month).padStart(2, "0")}`);
+    [year, month] = month === 12 ? [year + 1, 1] : [year, month + 1];
+  }
+  return out;
+}
+
+const mu = (kwh: number | null) => (kwh === null ? null : kwh / 1_000_000);
+
+/** Monthly series for the given states (CEA's own names), gaps included. */
+function monthlyRows(rows: Consumption[], places: readonly string[]): ChartRow[] {
+  const months = rows.filter((r) => r.span === "month");
+  if (!months.length) return [];
+  const all = months.map((r) => r.report_month).sort();
+  return places.flatMap((place) =>
+    monthRange(all[0]!, all[all.length - 1]!).map((month): ChartRow => {
+      const row = months.find((r) => r.cea_state_name === place && r.report_month === month);
+      const value = row ? mu(row.total_kwh) : null;
+      return {
+        region: place,
+        period: month,
+        indicator: "Total EV charging electricity",
+        series: place,
+        label: monthLabel(month),
+        value,
+        status: value === null ? "missing" : "observed",
+      };
+    }),
+  );
+}
+
+export function consumptionCharts(data: Expansion, catalogue: PublicCatalogue): ChartData[] {
+  const rows = data.consumption;
+  if (!rows.length) return [];
+  const charts: (ChartData | null)[] = [];
+  charts.push(
+    sourceChart(catalogue, "cea_ev_consumption", {
+      id: "ev-charging-electricity-india",
+      title: "Electricity used by EV charging in India",
+      subtitle: "Million kWh per month, all reporting states, as published by CEA.",
+      summary: `Monthly EV charging electricity in India. ${consumptionNote}`,
+      type: "line",
+      unit: "million kWh",
+      rows: monthlyRows(rows, ["India"]),
+      notes: [
+        consumptionNote,
+        "Gaps are months CEA published as images (November 2024 to June 2025) or not at all; they are not estimated.",
+      ],
+    }),
+  );
+  const south = ["Kerala", "Tamil Nadu", "Karnataka"].filter((place) =>
+    rows.some((r) => r.cea_state_name === place),
+  );
+  if (south.length)
+    charts.push(
+      sourceChart(catalogue, "cea_ev_consumption", {
+        id: "ev-charging-electricity-south",
+        title: "EV charging electricity: Kerala, Tamil Nadu and Karnataka",
+        subtitle: "Million kWh per month, as each state's utilities report it to CEA.",
+        summary: `Monthly EV charging electricity in ${south.join(", ")}. ${consumptionNote}`,
+        type: "line",
+        unit: "million kWh",
+        rows: monthlyRows(rows, south),
+        notes: [consumptionNote, "A month a state's utilities did not report is a gap, not zero."],
+      }),
+    );
+  const latest = rows
+    .filter((r) => r.span === "fy_to_date" && r.state !== "India" && r.total_kwh !== null)
+    .map((r) => r.report_month)
+    .sort()
+    .at(-1);
+  if (latest) {
+    const year = rows.filter(
+      (r) =>
+        r.span === "fy_to_date" &&
+        r.report_month === latest &&
+        r.state !== "India" &&
+        r.total_kwh !== null,
+    );
+    const start = year[0]!.span_start.slice(0, 7);
+    charts.push(
+      sourceChart(catalogue, "cea_ev_consumption", {
+        id: "ev-charging-electricity-states",
+        title: `EV charging electricity by state, ${monthLabel(start)} to ${monthLabel(latest)}`,
+        subtitle: "Million kWh in the financial year to date, reporting states only.",
+        summary: `EV charging electricity by state for the financial year to ${monthLabel(latest)}. ${consumptionNote}`,
+        type: "horizontal-bar",
+        unit: "million kWh",
+        rows: year
+          .sort((a, b) => (b.total_kwh ?? 0) - (a.total_kwh ?? 0))
+          .map((r): ChartRow => ({
+            region: r.cea_state_name,
+            period: latest,
+            indicator: "Financial year to date",
+            series: "States",
+            label: r.cea_state_name,
+            value: mu(r.total_kwh),
+            status: "observed",
+          })),
+        notes: [
+          consumptionNote,
+          "States whose utilities reported nothing this year are left out rather than shown as zero.",
+        ],
+      }),
+    );
+  }
+  return charts.filter((chart): chart is ChartData => chart !== null);
 }

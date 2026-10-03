@@ -1,0 +1,96 @@
+{
+  "id": "cea_ev_consumption",
+  "title": "Electricity used by EV charging, by state (CEA)",
+  "description": "Monthly electricity consumed by EV charging in each state and in India, as DISCOMs report it to the Central Electricity Authority: public stations, heavy-duty public stations and other EV charging, for the month and the financial year to date",
+  "source_name": "Central Electricity Authority (CEA), Ministry of Power, Government of India",
+  "source_url": "https://cea.nic.in/electric-vehicle-charging-reports/?lang=en",
+  "retrieved_on": "2026-10-03",
+  "licence": "Government of India publication; CEA publishes no reuse licence. Reproduced unaltered with attribution (Chargeworthy publication decision, 2026-10-03)",
+  "licence_url": "https://cea.nic.in/website-policies/?lang=en",
+  "attribution": "Source: Central Electricity Authority, Ministry of Power, Government of India - Electric Vehicles Public Charging Stations Monthly Power Consumption Report",
+  "geography_level": "state",
+  "time_coverage": "Report months 2024-04 to 2026-03; 16 months. Missing: Nov 2024 - Jun 2025 (tables published as images) and months CEA did not publish",
+  "update_frequency": "Checked weekly; CEA publishes irregularly, about 2-5 months after the month",
+  "notes": "Values are kWh, exact to 10,000 kWh (CEA prints MU to 0.01). Blank means the utility did not report, never zero. Reports to Nov 2025 have no 'other' column; Apr 2024 has no year-to-date figures. Coverage grows over time (17 states in mid 2024, 33 in 2026), so state totals are not comparable across that change. Where a month was re-issued the newest file is used. DISCOM rows and lines covering more than one state stay out of this file. Provisional, as reported by DISCOMs.",
+  "columns": [
+    {
+      "name": "state",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "LGD state name, or India for CEA's Grand Total"
+    },
+    {
+      "name": "cea_state_name",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "State as CEA prints it, verbatim"
+    },
+    {
+      "name": "report_month",
+      "type": "month",
+      "unit": "YYYY-MM",
+      "description": "Month the report is for"
+    },
+    {
+      "name": "span",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "month: the report month; fy_to_date: April to the report month"
+    },
+    {
+      "name": "span_start",
+      "type": "date",
+      "unit": "YYYY-MM-DD",
+      "description": "First day the value covers"
+    },
+    {
+      "name": "pcs_kwh",
+      "type": "integer",
+      "unit": "kWh",
+      "description": "Public charging stations excluding heavy duty",
+      "nullable": true
+    },
+    {
+      "name": "heavy_duty_pcs_kwh",
+      "type": "integer",
+      "unit": "kWh",
+      "description": "Heavy-duty public charging stations only",
+      "nullable": true
+    },
+    {
+      "name": "other_kwh",
+      "type": "integer",
+      "unit": "kWh",
+      "description": "EV charging other than public stations; printed from December 2025",
+      "nullable": true
+    },
+    {
+      "name": "total_kwh",
+      "type": "integer",
+      "unit": "kWh",
+      "description": "Total EV charging electricity as printed",
+      "nullable": true
+    },
+    {
+      "name": "source_url",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "The CEA report PDF this row was read from"
+    },
+    {
+      "name": "source_sha256",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "SHA-256 of that PDF"
+    },
+    {
+      "name": "notes",
+      "type": "string",
+      "unit": "not applicable",
+      "description": "Row notes"
+    }
+  ],
+  "source_sha256": "f46021db5ddbacb8760f0caa1989403cfaf71950b38994595d9777e8239f74f0",
+  "review_ref": "docs/analytics/CEA_EV_CONSUMPTION.md",
+  "transformation_version": "cea_ev_report_parse_v1"
+}

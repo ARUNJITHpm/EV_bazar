@@ -106,6 +106,20 @@ const fields = {
     "Invented",
   ],
   osm_power: ["node/999999999", "transformer", "", "10", "75", "999001", "2020-01-31", "node"],
+  cea_ev_consumption: [
+    "Test State",
+    "Test State",
+    "2020-01",
+    "month",
+    "2020-01-01",
+    "1000",
+    "",
+    "",
+    "1000",
+    "https://example.invalid/test-source",
+    "0".repeat(64),
+    "Invented",
+  ],
 } as const;
 function columns(id: (typeof datasetIds)[number]) {
   const names =
@@ -167,7 +181,7 @@ for (const id of datasetIds) {
         ? "discom"
         : ["supply_hours", "nhai_wayside_amenities"].includes(id)
           ? "mixed"
-          : ["ev_tariffs", "state_ev_policies"].includes(id)
+          : ["ev_tariffs", "state_ev_policies", "cea_ev_consumption"].includes(id)
             ? "state"
             : id === "highways"
               ? "corridor"

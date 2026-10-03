@@ -21,6 +21,7 @@ EXPANSION_DATASETS = (
     "state_ev_policies",
     "nhai_wayside_amenities",
     "osm_power",
+    "cea_ev_consumption",
 )
 _VERSIONS = {
     "model_version": "not_applicable:observed_public_data",

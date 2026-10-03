@@ -29,6 +29,7 @@ const expansion: Expansion = {
   supply: [],
   performance: [],
   amenities: [],
+  consumption: [],
 };
 const descriptor = (id: DatasetDescriptor["id"]): DatasetDescriptor => ({
   id,

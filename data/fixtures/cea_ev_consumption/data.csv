@@ -1,0 +1,2 @@
+state,cea_state_name,report_month,span,span_start,pcs_kwh,heavy_duty_pcs_kwh,other_kwh,total_kwh,source_url,source_sha256,notes
+Test State,Test State,2020-01,month,2020-01-01,1000,,,1000,https://example.invalid/test-source,0000000000000000000000000000000000000000000000000000000000000000,Invented

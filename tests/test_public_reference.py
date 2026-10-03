@@ -138,7 +138,8 @@ def test_pending_production_sources_return_no_invented_values(tmp_path):
     )
     digest = hashlib.sha256(snapshot.read_bytes()).hexdigest()
     reference = PublicReference.load(snapshot, sources, expected_sha256=digest)
-    for dataset in (item for item in EXPANSION_DATASETS if item != "osm_power"):
+    published = {"osm_power", "cea_ev_consumption"}
+    for dataset in (item for item in EXPANSION_DATASETS if item not in published):
         result = reference.lookup(dataset, state="Kerala")
         assert result.status == "pending"
         assert result.rows == () and result.provenance is None
@@ -148,6 +149,11 @@ def test_pending_production_sources_return_no_invented_values(tmp_path):
     assert all(row["lgd_code"] is None for row in mapped.rows)
     assert reference.lookup("osm_power", state="Kerala").status == "no_matching_observations"
     assert reference.lookup("osm_power", lgd_code=544).rows == ()
+    # CEA is published under the 2026-10-03 rule; a state lookup is exact.
+    cea = reference.lookup("cea_ev_consumption", state="KERALA")
+    assert cea.status == "available"
+    assert cea.rows and all(row["state"] == "KERALA" for row in cea.rows)
+    assert cea.provenance is not None
     assert mapped.provenance["licence"] == "ODbL-1.0"
 
 

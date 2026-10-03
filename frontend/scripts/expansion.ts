@@ -20,5 +20,6 @@ export function buildExpansion(loaded: LoadedPublicData, asOf: string): Expansio
     supply: rows("supply_hours") as Expansion["supply"],
     policies: rows("state_ev_policies") as Expansion["policies"],
     amenities: rows("nhai_wayside_amenities") as Expansion["amenities"],
+    consumption: rows("cea_ev_consumption") as Expansion["consumption"],
   };
 }

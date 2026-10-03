@@ -66,6 +66,28 @@ export function Plot({
     bottom = height - 72;
   const { domain: axis, ticks } = niceTicks(domain);
   const scale = linearScale(axis[0], axis[1], horizontal ? left : bottom, horizontal ? right : top);
+  // A long axis labels evenly spaced categories that fit (the 17px mono axis
+  // font is ~10.5px a character) and always the last; every category keeps
+  // its tooltip and table row.
+  const widest = Math.min(14, Math.max(0, ...labels.map((label) => label.length)));
+  const labelStep = Math.max(
+    1,
+    Math.ceil((widest * 10.5 + 16) / ((right - left) / Math.max(1, labels.length))),
+  );
+  const shownLabel = (index: number) =>
+    index === labels.length - 1 ||
+    (index % labelStep === 0 && labels.length - 1 - index >= labelStep);
+  // Runs of categories where no series has a value: one band, not a "No data"
+  // label per point, so a gap reads as a gap.
+  const gapRuns: [number, number][] = [];
+  if (type === "line")
+    labels.forEach((label, index) => {
+      const empty = rows.every((row) => row.label !== label || row.value == null);
+      const last = gapRuns[gapRuns.length - 1];
+      if (!empty) return;
+      if (last && last[1] === index - 1) last[1] = index;
+      else gapRuns.push([index, index]);
+    });
   const category = (label: string) =>
     left + ((labels.indexOf(label) + 0.5) / labels.length) * (right - left);
   return (
@@ -106,18 +128,38 @@ export function Plot({
             </g>
           ))}
           {!horizontal &&
-            labels.map((label) => (
-              <text
-                className="analytics-axis-label"
-                key={label}
-                x={category(label)}
-                y={bottom + 28}
-                textAnchor="middle"
-              >
-                {label.length > 14 ? label.slice(0, 12) + "…" : label}
-                <title>{label}</title>
-              </text>
-            ))}
+            labels.map((label, index) =>
+              shownLabel(index) ? (
+                <text
+                  className="analytics-axis-label"
+                  key={label}
+                  x={category(label)}
+                  y={bottom + 28}
+                  textAnchor="middle"
+                >
+                  {label.length > 14 ? label.slice(0, 12) + "…" : label}
+                  <title>{label}</title>
+                </text>
+              ) : null,
+            )}
+          {type === "line" &&
+            gapRuns.map(([first, last]) => {
+              const step = (right - left) / labels.length;
+              const x1 = category(labels[first]!) - step / 2;
+              const width = (last - first + 1) * step;
+              const span = `${labels[first]!}${last > first ? ` to ${labels[last]!}` : ""}`;
+              return (
+                <g key={first} className="analytics-gap analytics-gap-band">
+                  <title>{`${span}: no data published`}</title>
+                  <rect x={x1} y={top} width={width} height={bottom - top} />
+                  {width >= 70 && (
+                    <text x={x1 + width / 2} y={(top + bottom) / 2} textAnchor="middle">
+                      No data
+                    </text>
+                  )}
+                </g>
+              );
+            })}
           {reference && (
             <g className="analytics-reference">
               <title>{`${reference.label}: ${numberLabel(reference.value)}`}</title>
@@ -203,6 +245,13 @@ export function Plot({
                         Math.min(18, ((right - left) / labels.length / series.length) * 0.6)
                       : 0);
                   const y = top + ((rowIndex + 0.5) / rows.length) * (bottom - top);
+                  // Line charts show gaps as bands (above) or as breaks in the line.
+                  if (row.value == null && type === "line")
+                    return (
+                      <g key={index}>
+                        <title>{`${row.series}, ${row.label}: ${rowValue(row)}`}</title>
+                      </g>
+                    );
                   if (row.value == null)
                     return (
                       <g key={index} className="analytics-gap">

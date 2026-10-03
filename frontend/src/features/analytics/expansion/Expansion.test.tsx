@@ -24,7 +24,14 @@ import {
 
 const data = vi.hoisted(
   () =>
-    ({ asOf: "2026-10-02", performance: [], supply: [], policies: [], amenities: [] }) as Expansion,
+    ({
+      asOf: "2026-10-02",
+      performance: [],
+      supply: [],
+      policies: [],
+      amenities: [],
+      consumption: [],
+    }) as Expansion,
 );
 vi.mock("virtual:analytics-expansion", () => ({ default: data }));
 afterEach(() => {

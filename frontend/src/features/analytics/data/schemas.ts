@@ -40,6 +40,7 @@ export const expansionDatasetIds = [
   "state_ev_policies",
   "nhai_wayside_amenities",
   "osm_power",
+  "cea_ev_consumption",
 ] as const;
 
 export const rowSchemas = {
@@ -206,6 +207,22 @@ export const rowSchemas = {
       point_derivation: z.enum(["node", "representative_point"]),
     })
     .strict(),
+  cea_ev_consumption: z
+    .object({
+      state: text,
+      cea_state_name: text,
+      report_month: month,
+      span: z.enum(["month", "fy_to_date"]),
+      span_start: date,
+      pcs_kwh: nullable(integer),
+      heavy_duty_pcs_kwh: nullable(integer),
+      other_kwh: nullable(integer),
+      total_kwh: nullable(integer),
+      source_url: url,
+      source_sha256: text.regex(/^[a-f0-9]{64}$/),
+      notes: z.string(),
+    })
+    .strict(),
 } as const;
 
 export type CsvDatasetId = keyof typeof rowSchemas;
@@ -231,6 +248,7 @@ export const datasetFiles: Record<DatasetId, string> = {
   state_ev_policies: "data.csv",
   nhai_wayside_amenities: "data.csv",
   osm_power: "data.csv",
+  cea_ev_consumption: "data.csv",
   district_boundaries: "data.topojson",
   highways: "data.geojson",
 };
@@ -247,6 +265,7 @@ export const datasetLabels: Record<DatasetId, string> = {
   state_ev_policies: "State EV policies",
   nhai_wayside_amenities: "NHAI wayside amenities",
   osm_power: "OpenStreetMap power equipment",
+  cea_ev_consumption: "EV charging electricity consumption (CEA)",
   district_boundaries: "District boundaries",
   highways: "National highways",
 };
@@ -329,6 +348,10 @@ export function columnType(
       "energy_charge_paise_per_kwh",
       "demand_or_fixed_charge_paise",
       "acs_arr_gap_paise_per_kwh",
+      "pcs_kwh",
+      "heavy_duty_pcs_kwh",
+      "other_kwh",
+      "total_kwh",
     ].includes(name)
   )
     return "integer";
@@ -340,7 +363,7 @@ export function columnType(
     return "number";
   if (["geometry", "former_names"].includes(name)) return "json";
   if (name === "covers_multiple_districts") return "boolean";
-  if (["month", "opened_month"].includes(name)) return "month";
+  if (["month", "opened_month", "report_month"].includes(name)) return "month";
   if (
     [
       "recorded_on",
@@ -354,6 +377,7 @@ export function columnType(
       "status_as_of",
       "source_doc_date",
       "extract_date",
+      "span_start",
     ].includes(name)
   )
     return "date";

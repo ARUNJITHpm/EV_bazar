@@ -468,6 +468,7 @@ export async function loadPublicData(root: string, fixtures = false): Promise<Lo
           "state" in row &&
           !(id === "state_ev_policies" && row.state === "central") &&
           !(id === "discom_performance" && row.state === "India" && row.discom_id === "national") &&
+          !(id === "cea_ev_consumption" && row.state === "India") &&
           !catalogue.districts.some((d) => d.state_name === row.state)
         )
           fail(loaded.file, line, "state", "state is absent from district reference");
@@ -537,6 +538,16 @@ export async function loadPublicData(root: string, fixtures = false): Promise<Lo
           if ((row.lat === null) !== (row.lon === null))
             fail(loaded.file, line, "lat/lon", "coordinates must be paired or both unknown");
           key = JSON.stringify([row.wsa_id, row.source_doc_date, row.status_as_of, row.status]);
+        }
+        if (id === "cea_ev_consumption") {
+          if (row.span === "month" && row.span_start !== `${String(row.report_month)}-01`)
+            fail(loaded.file, line, "span_start", "a month row starts on its report month");
+          if (
+            row.span === "fy_to_date" &&
+            String(row.span_start) > `${String(row.report_month)}-01`
+          )
+            fail(loaded.file, line, "span_start", "year to date cannot start after its month");
+          key = JSON.stringify([row.state, row.report_month, row.span]);
         }
         if (id === "osm_power") {
           if (String(row.osm_id).startsWith("node/") !== (row.point_derivation === "node"))

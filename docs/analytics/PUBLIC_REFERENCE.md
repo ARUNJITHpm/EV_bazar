@@ -20,8 +20,10 @@ Each expansion directory contains `data.template.csv` and
 `meta.template.json`; reviewed OSM observations also have active `data.csv` and
 `meta.json`. Complete
 source checksum, licence URL, review reference and transformation version before
-activation. The review reference identifies a review record, not private owner
-data. The checksum identifies the upstream artifact; raw CSV and metadata
+activation. A source with no stated licence may activate under the publication
+rule in [DATA_SOURCES_TODO.md](DATA_SOURCES_TODO.md); its `licence` records that
+basis, never an invented licence. The review reference identifies a review record,
+not private owner data. The checksum identifies the upstream artifact; raw CSV and metadata
 digests are separately computed during validation.
 
 The five schemas add these provenance refinements to the roadmap fields:

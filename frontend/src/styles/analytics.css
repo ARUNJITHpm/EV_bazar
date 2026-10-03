@@ -354,6 +354,13 @@
   fill: var(--cw-ink);
   font: 17px var(--cw-mono);
 }
+.analytics-gap-band rect {
+  fill: var(--cw-rule);
+  opacity: 0.35;
+}
+.analytics-gap-band text {
+  fill: var(--cw-paper-muted);
+}
 .analytics-series {
   stroke: var(--cw-paper-slate);
   fill: var(--cw-paper-slate);

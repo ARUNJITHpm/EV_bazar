@@ -40,6 +40,7 @@ for (const [id, column, bad] of [
   ["state_ev_policies", "notified_on", "2020-02-30"],
   ["nhai_wayside_amenities", "lat", "91"],
   ["osm_power", "lon", "181"],
+  ["cea_ev_consumption", "report_month", "2020-13"],
 ]) {
   const originals = new Map<string, Buffer | null>();
   const directory = resolve("../data/public", id!);

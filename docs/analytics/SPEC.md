@@ -223,6 +223,9 @@ validation reports through the frontend.
    and eligible original outputs. Third-party material retains its licence,
    including OSM's ODbL obligations. Do not blanket-relicense all source CSVs;
    document reuse permissions per dataset and with each download in Parts 2/7.
+   Publicly available data without a stated licence may be published with
+   attribution under the publication rule in `DATA_SOURCES_TODO.md` (owner
+   decision, 2026-10-03).
 
 9. **Token and build descriptions contain older assumptions.** Actual Tailwind
    configuration is CSS-first v4, not a new `tailwind.config.ts`. Reuse the

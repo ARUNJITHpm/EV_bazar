@@ -13,13 +13,18 @@ afterEach(async () => {
 it("production consumers use validated artifacts and keep pending sources empty", async () => {
   const loaded = await loadPublicData(resolve("../data/public"));
   const data = buildExpansion(loaded, "2026-10-02");
-  expect(data).toEqual({
+  const { consumption, ...pending } = data;
+  expect(pending).toEqual({
     asOf: "2026-10-02",
     performance: [],
     supply: [],
     policies: [],
     amenities: [],
   });
+  // CEA's reports are the one published expansion source (2026-10-03).
+  expect(consumption.length).toBeGreaterThan(0);
+  expect(consumption.every((r) => r.source_url.startsWith("https://cea.nic.in/"))).toBe(true);
+  expect(consumption.some((r) => r.state === "India")).toBe(true);
 });
 it("validates an explicitly scoped national PFC reference without relaxing state joins", async () => {
   const root = await mkdtemp(resolve(tmpdir(), "part15-national-"));

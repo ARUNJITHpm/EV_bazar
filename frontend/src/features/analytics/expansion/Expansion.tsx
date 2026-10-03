@@ -5,6 +5,8 @@ import { numberLabel } from "../chart/model";
 import type { DatasetId, District } from "../data/schemas";
 import { stateLabel } from "../districts/model";
 import {
+  consumptionCharts,
+  consumptionNote,
   latestSupply,
   outageNote,
   performanceCharts,
@@ -114,6 +116,7 @@ export function Policies({ state }: { state?: string }) {
 
 export function ElectricityContext() {
   const charts = performanceCharts(expansion, catalogue);
+  const consumption = consumptionCharts(expansion, catalogue);
   const supply = latestSupply(expansion.supply, expansion.asOf);
   const supplyChart = sourceChart(catalogue, "supply_hours", {
     id: "area-supply-hours",
@@ -142,6 +145,16 @@ export function ElectricityContext() {
   });
   return (
     <>
+      <section className="analytics-section analytics-context" id="ev-charging-electricity">
+        <h2>Electricity used by EV charging</h2>
+        <p>{consumptionNote}</p>
+        {consumption.length ? (
+          consumption.map((data) => <Chart key={data.id} data={data} />)
+        ) : (
+          <p>Not available yet. CEA's monthly reports have not been loaded.</p>
+        )}
+        <SourceLine id="cea_ev_consumption" />
+      </section>
       <section className="analytics-section analytics-context">
         <h2>Electricity billing and collection losses</h2>
         <p>{outageNote}</p>

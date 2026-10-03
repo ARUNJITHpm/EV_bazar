@@ -41,6 +41,7 @@ data/public/*
 !data/public/state_ev_policies/
 !data/public/nhai_wayside_amenities/
 !data/public/osm_power/
+!data/public/cea_ev_consumption/
 data/public/*/*
 !data/public/*/.gitkeep
 !data/public/*/data.csv
@@ -101,3 +102,4 @@ frontend/node_modules/
 # CEA EV report PDFs fetched by scripts.fetch_cea_ev (reproducible from their URLs).
 /data/cea_ev/
 /cea_archive_index.txt
+/cea_copyright_policy.pdf

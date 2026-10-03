@@ -5,6 +5,28 @@ Sources were checked on 2026-09-30, with acquisition on 2026-10-01 recorded in
 [PART12_SOURCE_REVIEW.md](PART12_SOURCE_REVIEW.md). Portal availability can vary. Never record
 that date as a dataset's retrieval date unless the actual dataset was retrieved.
 
+## Publication rule (owner decision, 2026-10-03)
+
+Publicly available data may be published on Chargeworthy Data, including
+government statistics whose publisher states no reuse licence. Conditions:
+
+- **Attribute and link** the publisher on every chart, table and download
+  (`source_name`, `source_url`, `attribution`).
+- **Reproduce, do not alter.** Values are published as the source prints them
+  (unit conversion such as MU to kWh is allowed and documented); gaps stay
+  gaps, never zero or interpolated.
+- **Record the basis honestly.** Where the source has a licence, keep it
+  (OSM stays ODbL; CC BY 4.0 still never relicenses third-party data). Where it
+  has none, `licence` states that and names this decision, and `licence_url`
+  points to the publisher's terms page. Never invent a licence.
+- **Keep a review record** (`review_ref`) saying what was read, how it was
+  checked and what is refused.
+- Remove a dataset promptly if a publisher objects.
+
+This replaces the earlier gate that kept a source unpublished until a reuse
+licence was verified. Data scraped from private apps and owner data remain
+private; this rule is about publicly published statistics.
+
 ## How to add a dataset
 
 1. Keep the original download and a checksum outside `data/public/`. Preserve
@@ -219,8 +241,8 @@ publisher date (unknown if absent), represented period, edition, table/page,
 units, definitions, licence evidence and human reviewer. Publish only reviewed
 allowlisted observations in `data/public/<id>/data.csv` with `meta.json` through
 the existing validator. Preserve the upstream licence; Chargeworthy's CC BY 4.0
-text licence does not relicense third-party data. Public accessibility alone is
-not commercial reuse permission. Reject HTML/error/login pages saved as PDFs.
+text licence does not relicense third-party data. A source without a stated
+licence may be published under the publication rule above. Reject HTML/error/login pages saved as PDFs.
 Never use demo/sandbox records as live observations. Missing means null, not zero.
 
 ## DISCOM performance - PFC acquisition pending
