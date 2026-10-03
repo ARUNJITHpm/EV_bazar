@@ -28,6 +28,9 @@ def create_app() -> FastAPI:
         title="EV Site Intelligence Platform",
         version="0.1.0",
         docs_url="/api/docs" if settings.env != "prod" else None,
+        # The schema is the full map of every route and field; in prod nobody
+        # outside needs it. CI builds schema.d.ts from app.openapi(), not HTTP.
+        openapi_url="/api/openapi.json" if settings.env != "prod" else None,
         redoc_url=None,
     )
 

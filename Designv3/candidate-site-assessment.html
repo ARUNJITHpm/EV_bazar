@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Full Site Assessment — Animated Section</title>
+  <style>
+    :root {
+      --ground: #070a08;
+      --surface: #111513;
+      --surface-2: #181d1a;
+      --line: #292d2b;
+      --line-soft: #202422;
+      --text: #f2f4f2;
+      --muted: #929995;
+      --green: #39b970;
+      --green-deep: #237a4e;
+      --green-soft: #6bd399;
+      --warning: #d99a4a;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      min-width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background: var(--ground);
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      font-family: Archivo, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .assessment {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(390px, .92fr) minmax(500px, 1.08fr);
+      gap: clamp(38px, 5.5vw, 78px);
+      width: min(1240px, 96vw);
+      min-height: min(750px, 96vh);
+      padding: clamp(34px, 4.5vw, 68px);
+      border: 1px solid var(--line-soft);
+      background:
+        linear-gradient(rgba(32, 36, 34, .15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(32, 36, 34, .15) 1px, transparent 1px),
+        var(--ground);
+      background-size: 40px 40px;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .assessment::before,
+    .assessment::after {
+      content: "";
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      pointer-events: none;
+    }
+
+    .assessment::before {
+      top: 18px;
+      left: 18px;
+      border-top: 1px solid var(--green-deep);
+      border-left: 1px solid var(--green-deep);
+    }
+
+    .assessment::after {
+      right: 18px;
+      bottom: 18px;
+      border-right: 1px solid var(--green-deep);
+      border-bottom: 1px solid var(--green-deep);
+    }
+
+    .site-visual,
+    .ledger {
+      transition: opacity 500ms var(--ease);
+    }
+
+    .assessment.loop-fade .site-visual,
+    .assessment.loop-fade .ledger {
+      opacity: 0;
+    }
+
+    .site-visual {
+      position: relative;
+      align-self: center;
+      min-width: 0;
+    }
+
+    .site-plan {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 580px;
+    }
+
+    .parcel-fill {
+      fill: rgba(35, 122, 78, .065);
+      opacity: 0;
+      animation: parcel-fill-in 22s var(--ease) infinite;
+    }
+
+    .parcel-outline {
+      fill: none;
+      stroke: var(--green-deep);
+      stroke-width: 2;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      vector-effect: non-scaling-stroke;
+      animation: parcel-draw 22s var(--ease) infinite;
+    }
+
+    .parcel-setback {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 1;
+      stroke-dasharray: 5 7;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .map-layer {
+      opacity: .24;
+      transition: opacity 300ms var(--ease);
+    }
+
+    .assessment[data-stage="road"] .road-layer,
+    .assessment[data-stage="demand"] .demand-layer,
+    .assessment[data-stage="grid"] .grid-layer,
+    .assessment[data-stage="plot"] .plot-layer,
+    .assessment[data-stage="commercial"] .commercial-layer {
+      opacity: 1;
+    }
+
+    .assessment[data-stage="summary"] .map-layer { opacity: .78; }
+
+    .road-edge {
+      fill: none;
+      stroke: #0e1712;
+      stroke-width: 58;
+      stroke-linecap: round;
+    }
+
+    .road {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 48;
+      stroke-linecap: round;
+    }
+
+    .road-mark {
+      fill: none;
+      stroke: #59615d;
+      stroke-width: 1.5;
+      stroke-dasharray: 13 14;
+      opacity: .6;
+    }
+
+    .access-route {
+      fill: none;
+      stroke: var(--green-deep);
+      stroke-width: 9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .access-arrow,
+    .traffic-arrow { fill: var(--green-soft); }
+
+    .traffic-badge,
+    .map-badge {
+      fill: rgba(7, 10, 8, .93);
+      stroke: var(--green-deep);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .map-label {
+      fill: var(--muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 10px;
+      letter-spacing: .09em;
+    }
+
+    .map-value {
+      fill: var(--text);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bay {
+      fill: rgba(24, 29, 26, .78);
+      stroke: #56615b;
+      stroke-width: 1.25;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .bay-line {
+      stroke: var(--line);
+      stroke-width: 1;
+      stroke-dasharray: 4 5;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .canopy {
+      fill: rgba(35, 122, 78, .045);
+      stroke: var(--green-deep);
+      stroke-width: 1;
+      stroke-dasharray: 7 6;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .island {
+      fill: var(--surface-2);
+      stroke: var(--green-deep);
+      stroke-width: 1.25;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .charger-head {
+      fill: var(--green-deep);
+      stroke: var(--green-soft);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .charger-bolt { fill: var(--green-soft); }
+    .bollard { fill: #303733; stroke: #69736d; stroke-width: .7; }
+
+    .transformer {
+      fill: var(--surface-2);
+      stroke: var(--green-deep);
+      stroke-width: 1.5;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .power-route {
+      fill: none;
+      stroke: var(--green-deep);
+      stroke-width: 2;
+      stroke-dasharray: 7 6;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .competitor-ring {
+      fill: none;
+      stroke: var(--green-deep);
+      stroke-width: 1;
+      opacity: .55;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .competitor-dot { fill: var(--warning); }
+    .site-dot { fill: var(--green); }
+
+    .scan {
+      opacity: 0;
+      animation: survey-scan 3.3s linear infinite;
+    }
+
+    .assessment[data-stage="intro"] .scan,
+    .assessment[data-stage="summary"] .scan {
+      animation-play-state: paused;
+      opacity: 0;
+    }
+
+    .survey-band { fill: url(#scanFade); }
+    .survey-line { stroke: var(--green-soft); stroke-width: 2; vector-effect: non-scaling-stroke; }
+
+    .candidate-tag {
+      position: absolute;
+      top: 1.5%;
+      left: 1.5%;
+      min-width: 232px;
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      background: rgba(7, 10, 8, .9);
+      color: var(--muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+    }
+
+    .candidate-tag strong {
+      color: var(--green-soft);
+      font-weight: 700;
+    }
+
+    .ledger {
+      display: flex;
+      flex-direction: column;
+      align-self: center;
+      min-width: 0;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--green-soft);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: clamp(11px, 1.2vw, 13px);
+      font-weight: 700;
+      letter-spacing: .16em;
+    }
+
+    h1 {
+      max-width: 610px;
+      margin: 0 0 10px;
+      color: var(--text);
+      font-size: clamp(34px, 4.2vw, 56px);
+      font-weight: 520;
+      letter-spacing: -.045em;
+      line-height: .98;
+    }
+
+    .intro-copy {
+      max-width: 620px;
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: clamp(14px, 1.35vw, 17px);
+      line-height: 1.5;
+    }
+
+    .category-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .category {
+      min-width: 0;
+      padding: 9px 8px 8px;
+      border: 1px solid var(--line);
+      background: rgba(17, 21, 19, .78);
+      transition: border-color 200ms ease, background 200ms ease;
+    }
+
+    .category-number {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .category-name {
+      display: block;
+      overflow: hidden;
+      color: #6f7973;
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 8px;
+      letter-spacing: .08em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .category.active {
+      border-color: var(--green);
+      background: rgba(35, 122, 78, .11);
+    }
+
+    .category.active .category-number,
+    .category.active .category-name {
+      color: var(--green-soft);
+    }
+
+    .category.complete {
+      border-color: var(--green-deep);
+    }
+
+    .category.complete .category-number { color: var(--text); }
+
+    .panel-stack {
+      position: relative;
+      min-height: 294px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .factor-panel {
+      position: absolute;
+      inset: 0;
+      padding: 14px 0 12px;
+      opacity: 0;
+      transform: translateY(7px);
+      pointer-events: none;
+      transition: opacity 220ms ease, transform 380ms var(--ease);
+    }
+
+    .factor-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 10px;
+      color: var(--green-soft);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+
+    .panel-heading span:last-child {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .factor-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 18px;
+    }
+
+    .check {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 43px;
+      border-top: 1px solid var(--line-soft);
+      opacity: 0;
+      transform: translateY(4px);
+    }
+
+    .factor-panel.active .check {
+      animation: check-in 380ms var(--ease) forwards;
+      animation-delay: calc(var(--i) * 42ms);
+    }
+
+    .check-label {
+      overflow: hidden;
+      color: var(--muted);
+      font-size: clamp(11px, 1vw, 13px);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .check-value {
+      color: var(--text);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: clamp(10px, .95vw, 12px);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      transition: color 160ms ease;
+    }
+
+    .check-value.changing { color: var(--green-soft); }
+    .check-value.warning { color: var(--warning); }
+
+    .intro-panel {
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .initialising {
+      color: var(--muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 12px;
+      letter-spacing: .14em;
+    }
+
+    .initialising::after {
+      content: "";
+      display: block;
+      width: 160px;
+      height: 2px;
+      margin: 16px auto 0;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      animation: initialise 1.2s ease-in-out infinite;
+    }
+
+    .summary-panel { padding-top: 18px; }
+
+    .summary-counts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .summary-count {
+      padding: 12px 10px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .summary-count strong {
+      display: block;
+      color: var(--text);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .summary-count span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 9px;
+      letter-spacing: .1em;
+    }
+
+    .summary-count.warning strong,
+    .summary-count.warning span { color: var(--warning); }
+
+    .confidence-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 10px;
+      letter-spacing: .09em;
+    }
+
+    .band {
+      position: relative;
+      height: 16px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .band-fill {
+      position: absolute;
+      top: 3px;
+      bottom: 3px;
+      left: 19%;
+      width: 53%;
+      background: var(--green-deep);
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+
+    .summary-panel.active .band-fill {
+      animation: band-fill 900ms var(--ease) 220ms forwards;
+    }
+
+    .breakeven {
+      position: absolute;
+      top: -7px;
+      bottom: -7px;
+      left: 47%;
+      width: 2px;
+      background: var(--text);
+      opacity: 0;
+    }
+
+    .summary-panel.active .breakeven {
+      animation: marker-in 500ms var(--ease) 780ms forwards;
+    }
+
+    .band-labels {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      margin-top: 7px;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 9px;
+    }
+
+    .band-labels span:nth-child(2) { color: var(--text); text-align: center; }
+    .band-labels span:last-child { text-align: right; }
+
+    .verdict {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 17px;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 15px;
+      border-top: 2px solid var(--green-deep);
+      opacity: 0;
+      transform: translateY(7px);
+    }
+
+    .summary-panel.active .verdict {
+      animation: verdict-in 600ms var(--ease) 1.25s forwards;
+    }
+
+    .verdict-word {
+      color: var(--green);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: clamp(23px, 2.7vw, 34px);
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .verdict-copy {
+      color: var(--muted);
+      font-size: clamp(11px, 1.05vw, 13px);
+      line-height: 1.4;
+    }
+
+    .footnote {
+      position: absolute;
+      right: 28px;
+      bottom: 22px;
+      color: #68716c;
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .assessment.paused * { animation-play-state: paused !important; }
+
+    @keyframes parcel-draw {
+      0% { stroke-dashoffset: 1; opacity: 1; }
+      7%, 96% { stroke-dashoffset: 0; opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+
+    @keyframes parcel-fill-in {
+      0%, 3% { opacity: 0; }
+      8%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes survey-scan {
+      0% { opacity: 0; transform: translateY(-72px); }
+      8% { opacity: .9; }
+      90% { opacity: .9; transform: translateY(430px); }
+      100% { opacity: 0; transform: translateY(430px); }
+    }
+
+    @keyframes check-in {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes initialise {
+      0%, 100% { transform: scaleX(.2); opacity: .25; }
+      50% { transform: scaleX(1); opacity: 1; }
+    }
+
+    @keyframes band-fill {
+      to { transform: scaleX(1); }
+    }
+
+    @keyframes marker-in {
+      to { opacity: 1; }
+    }
+
+    @keyframes verdict-in {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 820px) {
+      body { display: block; }
+
+      .assessment {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        width: 100%;
+        min-height: 100svh;
+        padding: 44px 22px 72px;
+        border-right: 0;
+        border-left: 0;
+        overflow: visible;
+      }
+
+      .site-visual {
+        width: min(100%, 520px);
+        margin-inline: auto;
+      }
+
+      .site-plan { max-height: none; }
+      .ledger { width: min(100%, 600px); margin-inline: auto; }
+      h1 { font-size: clamp(38px, 10vw, 54px); }
+      .intro-copy { margin-bottom: 18px; }
+      .panel-stack { min-height: 336px; }
+      .factor-list { grid-template-columns: 1fr; }
+      .check { min-height: 31px; }
+      .category-name { display: none; }
+      .category { text-align: center; }
+      .footnote { right: 22px; bottom: 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce), print {
+      .parcel-fill,
+      .parcel-outline,
+      .scan,
+      .check,
+      .initialising::after,
+      .band-fill,
+      .breakeven,
+      .verdict {
+        animation: none !important;
+      }
+
+      .parcel-fill { opacity: 1; }
+      .parcel-outline { stroke-dashoffset: 0; opacity: 1; }
+      .scan, .intro-panel { opacity: 0 !important; }
+      .check { opacity: 1; transform: none; }
+      .band-fill { transform: scaleX(1); }
+      .breakeven, .verdict { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <section class="assessment" data-stage="intro" aria-labelledby="assessment-title">
+    <div class="site-visual">
+      <div class="candidate-tag"><strong id="stageStatus">INITIALISING SOURCES</strong> · CM-KL-047</div>
+
+      <svg class="site-plan" viewBox="0 0 480 520" role="img" aria-labelledby="plan-title plan-desc">
+        <title id="plan-title">Full EV charging-site assessment</title>
+        <desc id="plan-desc">A candidate parcel with road access, traffic, off-site transformer connection, charging bays and competitor catchment.</desc>
+
+        <defs>
+          <pattern id="planGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+            <path d="M24 0H0V24" fill="none" stroke="#202422" stroke-width="1" opacity=".5"/>
+          </pattern>
+          <linearGradient id="scanFade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#39b970" stop-opacity="0"/>
+            <stop offset="1" stop-color="#39b970" stop-opacity=".16"/>
+          </linearGradient>
+          <clipPath id="parcelClip">
+            <path d="M70 60 L388 42 L432 178 L400 420 L126 444 L54 310 Z"/>
+          </clipPath>
+        </defs>
+
+        <rect x="24" y="22" width="432" height="458" fill="#0a0d0b" stroke="#202422"/>
+        <rect x="24" y="22" width="432" height="458" fill="url(#planGrid)"/>
+        <path class="parcel-fill" d="M70 60 L388 42 L432 178 L400 420 L126 444 L54 310 Z"/>
+        <path class="parcel-outline" pathLength="1" d="M70 60 L388 42 L432 178 L400 420 L126 444 L54 310 Z"/>
+        <path class="parcel-setback" d="M88 82 L373 66 L408 184 L380 398 L139 420 L78 300 Z"/>
+
+        <g class="map-layer road-layer">
+          <path class="road-edge" d="M-15 471 C95 435 206 468 303 451 C382 437 425 416 500 398"/>
+          <path class="road" d="M-15 471 C95 435 206 468 303 451 C382 437 425 416 500 398"/>
+          <path class="road-mark" d="M-15 471 C95 435 206 468 303 451 C382 437 425 416 500 398"/>
+          <path class="access-route" d="M345 443 C344 407 331 376 306 351 L280 328"/>
+          <path class="access-arrow" d="M274 327 L289 321 L285 336 Z"/>
+          <rect class="map-badge" x="322" y="468" width="104" height="25" rx="12.5"/>
+          <text class="map-label" x="374" y="485" text-anchor="middle">8.2 m ENTRY</text>
+        </g>
+
+        <g class="map-layer demand-layer">
+          <path class="traffic-arrow" d="M74 447 l18 -4 l-10 16z"/>
+          <path class="traffic-arrow" d="M161 451 l18 -1 l-12 14z"/>
+          <rect class="traffic-badge" x="78" y="381" width="126" height="43" rx="5"/>
+          <text class="map-label" x="91" y="398">AADT</text>
+          <text class="map-value" x="91" y="416">18,400 / DAY</text>
+        </g>
+
+        <g class="map-layer grid-layer">
+          <!-- The transformer is outside the parcel; the route is labelled 140 m. -->
+          <rect class="transformer" x="17" y="92" width="47" height="54" rx="5"/>
+          <text class="map-label" x="40.5" y="113" text-anchor="middle">TX</text>
+          <text class="map-value" x="40.5" y="133" text-anchor="middle">180</text>
+          <path class="power-route" d="M64 119 H102 V174 H146 V208"/>
+          <rect class="transformer" x="132" y="194" width="29" height="34" rx="3"/>
+          <rect class="map-badge" x="74" y="147" width="74" height="23" rx="11.5"/>
+          <text class="map-label" x="111" y="162" text-anchor="middle">140 m GRID</text>
+        </g>
+
+        <g class="map-layer plot-layer">
+          <rect class="canopy" x="126" y="196" width="294" height="158" rx="6"/>
+          <rect class="bay" x="133" y="218" width="65" height="118" rx="4"/>
+          <rect class="bay" x="201" y="218" width="65" height="118" rx="4"/>
+          <rect class="bay" x="286" y="218" width="65" height="118" rx="4"/>
+          <rect class="bay" x="354" y="218" width="59" height="118" rx="4"/>
+          <path class="bay-line" d="M165 218V336 M233 218V336 M318 218V336 M383 218V336"/>
+
+          <!-- Two charging islands, each serving a pair of bays. -->
+          <g transform="translate(199 206)">
+            <rect class="island" x="-15" y="-12" width="30" height="24" rx="5"/>
+            <rect class="charger-head" x="-8" y="-9" width="16" height="18" rx="4"/>
+            <path class="charger-bolt" d="M2 -6 L-4 1 H0 L-2 6 L5 -2 H2Z"/>
+            <circle class="bollard" cx="-21" cy="-7" r="3"/>
+            <circle class="bollard" cx="21" cy="-7" r="3"/>
+          </g>
+          <g transform="translate(352 206)">
+            <rect class="island" x="-15" y="-12" width="30" height="24" rx="5"/>
+            <rect class="charger-head" x="-8" y="-9" width="16" height="18" rx="4"/>
+            <path class="charger-bolt" d="M2 -6 L-4 1 H0 L-2 6 L5 -2 H2Z"/>
+            <circle class="bollard" cx="-21" cy="-7" r="3"/>
+            <circle class="bollard" cx="21" cy="-7" r="3"/>
+          </g>
+
+          <text class="map-label" x="273" y="372" text-anchor="middle">2 × 30 kW DC · 4 CONNECTORS · LOAD MANAGED</text>
+        </g>
+
+        <g class="map-layer commercial-layer" transform="translate(344 114)">
+          <rect class="map-badge" x="-65" y="-67" width="130" height="134" rx="5"/>
+          <circle class="competitor-ring" r="23"/>
+          <circle class="competitor-ring" r="41"/>
+          <circle class="competitor-ring" r="57"/>
+          <circle class="site-dot" r="4"/>
+          <circle class="competitor-dot" cx="-12" cy="-31" r="3"/>
+          <circle class="competitor-dot" cx="35" cy="19" r="3"/>
+          <circle class="competitor-dot" cx="-44" cy="30" r="3"/>
+          <text class="map-label" x="0" y="-47" text-anchor="middle">3 / 5 / 10 KM</text>
+          <text class="map-label" x="0" y="57" text-anchor="middle">3 COMPETITORS</text>
+        </g>
+
+        <g clip-path="url(#parcelClip)">
+          <g class="scan">
+            <rect class="survey-band" x="40" y="-34" width="410" height="34"/>
+            <line class="survey-line" x1="40" y1="0" x2="450" y2="0"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="ledger">
+      <p class="eyebrow">34 ASSESSMENT CHECKS</p>
+      <h1 id="assessment-title">Nothing here is assumed.</h1>
+      <p class="intro-copy">Every factor is measured or sourced. Anything unverified is marked clearly—never buried.</p>
+
+      <div class="category-strip" aria-label="Assessment categories">
+        <div class="category" data-category="road"><span class="category-number">09</span><span class="category-name">ROAD</span></div>
+        <div class="category" data-category="demand"><span class="category-number">07</span><span class="category-name">DEMAND</span></div>
+        <div class="category" data-category="grid"><span class="category-number">08</span><span class="category-name">GRID</span></div>
+        <div class="category" data-category="plot"><span class="category-number">06</span><span class="category-name">PLOT</span></div>
+        <div class="category" data-category="commercial"><span class="category-number">04</span><span class="category-name">MARKET</span></div>
+      </div>
+
+      <div class="panel-stack">
+        <section class="factor-panel intro-panel active" data-panel="intro">
+          <div class="initialising">CONNECTING VERIFIED DATA SOURCES</div>
+        </section>
+
+        <section class="factor-panel" data-panel="road">
+          <div class="panel-heading"><span>ROAD ACCESS & GEOMETRY</span><span>09 CHECKS</span></div>
+          <div class="factor-list">
+            <div class="check" style="--i:0"><span class="check-label">Road class</span><span class="check-value" data-final="NH arterial" data-pool="SH arterial|Urban arterial|MDR|NH arterial"></span></div>
+            <div class="check" style="--i:1"><span class="check-label">Distance from main road</span><span class="check-value" data-final="0.4 km" data-pool="0.2 km|0.8 km|1.1 km|0.4 km"></span></div>
+            <div class="check" style="--i:2"><span class="check-label">Carriageway direction</span><span class="check-value" data-final="Eastbound" data-pool="Northbound|Southbound|Westbound|Eastbound"></span></div>
+            <div class="check" style="--i:3"><span class="check-label">Sub-road access</span><span class="check-value" data-final="2 points" data-pool="1 point|3 points|4 points|2 points"></span></div>
+            <div class="check" style="--i:4"><span class="check-label">Median / divider</span><span class="check-value" data-final="Divided" data-pool="Undivided|Raised|Painted|Divided"></span></div>
+            <div class="check" style="--i:5"><span class="check-label">Sight line</span><span class="check-value" data-final="180 m" data-pool="110 m|145 m|220 m|180 m"></span></div>
+            <div class="check" style="--i:6"><span class="check-label">Turning radius</span><span class="check-value" data-final="12.5 m" data-pool="8.5 m|10.2 m|14.4 m|12.5 m"></span></div>
+            <div class="check" style="--i:7"><span class="check-label">Entry / exit width</span><span class="check-value" data-final="8.2 m" data-pool="6.4 m|7.1 m|9.0 m|8.2 m"></span></div>
+            <div class="check" style="--i:8"><span class="check-label">Frontage width</span><span class="check-value" data-final="46 m" data-pool="31 m|52 m|64 m|46 m"></span></div>
+          </div>
+        </section>
+
+        <section class="factor-panel" data-panel="demand">
+          <div class="panel-heading"><span>DEMAND & MOBILITY</span><span>07 CHECKS</span></div>
+          <div class="factor-list">
+            <div class="check" style="--i:0"><span class="check-label">AADT traffic count</span><span class="check-value" data-final="18,400 /day" data-pool="12,600 /day|21,300 /day|16,900 /day|18,400 /day"></span></div>
+            <div class="check" style="--i:1"><span class="check-label">Dominant flow direction</span><span class="check-value" data-final="Inbound AM" data-pool="Outbound AM|Inbound PM|Balanced|Inbound AM"></span></div>
+            <div class="check" style="--i:2"><span class="check-label">Peak-hour timing</span><span class="check-value" data-final="08:00–10:00" data-pool="07:00–09:00|12:00–14:00|17:00–19:00|08:00–10:00"></span></div>
+            <div class="check" style="--i:3"><span class="check-label">EV registrations</span><span class="check-value" data-final="12,540" data-pool="8,920|14,670|10,840|12,540"></span></div>
+            <div class="check" style="--i:4"><span class="check-label">Registration mix</span><span class="check-value" data-final="68% 4W" data-pool="54% 4W|72% 2W|41% fleet|68% 4W"></span></div>
+            <div class="check" style="--i:5"><span class="check-label">Fleet operators, 10 km</span><span class="check-value" data-final="14" data-pool="8|19|11|14"></span></div>
+            <div class="check" style="--i:6"><span class="check-label">Nearest city</span><span class="check-value" data-final="6.8 km" data-pool="3.4 km|9.1 km|12.6 km|6.8 km"></span></div>
+          </div>
+        </section>
+
+        <section class="factor-panel" data-panel="grid">
+          <div class="panel-heading"><span>GRID, TARIFF & POLICY</span><span>08 CHECKS</span></div>
+          <div class="factor-list">
+            <div class="check" style="--i:0"><span class="check-label">Tariff order</span><span class="check-value" data-final="TOU C&amp;I" data-pool="LT-VIIA|HT-IV|EV tariff|TOU C&amp;I"></span></div>
+            <div class="check" style="--i:1"><span class="check-label">Demand charges</span><span class="check-value" data-final="₹390 /kVA" data-pool="₹310 /kVA|₹460 /kVA|₹425 /kVA|₹390 /kVA"></span></div>
+            <div class="check" style="--i:2"><span class="check-label">Sanctioned load</span><span class="check-value" data-final="75 kVA" data-pool="50 kVA|100 kVA|125 kVA|75 kVA"></span></div>
+            <div class="check" style="--i:3"><span class="check-label">Transformer distance</span><span class="check-value" data-final="140 m" data-pool="80 m|210 m|320 m|140 m"></span></div>
+            <div class="check" style="--i:4"><span class="check-label">Transformer spare capacity</span><span class="check-value" data-final="180 kVA" data-pool="90 kVA|240 kVA|320 kVA|180 kVA"></span></div>
+            <div class="check" style="--i:5"><span class="check-label">Grid outage hours</span><span class="check-value warning" data-final="UNVERIFIED" data-pool="1.8 h/mo|4.2 h/mo|2.7 h/mo|UNVERIFIED"></span></div>
+            <div class="check" style="--i:6"><span class="check-label">New connection cost</span><span class="check-value" data-final="₹8.4 lakh" data-pool="₹5.6 lakh|₹12.1 lakh|₹9.8 lakh|₹8.4 lakh"></span></div>
+            <div class="check" style="--i:7"><span class="check-label">State subsidy</span><span class="check-value" data-final="Applicable" data-pool="Not applicable|Conditional|Under review|Applicable"></span></div>
+          </div>
+        </section>
+
+        <section class="factor-panel" data-panel="plot">
+          <div class="panel-heading"><span>PLOT READINESS</span><span>06 CHECKS</span></div>
+          <div class="factor-list">
+            <div class="check" style="--i:0"><span class="check-label">Plot area</span><span class="check-value" data-final="3,420 m²" data-pool="2,680 m²|4,150 m²|3,860 m²|3,420 m²"></span></div>
+            <div class="check" style="--i:1"><span class="check-label">Parking bays</span><span class="check-value" data-final="12" data-pool="8|16|10|12"></span></div>
+            <div class="check" style="--i:2"><span class="check-label">Canopy feasibility</span><span class="check-value" data-final="680 m²" data-pool="420 m²|760 m²|540 m²|680 m²"></span></div>
+            <div class="check" style="--i:3"><span class="check-label">Amenities, walkable</span><span class="check-value" data-final="6" data-pool="3|8|4|6"></span></div>
+            <div class="check" style="--i:4"><span class="check-label">Mobile coverage</span><span class="check-value" data-final="-79 dBm" data-pool="-92 dBm|-71 dBm|-84 dBm|-79 dBm"></span></div>
+            <div class="check" style="--i:5"><span class="check-label">Night lighting</span><span class="check-value" data-final="18 lux" data-pool="11 lux|24 lux|15 lux|18 lux"></span></div>
+          </div>
+        </section>
+
+        <section class="factor-panel" data-panel="commercial">
+          <div class="panel-heading"><span>COMMERCIAL LANDSCAPE</span><span>04 CHECKS</span></div>
+          <div class="factor-list">
+            <div class="check" style="--i:0"><span class="check-label">Land / lease cost</span><span class="check-value" data-final="₹1.8 lakh/mo" data-pool="₹1.2 lakh/mo|₹2.4 lakh/mo|₹2.0 lakh/mo|₹1.8 lakh/mo"></span></div>
+            <div class="check" style="--i:1"><span class="check-label">Nearest competitor</span><span class="check-value" data-final="2.4 km" data-pool="1.1 km|4.8 km|3.2 km|2.4 km"></span></div>
+            <div class="check" style="--i:2"><span class="check-label">Density, 3 / 5 / 10 km</span><span class="check-value" data-final="1 / 3 / 5" data-pool="0 / 2 / 4|2 / 5 / 8|1 / 4 / 7|1 / 3 / 5"></span></div>
+            <div class="check" style="--i:3"><span class="check-label">Announced stations</span><span class="check-value" data-final="2" data-pool="0|4|1|2"></span></div>
+          </div>
+        </section>
+
+        <section class="factor-panel summary-panel" data-panel="summary">
+          <div class="panel-heading"><span>ASSESSMENT COMPLETE</span><span>34 / 34 CHECKS</span></div>
+          <div class="summary-counts">
+            <div class="summary-count"><strong>27</strong><span>MEASURED</span></div>
+            <div class="summary-count"><strong>06</strong><span>SOURCED</span></div>
+            <div class="summary-count warning"><strong>01</strong><span>UNVERIFIED</span></div>
+          </div>
+          <div class="confidence-head"><span>12-MONTH UTILISATION</span><span>FORECAST RANGE</span></div>
+          <div class="band"><div class="band-fill"></div><div class="breakeven"></div></div>
+          <div class="band-labels"><span>P10 · 19%</span><span>BREAKEVEN · 26%</span><span>P90 · 34%</span></div>
+          <div class="verdict">
+            <div class="verdict-word">CONDITIONAL BUILD</div>
+            <div class="verdict-copy">Strong access and viable grid proximity. Verify outage history before capital commitment.</div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="footnote">Illustrative assessment · Replace with live project data</div>
+  </section>
+
+  <script>
+    (() => {
+      const assessment = document.querySelector(".assessment");
+      const status = document.getElementById("stageStatus");
+      const panels = [...document.querySelectorAll("[data-panel]")];
+      const categories = [...document.querySelectorAll("[data-category]")];
+      const values = [...document.querySelectorAll(".check-value")];
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      const loopMs = 22000;
+      const stages = [
+        { key: "intro", start: 0, end: 1500, label: "INITIALISING SOURCES" },
+        { key: "road", start: 1500, end: 4800, label: "ROAD ACCESS · 01/05" },
+        { key: "demand", start: 4800, end: 8100, label: "DEMAND SIGNALS · 02/05" },
+        { key: "grid", start: 8100, end: 11400, label: "GRID & POLICY · 03/05" },
+        { key: "plot", start: 11400, end: 14700, label: "PLOT READINESS · 04/05" },
+        { key: "commercial", start: 14700, end: 18000, label: "COMMERCIAL LANDSCAPE · 05/05" },
+        { key: "summary", start: 18000, end: 22000, label: "ASSESSMENT COMPLETE" }
+      ];
+
+      let origin = performance.now();
+      let pausedAt = 0;
+      let pausedDuration = 0;
+      let currentKey = "";
+      let lastRandomAt = 0;
+      let running = false;
+      let inView = true;
+      let frameId = 0;
+
+      function settle(panel) {
+        panel.querySelectorAll(".check-value").forEach((value) => {
+          value.textContent = value.dataset.final;
+          value.classList.remove("changing");
+        });
+      }
+
+      function randomise(panel) {
+        panel.querySelectorAll(".check-value").forEach((value) => {
+          const pool = value.dataset.pool.split("|");
+          value.textContent = pool[Math.floor(Math.random() * pool.length)];
+          value.classList.add("changing");
+        });
+      }
+
+      function activate(stage) {
+        currentKey = stage.key;
+        assessment.dataset.stage = stage.key;
+        status.textContent = stage.label;
+
+        panels.forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === stage.key));
+
+        const activeIndex = stages.findIndex((item) => item.key === stage.key) - 1;
+        categories.forEach((category, index) => {
+          category.classList.toggle("active", index === activeIndex);
+          category.classList.toggle("complete", stage.key === "summary" || index < activeIndex);
+        });
+
+        const panel = panels.find((item) => item.dataset.panel === stage.key);
+        if (panel) randomise(panel);
+      }
+
+      function getStage(elapsed) {
+        return stages.find((stage) => elapsed >= stage.start && elapsed < stage.end) || stages[0];
+      }
+
+      function render(now) {
+        if (!running) return;
+
+        const elapsed = (now - origin - pausedDuration) % loopMs;
+        const stage = getStage(elapsed);
+        const progress = (elapsed - stage.start) / (stage.end - stage.start);
+
+        if (stage.key !== currentKey) activate(stage);
+
+        const panel = panels.find((item) => item.dataset.panel === stage.key);
+        const isAssessmentStage = !["intro", "summary"].includes(stage.key);
+
+        if (isAssessmentStage && progress < .66 && now - lastRandomAt > 92) {
+          randomise(panel);
+          lastRandomAt = now;
+        } else if (isAssessmentStage && progress >= .66) {
+          settle(panel);
+        }
+
+        assessment.classList.toggle("loop-fade", elapsed >= 21500);
+        frameId = requestAnimationFrame(render);
+      }
+
+      function pause() {
+        if (!running) return;
+        running = false;
+        pausedAt = performance.now();
+        cancelAnimationFrame(frameId);
+        assessment.classList.add("paused");
+      }
+
+      function resume() {
+        if (running || reducedMotion.matches || document.hidden || !inView) return;
+        if (pausedAt) pausedDuration += performance.now() - pausedAt;
+        pausedAt = 0;
+        running = true;
+        assessment.classList.remove("paused");
+        frameId = requestAnimationFrame(render);
+      }
+
+      function showReducedMotionState() {
+        values.forEach((value) => {
+          value.textContent = value.dataset.final;
+          value.classList.remove("changing");
+        });
+        activate(stages[stages.length - 1]);
+        assessment.classList.remove("loop-fade");
+      }
+
+      function syncMotionPreference() {
+        if (reducedMotion.matches) {
+          pause();
+          showReducedMotionState();
+        } else {
+          resume();
+        }
+      }
+
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver((entries) => {
+          inView = entries[0].isIntersecting;
+          if (inView) resume();
+          else pause();
+        }, { threshold: .05 }).observe(assessment);
+      }
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) pause();
+        else resume();
+      });
+
+      if (reducedMotion.addEventListener) {
+        reducedMotion.addEventListener("change", syncMotionPreference);
+      } else {
+        reducedMotion.addListener(syncMotionPreference);
+      }
+
+      values.forEach((value) => { value.textContent = value.dataset.final; });
+      syncMotionPreference();
+    })();
+  </script>
+</body>
+</html>

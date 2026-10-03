@@ -129,7 +129,7 @@ evsite/
 │   │   │
 │   │   ├── vahan/              # PART 4a
 │   │   ├── cpo/                # PART 6 — runs roi engine once per operator
-│   │   ├── report/             # PART 5 — assembles the 7-section payload
+│   │   ├── report/             # PART 5 — assembles the 12-section payload
 │   │   └── attribution/        # PART 7
 │   │
 │   ├── api/
@@ -175,15 +175,22 @@ evsite/
 │   │   │   ├── assess/         # Leaflet pin drop + the five taps
 │   │   │   ├── waitlist/       # tier 2/3 capture
 │   │   │   │
-│   │   │   ├── report/         # ◀── ONE COMPONENT PER SECTION. 1:1 with §7 anatomy.
-│   │   │   │   ├── Report.tsx
-│   │   │   │   ├── Verdict.tsx
-│   │   │   │   ├── HeroNumber.tsx      # the signature element — see §7
-│   │   │   │   ├── SiteProfile.tsx
-│   │   │   │   ├── Financials.tsx
-│   │   │   │   ├── CpoTable.tsx
-│   │   │   │   ├── Ledger.tsx          # assumption ledger, ⚠️ rows
-│   │   │   │   └── Provenance.tsx
+│   │   │   ├── report/         # ◀── ONE COMPONENT PER SECTION. 1:1 with §8 anatomy.
+│   │   │   │   ├── Report.tsx          # 01..12, in reading order
+│   │   │   │   ├── parts.tsx           # Section / Table / NUM primitives
+│   │   │   │   ├── Verdict.tsx         # 01 — the word, then the sentence
+│   │   │   │   ├── Money.tsx           # 02 — return beside a fixed deposit
+│   │   │   │   ├── Judged.tsx          # 03 — thresholds BEFORE the data
+│   │   │   │   ├── Site.tsx            # 04 — facts, each with a direction
+│   │   │   │   ├── SiteMap.tsx         #      the two Mapbox Static images
+│   │   │   │   ├── Financials.tsx      # 05
+│   │   │   │   ├── Operators.tsx       # 06 — PART 6, ranked by IRR
+│   │   │   │   ├── Competitors.tsx     # 07
+│   │   │   │   ├── ChangeVerdict.tsx   # 08 — what would move the answer
+│   │   │   │   ├── Statistical.tsx     # 09 — the one chart
+│   │   │   │   ├── Ledger.tsx          # 10 — assumption ledger, ⚠️ rows
+│   │   │   │   ├── Provenance.tsx      # 11 — new page in print
+│   │   │   │   └── Disclosure.tsx      # 12 — the conflict, stated
 │   │   │   │
 │   │   │   └── console/        # ◀── PART C
 │   │   │       ├── ConsoleLayout.tsx   # left sidebar
@@ -369,9 +376,11 @@ a task queue before you've measured.
 
 ## 5. Frontend structure
 
-Report components map **one-to-one** onto the 7 sections in `OVERVIEW.md` §8.
+Report components map **one-to-one** onto the 12 sections in `OVERVIEW.md` §8.
 That mapping is the point: "the ledger is wrong" points at exactly one file,
-`features/report/Ledger.tsx`.
+`features/report/Ledger.tsx`. The count went 7 → 12 on 2026-09-03 when the
+report was rebuilt to `design/brand/report-spec.md`; the mapping rule is what
+survived the rebuild, not the number.
 
 Two formatting rules that exist because getting them wrong corrupts every
 number on the page:
@@ -415,19 +424,38 @@ toolchain is intact and fail loudly when someone bumps Chromium — which is
 exactly the signal you want.
 
 **Print CSS remains a first-class deliverable, not an afterthought.** Page
-breaks between the 7 sections, `@page` margins, provenance block in the footer
+breaks between the 12 sections, `@page` margins, provenance on its own page
 of every page. It lives in `src/styles/print.css` and is exercised by the PDF
 path on every build, so it cannot rot unnoticed.
 
+`app/pdf/render.py` exists as of Track B R11, and it is **sync**, not async:
+`sync_playwright` cannot run inside a live asyncio loop, and rendering is a
+generation-time job rather than a request-time one, so it is called from a
+script or a worker and never straight from a route handler.
+
 ```python
-# app/pdf/render.py
-async with async_playwright() as p:
-    browser = await p.chromium.launch()
-    page = await browser.new_page()
-    await page.goto(f"{BASE_URL}/report/{report_id}?print=1")
-    await page.wait_for_selector("[data-report-ready]")  # never race the render
-    pdf = await page.pdf(format="A4", print_background=True)
+# app/pdf/render.py - the shape that survived contact
+page.goto(url, wait_until="networkidle")
+page.wait_for_selector("[data-report-ready]")  # never race the render
+page.evaluate("() => document.fonts.ready")  # and never race the FONTS
+pdf = page.pdf(
+    format="A4",
+    print_background=True,
+    display_header_footer=True,  # the page number, and only that
+    footer_template=_FOOTER,
+    header_template="<span></span>",
+    margin={side: "14mm" for side in ("top", "bottom", "left", "right")},
+)
 ```
+
+**The fonts line is not defensive padding.** Measured: with the page loaded,
+`[data-report-ready]` present and the network quiet, `document.fonts.status`
+is still `loading`, and printing then lays the document out in fallback
+metrics — one page fewer than the truth. Every print measurement taken during
+the section rebuild was wrong by a page until R11 caught it.
+
+The archived bytes land in `report_pdfs` (migration 0013), insert-only, with
+`renderer_version` carrying both the Vite build hash and the Chromium build.
 
 ---
 
@@ -514,8 +542,8 @@ tiers when it is enabled.
 | 2 Context | `domain/context/` | — |
 | 3 Tariffs + ROI | `domain/tariffs/`, `domain/roi/` | — |
 | 4 Demand | `domain/demand/` + `workers/vahan_ingest.py` | — |
-| 5 Reports | `domain/report/`, `app/pdf/` | `features/report/` (7 components) |
-| 6 CPO | `domain/cpo/` | `features/report/CpoTable.tsx` |
+| 5 Reports | `domain/report/`, `app/pdf/` | `features/report/` (12 components) |
+| 6 CPO | `domain/cpo/` | `features/report/Operators.tsx` |
 | 7 Attribution | `domain/attribution/` + `api/v1/` | `features/console/Reports.tsx` |
 | 8 Supervised | `domain/demand/lgbm_v1.py` | — |
 | **C Console** | `app/metering/`, `api/internal/console_*.py` | `features/console/` |

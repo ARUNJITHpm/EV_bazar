@@ -18,7 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.domain.report.payload import ReportPayload
-from app.models.report import Report
+from app.models.report import Report, ReportPdf
 
 
 def save_report(
@@ -63,3 +63,60 @@ def get_payload(session: Session, report_id: str) -> dict[str, object] | None:
         select(Report.payload).where(Report.report_id == report_id)
     ).scalar_one_or_none()
     return row
+
+
+def archive_pdf(
+    session: Session,
+    report_id: str,
+    *,
+    pdf: bytes,
+    renderer_version: str,
+    pages: int,
+) -> ReportPdf:
+    """Freeze the rendered bytes against a report - once (Track B R11).
+
+    The same line ``save_report`` holds: a demo artifact may be replaced, a
+    customer's never. Re-rendering a customer report on a later Chromium
+    produces different bytes and would quietly replace the evidence the
+    archive exists to be.
+
+    The database enforces this too (migration 0013's rules); the check here
+    is so a caller gets an error instead of a silent no-op, which is what a
+    Postgres ``DO INSTEAD NOTHING`` looks like from the application side.
+    """
+    if not pdf:
+        raise ValueError(f"refusing to archive an empty render for {report_id}")
+    report = session.get(Report, report_id)
+    if report is None:
+        raise ValueError(f"no report {report_id} to archive a render against")
+
+    existing = session.get(ReportPdf, report_id)
+    if existing is not None:
+        if not bool(report.payload.get("demo")):
+            raise ValueError(
+                f"report {report_id} is already archived - a re-render is a new "
+                "report id, never an overwrite"
+            )
+        session.delete(existing)
+        session.flush()
+
+    row = ReportPdf(
+        report_id=report_id,
+        pdf=pdf,
+        renderer_version=renderer_version,
+        pages=pages,
+        byte_size=len(pdf),
+    )
+    session.add(row)
+    # The render stamp is duplicated onto `reports` so "which build rendered
+    # this" is a column, not a join - the same reasoning as the other version
+    # stamps there. Demo rows are the only ones the UPDATE rule lets through,
+    # which is exactly the set that may be re-rendered anyway.
+    report.renderer_version = renderer_version
+    session.flush()
+    return row
+
+
+def get_pdf(session: Session, report_id: str) -> ReportPdf | None:
+    """The archived render, or None where nothing has been archived yet."""
+    return session.get(ReportPdf, report_id)

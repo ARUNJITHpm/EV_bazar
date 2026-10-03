@@ -1,6 +1,6 @@
 # Chargeworthy Data: specification
 
-Status: Parts 0–3 complete; Part 4 implementation complete with live indicators pending sources; Part 5 working draft unpublished; Part 6 content implementation complete; Part 7 implementation complete with owner-confirmed affiliation and ownership disclosure. Reviewed 2026-10-01.
+Status: Parts 0–3 complete; Part 4 implementation complete with live indicators pending sources; Part 5 working draft unpublished; Part 6 content implementation complete; Part 7 implementation complete with owner-confirmed affiliation and ownership disclosure. Part 8 social exports implemented; public origin and deployed WhatsApp check pending. Reviewed 2026-10-01.
 Implementation brief: `chargeworthy-data-roadmap.md`.
 Read this file before every subsequent analytics part, alongside `AGENTS.md`,
 `OVERVIEW.md`, `STACK.md`, `PLAN.md` and `FINDINGS.md`.
@@ -371,6 +371,26 @@ site-assessment/operator-matching fee model without asserting when income began.
 Part 7 implementation and acceptance checks are complete. No real validation
 run, private data export, production migration or deployment occurred.
 Workflow details are in METHODOLOGY.md.
+
+## Part 8 checkpoint - 2026-10-01
+
+- Added a shared token-based SVG template for browser PNG downloads and build-time
+  social export, with portrait, square and Open Graph formats. The current
+  reviewed weekly post gets all three images, sourced from the archived reference.
+- The Save image control exports the displayed selection, loads pinned local
+  fonts and reports recoverable failures. PNG iTXt metadata preserves source
+  licences, public rows and all six stamps; missing values stay missing.
+- Weekly HTML includes OG image dimensions and alt text. SPA navigation updates
+  and removes image metadata. Build-time minimum-font and wrapping checks refuse
+  unreadable exports; a 300px gallery was inspected visually.
+- Build, 123 frontend tests, browser PNG downloads/checksums/provenance, pinned
+  font glyph bounds, responsive and JS-off OG checks, existing article checks,
+  and the production privacy/fixture scan passed. ESLint remains unconfigured;
+  existing large-chunk warnings remain for Part 9.
+- The public HTTPS origin is awaiting user confirmation. Local builds currently
+  emit explicitly labelled preview images; a deployed WhatsApp preview has not
+  been claimed. Part 7 disclosure is confirmed and published separately. Part 8
+  remains uncommitted and unpublished pending the public origin. See `SOCIAL_IMAGES.md` for configuration and remaining checks.
 
 ## Expansion source register (Part 11) - 2026-10-01
 

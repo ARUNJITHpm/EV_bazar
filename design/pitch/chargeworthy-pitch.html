@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chargeworthy Pitch</title>
+  <meta name="description" content="Chargeworthy — breakeven utilisation for EV charging sites in India. Ten-slide investor deck." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Archivo', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+          },
+          colors: {
+            copper: '#d98a3d',
+            pos: '#3fa37f',
+            neg: '#c4564a',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html, body { height: 100%; background: #0a0a0a; }
+    body {
+      background-color: #0a0a0a;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 70% -10%, rgba(217,138,61,0.07), transparent 60%),
+        radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: auto, 22px 22px;
+    }
+    .slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transform: translateY(14px);
+      transition: opacity .45s ease, transform .45s ease, visibility 0s linear .45s; }
+    .slide.active { opacity: 1; visibility: visible; transform: none; transition: opacity .45s ease, transform .45s ease; }
+    .slide.active .rise { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
+    .slide.active .rise:nth-child(2) { animation-delay: .06s; }
+    .slide.active .rise:nth-child(3) { animation-delay: .12s; }
+    .slide.active .rise:nth-child(4) { animation-delay: .18s; }
+    .slide.active .rise:nth-child(5) { animation-delay: .24s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .bar-grow { transform-origin: left; }
+    .slide.active .bar-grow { animation: grow .9s cubic-bezier(.2,.7,.2,1) .2s both; }
+    @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    .col-grow { transform-origin: bottom; }
+    .slide.active .col-grow { animation: growy .9s cubic-bezier(.2,.7,.2,1) .2s both; }
+    @keyframes growy { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    body.hide-notes .note { display: none; }
+    .tnum { font-variant-numeric: tabular-nums; }
+    .hatch { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.08) 0 2px, transparent 2px 7px); }
+    @media (prefers-reduced-motion: reduce) {
+      .slide, .slide.active { transition: none; transform: none; }
+      .slide.active .rise, .slide.active .bar-grow, .slide.active .col-grow { animation: none; }
+    }
+    :focus-visible { outline: 2px solid #d98a3d; outline-offset: 3px; }
+  </style>
+</head>
+<body class="font-sans text-white antialiased overflow-hidden">
+
+  <!-- top bar -->
+  <header class="fixed top-0 inset-x-0 z-20 flex items-center justify-between px-4 sm:px-10 h-14 bg-neutral-950/85 backdrop-blur-sm sm:bg-transparent sm:backdrop-blur-none">
+    <div class="flex items-center gap-2.5 text-sm font-semibold tracking-tight">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" fill="#d98a3d"/></svg>
+      Chargeworthy
+      <span class="hidden sm:inline font-mono font-normal text-[11px] text-neutral-500 tracking-normal ml-1">chargeworthy.in</span>
+    </div>
+    <button id="notesToggle" class="font-mono text-[11px] uppercase tracking-[.14em] text-neutral-500 hover:text-neutral-200 transition-colors" aria-pressed="true">
+      Framework notes · <span id="notesState">on</span> <span class="hidden sm:inline text-neutral-600">(N)</span>
+    </button>
+  </header>
+
+  <div class="fixed top-0 inset-x-0 h-[2px] z-30 bg-neutral-900"><div id="progress" class="h-full bg-copper transition-[width] duration-500" style="width:0"></div></div>
+
+  <main id="deck" class="relative h-dvh w-full" aria-live="polite">
+
+    <!-- 1 · HOOK -->
+    <section class="slide" data-title="The Hook">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-6">01 — The hook</p>
+        <h1 class="rise text-[clamp(36px,5.8vw,80px)] font-bold leading-[1] tracking-[-0.035em] max-w-[20ch]">
+          Check the site before you sign the cheque for an <span class="text-copper">EV&nbsp;charger.</span>
+        </h1>
+        <p class="rise mt-7 text-[clamp(17px,1.6vw,22px)] text-neutral-400 max-w-[58ch] leading-relaxed">
+          <span class="text-white font-medium">34 factors. 12 public datasets. One verdict.</span>
+          Site analytics for new locations, and performance insight for station owners already on the ground.
+        </p>
+        <p class="rise mt-4 font-mono text-sm text-neutral-500">Try it → <a href="https://talk-to-nitara.hf.space/" target="_blank" rel="noopener" class="text-copper underline underline-offset-4 decoration-copper/40 hover:decoration-copper">chargeworthy.in</a> <span class="text-neutral-600">(live today at talk-to-nitara.hf.space)</span></p>
+        <div class="rise mt-8 grid grid-cols-2 lg:grid-cols-4 gap-px bg-neutral-800/70 border border-neutral-800/70 max-w-5xl">
+          <div class="bg-neutral-950 p-5"><div class="font-mono tnum text-3xl sm:text-4xl font-medium">2,101</div><div class="mt-1 text-sm text-neutral-400">charger locations mapped</div></div>
+          <div class="bg-neutral-950 p-5"><div class="font-mono tnum text-3xl sm:text-4xl font-medium">18</div><div class="mt-1 text-sm text-neutral-400">operators compared</div></div>
+          <div class="bg-neutral-950 p-5"><div class="text-3xl sm:text-4xl font-bold tracking-tight">Free</div><div class="mt-1 text-sm text-neutral-400">performance page for station owners</div></div>
+          <div class="bg-neutral-950 p-5"><div class="text-3xl sm:text-4xl font-bold tracking-tight text-neg">Don’t</div><div class="mt-1 text-sm text-neutral-400">what our own demo site was told</div></div>
+        </div>
+        <p class="note rise mt-6 text-sm text-neutral-500 border-l-2 border-copper/60 pl-4 max-w-[62ch]">
+          <span class="text-neutral-300 font-medium">Lead with proof, not problem.</span> We are pre-revenue, so the proof is the live product and the data behind it — not an MRR line we don’t have.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2 · PROBLEM -->
+    <section class="slide" data-title="Problem">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-6">02 — Problem</p>
+        <h2 class="rise text-[clamp(32px,5.2vw,72px)] font-bold leading-[1.02] tracking-[-0.03em] max-w-[20ch]">
+          ₹20–40 lakh committed on a vendor’s spreadsheet.
+        </h2>
+        <div class="rise mt-10 grid lg:grid-cols-[1.15fr_1fr] gap-10 items-start">
+          <p class="text-[clamp(17px,1.5vw,21px)] text-neutral-400 leading-relaxed max-w-[56ch]">
+            A land owner on NH-66 near Technopark is pitched a 60&nbsp;kW DC charger. The vendor’s sheet uses a
+            <span class="text-white">P50 utilisation</span>, ignores that sanctioned load is billed in <span class="text-white">kVA</span>, and skips the
+            8 chargers already within 3&nbsp;km — the nearest 246&nbsp;m away. The demand charge alone is
+            <span class="text-white">₹2.4–4 lakh a year before a single unit is sold.</span>
+          </p>
+          <ul class="space-y-4">
+            <li class="flex gap-4 border-t border-neutral-800 pt-4"><span class="font-mono text-copper text-sm pt-1">01</span><span class="text-neutral-300">Nobody tells them the number the site has to <em>beat</em>.</span></li>
+            <li class="flex gap-4 border-t border-neutral-800 pt-4"><span class="font-mono text-copper text-sm pt-1">02</span><span class="text-neutral-300">Everyone selling to them earns on a <em>yes</em>.</span></li>
+            <li class="flex gap-4 border-t border-neutral-800 pt-4"><span class="font-mono text-copper text-sm pt-1">03</span><span class="text-neutral-300">Lenders have no underwriting standard for a charger at all.</span></li>
+          </ul>
+        </div>
+        <p class="note rise mt-10 text-sm text-neutral-500 border-l-2 border-copper/60 pl-4 max-w-[62ch]">
+          <span class="text-neutral-300 font-medium">One painful, specific scenario.</span> This is our real demo site — Kazhakkoottam, Thiruvananthapuram.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3 · SOLUTION -->
+    <section class="slide" data-title="Solution">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-6">03 — Solution</p>
+        <div class="grid lg:grid-cols-[1fr_1.25fr] gap-10 lg:gap-14 items-center">
+          <div>
+            <h2 class="rise text-[clamp(30px,4.4vw,60px)] font-bold leading-[1.02] tracking-[-0.03em]">
+              A verdict that is allowed to say <span class="text-neg">no.</span>
+            </h2>
+            <p class="rise mt-6 text-[clamp(16px,1.4vw,19px)] text-neutral-400 leading-relaxed max-w-[46ch]">
+              Breakeven is pure arithmetic over the state’s real tariff order. A model predicts one thing only — kWh per connector per day, as a P10–P90 band.
+              The verdict is decided by the <span class="text-white">pessimistic P10</span>, never the median.
+            </p>
+            <p class="rise mt-5 font-mono text-xs text-neutral-500">Stored report · /report/KL-TVM-DEMO-001 · economics v0.5.0</p>
+          </div>
+
+          <!-- product frame: the stored demo report's real figures -->
+          <figure class="rise rounded-xl border border-neutral-800 bg-neutral-900/60 shadow-2xl shadow-black/60 overflow-hidden">
+            <div class="flex items-center gap-2 px-4 h-9 border-b border-neutral-800 bg-neutral-900">
+              <span class="w-2.5 h-2.5 rounded-full bg-neutral-700"></span><span class="w-2.5 h-2.5 rounded-full bg-neutral-700"></span><span class="w-2.5 h-2.5 rounded-full bg-neutral-700"></span>
+              <span class="ml-3 font-mono text-[11px] text-neutral-500 truncate">chargeworthy.in/report/KL-TVM-DEMO-001</span>
+            </div>
+            <div class="p-5 sm:p-7">
+              <div class="font-mono text-[11px] uppercase tracking-[.16em] text-neutral-500">01 · Verdict</div>
+              <div class="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                <span class="text-4xl sm:text-5xl font-bold tracking-tight text-neg">Don’t build</span>
+                <span class="font-mono tnum text-neutral-300">margin of safety −3.5 pp</span>
+              </div>
+              <p class="mt-2 text-sm text-neutral-400">Even the optimistic case stays below what this site needs to pay for itself.</p>
+
+              <div class="mt-7 font-mono text-[11px] uppercase tracking-[.16em] text-neutral-500">09 · Statistical basis</div>
+              <div class="mt-3 relative h-14">
+                <div class="absolute inset-x-0 top-6 h-px bg-neutral-700"></div>
+                <!-- scale 0–6% -->
+                <div class="absolute top-3 h-7 rounded-sm bg-neutral-300/80 bar-grow" style="left:15%;width:25%"></div>
+                <div class="absolute top-0 bottom-0 w-[2px] bg-copper" style="left:71.67%"></div>
+                <div class="absolute -top-1 font-mono text-[11px] text-copper" style="left:calc(71.67% + 6px)">breakeven 4.3%</div>
+                <div class="absolute bottom-[-2px] font-mono text-[11px] text-neutral-400" style="left:15%">P10–P90 · 0.9–2.4%</div>
+              </div>
+
+              <div class="mt-7 grid grid-cols-3 gap-px bg-neutral-800 border border-neutral-800 text-center">
+                <div class="bg-neutral-950 py-3"><div class="font-mono tnum text-xl">39</div><div class="text-[11px] text-neutral-500 mt-0.5">site checks</div></div>
+                <div class="bg-neutral-950 py-3"><div class="font-mono tnum text-xl">8</div><div class="text-[11px] text-neutral-500 mt-0.5">rivals ≤ 3 km</div></div>
+                <div class="bg-neutral-950 py-3"><div class="font-mono tnum text-xl">26</div><div class="text-[11px] text-neutral-500 mt-0.5">archived PDF pages</div></div>
+              </div>
+            </div>
+          </figure>
+        </div>
+        <p class="note rise mt-10 text-sm text-neutral-500 border-l-2 border-copper/60 pl-4 max-w-[70ch]">
+          <span class="text-neutral-300 font-medium">Not mockups. The real thing.</span> Every figure in the frame is read from the stored, versioned demo report. Before presenting, swap this frame for a live screenshot of <span class="font-mono">/report/KL-TVM-DEMO-001</span>.
+        </p>
+      </div>
+    </section>
+
+    <!-- 4 · WHAT DECIDES THE VERDICT -->
+    <section class="slide" data-title="What decides the verdict">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-5">04 — What decides the verdict</p>
+        <div class="rise flex flex-wrap items-end gap-x-10 gap-y-4">
+          <h2 class="text-[clamp(30px,4.4vw,60px)] font-bold leading-[1.02] tracking-[-0.03em] max-w-[18ch]">
+            34 site factors. Rules set before the data.
+          </h2>
+          <div class="flex gap-8 font-mono tnum pb-1">
+            <div><div class="text-3xl sm:text-4xl">34</div><div class="text-[11px] text-neutral-500 uppercase tracking-wider mt-1">site factors</div></div>
+            <div><div class="text-3xl sm:text-4xl">12</div><div class="text-[11px] text-neutral-500 uppercase tracking-wider mt-1">public datasets</div></div>
+            <div><div class="text-3xl sm:text-4xl">4</div><div class="text-[11px] text-neutral-500 uppercase tracking-wider mt-1">operator lenses</div></div>
+          </div>
+        </div>
+
+        <!-- factor share bar: 12 / 4 / 8 / 7 / 3 of 34 -->
+        <div class="rise mt-8 flex h-2 w-full overflow-hidden rounded-full gap-[2px] bar-grow" aria-hidden="true">
+          <div class="bg-neutral-200" style="width:35.3%"></div>
+          <div class="bg-copper" style="width:11.8%"></div>
+          <div class="bg-neutral-400" style="width:23.5%"></div>
+          <div class="bg-neutral-600" style="width:20.6%"></div>
+          <div class="bg-neg" style="width:8.8%"></div>
+        </div>
+
+        <div class="rise mt-6 grid sm:grid-cols-2 lg:grid-cols-5 gap-px bg-neutral-800/70 border border-neutral-800/70 text-[13.5px]">
+          <div class="bg-neutral-950 p-4">
+            <div class="flex items-baseline justify-between"><span class="font-semibold text-[15px]"><span class="inline-block w-2 h-2 rounded-full bg-neutral-200 mr-2"></span>Access</span><span class="font-mono text-neutral-500">12</span></div>
+            <p class="mt-2 text-neutral-400 leading-relaxed">Road class · distance from main road · carriageway served · sub-road access · median · sight line · turning radius · entry/exit width · frontage · AADT traffic · flow direction · peak hour</p>
+          </div>
+          <div class="bg-neutral-950 p-4">
+            <div class="flex items-baseline justify-between"><span class="font-semibold text-[15px]"><span class="inline-block w-2 h-2 rounded-full bg-copper mr-2"></span>Demand</span><span class="font-mono text-neutral-500">4</span></div>
+            <p class="mt-2 text-neutral-400 leading-relaxed">EV registrations · registration mix (2W / 3W / 4W) · fleet operators within 10 km · distance to nearest city</p>
+          </div>
+          <div class="bg-neutral-950 p-4">
+            <div class="flex items-baseline justify-between"><span class="font-semibold text-[15px]"><span class="inline-block w-2 h-2 rounded-full bg-neutral-400 mr-2"></span>Power &amp; tariff</span><span class="font-mono text-neutral-500">8</span></div>
+            <p class="mt-2 text-neutral-400 leading-relaxed">SERC EV tariff order · demand charges · sanctioned load (kVA) · transformer distance · spare capacity · outage hours · new-connection cost · state subsidy</p>
+          </div>
+          <div class="bg-neutral-950 p-4">
+            <div class="flex items-baseline justify-between"><span class="font-semibold text-[15px]"><span class="inline-block w-2 h-2 rounded-full bg-neutral-600 mr-2"></span>Site</span><span class="font-mono text-neutral-500">7</span></div>
+            <p class="mt-2 text-neutral-400 leading-relaxed">Plot area · parking bays · canopy feasibility · amenities in walking distance · mobile signal · night lighting · land or lease cost</p>
+          </div>
+          <div class="bg-neutral-950 p-4">
+            <div class="flex items-baseline justify-between"><span class="font-semibold text-[15px]"><span class="inline-block w-2 h-2 rounded-full bg-neg mr-2"></span>Competition</span><span class="font-mono text-neutral-500">3</span></div>
+            <p class="mt-2 text-neutral-400 leading-relaxed">Nearest competitor (geodesic) · density at 3 / 5 / 10 km · announced stations</p>
+          </div>
+        </div>
+
+        <div class="rise mt-6 grid lg:grid-cols-2 gap-6">
+          <div>
+            <div class="font-mono text-[11px] uppercase tracking-[.16em] text-neutral-500">Operator fit — run once per operator</div>
+            <div class="mt-3 flex flex-wrap gap-2 text-[13px]">
+              <span class="px-3 py-1.5 rounded-full border border-neutral-800 text-neutral-300">Network reach</span>
+              <span class="px-3 py-1.5 rounded-full border border-neutral-800 text-neutral-300">Demand channel</span>
+              <span class="px-3 py-1.5 rounded-full border border-neutral-800 text-neutral-300">Interoperability &amp; roaming</span>
+              <span class="px-3 py-1.5 rounded-full border border-neutral-800 text-neutral-300">Commercial terms</span>
+            </div>
+          </div>
+          <div>
+            <div class="font-mono text-[11px] uppercase tracking-[.16em] text-neutral-500">Data behind it</div>
+            <p class="mt-3 text-[13.5px] text-neutral-400 leading-relaxed">VAHAN EV registrations · RTO→district map · public charger inventory · SERC EV tariffs · state EV policies · DISCOM performance · supply hours · OSM power grid · national highways · NHAI wayside amenities · LGD district boundaries · district reference</p>
+          </div>
+        </div>
+        <p class="note rise mt-8 text-sm text-neutral-500 border-l-2 border-copper/60 pl-4 max-w-[70ch]">
+          <span class="text-neutral-300 font-medium">Show the engine, not the adjectives.</span> Every factor prints as favours / neutral / against — or <span class="font-mono">? UNVERIFIED</span> when no source exists yet. No guess is dressed up as a measurement.
+        </p>
+      </div>
+    </section>
+
+    <!-- 5 · WHY NOW -->
+    <section class="slide" data-title="Why Now?">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-6">05 — Why now</p>
+        <h2 class="rise text-[clamp(32px,5.2vw,72px)] font-bold leading-[1.02] tracking-[-0.03em] max-w-[18ch]">
+          The capital is arriving before the judgement.
+        </h2>
+        <div class="rise mt-12 grid sm:grid-cols-3 gap-px bg-neutral-800/70 border border-neutral-800/70">
+          <div class="bg-neutral-950 p-6">
+            <div class="font-mono text-[11px] uppercase tracking-[.16em] text-neutral-500">Behaviour</div>
+            <div class="mt-3 font-mono tnum text-4xl font-medium">+33.5%</div>
+            <p class="mt-3 text-neutral-400 text-[15px] leading-relaxed">EV registrations year on year in one Kerala district (17,895 in 2025) — and 80% are two-wheelers, a different charging archetype from 4W DC.</p>
+          </div>
+          <div class="bg-neutral-950 p-6">
+            <div class="font-mono text-[11px] uppercase tracking-[.16em] text-neutral-500">Regulation</div>
+            <div class="mt-3 text-2xl font-semibold leading-tight">EV tariff categories &amp; PM E-DRIVE</div>
+            <p class="mt-3 text-neutral-400 text-[15px] leading-relaxed">State commissions now publish EV-specific tariffs, and capital subsidies change amortised capex enough to flip a verdict.</p>
+          </div>
+          <div class="bg-neutral-950 p-6">
+            <div class="font-mono text-[11px] uppercase tracking-[.16em] text-neutral-500">Data</div>
+            <div class="mt-3 text-2xl font-semibold leading-tight">Public, machine-readable, free</div>
+            <p class="mt-3 text-neutral-400 text-[15px] leading-relaxed">VAHAN registrations, OpenStreetMap roads and POIs, open charger inventories — joinable at district level for the first time.</p>
+          </div>
+        </div>
+        <p class="note rise mt-10 text-sm text-neutral-500 border-l-2 border-copper/60 pl-4 max-w-[62ch]">
+          <span class="text-neutral-300 font-medium">Timing creates opportunity.</span> Behaviour, regulation and data all moved at once.
+        </p>
+      </div>
+    </section>
+
+    <!-- 6 · TRACTION -->
+    <section class="slide" data-title="Traction">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-6">06 — Traction</p>
+        <div class="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 items-center">
+          <div>
+            <h2 class="rise text-[clamp(30px,4.6vw,64px)] font-bold leading-[1.02] tracking-[-0.03em]">
+              Built, deployed, and measuring.
+            </h2>
+            <ul class="rise mt-8 space-y-3.5 text-[clamp(15px,1.3vw,18px)]">
+              <li class="flex gap-3"><span class="text-pos mt-0.5">●</span><span class="text-neutral-300"><span class="text-white">Live funnel</span> — pin → four taps → breakeven, open to anyone</span></li>
+              <li class="flex gap-3"><span class="text-pos mt-0.5">●</span><span class="text-neutral-300"><span class="text-white">Paid-grade report</span> — 12 sections, PDF archived as immutable bytes</span></li>
+              <li class="flex gap-3"><span class="text-pos mt-0.5">●</span><span class="text-neutral-300"><span class="text-white">Owner bill flow</span> — station owners upload monthly bills; we get ground truth</span></li>
+              <li class="flex gap-3"><span class="text-pos mt-0.5">●</span><span class="text-neutral-300"><span class="text-white">2,101 stations · 18 CPOs</span> — five states + Delhi</span></li>
+              <li class="flex gap-3"><span class="text-copper mt-0.5">○</span><span class="text-neutral-400">Paying customers · <span class="font-mono">[0]</span> — first target: Tariff Audit sold to 3 operators</span></li>
+            </ul>
+          </div>
+          <figure class="rise border border-neutral-800 rounded-xl p-6 bg-neutral-900/40">
+            <figcaption class="flex items-baseline justify-between">
+              <span class="font-mono text-[11px] uppercase tracking-[.16em] text-neutral-500">Demand signal · Thiruvananthapuram</span>
+              <span class="font-mono text-[11px] text-neutral-500">VAHAN</span>
+            </figcaption>
+            <div class="mt-6 h-48 flex items-end gap-8 sm:gap-12 px-4 border-b border-neutral-700">
+              <div class="flex-1 flex flex-col items-center justify-end h-full">
+                <span class="font-mono tnum text-sm text-neutral-400 mb-2">≈13,400</span>
+                <div class="w-full max-w-[90px] bg-neutral-700 col-grow" style="height:74.9%"></div>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full">
+                <span class="font-mono tnum text-sm text-white mb-2">17,895</span>
+                <div class="w-full max-w-[90px] bg-copper col-grow" style="height:100%"></div>
+              </div>
+            </div>
+            <div class="flex gap-8 sm:gap-12 px-4 mt-2 font-mono text-xs text-neutral-500">
+              <span class="flex-1 text-center">2024</span><span class="flex-1 text-center">2025</span>
+            </div>
+            <p class="mt-4 text-xs text-neutral-500">EV registrations. 2024 derived from the +33.5% YoY figure.</p>
+          </figure>
+        </div>
+        <p class="note rise mt-10 text-sm text-neutral-500 border-l-2 border-copper/60 pl-4 max-w-[70ch]">
+          <span class="text-neutral-300 font-medium">Numbers speak louder than vision.</span> Replace the bracket with customer logos and a revenue chart the day the first audit is paid — not before.
+        </p>
+      </div>
+    </section>
+
+    <!-- 6 · BUSINESS MODEL -->
+    <section class="slide" data-title="Business Model">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-6">07 — Business model</p>
+        <h2 class="rise text-[clamp(26px,3.8vw,52px)] font-semibold leading-[1.12] tracking-[-0.025em] max-w-[34ch]">
+          Operators pay for the bill audit now; expansion teams and lenders subscribe to screening — and a <span class="text-neg">“don’t build”</span> earns the same as a yes.
+        </h2>
+        <div class="rise mt-12 grid md:grid-cols-3 gap-px bg-neutral-800/70 border border-neutral-800/70">
+          <div class="bg-neutral-950 p-6">
+            <div class="font-mono text-copper text-sm">Rung 1 · cash now</div>
+            <div class="mt-2 text-xl font-semibold">Tariff Audit</div>
+            <p class="mt-2 text-neutral-400 text-[15px] leading-relaxed">Existing operators. Wrong tariff category, oversized sanctioned load, missed ToD. “We found ₹2.8 lakh a year in your bill.” Needs no model.</p>
+          </div>
+          <div class="bg-neutral-950 p-6">
+            <div class="font-mono text-copper text-sm">Rung 2 · the business</div>
+            <div class="mt-2 text-xl font-semibold">Portfolio screening</div>
+            <p class="mt-2 text-neutral-400 text-[15px] leading-relaxed">CPO expansion teams, banks &amp; NBFCs, OMC dealer programmes, fleets. “Rank these 200 sites” — subscription or API.</p>
+          </div>
+          <div class="bg-neutral-950 p-6">
+            <div class="font-mono text-copper text-sm">Rung 3 · upside</div>
+            <div class="mt-2 text-xl font-semibold">Operator-matching fees</div>
+            <p class="mt-2 text-neutral-400 text-[15px] leading-relaxed">Paid by operators per matched site — priced separately from the report, with the verdict distribution published.</p>
+          </div>
+        </div>
+        <p class="note rise mt-10 text-sm text-neutral-500 border-l-2 border-copper/60 pl-4 max-w-[62ch]">
+          <span class="text-neutral-300 font-medium">How you make money, in one sentence.</span> The free pin-drop and retail report are lead capture, not the business.
+        </p>
+      </div>
+    </section>
+
+    <!-- 7 · MARKET -->
+    <section class="slide" data-title="Market">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-6">08 — Market</p>
+        <h2 class="rise text-[clamp(32px,5vw,68px)] font-bold leading-[1.02] tracking-[-0.03em] max-w-[20ch]">
+          Counted buyer by buyer, not from a TAM.
+        </h2>
+        <div class="rise mt-10 overflow-x-auto">
+          <table class="w-full min-w-[560px] text-left">
+            <thead>
+              <tr class="font-mono text-[11px] uppercase tracking-[.14em] text-neutral-500 border-b border-neutral-800">
+                <th class="py-3 pr-4 font-normal">Buyer</th><th class="py-3 pr-4 font-normal text-right">Count</th><th class="py-3 pr-4 font-normal text-right">₹ / year each</th><th class="py-3 font-normal text-right">₹ / year</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono tnum text-[15px]">
+              <tr class="border-b border-neutral-900"><td class="py-3.5 pr-4 font-sans text-neutral-200">Operators — Tariff Audit</td><td class="py-3.5 pr-4 text-right text-white">18<span class="text-neutral-500 text-xs"> CPOs seen</span></td><td class="py-3.5 pr-4 text-right text-neutral-400">[₹X]</td><td class="py-3.5 text-right text-neutral-400">[ ]</td></tr>
+              <tr class="border-b border-neutral-900"><td class="py-3.5 pr-4 font-sans text-neutral-200">CPO expansion teams — screening</td><td class="py-3.5 pr-4 text-right text-neutral-400">[N]</td><td class="py-3.5 pr-4 text-right text-neutral-400">[₹X]</td><td class="py-3.5 text-right text-neutral-400">[ ]</td></tr>
+              <tr class="border-b border-neutral-900"><td class="py-3.5 pr-4 font-sans text-neutral-200">Banks &amp; NBFCs — underwriting</td><td class="py-3.5 pr-4 text-right text-neutral-400">[N]</td><td class="py-3.5 pr-4 text-right text-neutral-400">[₹X]</td><td class="py-3.5 text-right text-neutral-400">[ ]</td></tr>
+              <tr class="border-b border-neutral-900"><td class="py-3.5 pr-4 font-sans text-neutral-200">Fleets &amp; OMC dealer programmes</td><td class="py-3.5 pr-4 text-right text-neutral-400">[N]</td><td class="py-3.5 pr-4 text-right text-neutral-400">[₹X]</td><td class="py-3.5 text-right text-neutral-400">[ ]</td></tr>
+              <tr><td class="py-3.5 pr-4 font-sans text-white font-semibold">Serviceable now — 6 Tier-1 states</td><td class="py-3.5 pr-4"></td><td class="py-3.5 pr-4"></td><td class="py-3.5 text-right text-copper text-lg">[₹ total]</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="rise mt-6 text-neutral-400 max-w-[70ch]">Tier 1 today: Kerala, Tamil Nadu, Karnataka, Maharashtra, Delhi-NCR, Gujarat. The schema already holds all ~780 districts; every waitlisted pin tells us which state to open next.</p>
+        <p class="note rise mt-8 text-sm text-neutral-500 border-l-2 border-copper/60 pl-4 max-w-[70ch]">
+          <span class="text-neutral-300 font-medium">Bottom-up, not a $50B TAM.</span> Brackets are deliberate: fill each count and price from real conversations before this deck leaves the room.
+        </p>
+      </div>
+    </section>
+
+    <!-- 8 · COMPETITION -->
+    <section class="slide" data-title="Competition">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-6">09 — Competition</p>
+        <h2 class="rise text-[clamp(30px,4.6vw,64px)] font-bold leading-[1.02] tracking-[-0.03em] max-w-[22ch]">
+          The alternatives are real. They just all earn on a yes.
+        </h2>
+        <div class="rise mt-10 overflow-x-auto">
+          <table class="w-full min-w-[640px] text-left text-[15px]">
+            <thead>
+              <tr class="font-mono text-[11px] uppercase tracking-[.14em] text-neutral-500 border-b border-neutral-800">
+                <th class="py-3 pr-4 font-normal">Alternative</th><th class="py-3 pr-4 font-normal">What it does well</th><th class="py-3 pr-4 font-normal text-center">Says “don’t”</th><th class="py-3 pr-4 font-normal text-center">Shows the range</th><th class="py-3 font-normal text-center">Ground truth</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-neutral-900"><td class="py-3.5 pr-4 text-neutral-200">Hardware vendor “feasibility”</td><td class="py-3.5 pr-4 text-neutral-400">Free, fast, bundled with the sale</td><td class="text-center text-neutral-600">—</td><td class="text-center text-neutral-600">—</td><td class="text-center text-neutral-600">—</td></tr>
+              <tr class="border-b border-neutral-900"><td class="py-3.5 pr-4 text-neutral-200">DPR consultants</td><td class="py-3.5 pr-4 text-neutral-400">Bankable format, local knowledge</td><td class="text-center text-neutral-500">rarely</td><td class="text-center text-neutral-600">—</td><td class="text-center text-neutral-600">—</td></tr>
+              <tr class="border-b border-neutral-900"><td class="py-3.5 pr-4 text-neutral-200">CPO in-house site teams</td><td class="py-3.5 pr-4 text-neutral-400">Their own session data</td><td class="text-center text-neutral-500">for others</td><td class="text-center text-neutral-600">—</td><td class="text-center text-neutral-400">own sites</td></tr>
+              <tr class="border-b border-neutral-900"><td class="py-3.5 pr-4 text-neutral-200">Charger maps &amp; apps</td><td class="py-3.5 pr-4 text-neutral-400">Where chargers already are</td><td class="text-center text-neutral-600">—</td><td class="text-center text-neutral-600">—</td><td class="text-center text-neutral-600">—</td></tr>
+              <tr><td class="py-3.5 pr-4 text-white font-semibold">Chargeworthy</td><td class="py-3.5 pr-4 text-neutral-300">Breakeven as arithmetic, verdict on P10</td><td class="text-center text-pos">●</td><td class="text-center text-pos">●</td><td class="text-center text-pos">owner bills</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="rise mt-6 text-neutral-400 max-w-[72ch]">
+          <span class="text-white">Different, not just better:</span> thresholds are stated before site data, the conflict of interest is printed in the report, and every month an owner uploads a bill, the dataset nobody else has grows by one row.
+        </p>
+        <p class="note rise mt-8 text-sm text-neutral-500 border-l-2 border-copper/60 pl-4 max-w-[62ch]">
+          <span class="text-neutral-300 font-medium">Honest competition slide.</span> Acknowledge what each alternative does well — then show why you are a different kind of answer.
+        </p>
+      </div>
+    </section>
+
+    <!-- 9 · TEAM -->
+    <section class="slide" data-title="Team">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-6">10 — Team</p>
+        <h2 class="rise text-[clamp(32px,5vw,68px)] font-bold leading-[1.02] tracking-[-0.03em] max-w-[20ch]">
+          Inside a charging operator. Building its referee.
+        </h2>
+        <div class="rise mt-12 grid sm:grid-cols-3 gap-6">
+          <div class="border-t-2 border-copper pt-5">
+            <div class="w-14 h-14 rounded-full bg-neutral-800 hatch mb-4"></div>
+            <div class="text-xl font-semibold">[Founder name]</div>
+            <div class="font-mono text-xs text-neutral-500 mt-1 uppercase tracking-wider">Founder · product &amp; data</div>
+            <p class="mt-3 text-neutral-400 text-[15px] leading-relaxed">[One line of proof — e.g. built the platform end to end: ROI engine, VAHAN pipeline, report renderer.]</p>
+          </div>
+          <div class="border-t-2 border-neutral-700 pt-5">
+            <div class="w-14 h-14 rounded-full bg-neutral-800 hatch mb-4"></div>
+            <div class="text-xl font-semibold">[Co-founder name]</div>
+            <div class="font-mono text-xs text-neutral-500 mt-1 uppercase tracking-wider">Co-founder · sales &amp; operators</div>
+            <p class="mt-3 text-neutral-400 text-[15px] leading-relaxed">[One line of proof — relationships with CPOs, DISCOMs or lenders.]</p>
+          </div>
+          <div class="border-t-2 border-neutral-700 pt-5">
+            <div class="w-14 h-14 rounded-full bg-neutral-800 hatch mb-4"></div>
+            <div class="text-xl font-semibold">[Key person]</div>
+            <div class="font-mono text-xs text-neutral-500 mt-1 uppercase tracking-wider">Advisor · credit / tariffs</div>
+            <p class="mt-3 text-neutral-400 text-[15px] leading-relaxed">[One line of proof — e.g. ex-NBFC credit or SERC tariff expertise.]</p>
+          </div>
+        </div>
+        <p class="rise mt-10 text-[15px] text-neutral-400 max-w-[72ch]">
+          <span class="text-white">Disclosed up front:</span> we have no current CPO affiliation and do not own or operate charging stations. We earn assessment and operator-matching fees — a potential conflict the report itself discloses in its final section.
+        </p>
+        <p class="note rise mt-8 text-sm text-neutral-500 border-l-2 border-copper/60 pl-4 max-w-[62ch]">
+          <span class="text-neutral-300 font-medium">You + co-founder + one key person.</span> Fill the brackets; keep each proof to one line.
+        </p>
+      </div>
+    </section>
+
+    <!-- 10 · ASK -->
+    <section class="slide" data-title="The Ask">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-6">11 — The ask</p>
+        <h2 class="rise text-[clamp(30px,5vw,70px)] font-bold leading-[1.05] tracking-[-0.03em] max-w-[24ch]">
+          Raising <span class="text-copper">[₹X]</span> at <span class="text-copper">[₹Y]</span> for 18 months to become India’s underwriting standard for chargers.
+        </h2>
+        <div class="rise mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-neutral-800/70 border border-neutral-800/70">
+          <div class="bg-neutral-950 p-5"><div class="font-mono text-xs text-neutral-500">Month 0–3</div><div class="mt-2 font-semibold">Tariff orders loaded</div><p class="mt-1 text-sm text-neutral-400">All 6 Tier-1 states, superseded orders included</p></div>
+          <div class="bg-neutral-950 p-5"><div class="font-mono text-xs text-neutral-500">Month 3–6</div><div class="mt-2 font-semibold">3 paid Tariff Audits</div><p class="mt-1 text-sm text-neutral-400">Engine reconciled to a real operator P&amp;L within 5%</p></div>
+          <div class="bg-neutral-950 p-5"><div class="font-mono text-xs text-neutral-500">Month 6–12</div><div class="mt-2 font-semibold">[N] stations’ bills</div><p class="mt-1 text-sm text-neutral-400">Demand model fitted on owner ground truth</p></div>
+          <div class="bg-neutral-950 p-5 ring-1 ring-copper/50"><div class="font-mono text-xs text-copper">Month 18 · milestone</div><div class="mt-2 font-semibold">1 lender on P10 screening</div><p class="mt-1 text-sm text-neutral-400">A credit committee using our margin of safety</p></div>
+        </div>
+        <p class="note rise mt-10 text-sm text-neutral-500 border-l-2 border-copper/60 pl-4 max-w-[62ch]">
+          <span class="text-neutral-300 font-medium">Specific ask, clear milestone.</span> The milestones are the repo’s own exit criteria; set the amount and valuation before presenting.
+        </p>
+      </div>
+    </section>
+
+    <!-- 11 · CLOSE -->
+    <section class="slide" data-title="Summary">
+      <div class="h-full overflow-y-auto px-4 sm:px-10 lg:px-20 pt-20 pb-28 flex flex-col justify-[safe_center] items-start max-w-7xl mx-auto">
+        <p class="rise font-mono text-xs uppercase tracking-[.2em] text-copper mb-6">Summary</p>
+        <h2 class="rise text-[clamp(44px,9vw,128px)] font-extrabold leading-[0.92] tracking-[-0.045em]">
+          10 slides.<br /><span class="text-neutral-500">3 minutes.</span>
+        </h2>
+        <p class="rise mt-8 text-[clamp(18px,1.8vw,24px)] text-neutral-400 max-w-[44ch] leading-relaxed">
+          That’s all you get. Make every slide count — and make one of them the site you told not to build.
+        </p>
+        <div class="rise mt-10 flex flex-wrap items-center gap-3">
+          <button data-goto="0" class="px-5 h-11 bg-white text-neutral-950 font-semibold rounded-md hover:bg-neutral-200 transition-colors">Start over</button>
+          <a href="https://talk-to-nitara.hf.space/" target="_blank" rel="noopener" class="px-5 h-11 inline-flex items-center gap-2 border border-copper/60 rounded-md font-mono text-sm text-white hover:bg-neutral-900 transition-colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" fill="#d98a3d"/></svg>chargeworthy.in
+          </a>
+        </div>
+        <p class="rise mt-4 font-mono text-xs text-neutral-500">
+          Live now at <a href="https://talk-to-nitara.hf.space/" target="_blank" rel="noopener" class="text-neutral-300 underline underline-offset-4 decoration-neutral-700 hover:decoration-neutral-300">talk-to-nitara.hf.space</a> · chargeworthy.in coming soon
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- controls -->
+  <nav class="fixed bottom-0 inset-x-0 z-20 px-4 sm:px-10 pb-5 pt-3 flex items-center justify-between gap-4 bg-gradient-to-t from-neutral-950 via-neutral-950/90 to-transparent" aria-label="Slide navigation">
+    <div class="flex items-baseline gap-3 min-w-0">
+      <span class="font-mono tnum text-sm"><span id="current">01</span><span class="text-neutral-600"> / </span><span id="total" class="text-neutral-500">11</span></span>
+      <span id="slideTitle" class="hidden sm:inline text-sm text-neutral-500 truncate"></span>
+    </div>
+    <div id="dots" class="hidden md:flex items-center gap-1.5"></div>
+    <div class="flex items-center gap-2">
+      <button id="prev" class="w-11 h-11 grid place-items-center rounded-md border border-neutral-800 text-neutral-300 hover:bg-neutral-900 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-colors" aria-label="Previous slide">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <button id="next" class="w-11 h-11 grid place-items-center rounded-md bg-white text-neutral-950 hover:bg-neutral-200 disabled:opacity-30 transition-colors" aria-label="Next slide">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const total = slides.length;
+      const $ = (id) => document.getElementById(id);
+      const pad = (n) => String(n).padStart(2, '0');
+      const dots = $('dots');
+      $('total').textContent = pad(total);
+
+      slides.forEach((s, i) => {
+        const b = document.createElement('button');
+        b.className = 'h-1.5 rounded-full transition-all duration-300';
+        b.setAttribute('aria-label', 'Go to slide ' + (i + 1) + ': ' + s.dataset.title);
+        b.addEventListener('click', () => go(i));
+        dots.appendChild(b);
+      });
+
+      let index = 0;
+      function go(i) {
+        index = Math.max(0, Math.min(total - 1, i));
+        slides.forEach((s, j) => {
+          const on = j === index;
+          s.classList.toggle('active', on);
+          s.setAttribute('aria-hidden', on ? 'false' : 'true');
+          if (on) s.removeAttribute('inert'); else s.setAttribute('inert', '');
+        });
+        Array.from(dots.children).forEach((d, j) => {
+          d.className = 'h-1.5 rounded-full transition-all duration-300 ' + (j === index ? 'w-6 bg-white' : 'w-1.5 bg-neutral-700 hover:bg-neutral-500');
+        });
+        $('current').textContent = pad(index + 1);
+        $('slideTitle').textContent = slides[index].dataset.title;
+        $('progress').style.width = ((index + 1) / total * 100) + '%';
+        $('prev').disabled = index === 0;
+        $('next').disabled = index === total - 1;
+        const h = '#' + (index + 1);
+        if (location.hash !== h) history.replaceState(null, '', h);
+      }
+
+      $('prev').addEventListener('click', () => go(index - 1));
+      $('next').addEventListener('click', () => go(index + 1));
+      document.querySelectorAll('[data-goto]').forEach((b) => b.addEventListener('click', () => go(+b.dataset.goto)));
+
+      function setNotes(on) {
+        document.body.classList.toggle('hide-notes', !on);
+        $('notesState').textContent = on ? 'on' : 'off';
+        $('notesToggle').setAttribute('aria-pressed', String(on));
+        try { localStorage.setItem('cw-pitch-notes', on ? '1' : '0'); } catch (e) {}
+      }
+      let notesOn = true;
+      try { notesOn = localStorage.getItem('cw-pitch-notes') !== '0'; } catch (e) {}
+      setNotes(notesOn);
+      $('notesToggle').addEventListener('click', () => { notesOn = !notesOn; setNotes(notesOn); });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        switch (e.key) {
+          case 'ArrowRight': case 'PageDown': case ' ': e.preventDefault(); go(index + 1); break;
+          case 'ArrowLeft': case 'PageUp': e.preventDefault(); go(index - 1); break;
+          case 'Home': e.preventDefault(); go(0); break;
+          case 'End': e.preventDefault(); go(total - 1); break;
+          case 'n': case 'N': notesOn = !notesOn; setNotes(notesOn); break;
+          case 'f': case 'F':
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+            else document.exitFullscreen?.();
+            break;
+        }
+      });
+
+      let x0 = null, y0 = null;
+      document.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+      document.addEventListener('touchend', (e) => {
+        if (x0 === null) return;
+        const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) go(index + (dx < 0 ? 1 : -1));
+        x0 = y0 = null;
+      });
+
+      window.addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1); });
+      const start = parseInt(location.hash.slice(1), 10);
+      go(start ? start - 1 : 0);
+    })();
+  </script>
+</body>
+</html>

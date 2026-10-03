@@ -5,12 +5,14 @@ import type { Plugin } from "vite";
 import { loadPublicData } from "./public-data.ts";
 import { buildExpansion } from "./expansion.ts";
 import { buildAtlas } from "./atlas.ts";
+import { loadPublishedUsage } from "./published-usage.ts";
 
 export function publicDataPlugin(): Plugin {
   let root = "",
     contentRoot = "",
     development = false;
   let loaded: Awaited<ReturnType<typeof loadPublicData>> | undefined;
+  let published: Awaited<ReturnType<typeof loadPublishedUsage>> | undefined;
   return {
     name: "validated-public-analytics-data",
     config(_config, env) {
@@ -22,11 +24,14 @@ export function publicDataPlugin(): Plugin {
     },
     async buildStart() {
       loaded = await loadPublicData(resolve(root, "public"));
+      published = await loadPublishedUsage(resolve(root, "published"), loaded.catalogue);
     },
     configureServer(server) {
       server.middlewares.use((request, response, next) => {
         const pathname = new URL(request.url ?? "/", "http://localhost").pathname;
-        const artifact = loaded?.artifacts.find(({ name }) => pathname === `/${name}`);
+        const artifact = [...(loaded?.artifacts ?? []), ...(published?.artifacts ?? [])].find(
+          ({ name }) => pathname === `/${name}`,
+        );
         if (!artifact) return next();
         response.setHeader(
           "Content-Type",
@@ -76,7 +81,8 @@ export function publicDataPlugin(): Plugin {
       }
       if (id === "\0virtual:analytics-atlas") {
         loaded ??= await loadPublicData(resolve(root, "public"));
-        return `export default ${JSON.stringify(buildAtlas(loaded, false))};`;
+        published ??= await loadPublishedUsage(resolve(root, "published"), loaded.catalogue);
+        return `export default ${JSON.stringify({ ...buildAtlas(loaded, false), usage: published.rows, usage_metadata: published.metadata })};`;
       }
       if (id === "\0virtual:analytics-public-data") {
         loaded ??= await loadPublicData(resolve(root, "public"));
@@ -91,7 +97,7 @@ export function publicDataPlugin(): Plugin {
       }
     },
     generateBundle() {
-      for (const artifact of loaded?.artifacts ?? [])
+      for (const artifact of [...(loaded?.artifacts ?? []), ...(published?.artifacts ?? [])])
         this.emitFile({ type: "asset", fileName: artifact.name, source: artifact.source });
     },
   };

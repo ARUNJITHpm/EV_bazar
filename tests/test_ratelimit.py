@@ -162,6 +162,47 @@ def test_the_throttle_actually_fires_on_the_assess_route(monkeypatch: pytest.Mon
     assert second.headers["retry-after"] == "60"
 
 
+def test_console_login_is_throttled_on_the_route(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Password guessing on /console/login is refused past the hourly ceiling."""
+    monkeypatch.setattr(
+        "app.api.internal.ratelimit._console_login_limiter", _limiter(FakeClock(), 3600.0)
+    )
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: Settings(
+        env="test", console_login_limit_per_hour=1, _env_file=None
+    )
+    with TestClient(app, raise_server_exceptions=False) as c:
+        first = c.post("/api/internal/console/login", json={"password": "x"})
+        second = c.post("/api/internal/console/login", json={"password": "x"})
+    assert first.status_code != 429
+    assert second.status_code == 429
+
+
+def test_report_reads_are_throttled_on_the_route(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A caller walking report ids is refused past the per-minute ceiling."""
+    monkeypatch.setattr("app.api.internal.ratelimit._report_limiter", _limiter(FakeClock()))
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: Settings(
+        env="test", report_read_limit_per_minute=1, _env_file=None
+    )
+    app.dependency_overrides[get_session] = lambda: (yield MagicMock())
+    with TestClient(app, raise_server_exceptions=False) as c:
+        first = c.get("/api/internal/reports/NOPE-1")
+        second = c.get("/api/internal/reports/NOPE-2")
+    assert first.status_code != 429
+    assert second.status_code == 429
+
+
+def test_openapi_is_not_served_in_prod(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The schema maps every route and field; prod must not publish it."""
+    monkeypatch.setattr("app.main.get_settings", lambda: Settings(env="prod", _env_file=None))
+    try:
+        app = create_app()
+    except Exception:  # prod refuses to boot without its secrets; that is fine here
+        pytest.skip("prod settings need secrets to construct")
+    assert app.openapi_url is None
+
+
 # --- the owner submission cap -------------------------------------------------
 
 

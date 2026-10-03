@@ -25,6 +25,7 @@ export interface ChartReference {
 export interface ChartData {
   annotations?: readonly ChartAnnotation[];
   reference?: ChartReference;
+  social?: { question: string; context: string };
   id: string;
   title: string;
   subtitle: string;
@@ -214,6 +215,26 @@ export function valueDomain(rows: readonly ChartRow[]): [number, number] {
   const min = values.reduce((bound, value) => Math.min(bound, value), 0),
     max = values.reduce((bound, value) => Math.max(bound, value), 0);
   return min === max ? [0, 1] : [min, max];
+}
+/** Round a step to 1, 2, 2.5 or 5 x 10^n so axis labels read as plain numbers. */
+function niceStep(span: number, count: number) {
+  const raw = span / count,
+    power = 10 ** Math.floor(Math.log10(raw)),
+    fraction = raw / power;
+  return (
+    (fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 2.5 ? 2.5 : fraction <= 5 ? 5 : 10) * power
+  );
+}
+/** Widen a domain to whole steps and return it with its tick values. */
+export function niceTicks([min, max]: [number, number], count = 4) {
+  const step = niceStep(max - min || 1, count),
+    low = Math.floor(min / step) * step,
+    high = Math.ceil(max / step) * step;
+  const ticks = Array.from(
+    { length: Math.round((high - low) / step) + 1 },
+    (_, index) => low + index * step,
+  );
+  return { domain: [low, high] as [number, number], ticks };
 }
 export const numberLabel = (value: number) =>
   value.toLocaleString("en-IN", { maximumFractionDigits: 2 });

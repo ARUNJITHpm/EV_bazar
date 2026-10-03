@@ -235,6 +235,22 @@ export const datasetFiles: Record<DatasetId, string> = {
   highways: "data.geojson",
 };
 
+/** Reader-facing names for datasets that have no published metadata title yet. */
+export const datasetLabels: Record<DatasetId, string> = {
+  district_reference: "District reference",
+  rto_to_district: "RTO-to-district mapping",
+  ev_registrations: "EV registrations",
+  public_chargers: "Public chargers",
+  ev_tariffs: "EV electricity tariffs",
+  discom_performance: "Electricity distribution company performance",
+  supply_hours: "Electricity supply hours",
+  state_ev_policies: "State EV policies",
+  nhai_wayside_amenities: "NHAI wayside amenities",
+  osm_power: "OpenStreetMap power equipment",
+  district_boundaries: "District boundaries",
+  highways: "National highways",
+};
+
 export const metadataSchema = z
   .object({
     id: z.enum([

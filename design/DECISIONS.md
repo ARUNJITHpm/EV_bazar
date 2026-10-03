@@ -166,6 +166,26 @@ The wiring is exercised live in `tests/test_assess_teaser.py`.
   padded progress bar its own comment forbids. Our real work is one POST
   (~1–3 s); the screen names the real sources being consulted and completes
   when the response lands. No timers.
+  **Amended 2026-09-03, owner's call:** an answer that lands in under a
+  second reads as a guess, so the screen now walks the 34 landing-page
+  factors over ~14 s (`features/public/flow/Working.tsx`), grouped as the
+  report groups them, with the real POST running alongside. Two rules
+  survive: no factor ever shows a value it did not fetch, and the last tick
+  waits for the response - the screen never finishes ahead of the answer.
+  Reduced-motion drops the pacing and waits on the request alone.
+- **The report is the eleven-section paper document, plus operators.**
+  2026-09-03: `/report/:id` was rebuilt to `design/reference/
+  chargeworthy-report.tar.gz` and `design/brand/report-spec.md` — verdict,
+  money beside a fixed deposit, the judging rules BEFORE the data, the site
+  (two Mapbox Static images: the plot from above, the 3/5/10 km catchment)
+  with every factor under a heading and a sign-plus-word direction marker,
+  financials, operators, competitors, what would change the verdict, the
+  one chart, ledger, provenance, disclosure. Site facts now carry
+  `group`/`direction` from the assembler (fixed thresholds, stated in
+  `assemble.py`); a mid-year VAHAN snapshot's growth is marked "not
+  comparable" rather than argued against. The fixed-deposit rate is an
+  indicative constant beside its own caveat; the rejection proportion stays
+  bracketed.
 - **Numbers the repo does not have render bracketed, per IMPLEMENT.md.**
   "[340] sites assessed", "[38%] advised against", "[XX%]" accuracy,
   "[1,000+]" owners. Partner and hardware names are NOT shipped (no written

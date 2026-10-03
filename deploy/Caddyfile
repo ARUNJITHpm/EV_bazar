@@ -9,6 +9,26 @@
 :8000 {
 	encode gzip
 
+	header {
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
+		# Frame-ancestors is the modern clickjacking guard; the full script/
+		# style CSP needs testing against Mapbox and fonts before it ships.
+		Content-Security-Policy "frame-ancestors 'self' https://huggingface.co"
+		-Server
+	}
+
+	# Largest legitimate body is an owner bill image (8 MiB cap in config.py).
+	request_body {
+		max_size 10MB
+	}
+
+	handle /robots.txt {
+		respond "User-agent: *\nDisallow: /api/\nDisallow: /console\n" 200
+	}
+
 	handle /api/* {
 		reverse_proxy 127.0.0.1:8001 {
 			# Caddy does not trust the Space's front proxy, so it discards the

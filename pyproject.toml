@@ -109,11 +109,17 @@ forbidden_modules = [
   "geoalchemy2",
 ]
 
+# `app.pdf` renders a stored report and knows nothing about how it was
+# assembled - it drives a browser at a URL. It sits above `domain` so that
+# nothing in the domain layer can start reaching for a renderer: a financial
+# number that depends on a browser being installed is not a financial number
+# we can defend (Track B - R11).
 [[tool.importlinter.contracts]]
-name = "Layers: api -> domain -> models"
+name = "Layers: api -> pdf -> domain -> models"
 type = "layers"
 layers = [
   "app.api",
+  "app.pdf",
   "app.domain",
   "app.models",
 ]

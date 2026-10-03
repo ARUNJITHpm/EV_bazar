@@ -56,6 +56,11 @@
 .analytics-root a:hover {
   text-decoration: underline;
 }
+/* Links inside running text need more than colour to stand out from it. */
+.analytics-document :is(p, li, dd, figcaption) a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
 .analytics-header,
 .analytics-footer {
   background: var(--cw-ground);
@@ -86,8 +91,11 @@
   align-items: center;
   min-height: 44px;
 }
-.analytics-header nav a[aria-current] {
+.analytics-header nav a[aria-current],
+.analytics-root .public-context-row a[aria-current] {
+  color: var(--cw-text);
   text-decoration: underline;
+  text-underline-offset: 6px;
 }
 .analytics-document {
   max-width: var(--cw-public-width);
@@ -229,6 +237,11 @@
   align-items: flex-start;
   padding-top: 36px;
   padding-bottom: 40px;
+  /* Line up with the header and the document column above it. */
+  padding-inline: max(
+    var(--cw-public-gutter),
+    calc((100% - var(--cw-public-width)) / 2 + var(--cw-public-gutter))
+  );
 }
 .analytics-footer p {
   max-width: 52ch;
@@ -387,9 +400,16 @@
 .analytics-chart-controls {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
   gap: 8px;
   margin-top: 24px;
+}
+/* Keep the format choice beside the button it applies to. */
+.analytics-image-export {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex-basis: 100%;
 }
 .analytics-table-scroll {
   max-width: 100%;
@@ -549,6 +569,16 @@
   .analytics-chart {
     break-inside: avoid;
   }
+}
+
+.analytics-chart-controls select {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--cw-rule);
+  color: var(--cw-ink);
+  background: var(--cw-paper);
+  font: inherit;
 }
 
 /* Public grid/policy notes often contain long notification URLs. */

@@ -191,7 +191,7 @@ export function Working({
   if (failed) {
     return (
       <div className="flex max-w-[720px] flex-col gap-6">
-        <h1 className="text-[clamp(28px,4vw,40px)] leading-[1.15] font-medium">
+        <h1 className="text-[clamp(32px,4.6vw,50px)] leading-[1.15] font-medium">
           We could not finish the check.
         </h1>
         <p className="text-cw-muted">
@@ -217,7 +217,7 @@ export function Working({
     <div className="flex max-w-[1140px] flex-col gap-[clamp(28px,4vw,40px)]">
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
         <div className="flex max-w-[640px] flex-col gap-3.5">
-          <h1 className="text-[clamp(28px,4vw,40px)] leading-[1.15] font-medium">
+          <h1 className="text-[clamp(32px,4.6vw,50px)] leading-[1.15] font-medium">
             {finished
               ? "Checklist reviewed. Preparing your answer."
               : `Reviewing ${TOTAL} assessment questions.`}
@@ -228,7 +228,7 @@ export function Working({
           </p>
         </div>
         <div
-          className="font-cw-mono text-[clamp(28px,4vw,40px)] leading-none font-medium tracking-[-0.02em] text-cw-text tabular-nums"
+          className="font-cw-mono text-[clamp(32px,4.6vw,50px)] leading-none font-medium tracking-[-0.02em] text-cw-text tabular-nums"
           aria-hidden="true"
         >
           {done}

@@ -19,9 +19,8 @@ import { developmentFixtures } from "./data/client";
 import { parseCsv } from "../../../scripts/csv";
 import { datasetStructuredData } from "../../../scripts/analytics-seo";
 
-import { PublicHeader } from "../public/PublicHeader";
-
 import { analyticsMetadata, searchPublicContent, verticals } from "./catalog";
+import { PublicHeader } from "../public/PublicHeader";
 
 const ChartDemo = import.meta.env.DEV ? lazy(() => import("./chart/ChartDemo")) : null;
 const MapDemo = import.meta.env.DEV ? lazy(() => import("./districts/MapDemo")) : null;
@@ -72,7 +71,9 @@ function Search({ districtsOnly = false }: { districtsOnly?: boolean }) {
         <>
           <p className="analytics-search-status" role="status">
             {matches.length === 0
-              ? "No matching titles. Try another topic."
+              ? districtsOnly
+                ? "No matching districts. Check the spelling or try the state name."
+                : "No matching titles. Try another topic."
               : `${matches.length.toLocaleString("en-IN")} ${matches.length === 1 ? "result" : "results"} found`}
           </p>
           <ul className="analytics-search-results" id={`${id}-results`}>
@@ -261,6 +262,12 @@ export function AnalyticsApp() {
       element: document.querySelector(selector),
       content: document.querySelector(selector)?.getAttribute("content") ?? "",
     }));
+    const socialSelectors = ["og:image", "og:image:width", "og:image:height", "og:image:alt"];
+    const oldSocial = socialSelectors.map((property) => ({
+      property,
+      element: document.querySelector<HTMLMetaElement>(`meta[property="${property}"]`),
+      content: document.querySelector<HTMLMetaElement>(`meta[property="${property}"]`)?.content,
+    }));
     const previousRobots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
     const previousRobotsContent = previousRobots?.content;
     const metadata = analyticsMetadata(pathname);
@@ -283,6 +290,31 @@ export function AnalyticsApp() {
       document.head.append(ld);
     }
     document.title = metadata.title;
+    const socialValues = metadata.socialImage
+      ? [
+          new URL(
+            metadata.socialImage,
+            import.meta.env.VITE_ANALYTICS_SITE_ORIGIN || window.location.origin,
+          ).href,
+          "1200",
+          "630",
+          metadata.title,
+        ]
+      : [];
+    socialSelectors.forEach((property, index) => {
+      let element = document.querySelector<HTMLMetaElement>(`meta[property="${property}"]`);
+      const content = socialValues[index];
+      if (!content) {
+        element?.remove();
+        return;
+      }
+      if (!element) {
+        element = document.createElement("meta");
+        element.setAttribute("property", property);
+        document.head.append(element);
+      }
+      element.content = content;
+    });
     document
       .querySelector('meta[name="description"]')
       ?.setAttribute("content", metadata.description);
@@ -298,6 +330,13 @@ export function AnalyticsApp() {
       .querySelector('meta[property="og:description"]')
       ?.setAttribute("content", metadata.description);
     return () => {
+      for (const old of oldSocial) {
+        document.querySelector(`meta[property="${old.property}"]`)?.remove();
+        if (old.element) {
+          old.element.content = old.content ?? "";
+          document.head.append(old.element);
+        }
+      }
       canonical?.remove();
       document.getElementById("analytics-datasets")?.remove();
       document.title = previousTitle;
@@ -325,6 +364,9 @@ export function AnalyticsApp() {
             "Independent EV charging site assessment. Right site. Right operator.",
           );
         robots?.remove();
+        socialSelectors.forEach((property) =>
+          document.querySelector(`meta[property="${property}"]`)?.remove(),
+        );
       }
     };
   }, [pathname]);
@@ -341,8 +383,15 @@ export function AnalyticsApp() {
           >
             Data
           </Link>
-          <Link to="/data/methodology">Methodology</Link>
-          <Link to="/data/sources">Sources</Link>
+          {(["methodology", "sources"] as const).map((page) => (
+            <Link
+              key={page}
+              to={`/data/${page}`}
+              aria-current={pathname.replace(/\/+$/, "") === `/data/${page}` ? "page" : undefined}
+            >
+              {page === "methodology" ? "Methodology" : "Sources"}
+            </Link>
+          ))}
         </nav>
       </PublicHeader>
       <main id="data-main" tabIndex={-1} className="analytics-document">

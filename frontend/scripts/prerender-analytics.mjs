@@ -3,6 +3,8 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import react from "@vitejs/plugin-react";
 import { build, loadEnv } from "vite";
+import { Resvg } from "@resvg/resvg-js";
+import { createHash } from "node:crypto";
 import { publicDataPlugin } from "./public-data-plugin.ts";
 import { sitemap, datasetStructuredData } from "./analytics-seo.ts";
 
@@ -19,9 +21,99 @@ await build({
     rollupOptions: { output: { entryFileNames: "render.mjs" } },
   },
 });
-const { renderAnalytics, staticAnalyticsPaths, analyticsMetadata } = await import(
-  pathToFileURL(resolve(output, "render.mjs")).href
+const {
+  renderAnalytics,
+  staticAnalyticsPaths,
+  analyticsMetadata,
+  socialArticles,
+  socialSvg,
+  socialFormats,
+  socialImagePath,
+  assertSocialSvgLegibility,
+  pngWithProvenance,
+} = await import(pathToFileURL(resolve(output, "render.mjs")).href);
+// Node and rasterisation are build-only; Caddy serves the resulting static PNGs.
+const configuredOrigin = process.env.VITE_ANALYTICS_SITE_ORIGIN ?? "";
+const origin = configuredOrigin || "http://localhost:4173";
+const parsedOrigin = new URL(origin);
+if (
+  parsedOrigin.origin !== origin ||
+  (configuredOrigin &&
+    (parsedOrigin.protocol !== "https:" || parsedOrigin.hostname === "localhost"))
+)
+  throw new Error(
+    "VITE_ANALYTICS_SITE_ORIGIN must be a public HTTPS origin with no path or trailing slash",
+  );
+if (!configuredOrigin)
+  console.warn(
+    "Social images are local previews. Set VITE_ANALYTICS_SITE_ORIGIN before deploying link previews.",
+  );
+const tokenCss = await readFile("src/styles/tokens.css", "utf8");
+const tokenNames = {
+  paper: "--cw-paper",
+  ink: "--cw-ink",
+  muted: "--cw-paper-muted",
+  slate: "--cw-paper-slate",
+  rule: "--cw-rule",
+  highlight: "--cw-data-highlight",
+};
+const palette = Object.fromEntries(
+  Object.entries(tokenNames).map(([key, token]) => {
+    const value = new RegExp(`${token}:\\s*(#[0-9a-f]{6})`, "i").exec(tokenCss)?.[1];
+    if (!value) throw new Error(`Missing report palette token ${token}`);
+    return [key, value];
+  }),
 );
+const fontDirectory = resolve("public/analytics-fonts");
+const fontManifest = JSON.parse(await readFile(resolve(fontDirectory, "provenance.json"), "utf8"));
+for (const [name, entry] of Object.entries(fontManifest.files)) {
+  if (
+    createHash("sha256")
+      .update(await readFile(resolve(fontDirectory, name)))
+      .digest("hex") !== entry.sha256
+  )
+    throw new Error(`Font provenance mismatch: ${name}`);
+}
+const fontFiles = ["SourceSerif4.ttf", "IBMPlexMono.ttf"].map((name) =>
+  resolve(fontDirectory, name),
+);
+await mkdir("dist/analytics-images", { recursive: true });
+const imageManifest = { public_origin_confirmed: Boolean(configuredOrigin), origin, images: [] };
+for (const article of socialArticles.filter((a) => a.format === "weekly")) {
+  const chart = article.blocks.find((b) => b.kind === "chart");
+  if (!chart) throw new Error(`Weekly post has no chart: ${article.slug}`);
+  for (const [format, dimensions] of Object.entries(socialFormats)) {
+    const svg = socialSvg({
+      data: chart.data,
+      rows: chart.data.rows,
+      question: article.question,
+      pageUrl: `${origin}/data/weekly/${article.slug}`,
+      format,
+      palette,
+    });
+    assertSocialSvgLegibility(svg, format);
+    const renderer = new Resvg(svg, {
+      font: { fontFiles, loadSystemFonts: false },
+      fitTo: { mode: "original" },
+    });
+    const png = pngWithProvenance(renderer.render().asPng(), svg);
+    const path = socialImagePath(article.slug, format);
+    await writeFile(`dist${path}`, png);
+    // SVG is a public audit artifact for font/bounds checks; all values came
+    // through the same reviewed public content loader as the article.
+    await writeFile(`dist${path.replace(/\.png$/, ".svg")}`, svg);
+    imageManifest.images.push({
+      article: article.slug,
+      format,
+      path,
+      width: dimensions.width,
+      height: dimensions.height,
+      sha256: createHash("sha256").update(png).digest("hex"),
+    });
+  }
+}
+await writeFile("dist/analytics-images/manifest.json", JSON.stringify(imageManifest, null, 2));
+console.log(`Generated ${imageManifest.images.length} reviewed weekly social PNGs.`);
 const template = await readFile("dist/index.html", "utf8");
 const catalogue = JSON.parse(await readFile("dist/analytics-data/catalogue.json", "utf8"));
 const analyticsOrigin =
@@ -82,6 +174,18 @@ function documentFor(path) {
     "</head>",
     `<meta name="robots" content="${metadata.noindex ? "noindex, follow" : "index, follow"}" /></head>`,
   );
+  const weekly = socialArticles.find(
+    (a) => a.format === "weekly" && path === `/data/weekly/${a.slug}`,
+  );
+  if (weekly) {
+    const image = `${configuredOrigin}${socialImagePath(weekly.slug, "og")}`;
+    html = html
+      .replace(/<meta\s+property="og:image"[^>]*>/g, "")
+      .replace(
+        "</head>",
+        `<meta property="og:image" content="${escape(image)}" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:image:alt" content="${escape(weekly.question)}" /></head>`,
+      );
+  }
   const marker = '<div id="root"></div>';
   if (!html.includes(marker))
     throw new Error("Analytics prerender: missing root marker in dist/index.html");

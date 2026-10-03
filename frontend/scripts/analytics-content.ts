@@ -62,6 +62,15 @@ function referenceChart(
       ? [["Archived district entries", catalogue.districts.length] as const]
       : [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
   const data: ChartData = {
+    social: {
+      question:
+        config.kind === "total"
+          ? "How many entries are in the archived district reference?"
+          : "How do archived district entries vary by state?",
+      context: source.metadata.time_coverage.match(/\b20\d{2}\b/)
+        ? `Archived reference \u00b7 ${source.metadata.time_coverage.match(/\b20\d{2}\b/)![0]} coverage`
+        : "Archived reference; see source period",
+    },
     id,
     title:
       config.kind === "total"
@@ -148,6 +157,9 @@ export function parseArticle(
       throw new Error("Weekly explanation exceeds 150 words");
     if (meta.chart.dataset !== meta.dataset) throw new Error("Weekly dataset and chart disagree");
     blocks.unshift({ kind: "chart", data: referenceChart(meta.chart, catalogue, `${slug}-chart`) });
+    const weeklyChart = blocks[0];
+    if (weeklyChart?.kind === "chart" && weeklyChart.data.social)
+      weeklyChart.data.social.question = meta.title;
     return {
       slug,
       format,

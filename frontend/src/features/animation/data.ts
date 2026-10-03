@@ -291,7 +291,25 @@ export const HERO_METRICS: readonly { readonly label: string; readonly value: st
   return check ? [{ label: m.label, value: check.value }] : [];
 });
 
-// Factors shown in the optional homepage operator checklist.
+/* ------------------------------------------------------------------ *
+ * The operator question - a different question from the 34.
+ *
+ * The 34 above decide whether anything should be built here. Every one of
+ * them is a property of the LAND and is identical whichever operator signs.
+ * These twelve decide WHO runs it, and they are site-conditional: the same
+ * operator scores differently at two sites five kilometres apart.
+ *
+ * Same rules as everything else in this file. Grouped BY SOURCE, one group
+ * one fetch. Names are illustrative content for a fictional site; the
+ * operators below are deliberately UNNAMED, because Landing.tsx promises
+ * that partner operators appear named only with written permission, and an
+ * animation is not an exception to that.
+ *
+ * Backend state as of 2026-09-07: groups 1 and 2 are computed for real
+ * (app/domain/cpo/presence.py); groups 3 to 5 are not. See
+ * CPO_SELECTION_PLAN.md and /console/operators.
+ * ------------------------------------------------------------------ */
+
 export type OperatorFactor = {
   readonly label: string;
   /** What it does to the answer, in one clause. Never a score. */
@@ -369,4 +387,79 @@ export const OPERATOR_GROUPS: readonly OperatorGroup[] = [
       },
     ],
   },
+];
+
+export const TOTAL_OPERATOR_FACTORS = OPERATOR_GROUPS.reduce((n, g) => n + g.factors.length, 0);
+
+/**
+ * Three candidate operators at one illustrative site.
+ *
+ * UNNAMED on purpose - see the block comment above. The shape of the
+ * argument is the point: the operator with the widest reach is also the one
+ * whose own chargers are nearest, and no single score can settle that trade
+ * for the site owner.
+ */
+export type OperatorCandidate = {
+  readonly id: string;
+  readonly label: string;
+  readonly ours: boolean;
+  readonly ownWithin3km: number;
+  readonly district: number;
+  readonly state: number;
+  readonly roaming: boolean;
+  /** What their own nearby stations do to this site's volume. */
+  readonly note: string;
+};
+
+export const OPERATOR_CANDIDATES: readonly OperatorCandidate[] = [
+  {
+    id: "a",
+    label: "Network A",
+    ours: true,
+    ownWithin3km: 3,
+    district: 32,
+    state: 281,
+    roaming: true,
+    note: "The widest reach here, and the nearest chargers of their own. Their app has three other places to send the same drivers.",
+  },
+  {
+    id: "b",
+    label: "Network B",
+    ours: false,
+    ownWithin3km: 1,
+    district: 24,
+    state: 284,
+    roaming: true,
+    note: "Comparable reach, one station of their own within 3 km. One place to lose a driver to, not three.",
+  },
+  {
+    id: "c",
+    label: "Network C",
+    ours: false,
+    ownWithin3km: 0,
+    district: 3,
+    state: 4,
+    roaming: false,
+    note: "Nothing of theirs nearby to divide the demand — and almost nothing in the state, so no local audience and no engineer close by.",
+  },
+];
+
+/**
+ * Six neighbouring chargers, as they sit around the illustrative site.
+ * ``x``/``y`` are percentages of the plane, ``owner`` indexes
+ * OPERATOR_CANDIDATES by id, and ``near`` marks the ones inside 3 km.
+ */
+export const NEIGHBOURS: readonly {
+  readonly id: string;
+  readonly owner: string;
+  readonly x: number;
+  readonly y: number;
+  readonly near: boolean;
+}[] = [
+  { id: "n1", owner: "a", x: 34, y: 30, near: true },
+  { id: "n2", owner: "a", x: 68, y: 36, near: true },
+  { id: "n3", owner: "a", x: 58, y: 70, near: true },
+  { id: "n4", owner: "b", x: 30, y: 66, near: true },
+  { id: "n5", owner: "b", x: 84, y: 18, near: false },
+  { id: "n6", owner: "c", x: 16, y: 84, near: false },
 ];

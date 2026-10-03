@@ -1,4 +1,7 @@
 @echo off
+echo VAHAN scraping on this laptop is disabled at the owner's request.
+exit /b 1
+
 REM ---------------------------------------------------------------------------
 REM VAHAN monthly refresh (PLAN 4.1). Scrape the dashboard, then ingest.
 REM

@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>designv2 — Chargeworthy hero animations</title>
+<style>
+/* =====================================================================
+ * designv2 — two hero animations, previewed standalone.
+ *
+ * Tokens are copied from frontend/src/styles/tokens.css so this file
+ * opens in a browser with no build step. When these move into the app,
+ * DELETE this block and use the real var(--cw-*) — do not fork tokens.
+ *
+ * Motion budget per design/IMPLEMENT.md:65-68 — entrances 520ms, state
+ * changes 200ms, cubic-bezier(0.16,1,0.3,1), no animation library,
+ * full prefers-reduced-motion. Everything here is CSS + SVG only.
+ * ===================================================================== */
+:root {
+  --cw-ground: #0d151e;
+  --cw-surface: #16212c;
+  --cw-surface-2: #1e2c39;
+  --cw-line: #253340;
+  --cw-text: #f4f1ec;
+  --cw-muted: #93a1ad;
+  --cw-slate: #4a8fb8;
+  --cw-accent: #d98a3d;
+  --cw-positive: #3fa37f;
+  --cw-negative: #c4564a;
+  --cw-sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --cw-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --cw-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--cw-ground);
+  color: var(--cw-text);
+  font-family: var(--cw-sans);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: clamp(24px, 5vw, 72px); }
+.eyebrow {
+  font-family: var(--cw-mono);
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cw-muted);
+}
+h1 { font-size: clamp(30px, 4vw, 46px); line-height: 1.1; letter-spacing: -0.025em; font-weight: 600; margin: 14px 0 10px; }
+h2 { font-size: clamp(24px, 3vw, 32px); line-height: 1.15; font-weight: 500; margin: 14px 0 10px; }
+p.lede { color: var(--cw-muted); max-width: 62ch; margin: 0 0 8px; }
+.rule { border: 0; border-top: 1px solid var(--cw-line); margin: clamp(48px, 7vw, 96px) 0; }
+.stage {
+  border: 1px solid var(--cw-line);
+  background: var(--cw-surface);
+  margin-top: 28px;
+  overflow: hidden;
+}
+.replay {
+  font-family: var(--cw-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cw-muted);
+  background: transparent;
+  border: 1px solid var(--cw-line);
+  padding: 10px 18px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: color 200ms var(--cw-ease), border-color 200ms var(--cw-ease);
+}
+.replay:hover { color: var(--cw-text); border-color: var(--cw-muted); }
+
+/* =====================================================================
+ * A — ROUTE TO CHARGE.  Landing hero.
+ * The car drives the corridor, parks, plugs in, the battery fills, and
+ * the 3/5/10 km catchment rings pulse out of the site. 11s loop.
+ * ===================================================================== */
+.routeSvg { display: block; width: 100%; height: auto; }
+
+/* The corridor draws itself in, then holds. */
+.road-draw {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: roadDraw 11s var(--cw-ease) infinite;
+}
+@keyframes roadDraw {
+  0%   { stroke-dashoffset: 1200; }
+  12%  { stroke-dashoffset: 0; }
+  92%  { stroke-dashoffset: 0; opacity: 1; }
+  98%  { stroke-dashoffset: 0; opacity: 0; }
+  100% { stroke-dashoffset: 1200; opacity: 0; }
+}
+
+/* The site — charger + bay — settles in under the road. */
+.site-in {
+  opacity: 0;
+  animation: siteIn 11s var(--cw-ease) infinite;
+}
+@keyframes siteIn {
+  0%, 6%    { opacity: 0; }
+  14%       { opacity: 1; }
+  92%       { opacity: 1; }
+  97%, 100% { opacity: 0; }
+}
+
+/* The drive. offset-path follows the same d as the road. */
+.car {
+  offset-path: path("M 30 566 C 172 566 232 502 302 466 C 382 424 430 376 500 338 C 566 302 622 250 700 232");
+  offset-rotate: auto;
+  offset-distance: 0%;
+  animation: drive 11s cubic-bezier(0.32, 0, 0.28, 1) infinite;
+}
+@keyframes drive {
+  0%, 10%   { offset-distance: 0%; opacity: 0; }
+  13%       { offset-distance: 2%; opacity: 1; }
+  48%       { offset-distance: 100%; opacity: 1; }
+  92%       { offset-distance: 100%; opacity: 1; }
+  97%, 100% { offset-distance: 100%; opacity: 0; }
+}
+/* Headlights only while moving. */
+.beam { opacity: 0; animation: beam 11s linear infinite; }
+@keyframes beam {
+  0%, 12%   { opacity: 0; }
+  16%       { opacity: 0.5; }
+  44%       { opacity: 0.5; }
+  50%, 100% { opacity: 0; }
+}
+
+/* The lane markings keep their dashes, so they cannot share the draw
+ * animation above (a CSS stroke-dasharray would overwrite the attribute).
+ * They fade in on the same beat instead. */
+.road-centre { opacity: 0; animation: centreIn 11s var(--cw-ease) infinite; }
+@keyframes centreIn {
+  0%, 6%    { opacity: 0; }
+  16%       { opacity: 0.5; }
+  92%       { opacity: 0.5; }
+  97%, 100% { opacity: 0; }
+}
+
+/* The cable reaches from the charger to the car. */
+.cable {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: cableOut 11s var(--cw-ease) infinite;
+}
+@keyframes cableOut {
+  0%, 50%   { stroke-dashoffset: 80; }
+  57%       { stroke-dashoffset: 0; }
+  92%       { stroke-dashoffset: 0; }
+  97%, 100% { stroke-dashoffset: 80; }
+}
+
+/* Charge pulses travelling up the cable, once connected. */
+.pulse {
+  stroke-dasharray: 10 70;
+  stroke-dashoffset: 80;
+  opacity: 0;
+  animation: pulse 11s linear infinite;
+}
+@keyframes pulse {
+  0%, 57%   { stroke-dashoffset: 80; opacity: 0; }
+  58%       { opacity: 1; }
+  72%       { stroke-dashoffset: -80; opacity: 1; }
+  72.01%    { stroke-dashoffset: 80; }
+  86%       { stroke-dashoffset: -80; opacity: 1; }
+  88%, 100% { opacity: 0; }
+}
+
+/* The charger's own LED strip IS the charge meter — it fills bottom-up
+ * rather than a ring floating off the unit. One element, one meaning. */
+.meter-fill {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: meterFill 11s var(--cw-ease) infinite;
+}
+@keyframes meterFill {
+  0%, 57% { stroke-dashoffset: 48; }
+  88%     { stroke-dashoffset: 0; }
+  100%    { stroke-dashoffset: 0; }
+}
+
+/* The 3 / 5 / 10 km catchment rings pulse outward once charging starts. */
+.catch {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: catch 11s var(--cw-ease) infinite;
+}
+.catch--2 { animation-delay: -10.75s; }
+.catch--3 { animation-delay: -10.5s; }
+@keyframes catch {
+  0%, 60%   { opacity: 0; transform: scale(0.72); }
+  70%       { opacity: 0.85; transform: scale(1); }
+  92%       { opacity: 0.4; transform: scale(1); }
+  97%, 100% { opacity: 0; transform: scale(1); }
+}
+
+/* Readout — no JS. @property lets the counter animate. */
+@property --kw { syntax: "<integer>"; initial-value: 0; inherits: false; }
+.stage--route { position: relative; }
+/* Top-LEFT: the catchment rings own the top-right corner. */
+.readout {
+  position: absolute;
+  left: clamp(16px, 3vw, 32px);
+  top: clamp(16px, 3vw, 28px);
+  border: 1px solid var(--cw-line);
+  background: color-mix(in srgb, var(--cw-ground) 82%, transparent);
+  padding: 14px 18px;
+  min-width: 168px;
+  opacity: 0;
+  animation: readoutIn 11s var(--cw-ease) infinite;
+}
+@keyframes readoutIn {
+  0%, 57%   { opacity: 0; }
+  62%       { opacity: 1; }
+  92%       { opacity: 1; }
+  97%, 100% { opacity: 0; }
+}
+.readout__label {
+  font-family: var(--cw-mono); font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--cw-muted);
+}
+.readout__value {
+  font-family: var(--cw-mono); font-size: 30px; font-weight: 500;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+  color: var(--cw-accent); line-height: 1.2;
+  --kw: 0;
+  counter-reset: kw var(--kw);
+  animation: kwCount 11s linear infinite;
+}
+.readout__value::after { content: counter(kw) "%"; }
+@keyframes kwCount {
+  0%, 57% { --kw: 0; }
+  88%     { --kw: 100; }
+  100%    { --kw: 100; }
+}
+
+/* =====================================================================
+ * B — THE CHARGER, ASSESSED.  Section hero for "What a full assessment
+ * checks" / the report showcase.  The unit is scanned top to bottom, the
+ * factors resolve one by one against it, the utilisation band fills
+ * against breakeven, and the verdict lands last. 12s loop.
+ * ===================================================================== */
+.assessGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  align-items: center;
+  gap: clamp(24px, 4vw, 56px);
+  padding: clamp(24px, 4vw, 48px);
+}
+.assessSvg { display: block; width: 100%; height: auto; max-height: 460px; }
+
+/* The unit draws itself. */
+.unit-draw {
+  stroke-dasharray: 900; stroke-dashoffset: 900;
+  animation: unitDraw 12s var(--cw-ease) infinite;
+}
+@keyframes unitDraw {
+  0%   { stroke-dashoffset: 900; }
+  14%  { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 0; }
+}
+.unit-fill { opacity: 0; animation: unitFill 12s var(--cw-ease) infinite; }
+@keyframes unitFill {
+  0%, 8% { opacity: 0; }
+  20%    { opacity: 1; }
+  100%   { opacity: 1; }
+}
+/* Screen wakes. */
+.screen-glow { opacity: 0; animation: screenGlow 12s var(--cw-ease) infinite; }
+@keyframes screenGlow {
+  0%, 18% { opacity: 0; }
+  24%     { opacity: 1; }
+  100%    { opacity: 1; }
+}
+/* Copper scan line sweeps the unit — the survey happening. */
+.scan { opacity: 0; animation: scan 12s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+@keyframes scan {
+  0%, 20% { opacity: 0; transform: translateY(0); }
+  24%     { opacity: 1; transform: translateY(0); }
+  56%     { opacity: 1; transform: translateY(250px); }
+  62%     { opacity: 0; transform: translateY(250px); }
+  100%    { opacity: 0; transform: translateY(250px); }
+}
+/* LED strip breathes once live. */
+.led { opacity: 0.25; animation: led 12s ease-in-out infinite; }
+@keyframes led {
+  0%, 22% { opacity: 0.15; }
+  30%     { opacity: 1; }
+  46%     { opacity: 0.35; }
+  62%     { opacity: 1; }
+  100%    { opacity: 0.8; }
+}
+
+/* The factor ledger. */
+.ledger { display: flex; flex-direction: column; min-width: 0; }
+.ledger__head { margin-bottom: 6px; }
+.row {
+  display: flex; align-items: baseline; gap: 14px;
+  border-top: 1px solid var(--cw-line);
+  padding: 11px 0;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: rowIn 12s var(--cw-ease) infinite;
+}
+.row:last-of-type { border-bottom: 1px solid var(--cw-line); }
+@keyframes rowIn {
+  0%, 18% { opacity: 0; transform: translateY(6px); }
+  26%     { opacity: 1; transform: translateY(0); }
+  100%    { opacity: 1; transform: translateY(0); }
+}
+.row:nth-of-type(1) { animation-delay: 0s; }
+.row:nth-of-type(2) { animation-delay: 0.36s; }
+.row:nth-of-type(3) { animation-delay: 0.72s; }
+.row:nth-of-type(4) { animation-delay: 1.08s; }
+.row:nth-of-type(5) { animation-delay: 1.44s; }
+.row__name { flex: 1 1 auto; min-width: 0; font-size: 16px; }
+.row__val {
+  font-family: var(--cw-mono); font-size: 15px;
+  font-variant-numeric: tabular-nums; color: var(--cw-muted);
+  white-space: nowrap;
+}
+/* The one unverified factor keeps copper — the token's reserved meaning. */
+.row__val--warn { color: var(--cw-accent); }
+
+/* Utilisation band: P10–P90 against the breakeven line. */
+.band { margin-top: 26px; }
+.band__track {
+  position: relative; height: 10px;
+  background: var(--cw-surface-2);
+  border: 1px solid var(--cw-line);
+}
+.band__fill {
+  position: absolute; top: 0; bottom: 0; left: 18%;
+  width: 0; background: var(--cw-slate);
+  animation: bandFill 12s var(--cw-ease) infinite;
+}
+@keyframes bandFill {
+  0%, 56% { width: 0; }
+  72%     { width: 46%; }
+  100%    { width: 46%; }
+}
+.band__breakeven {
+  position: absolute; top: -4px; bottom: -4px; left: 34%;
+  width: 2px; background: var(--cw-text); opacity: 0;
+  animation: beIn 12s var(--cw-ease) infinite;
+}
+@keyframes beIn {
+  0%, 60% { opacity: 0; }
+  70%     { opacity: 1; }
+  100%    { opacity: 1; }
+}
+.band__legend {
+  display: flex; justify-content: space-between; gap: 12px;
+  margin-top: 10px;
+  font-family: var(--cw-mono); font-size: 12px; letter-spacing: 0.06em;
+  color: var(--cw-muted);
+}
+
+/* Verdict lands last, on its own rule. */
+.verdict {
+  margin-top: 24px; padding-top: 18px;
+  border-top: 2px solid var(--cw-line);
+  opacity: 0; transform: translateY(8px);
+  animation: verdictIn 12s var(--cw-ease) infinite;
+}
+@keyframes verdictIn {
+  0%, 74% { opacity: 0; transform: translateY(8px); }
+  84%     { opacity: 1; transform: translateY(0); }
+  100%    { opacity: 1; transform: translateY(0); }
+}
+.verdict__word {
+  font-family: var(--cw-mono); font-size: clamp(26px, 3.4vw, 38px);
+  font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--cw-positive); line-height: 1.15;
+}
+.verdict__note { color: var(--cw-muted); font-size: 16px; margin-top: 6px; }
+
+/* =====================================================================
+ * Reduced motion — the contract from reveal.ts: the final state, at once.
+ * Nothing moves, nothing loops, and the composition still reads.
+ * ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .road-draw, .road-centre, .site-in, .car, .beam, .cable, .pulse, .meter-fill,
+  .catch, .readout, .readout__value, .unit-draw, .unit-fill, .screen-glow,
+  .scan, .led, .row, .band__fill, .band__breakeven, .verdict {
+    animation: none !important;
+  }
+  .road-draw, .cable, .meter-fill, .unit-draw { stroke-dashoffset: 0 !important; }
+  .site-in, .car, .readout, .unit-fill,
+  .screen-glow, .row, .band__breakeven, .verdict {
+    opacity: 1 !important; transform: none !important;
+  }
+  .road-centre { opacity: 0.5 !important; }
+  .car { offset-distance: 100% !important; }
+  .catch { opacity: 0.5 !important; transform: none !important; }
+  .beam, .pulse, .scan { opacity: 0 !important; }
+  .led { opacity: 0.8 !important; }
+  .band__fill { width: 46% !important; }
+  .readout__value { --kw: 100 !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">designv2 — hero animation A</div>
+  <h1>Route to charge</h1>
+  <p class="lede">
+    The landing hero. A vehicle drives the corridor, parks at the assessed site, connects, and
+    charges — and only then do the 3&nbsp;/&nbsp;5&nbsp;/&nbsp;10&nbsp;km catchment rings pulse out.
+    The sequence is the product argument in one loop: a real location, on a real road, that a real
+    car reaches.
+  </p>
+
+  <div class="stage stage--route">
+    <svg class="routeSvg" viewBox="0 0 1000 620" role="img"
+         aria-label="A vehicle drives along a highway corridor to a charging site, connects and charges, and the catchment rings expand around the site.">
+      <defs>
+        <linearGradient id="beamGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#d98a3d" stop-opacity="0.55"/>
+          <stop offset="100%" stop-color="#d98a3d" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="unitGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1e2c39"/>
+          <stop offset="100%" stop-color="#16212c"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Map substrate: blocks and minor roads. Deliberately flat and
+           unglamorous — this is a survey plan, not a games map. -->
+      <rect width="1000" height="620" fill="#0d151e"/>
+      <g stroke="#253340" stroke-width="1" opacity="0.55">
+        <path d="M0 120 H1000 M0 300 H1000 M0 470 H1000"/>
+        <path d="M170 0 V620 M420 0 V620 M640 0 V620 M860 0 V620"/>
+      </g>
+      <g fill="#16212c">
+        <rect x="60" y="150" width="90" height="120"/>
+        <rect x="200" y="60" width="180" height="40"/>
+        <rect x="460" y="490" width="150" height="90"/>
+        <rect x="680" y="380" width="120" height="60"/>
+        <rect x="220" y="330" width="70" height="110"/>
+      </g>
+
+      <!-- The corridor. Same d as the car's offset-path. -->
+      <path class="road-draw"
+            d="M 30 566 C 172 566 232 502 302 466 C 382 424 430 376 500 338 C 566 302 622 250 700 232"
+            fill="none" stroke="#1e2c39" stroke-width="26" stroke-linecap="round"/>
+      <path class="road-centre"
+            d="M 30 566 C 172 566 232 502 302 466 C 382 424 430 376 500 338 C 566 302 622 250 700 232"
+            fill="none" stroke="#4a8fb8" stroke-width="1.5" stroke-linecap="butt"
+            stroke-dasharray="10 14"/>
+
+      <!-- Catchment rings, 3 / 5 / 10 km, centred on the site. -->
+      <g fill="none" stroke="#d98a3d" stroke-width="1.25">
+        <circle class="catch" cx="807" cy="198" r="58"/>
+        <circle class="catch catch--2" cx="807" cy="198" r="102"/>
+        <circle class="catch catch--3" cx="807" cy="198" r="148"/>
+      </g>
+
+      <g class="site-in">
+        <!-- Parking bay -->
+        <rect x="648" y="200" width="104" height="72" fill="none" stroke="#253340" stroke-width="1.5"/>
+        <path d="M674 200 V272 M700 200 V272 M726 200 V272" stroke="#253340" stroke-width="1"/>
+
+        <!-- The charger. Original artwork — pedestal, lit screen, holstered
+             connector, and an LED strip that doubles as the charge meter.
+             Copper appears only on that strip and the live cable. -->
+        <g>
+          <rect x="786" y="254" width="42" height="8" rx="2" fill="#253340"/>
+          <rect x="788" y="140" width="38" height="114" rx="8" fill="url(#unitGrad)" stroke="#253340" stroke-width="1.5"/>
+          <rect x="795" y="150" width="24" height="28" rx="3" fill="#0d151e" stroke="#253340" stroke-width="1"/>
+          <rect x="799" y="157" width="16" height="2.5" fill="#4a8fb8" opacity="0.85"/>
+          <rect x="799" y="163" width="10" height="2.5" fill="#4a8fb8" opacity="0.5"/>
+
+          <!-- Connector holster -->
+          <rect x="794" y="186" width="14" height="18" rx="3" fill="#0d151e" stroke="#253340" stroke-width="1"/>
+          <circle cx="801" cy="193" r="2.6" fill="none" stroke="#93a1ad" stroke-width="1"/>
+
+          <!-- The charge meter: track, then a copper fill that climbs. -->
+          <line x1="818" y1="238" x2="818" y2="190" stroke="#253340" stroke-width="5" stroke-linecap="round"/>
+          <line class="meter-fill" x1="818" y1="238" x2="818" y2="190"
+                stroke="#d98a3d" stroke-width="5" stroke-linecap="round"/>
+        </g>
+
+        <!-- Cable from charger to car, then the charge pulses along it. -->
+        <path class="cable" d="M 788 228 C 762 228 748 240 722 236"
+              fill="none" stroke="#253340" stroke-width="4" stroke-linecap="round"/>
+        <path class="pulse" d="M 788 228 C 762 228 748 240 722 236"
+              fill="none" stroke="#d98a3d" stroke-width="4" stroke-linecap="round"/>
+      </g>
+
+      <!-- The vehicle. Top-down, because the surface is a map. -->
+      <g class="car">
+        <g transform="translate(-20 -10)">
+          <path class="beam" d="M40 3 L74 -8 L74 28 L40 17 Z" fill="url(#beamGrad)"/>
+          <rect x="0" y="0" width="40" height="20" rx="5" fill="#f4f1ec"/>
+          <rect x="10" y="3.5" width="17" height="13" rx="3" fill="#0d151e" opacity="0.82"/>
+          <rect x="30" y="4" width="3" height="3" rx="1.5" fill="#d98a3d"/>
+          <rect x="30" y="13" width="3" height="3" rx="1.5" fill="#d98a3d"/>
+        </g>
+      </g>
+    </svg>
+
+    <div class="readout">
+      <div class="readout__label">Charging</div>
+      <div class="readout__value"></div>
+      <div class="readout__label" style="margin-top:6px">KL-TVM-DEMO-001</div>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top:18px">
+    Copper appears three times only — the pin LED, the live cable, the fill ring — holding the
+    ~5% budget in <span style="font-family:var(--cw-mono)">tokens.css</span>. Nothing counts up
+    except the charge percentage, which is a state of the animation and not a claim about the business.
+  </p>
+
+  <hr class="rule">
+
+  <div class="eyebrow">designv2 — hero animation B</div>
+  <h1>The charger, assessed</h1>
+  <p class="lede">
+    A section hero for “What a full assessment checks” or the report showcase. The unit draws itself,
+    a survey line sweeps it, the factors resolve one at a time against real units, the projected
+    utilisation band fills against the breakeven line, and the verdict lands last — never first.
+  </p>
+
+  <div class="stage">
+    <div class="assessGrid">
+      <svg class="assessSvg" viewBox="0 0 380 460" role="img"
+           aria-label="A charging unit is surveyed by a scan line while assessment factors resolve beside it.">
+        <defs>
+          <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#1e2c39"/>
+            <stop offset="100%" stop-color="#131d27"/>
+          </linearGradient>
+          <linearGradient id="scanGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#d98a3d" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#d98a3d" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#d98a3d" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="trailGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#d98a3d" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#d98a3d" stop-opacity="0.22"/>
+          </linearGradient>
+          <clipPath id="unitClip"><rect x="112" y="86" width="156" height="270" rx="16"/></clipPath>
+        </defs>
+
+        <!-- Plinth -->
+        <g class="unit-fill">
+          <rect x="92" y="392" width="196" height="12" rx="3" fill="#253340"/>
+          <rect x="126" y="356" width="128" height="38" rx="4" fill="#16212c" stroke="#253340" stroke-width="1.5"/>
+        </g>
+
+        <!-- Body: fill settles in behind the drawn outline -->
+        <rect class="unit-fill" x="112" y="86" width="156" height="270" rx="16" fill="url(#bodyGrad)"/>
+        <rect class="unit-draw" x="112" y="86" width="156" height="270" rx="16"
+              fill="none" stroke="#4a8fb8" stroke-width="1.75" opacity="0.85"/>
+
+        <!-- Screen -->
+        <g class="screen-glow">
+          <rect x="134" y="112" width="112" height="76" rx="6" fill="#0d151e" stroke="#253340" stroke-width="1.5"/>
+          <text x="148" y="140" font-family="IBM Plex Mono, monospace" font-size="21" fill="#f4f1ec">60 kW</text>
+          <text x="148" y="163" font-family="IBM Plex Mono, monospace" font-size="11"
+                fill="#93a1ad" letter-spacing="1.4">CCS-2 · DC</text>
+          <rect x="148" y="172" width="84" height="4" rx="2" fill="#253340"/>
+          <rect x="148" y="172" width="52" height="4" rx="2" fill="#4a8fb8"/>
+        </g>
+
+        <!-- LED strip -->
+        <rect class="led" x="186" y="206" width="8" height="96" rx="4" fill="#d98a3d"/>
+
+        <!-- Holstered connectors and cables -->
+        <g class="unit-fill">
+          <rect x="132" y="214" width="30" height="40" rx="6" fill="#0d151e" stroke="#253340" stroke-width="1.5"/>
+          <circle cx="147" cy="228" r="5" fill="none" stroke="#93a1ad" stroke-width="1.5"/>
+          <path d="M147 254 C 147 300 96 300 96 344" fill="none" stroke="#253340"
+                stroke-width="7" stroke-linecap="round"/>
+          <rect x="218" y="214" width="30" height="40" rx="6" fill="#0d151e" stroke="#253340" stroke-width="1.5"/>
+          <circle cx="233" cy="228" r="5" fill="none" stroke="#93a1ad" stroke-width="1.5"/>
+          <path d="M233 254 C 233 300 288 300 288 344" fill="none" stroke="#253340"
+                stroke-width="7" stroke-linecap="round"/>
+        </g>
+
+        <!-- The survey sweep, clipped to the unit: a soft trailing band
+             under a hard copper edge, so the sweep reads at hero scale. -->
+        <g clip-path="url(#unitClip)">
+          <g class="scan">
+            <rect x="112" y="66" width="156" height="30" fill="url(#trailGrad)"/>
+            <rect x="112" y="94" width="156" height="2.5" fill="url(#scanGrad)"/>
+          </g>
+        </g>
+      </svg>
+
+      <div class="ledger">
+        <div class="ledger__head">
+          <div class="eyebrow">Measured, not assumed</div>
+          <h2>Nothing here is a guess.</h2>
+        </div>
+
+        <div class="row"><span class="row__name">AADT traffic count</span><span class="row__val">18,400 /day</span></div>
+        <div class="row"><span class="row__name">Transformer distance</span><span class="row__val">140 m</span></div>
+        <div class="row"><span class="row__name">Sanctioned load</span><span class="row__val">75 kVA</span></div>
+        <div class="row"><span class="row__name">Competitor density, 5 km</span><span class="row__val">3 stations</span></div>
+        <div class="row"><span class="row__name">Grid outage hours</span><span class="row__val row__val--warn">unverified</span></div>
+
+        <div class="band">
+          <div class="band__track">
+            <div class="band__fill"></div>
+            <div class="band__breakeven"></div>
+          </div>
+          <div class="band__legend">
+            <span>P10</span><span>BREAKEVEN</span><span>P90</span>
+          </div>
+        </div>
+
+        <div class="verdict">
+          <div class="verdict__word">Build</div>
+          <p class="verdict__note">
+            Clears breakeven across the projected band. Read the assumptions ledger before you commit.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top:18px">
+    The one copper value in the ledger is the unverified factor — the reserved meaning the token
+    comment protects. The verdict uses <span style="font-family:var(--cw-mono)">--cw-positive</span>,
+    which is semantic, so a DON&rsquo;T&nbsp;BUILD renders in the same composition without contradiction.
+  </p>
+
+  <hr class="rule">
+  <button class="replay" onclick="location.reload()">Replay both</button>
+
+</div>
+</body>
+</html>

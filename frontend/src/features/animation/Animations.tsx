@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 
+import { OperatorMatched } from "./OperatorMatched";
 import { RouteToCharge } from "./RouteToCharge";
 import { SiteAssessed } from "./SiteAssessed";
 import { SourcesToReport } from "./SourcesToReport";
 import { TOTAL_CHECKS } from "./data";
 
 /**
- * /animation - a staging surface for the three hero animations.
+ * /animation - a staging surface for the four hero animations.
  *
  * Deliberately NOT wired into Landing.tsx. These are candidates: they are
  * meant to be watched side by side, at real size, on the real ground, before
@@ -62,7 +63,7 @@ export function Animations() {
           n="B"
           title="The site, assessed"
           where="The 'What a full assessment checks' section, or the report showcase."
-          note={`All ${TOTAL_CHECKS} factors, grouped 9 / 7 / 8 / 6 / 4, walked one category at a time. Rows arrive already correct — never flickering through alternatives first. The verdict lands last.`}
+          note={`All ${TOTAL_CHECKS} factors, grouped BY SOURCE 12 / 4 / 8 / 7 / 3, walked one source at a time. Rows arrive already correct — never flickering through alternatives first. The verdict lands last.`}
         >
           <SiteAssessed />
         </Panel>
@@ -75,6 +76,14 @@ export function Animations() {
         >
           <SourcesToReport />
         </Panel>
+        <Panel
+          n="D"
+          title="The same neighbour, counted three ways"
+          where="After the 34-factor section — it is the SECOND question, and a site that fails the first never reaches it. Not a hero: it answers a question a visitor only has once they believe the first answer."
+          note="Six chargers sit near one plot and never move. What changes is who you signed with: a rival's charger is competition, but a charger run by YOUR operator is competition and a split, because their app has two places to send the same drivers. The operators are unnamed on purpose."
+        >
+          <OperatorMatched />
+        </Panel>
       </main>
 
       <footer
@@ -82,7 +91,7 @@ export function Animations() {
       >
         <p className="max-w-[54ch]">
           All three honour <span className="font-cw-mono text-[15px]">prefers-reduced-motion</span>:
-          the finished state renders immediately and nothing loops. B and C also stop when they
+          the finished state renders immediately and nothing loops. B, C and D also stop when they
           scroll out of view or the tab is backgrounded.
         </p>
         <Link
@@ -115,7 +124,7 @@ function Panel({
         <span className="font-cw-mono text-[13px] tracking-[0.16em] text-cw-slate uppercase">
           {n}
         </span>
-        <h2 className="text-[clamp(26px,3.4vw,36px)] leading-[1.12] font-medium">{title}</h2>
+        <h2 className="text-[clamp(29px,4vw,46px)] leading-[1.12] font-medium">{title}</h2>
       </div>
       <div className="mt-4 grid gap-x-10 gap-y-2 md:grid-cols-2">
         <p className="max-w-[58ch] text-cw-muted">{note}</p>

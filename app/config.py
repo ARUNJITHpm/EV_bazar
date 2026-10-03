@@ -171,6 +171,11 @@ class Settings(BaseSettings):
     owner_session_max_age_seconds: int = 30 * 24 * 3600
     #: Sign-up / login attempts per caller IP per hour. 0 disables it.
     owner_auth_limit_per_hour: int = 30
+    #: Console login attempts per caller IP per hour. 0 disables it.
+    console_login_limit_per_hour: int = 20
+    #: Report reads per caller IP per minute: a person opens a handful, a
+    #: scraper walking ids opens hundreds. 0 disables it.
+    report_read_limit_per_minute: int = 30
     owner_bill_max_bytes: int = 8 * 1024 * 1024
     # Retention (DPDP storage limitation). A bill image is kept only so the owner
     # can check their figures against it: it is deleted after this many days and

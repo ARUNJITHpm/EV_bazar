@@ -42,3 +42,9 @@
   font-family: var(--cw-mono);
   font-variant-numeric: tabular-nums;
 }
+.analytics-root .analytics-method h3 {
+  margin-top: var(--s-6);
+}
+.analytics-muted {
+  color: var(--cw-paper-muted);
+}

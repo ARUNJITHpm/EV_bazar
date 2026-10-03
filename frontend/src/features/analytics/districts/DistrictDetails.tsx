@@ -18,6 +18,7 @@ import {
   monthOffset,
   neighbourCodes,
   registrationTotal,
+  stateLabel,
 } from "./model";
 
 function chart(
@@ -46,6 +47,42 @@ export function DistrictDetails({ district }: { district: District }) {
     end = latestMonth(atlas),
     registrations = registrationTotal(atlas, code, end),
     previous = end ? registrationTotal(atlas, code, monthOffset(end, -12)) : null;
+  const usage = districtValue(atlas, code, "usage"),
+    usageMetadata = atlas.usage_metadata;
+  const usageRows = atlas.usage?.filter((row) => row.lgd_code === code) ?? [];
+  const usageChart: ChartData | null =
+    usageMetadata && usageRows.length
+      ? {
+          id: `usage-${code}`,
+          title: "What is estimated monthly charging energy?",
+          subtitle: "Estimated kWh per listed physical station, with P10/P50/P90.",
+          summary: "Estimated energy in the approved inventory, not an exhaustive district total.",
+          type: "range",
+          unit: "kWh/listed station/month",
+          updated: usageMetadata.retrieved_on,
+          sources: [
+            {
+              name: usageMetadata.source,
+              url: usageMetadata.source_url,
+              licence: usageMetadata.licence,
+            },
+          ],
+          versions: { ...usageMetadata.versions, renderer_version: "analytics_svg_v1" },
+          notes: [usageMetadata.note],
+          rows: usageRows.map((row) => ({
+            region: district.district_name,
+            period: row.month,
+            indicator: "Energy",
+            series: "Estimate",
+            label: row.month,
+            value: row.kwh_per_charger_p50,
+            p10: row.kwh_per_charger_p10,
+            p90: row.kwh_per_charger_p90,
+            status: row.kwh_per_charger_p50 == null ? "suppressed" : "estimate",
+            sample_size: row.stations_with_data,
+          })),
+        }
+      : null;
   const chargers = atlas.chargers.filter((row) => row.lgd_code === code),
     tariff = atlas.tariffs.filter((row) => row.state === district.state_name);
   const reference = catalogue.datasets.find((dataset) => dataset.id === "district_reference");
@@ -146,7 +183,7 @@ export function DistrictDetails({ district }: { district: District }) {
   };
   return (
     <>
-      <p className="analytics-lead">{district.state_name}</p>
+      <p className="analytics-lead">{stateLabel(district.state_name)}</p>
       <p>
         District name and LGD code <span className="analytics-number">{code}</span> come from our
         archived reference, retrieved <time>{reference?.metadata.retrieved_on}</time>. This is not a
@@ -215,16 +252,29 @@ export function DistrictDetails({ district }: { district: District }) {
             </dd>
           </div>
           <div>
-            <dt>Estimated monthly kWh per charger</dt>
-            <dd>Not enough data yet</dd>
+            <dt>Estimated monthly kWh per listed station</dt>
+            <dd className="analytics-number">
+              {usage.value == null
+                ? "Not enough data yet"
+                : `${numberLabel(usage.value)} kWh (P10 ${numberLabel(usage.p10!)}–P90 ${numberLabel(usage.p90!)})`}
+            </dd>
             <dd>
-              <p>Only privacy-safe, validated Part 5 aggregates can appear here.</p>
+              <p>
+                {usage.note ??
+                  "Only privacy-safe, validated aggregates from contributing stations can appear here."}
+              </p>
+              {usageMetadata && (
+                <p>
+                  Source: <a href={usageMetadata.source_url}>{usageMetadata.source}</a>. Last
+                  updated: <time>{usageMetadata.retrieved_on}</time>. {usageMetadata.licence}.
+                </p>
+              )}
             </dd>
           </div>
         </dl>
       </section>
       <DistrictGrid district={district} />
-      <div ref={ref}>
+      <div ref={ref} className="analytics-section">
         <h2>Locator</h2>
         {error && (
           <p role="status">
@@ -246,8 +296,9 @@ export function DistrictDetails({ district }: { district: District }) {
       </div>
       {registrationChart && regRows.length > 0 && <Chart data={registrationChart} />}
       {openingsChart && opened.length > 0 && <Chart data={openingsChart} />}
+      {usageChart && <Chart data={usageChart} />}
       <section className="analytics-section">
-        <h2>Electricity tariffs for {district.state_name}</h2>
+        <h2>Electricity tariffs for {stateLabel(district.state_name)}</h2>
         {tariff.length ? (
           <>
             <ul>
@@ -312,7 +363,7 @@ export function DistrictDetails({ district }: { district: District }) {
           {!atlas.shapes.some((shape) => shape.lgd_code === code) && (
             <li>A licensed boundary and neighbouring district joins.</li>
           )}
-          <li>Privacy-safe validated monthly usage estimates.</li>
+          {usage.value == null && <li>Privacy-safe validated monthly usage estimates.</li>}
           <li>Source completeness and differences from current district boundaries.</li>
         </ul>
       </section>

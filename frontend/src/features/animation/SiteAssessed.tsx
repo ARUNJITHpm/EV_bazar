@@ -81,7 +81,7 @@ export function SiteAssessed({ headless = false }: { headless?: boolean } = {}) 
             <div className="font-cw-mono text-[13px] tracking-[0.16em] text-cw-muted uppercase">
               {TOTAL_CHECKS} assessment checks
             </div>
-            <h3 className="mt-3.5 text-[clamp(24px,3vw,32px)] leading-[1.15] font-medium">
+            <h3 className="mt-3.5 text-[clamp(27px,3.5vw,40px)] leading-[1.15] font-medium">
               Nothing here is assumed.
             </h3>
             <p className="mt-3 text-cw-muted">

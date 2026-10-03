@@ -133,19 +133,14 @@ describe("owner area and private grid", () => {
   });
   it("does not restore private data when an outstanding save finishes after logout", async () => {
     let finish!: (value: unknown) => void;
-    mockApi.POST.mockReturnValue(
-      new Promise((resolve) => {
-        finish = resolve;
-      }),
-    );
-    show();
-    await screen.findByText("No grid details recorded.");
+    mockApi.POST.mockReturnValue(new Promise((resolve) => { finish = resolve; }));
+    show(); await screen.findByText("No grid details recorded.");
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Add grid details"));
     fireEvent.click(screen.getByText("Save grid revision"));
     await waitFor(() => expect(mockApi.POST).toHaveBeenCalled());
     await clearPrivateGridCache(client);
-    finish({ data: saved, response: new Response() });
+    finish({data: saved, response: new Response()});
     await waitFor(() => expect(screen.queryByText("Saving?")).toBeNull());
     expect(client.getQueryData(["owner-grid", 1])).toBeUndefined();
   });

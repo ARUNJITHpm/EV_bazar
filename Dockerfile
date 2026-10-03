@@ -25,6 +25,7 @@ COPY frontend/ ./
 # Only reviewed public analytics files enter the frontend build. Owner data,
 # raw reference downloads and test fixtures are never copied into this stage.
 COPY data/public/ /data/public/
+COPY data/published/ /data/published/
 RUN npm run build
 
 FROM python:3.11-slim@sha256:bab1b7ef4b450c81002278d035eff85ebe394ae94df904f7a3ba14f7e16e487b

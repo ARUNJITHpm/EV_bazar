@@ -179,17 +179,45 @@ The audit sells *this quarter*, before any model exists. Every audit customer is
 
 ## 8. Report anatomy
 
+Rebuilt 2026-09-03 to `design/brand/report-spec.md`. Two readers, in this
+order: a private investor deciding whether to commit ₹20–40 lakh, then their
+chartered accountant and the bank's credit officer. **Plain language decides;
+statistics verify.** The order below is that principle made structural.
+
 ```
-1. VERDICT                Build / Conditional / Don't
-2. THE NUMBER             Breakeven utilisation    ██ 18.4%
+01 VERDICT                Build / Conditional / Don't — the word, then one
+                          sentence, then what it means for the reader's money
+02 WHAT THIS MEANS        Capital, payback, effective return set BESIDE a
+   FOR YOUR MONEY         fixed-deposit rate on the same money; downside case
+03 HOW THIS SITE          The thresholds, stated BEFORE any site data — a
+   WAS JUDGED             standard shown first was not fitted to the conclusion
+04 THE SITE               Plot + 3/5/10 km catchment images, then every factor
+                          under its heading with favours / neutral / against
+05 FINANCIALS             3 scenarios · NPV · IRR · payback · 10-yr cashflow
+06 OPERATOR COMPARISON    Ranked table, IRR recomputed per operator
+07 COMPETITORS            Who else charges nearby, with measured distances
+08 WHAT WOULD CHANGE      Checkable conditions + the threshold each must
+   THIS VERDICT           cross. This is why a reader can trust a no.
+09 STATISTICAL BASIS      Breakeven utilisation    ██ 18.4%
                           Predicted P10–P90        ██ 11% – 27%
                           Margin of safety         −7.4 pp  ⚠️
-3. SITE PROFILE           Archetype, comparables, competitor occupancy
-4. FINANCIALS             3 scenarios · NPV · IRR · payback · 10-yr cashflow
-5. CPO COMPARISON         Ranked table, IRR recomputed per operator
-6. ASSUMPTION LEDGER      Every default, ⚠️ on unverified
-7. PROVENANCE             All version stamps + data vintages
+10 ASSUMPTION LEDGER      Every default, ⚠️ on unverified
+11 PROVENANCE             All version stamps + data vintages; own page in print
+12 DISCLOSURE             The commercial conflict, and the share refused
 ```
+
+**Why the number moved from 2 to 9.** The 2026-08-19 call was number-first:
+the band against the threshold line, verdict small underneath, so the reader
+reaches the conclusion themselves. Reversed 2026-09-03. The band still
+*decides* the verdict — P10 against breakeven, in the engine, unchanged — it
+just no longer has to be the thing that *communicates* it. Making a private
+investor decode a percentile band to learn the answer is a technical
+audience's idea of respect. The chart stayed, for the accountant, at 09.
+
+**Credibility is achieved structurally, not by claim**: thresholds before
+data (03), every factor including the favourable ones (04), what would
+overturn the verdict (08), what was measured versus estimated (10), and the
+conflict of interest named outright (12).
 
 CPO ranking runs the ROI engine **once per operator**, because each one changes `margin_per_kWh` (revenue share / ₹ per kWh fee), `annual_fixed` (platform fee, AMC) and capex (bundled hardware or BYO). Financial rank and qualitative score are displayed **side by side, never blended** — the site owner's weighting is not ours.
 

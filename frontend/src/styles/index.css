@@ -14,6 +14,10 @@
 /* The /animation review surface. Scoped by a cwa- prefix; see the file. */
 @import "./animation.css";
 @import "./public.css";
+/* Paper. AGENTS.md calls print.css a first-class deliverable; until
+ * 2026-09-07 it was not imported anywhere, so NO print rule had ever
+ * reached a page - not the A4 setup, not the section break rules, not the
+ * repeating table head. Last, so it wins on equal specificity. */
 @import "./print.css";
 
 /* Diagram text keeps its authored size; narrow screens scroll rather than shrink labels. */
@@ -77,8 +81,8 @@
   --color-cw-positive: var(--cw-positive);
   --color-cw-negative: var(--cw-negative);
 
-  /* The paper palette - report previews on the public site, and the report
-   * itself when its reskin lands. */
+  /* The paper palette - the report itself (features/report/) and its
+   * previews on the public site. */
   --color-cw-paper: var(--cw-paper);
   --color-cw-ink: var(--cw-ink);
   --color-cw-paper-slate: var(--cw-paper-slate);
@@ -296,4 +300,67 @@
 .cw-report-root :focus-visible {
   outline: 2px solid var(--cw-paper-slate);
   outline-offset: 3px;
+}
+
+/* =========================================================================
+ * The working screen - a factor ticking in, and the one being read.
+ * ========================================================================= */
+
+@keyframes cw-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes cw-tick {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes cw-reading {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.cw-rise {
+  animation: cw-rise 420ms var(--cw-ease) both;
+}
+
+.cw-tick {
+  animation: cw-tick 360ms var(--cw-ease) both;
+  transform-origin: center;
+}
+
+.cw-reading {
+  animation: cw-reading 1.1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cw-rise,
+  .cw-tick,
+  .cw-reading {
+    animation: none;
+  }
 }

@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sources to Site-Assessment Report</title>
+  <style>
+    :root {
+      --ground: #070a08;
+      --surface: #111513;
+      --surface-2: #181d1a;
+      --line: #292d2b;
+      --line-soft: #202422;
+      --text: #f2f4f2;
+      --muted: #929995;
+      --green: #39b970;
+      --green-deep: #237a4e;
+      --green-soft: #6bd399;
+      --warning: #d99a4a;
+      --paper: #f1efe8;
+      --paper-line: #c7c6c0;
+      --ink: #171b19;
+      --ink-muted: #5d635f;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      min-width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background: var(--ground);
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      font-family: Archivo, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .flow {
+      position: relative;
+      display: grid;
+      grid-template-columns: 225px minmax(420px, 1fr) 350px;
+      gap: clamp(28px, 3.6vw, 52px);
+      width: min(1260px, 96vw);
+      min-height: min(740px, 96vh);
+      padding: clamp(34px, 4vw, 58px);
+      border: 1px solid var(--line-soft);
+      background:
+        linear-gradient(rgba(32, 36, 34, .14) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(32, 36, 34, .14) 1px, transparent 1px),
+        var(--ground);
+      background-size: 40px 40px;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .flow::before,
+    .flow::after {
+      content: "";
+      position: absolute;
+      width: 46px;
+      height: 46px;
+      pointer-events: none;
+    }
+
+    .flow::before {
+      top: 18px;
+      left: 18px;
+      border-top: 1px solid var(--green-deep);
+      border-left: 1px solid var(--green-deep);
+    }
+
+    .flow::after {
+      right: 18px;
+      bottom: 18px;
+      border-right: 1px solid var(--green-deep);
+      border-bottom: 1px solid var(--green-deep);
+    }
+
+    .source-band,
+    .matrix-band,
+    .report-band {
+      position: relative;
+      align-self: center;
+      min-width: 0;
+      transition: opacity 500ms var(--ease);
+    }
+
+    .flow.loop-fade .source-band,
+    .flow.loop-fade .matrix-band,
+    .flow.loop-fade .report-band {
+      opacity: 0;
+    }
+
+    .band-label {
+      margin: 0 0 16px;
+      color: var(--green-soft);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .15em;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .source {
+      position: relative;
+      min-height: 68px;
+      padding: 12px 30px 10px 13px;
+      border: 1px solid var(--line);
+      background: rgba(17, 21, 19, .88);
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity 360ms var(--ease), transform 460ms var(--ease), border-color 200ms ease;
+    }
+
+    .source.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .source.processing { border-color: var(--green-deep); }
+
+    .source::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -5px;
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--green-deep);
+      border-radius: 50%;
+      background: var(--ground);
+      transform: translateY(-50%);
+    }
+
+    .source::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      width: clamp(28px, 3.6vw, 52px);
+      height: 1px;
+      background:
+        linear-gradient(90deg, transparent 0 35%, var(--green-soft) 45% 55%, transparent 65% 100%);
+      background-size: 240% 100%;
+      opacity: 0;
+      transform: translateY(-50%);
+    }
+
+    .source.processing::after {
+      opacity: .78;
+      animation: source-signal 1.15s linear infinite;
+    }
+
+    .source-name {
+      display: block;
+      color: var(--text);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      line-height: 1.25;
+    }
+
+    .source-stamp {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 9px;
+      letter-spacing: .08em;
+      line-height: 1.25;
+    }
+
+    .source-status {
+      position: absolute;
+      top: 11px;
+      right: 10px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--line);
+    }
+
+    .source.visible .source-status { background: var(--green); }
+
+    .matrix-shell {
+      position: relative;
+      padding: 17px;
+      border: 1px solid var(--line);
+      background: rgba(10, 13, 11, .9);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 420ms var(--ease), transform 520ms var(--ease);
+    }
+
+    .matrix-shell.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .matrix-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .matrix-title {
+      color: var(--text);
+      font-size: clamp(18px, 2vw, 24px);
+      font-weight: 560;
+      letter-spacing: -.02em;
+    }
+
+    .matrix-total {
+      color: var(--green-soft);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 11px;
+      letter-spacing: .1em;
+    }
+
+    .factor-groups {
+      display: grid;
+      gap: 7px;
+    }
+
+    .factor-group {
+      position: relative;
+      min-height: 81px;
+      padding: 10px 12px;
+      border: 1px solid var(--line-soft);
+      background: rgba(17, 21, 19, .72);
+      transition: border-color 180ms ease, background 180ms ease;
+    }
+
+    .factor-group.active {
+      border-color: var(--green);
+      background: rgba(35, 122, 78, .11);
+    }
+
+    .factor-group.complete { border-color: var(--green-deep); }
+
+    .factor-group-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .factor-name {
+      overflow: hidden;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .factor-count,
+    .factor-state {
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .factor-count { color: var(--text); }
+    .factor-state { color: #66706a; min-width: 62px; text-align: right; }
+    .factor-group.active .factor-state { color: var(--green-soft); }
+    .factor-group.complete .factor-state { color: var(--green); }
+
+    .factor-nodes {
+      display: flex;
+      gap: 5px;
+      margin-top: 10px;
+    }
+
+    .factor-node {
+      width: 9px;
+      height: 9px;
+      border: 1px solid #48504b;
+      background: var(--ground);
+      transition: background 120ms ease, border-color 120ms ease;
+    }
+
+    .factor-node.done {
+      border-color: var(--green-deep);
+      background: var(--green-deep);
+    }
+
+    .current-factor {
+      margin-top: 8px;
+      overflow: hidden;
+      color: #68726c;
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 9px;
+      letter-spacing: .06em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .factor-group.active .current-factor { color: var(--green-soft); }
+
+    .matrix-output {
+      position: absolute;
+      top: 50%;
+      right: calc(clamp(28px, 3.6vw, 52px) * -1);
+      width: clamp(28px, 3.6vw, 52px);
+      height: 1px;
+      background:
+        linear-gradient(90deg, transparent 0 35%, var(--green-soft) 45% 55%, transparent 65% 100%);
+      background-size: 240% 100%;
+      opacity: 0;
+    }
+
+    .matrix-shell.processing .matrix-output {
+      opacity: .78;
+      animation: source-signal 1.15s linear infinite;
+    }
+
+    .report-paper {
+      position: relative;
+      min-height: 594px;
+      padding: 26px 25px 24px;
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, .28);
+      opacity: .16;
+      transform: translateX(10px);
+      transition: opacity 480ms var(--ease), transform 560ms var(--ease);
+    }
+
+    .report-paper.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .report-paper::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 22px;
+      width: 56px;
+      height: 3px;
+      background: var(--green-deep);
+    }
+
+    .report-kicker {
+      color: var(--green-deep);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .14em;
+    }
+
+    .report-title {
+      margin: 9px 0 4px;
+      color: var(--ink);
+      font-size: 25px;
+      font-weight: 630;
+      letter-spacing: -.03em;
+    }
+
+    .report-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 19px;
+      color: var(--ink-muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 9px;
+      letter-spacing: .07em;
+    }
+
+    .report-lines {
+      border-top: 1px solid var(--paper-line);
+    }
+
+    .report-line {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      min-height: 38px;
+      border-bottom: 1px solid var(--paper-line);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 360ms var(--ease), transform 450ms var(--ease);
+    }
+
+    .report-line.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .report-index {
+      color: #858a87;
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 9px;
+    }
+
+    .report-label {
+      overflow: hidden;
+      color: var(--ink-muted);
+      font-size: 11px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .report-value {
+      color: var(--ink);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .report-line.warning .report-value {
+      color: #9d5f1f;
+    }
+
+    .warning-chip {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-right: 5px;
+      border-radius: 50%;
+      background: var(--warning);
+      vertical-align: 1px;
+    }
+
+    .report-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 17px;
+      opacity: 0;
+      transition: opacity 380ms var(--ease);
+    }
+
+    .report-summary.visible { opacity: 1; }
+
+    .report-stat {
+      padding: 9px 7px;
+      border: 1px solid var(--paper-line);
+    }
+
+    .report-stat strong {
+      display: block;
+      color: var(--ink);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 17px;
+    }
+
+    .report-stat span {
+      color: var(--ink-muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 7px;
+      letter-spacing: .08em;
+    }
+
+    .report-stat.warning strong,
+    .report-stat.warning span { color: #9d5f1f; }
+
+    .report-verdict {
+      margin-top: 17px;
+      padding-top: 14px;
+      border-top: 2px solid var(--green-deep);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 420ms var(--ease), transform 520ms var(--ease);
+    }
+
+    .report-verdict.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .verdict-word {
+      color: var(--green-deep);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: .025em;
+    }
+
+    .verdict-copy {
+      margin-top: 6px;
+      color: var(--ink-muted);
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .report-note {
+      position: absolute;
+      right: 25px;
+      bottom: 14px;
+      color: #8a8f8c;
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 7px;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .footnote {
+      position: absolute;
+      left: 58px;
+      bottom: 19px;
+      color: #68716c;
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .flow.paused * { animation-play-state: paused !important; }
+
+    @keyframes source-signal {
+      from { background-position: 100% 0; }
+      to { background-position: -140% 0; }
+    }
+
+    @media (max-width: 900px) {
+      body { display: block; }
+
+      .flow {
+        grid-template-columns: 1fr;
+        gap: 34px;
+        width: 100%;
+        min-height: 100svh;
+        padding: 46px 22px 70px;
+        border-right: 0;
+        border-left: 0;
+        overflow: visible;
+      }
+
+      .source-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .source::after,
+      .matrix-output { display: none; }
+
+      .matrix-band,
+      .source-band,
+      .report-band {
+        width: min(100%, 600px);
+        margin-inline: auto;
+      }
+
+      .report-paper { min-height: 580px; }
+      .footnote { left: 22px; bottom: 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce), print {
+      .source,
+      .matrix-shell,
+      .report-paper,
+      .report-line,
+      .report-summary,
+      .report-verdict {
+        transition: none;
+      }
+
+      .source::after,
+      .matrix-output {
+        animation: none !important;
+        opacity: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="flow" aria-label="Data sources processed through 34 site-assessment checks into a technical report">
+    <div class="source-band">
+      <p class="band-label">01 · SOURCE LAYER</p>
+      <div class="source-list">
+        <div class="source">
+          <span class="source-name">VAHAN · PARIVAHAN</span>
+          <span class="source-stamp">REGISTRATIONS · MIX</span>
+          <span class="source-status"></span>
+        </div>
+        <div class="source">
+          <span class="source-name">OPENSTREETMAP</span>
+          <span class="source-stamp">ROADS · POIs · ACCESS</span>
+          <span class="source-status"></span>
+        </div>
+        <div class="source">
+          <span class="source-name">DISCOM · TARIFF</span>
+          <span class="source-stamp">LOAD · COST · ORDERS</span>
+          <span class="source-status"></span>
+        </div>
+        <div class="source">
+          <span class="source-name">FIELD SURVEY</span>
+          <span class="source-stamp">GEOMETRY · AMENITIES</span>
+          <span class="source-status"></span>
+        </div>
+        <div class="source">
+          <span class="source-name">COMPETITOR CENSUS</span>
+          <span class="source-stamp">3 · 5 · 10 KM</span>
+          <span class="source-status"></span>
+        </div>
+        <div class="source">
+          <span class="source-name">LAND · POLICY</span>
+          <span class="source-stamp">LEASE · SUBSIDY</span>
+          <span class="source-status"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-band">
+      <p class="band-label">02 · ASSESSMENT MATRIX</p>
+      <div class="matrix-shell">
+        <div class="matrix-head">
+          <span class="matrix-title">Full-site assessment</span>
+          <span class="matrix-total">34 FACTORS</span>
+        </div>
+
+        <div class="factor-groups">
+          <div class="factor-group" data-key="road" data-count="9"
+            data-factors="Road class|Distance from main road|Carriageway direction served|Sub-road access|Median or divider|Sight line|Turning radius|Entry and exit width|Frontage width">
+            <div class="factor-group-top">
+              <span class="factor-name">ROAD ACCESS & GEOMETRY</span>
+              <span class="factor-count">00 / 09</span>
+              <span class="factor-state">WAITING</span>
+            </div>
+            <div class="factor-nodes"></div>
+            <div class="current-factor">Awaiting source data</div>
+          </div>
+
+          <div class="factor-group" data-key="demand" data-count="7"
+            data-factors="AADT traffic count|Dominant flow direction|Peak hour timing|EV registrations|Registration mix|Fleet operators within 10 km|Distance to nearest city">
+            <div class="factor-group-top">
+              <span class="factor-name">DEMAND & MOBILITY</span>
+              <span class="factor-count">00 / 07</span>
+              <span class="factor-state">WAITING</span>
+            </div>
+            <div class="factor-nodes"></div>
+            <div class="current-factor">Awaiting source data</div>
+          </div>
+
+          <div class="factor-group" data-key="grid" data-count="8"
+            data-factors="Tariff order|Demand charges|Sanctioned load|Transformer distance|Transformer spare capacity|Grid outage hours|New connection cost|State subsidy applicability">
+            <div class="factor-group-top">
+              <span class="factor-name">GRID, TARIFF & POLICY</span>
+              <span class="factor-count">00 / 08</span>
+              <span class="factor-state">WAITING</span>
+            </div>
+            <div class="factor-nodes"></div>
+            <div class="current-factor">Awaiting source data</div>
+          </div>
+
+          <div class="factor-group" data-key="plot" data-count="6"
+            data-factors="Plot area|Parking bays|Canopy feasibility|Amenities within walking distance|Mobile network coverage|Night lighting">
+            <div class="factor-group-top">
+              <span class="factor-name">PLOT READINESS</span>
+              <span class="factor-count">00 / 06</span>
+              <span class="factor-state">WAITING</span>
+            </div>
+            <div class="factor-nodes"></div>
+            <div class="current-factor">Awaiting source data</div>
+          </div>
+
+          <div class="factor-group" data-key="commercial" data-count="4"
+            data-factors="Land or lease cost|Competitor distance|Competitor density at 3 / 5 / 10 km|Announced stations">
+            <div class="factor-group-top">
+              <span class="factor-name">COMMERCIAL LANDSCAPE</span>
+              <span class="factor-count">00 / 04</span>
+              <span class="factor-state">WAITING</span>
+            </div>
+            <div class="factor-nodes"></div>
+            <div class="current-factor">Awaiting source data</div>
+          </div>
+        </div>
+        <span class="matrix-output"></span>
+      </div>
+    </div>
+
+    <div class="report-band">
+      <p class="band-label">03 · REPORT OUTPUT</p>
+      <article class="report-paper" aria-label="Illustrative site assessment report">
+        <div class="report-kicker">EV CHARGING · SITE INTELLIGENCE</div>
+        <h2 class="report-title">Site assessment</h2>
+        <div class="report-meta"><span>CM-KL-047</span><span>REV · 01</span></div>
+
+        <div class="report-lines">
+          <div class="report-line"><span class="report-index">01</span><span class="report-label">Assessment coverage</span><span class="report-value">34 / 34</span></div>
+          <div class="report-line"><span class="report-index">02</span><span class="report-label">Road access & geometry</span><span class="report-value">09 VERIFIED</span></div>
+          <div class="report-line"><span class="report-index">03</span><span class="report-label">Demand & mobility</span><span class="report-value">07 VERIFIED</span></div>
+          <div class="report-line"><span class="report-index">04</span><span class="report-label">Grid, tariff & policy</span><span class="report-value">07 + 01 REVIEW</span></div>
+          <div class="report-line"><span class="report-index">05</span><span class="report-label">Plot readiness</span><span class="report-value">06 VERIFIED</span></div>
+          <div class="report-line"><span class="report-index">06</span><span class="report-label">Commercial landscape</span><span class="report-value">04 SOURCED</span></div>
+          <div class="report-line"><span class="report-index">07</span><span class="report-label">Site fit</span><span class="report-value">92 / 100</span></div>
+          <div class="report-line warning"><span class="report-index">08</span><span class="report-label">Grid outage history</span><span class="report-value"><span class="warning-chip"></span>UNVERIFIED</span></div>
+        </div>
+
+        <div class="report-summary">
+          <div class="report-stat"><strong>27</strong><span>MEASURED</span></div>
+          <div class="report-stat"><strong>06</strong><span>SOURCED</span></div>
+          <div class="report-stat warning"><strong>01</strong><span>UNVERIFIED</span></div>
+        </div>
+
+        <div class="report-verdict">
+          <div class="verdict-word">CONDITIONAL BUILD</div>
+          <div class="verdict-copy">Strong access and viable grid proximity. Verify outage history before capital commitment.</div>
+        </div>
+
+        <div class="report-note">Illustrative model output · Replace with live project data</div>
+      </article>
+    </div>
+
+    <div class="footnote">Sources remain traceable · Missing evidence remains visible</div>
+  </section>
+
+  <script>
+    (() => {
+      const flow = document.querySelector(".flow");
+      const sources = [...document.querySelectorAll(".source")];
+      const matrix = document.querySelector(".matrix-shell");
+      const groups = [...document.querySelectorAll(".factor-group")];
+      const paper = document.querySelector(".report-paper");
+      const reportLines = [...document.querySelectorAll(".report-line")];
+      const reportSummary = document.querySelector(".report-summary");
+      const verdict = document.querySelector(".report-verdict");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const mobile = window.matchMedia("(max-width: 900px)");
+
+      const loopMs = 21000;
+      const groupWindows = [
+        { key: "road", start: 3200, end: 5400 },
+        { key: "demand", start: 5400, end: 7400 },
+        { key: "grid", start: 7400, end: 9600 },
+        { key: "plot", start: 9600, end: 11400 },
+        { key: "commercial", start: 11400, end: 13000 }
+      ];
+
+      let origin = performance.now();
+      let pausedAt = 0;
+      let pausedDuration = 0;
+      let running = false;
+      let inView = true;
+      let frameId = 0;
+      let previousElapsed = -1;
+
+      groups.forEach((group) => {
+        const count = Number(group.dataset.count);
+        const container = group.querySelector(".factor-nodes");
+        for (let index = 0; index < count; index += 1) {
+          const node = document.createElement("span");
+          node.className = "factor-node";
+          container.appendChild(node);
+        }
+      });
+
+      function reset() {
+        sources.forEach((source) => source.classList.remove("visible", "processing"));
+        matrix.classList.remove("visible", "processing");
+        groups.forEach((group) => {
+          group.classList.remove("active", "complete");
+          group.querySelector(".factor-count").textContent = "00 / " + String(group.dataset.count).padStart(2, "0");
+          group.querySelector(".factor-state").textContent = "WAITING";
+          group.querySelector(".current-factor").textContent = "Awaiting source data";
+          group.querySelectorAll(".factor-node").forEach((node) => node.classList.remove("done"));
+        });
+        paper.classList.remove("visible");
+        reportLines.forEach((line) => line.classList.remove("visible"));
+        reportSummary.classList.remove("visible");
+        verdict.classList.remove("visible");
+        flow.classList.remove("loop-fade");
+      }
+
+      function processGroup(window, elapsed) {
+        const group = groups.find((item) => item.dataset.key === window.key);
+        const count = Number(group.dataset.count);
+        const factors = group.dataset.factors.split("|");
+
+        if (elapsed < window.start) return;
+
+        if (elapsed >= window.end) {
+          group.classList.remove("active");
+          group.classList.add("complete");
+          group.querySelector(".factor-count").textContent = String(count).padStart(2, "0") + " / " + String(count).padStart(2, "0");
+          group.querySelector(".factor-state").textContent = window.key === "grid" ? "REVIEW" : "COMPLETE";
+          group.querySelector(".current-factor").textContent = window.key === "grid" ? "1 unresolved input surfaced" : "All checks resolved";
+          group.querySelectorAll(".factor-node").forEach((node) => node.classList.add("done"));
+          return;
+        }
+
+        group.classList.add("active");
+        const progress = (elapsed - window.start) / (window.end - window.start);
+        const resolved = Math.min(count, Math.floor(progress * (count + 1)));
+        const randomCount = Math.min(count, Math.max(resolved, Math.floor(Math.random() * (count + 1))));
+        const factorIndex = Math.min(count - 1, Math.floor(progress * count));
+
+        group.querySelector(".factor-count").textContent = String(randomCount).padStart(2, "0") + " / " + String(count).padStart(2, "0");
+        group.querySelector(".factor-state").textContent = "MEASURING";
+        group.querySelector(".current-factor").textContent = factors[factorIndex];
+        group.querySelectorAll(".factor-node").forEach((node, index) => node.classList.toggle("done", index < resolved));
+      }
+
+      function showFinal() {
+        reset();
+        sources.forEach((source) => source.classList.add("visible"));
+        matrix.classList.add("visible");
+        groups.forEach((group) => {
+          const count = Number(group.dataset.count);
+          group.classList.add("complete");
+          group.querySelector(".factor-count").textContent = String(count).padStart(2, "0") + " / " + String(count).padStart(2, "0");
+          group.querySelector(".factor-state").textContent = group.dataset.key === "grid" ? "REVIEW" : "COMPLETE";
+          group.querySelector(".current-factor").textContent = group.dataset.key === "grid" ? "1 unresolved input surfaced" : "All checks resolved";
+          group.querySelectorAll(".factor-node").forEach((node) => node.classList.add("done"));
+        });
+        paper.classList.add("visible");
+        reportLines.forEach((line) => line.classList.add("visible"));
+        reportSummary.classList.add("visible");
+        verdict.classList.add("visible");
+      }
+
+      function render(now) {
+        if (!running) return;
+        const elapsed = (now - origin - pausedDuration) % loopMs;
+
+        if (previousElapsed >= 0 && elapsed < previousElapsed) reset();
+        previousElapsed = elapsed;
+
+        sources.forEach((source, index) => {
+          source.classList.toggle("visible", elapsed >= 350 + index * 230);
+          source.classList.toggle("processing", elapsed >= 3000 && elapsed < 13000);
+        });
+
+        matrix.classList.toggle("visible", elapsed >= 2200);
+        matrix.classList.toggle("processing", elapsed >= 3000 && elapsed < 13200);
+        groupWindows.forEach((window) => processGroup(window, elapsed));
+
+        paper.classList.toggle("visible", elapsed >= 12700);
+        reportLines.forEach((line, index) => line.classList.toggle("visible", elapsed >= 13200 + index * 340));
+        reportSummary.classList.toggle("visible", elapsed >= 15700);
+        verdict.classList.toggle("visible", elapsed >= 17400);
+        flow.classList.toggle("loop-fade", elapsed >= 20000);
+
+        frameId = requestAnimationFrame(render);
+      }
+
+      function pause() {
+        if (!running) return;
+        running = false;
+        pausedAt = performance.now();
+        cancelAnimationFrame(frameId);
+        flow.classList.add("paused");
+      }
+
+      function resume() {
+        if (running || reducedMotion.matches || mobile.matches || document.hidden || !inView) return;
+        if (pausedAt) pausedDuration += performance.now() - pausedAt;
+        pausedAt = 0;
+        running = true;
+        flow.classList.remove("paused");
+        frameId = requestAnimationFrame(render);
+      }
+
+      function syncMode() {
+        if (reducedMotion.matches || mobile.matches) {
+          pause();
+          showFinal();
+        } else {
+          reset();
+          previousElapsed = -1;
+          origin = performance.now();
+          pausedDuration = 0;
+          resume();
+        }
+      }
+
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver((entries) => {
+          inView = entries[0].isIntersecting;
+          if (inView) resume();
+          else pause();
+        }, { threshold: .05 }).observe(flow);
+      }
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) pause();
+        else resume();
+      });
+
+      const listen = (query) => {
+        if (query.addEventListener) query.addEventListener("change", syncMode);
+        else query.addListener(syncMode);
+      };
+
+      listen(reducedMotion);
+      listen(mobile);
+      syncMode();
+    })();
+  </script>
+</body>
+</html>

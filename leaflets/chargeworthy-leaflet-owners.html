@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chargeworthy leaflet — station owners</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#e8e4dc;display:flex;flex-direction:column;align-items:center;gap:32px;padding:32px 0}
+.sheet{width:1123px;height:794px;box-shadow:0 2px 16px rgba(0,0,0,.18);flex:none}
+@page{size:297mm 210mm;margin:0}
+@media print{body{background:none;padding:0;gap:0;display:block}.sheet{box-shadow:none;break-after:page}.sheet:last-child{break-after:auto}}
+</style></head>
+<body>
+<!-- Sheet 1 = outside face (panels 2 · 6 · 1, front cover on the right). Sheet 2 = inside face (panels 3 · 4 · 5). Print double-sided, A4 landscape, flip on short edge, then fold in three. -->
+<div class="sheet" id="face1"><div style="width: 1123px; height: 794px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); font-family: 'Source Serif 4', Georgia, serif; color: #12171a; background: #faf8f4; overflow: hidden">
+
+  <!-- Panel 2 · inside flap: what Chargeworthy is -->
+  <section style="padding: 40px; display: flex; flex-direction: column; gap: 18px; background: #faf8f4">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #a65b1f">What is Chargeworthy</div>
+    <h2 style="margin: 0; font-family: Archivo, sans-serif; font-size: 27px; line-height: 1.12; font-weight: 600; letter-spacing: -0.015em; text-wrap: balance">Site analytics for EV charging in India.</h2>
+    <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #3a3833">One standard for two jobs: judging a new location before money moves, and measuring a station that is already running.</p>
+
+    <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 4px">
+      <div style="border-top: 1px solid #d6d2c8; padding-top: 12px">
+        <div style="font-family: Archivo, sans-serif; font-size: 15px; font-weight: 600">Already running a station?</div>
+        <p style="margin: 4px 0 0; font-size: 13.5px; line-height: 1.5; color: #3a3833">A free station page built from your electricity bill: next month's usage forecast, your bill split line by line, and how you compare.</p>
+      </div>
+      <div style="border-top: 1px solid #d6d2c8; padding-top: 12px">
+        <div style="font-family: Archivo, sans-serif; font-size: 15px; font-weight: 600">Planning a new site?</div>
+        <p style="margin: 4px 0 0; font-size: 13.5px; line-height: 1.5; color: #3a3833">34 factors. 12 public datasets. One verdict: Build, Conditional or Don't — decided on the cautious case, never the hopeful one.</p>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: #d6d2c8; border: 1px solid #d6d2c8; margin-top: 4px">
+      <div style="background: #faf8f4; padding: 10px 8px">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 500">2,101</div>
+        <div style="font-size: 12px; line-height: 1.3; color: #5c5852">chargers mapped</div>
+      </div>
+      <div style="background: #faf8f4; padding: 10px 8px">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 500">18</div>
+        <div style="font-size: 12px; line-height: 1.3; color: #5c5852">operators tracked</div>
+      </div>
+      <div style="background: #faf8f4; padding: 10px 8px">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 500">12</div>
+        <div style="font-size: 12px; line-height: 1.3; color: #5c5852">public datasets</div>
+      </div>
+    </div>
+
+    <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: baseline; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5c5852; border-top: 1px solid #d6d2c8; padding-top: 10px">
+      <span>chargeworthy.in</span><span>02</span>
+    </div>
+  </section>
+
+  <!-- Panel 6 · back cover: how to start -->
+  <section style="padding: 40px; display: flex; flex-direction: column; gap: 18px; background: #16212c; color: #f4f1ec">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #d98a3d">Start in three steps</div>
+    <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px">
+      <li style="display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 8px">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #d98a3d">01</span>
+        <span style="font-size: 14px; line-height: 1.45">Open <strong style="font-weight: 600">chargeworthy.in/owner</strong></span>
+      </li>
+      <li style="display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 8px">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #d98a3d">02</span>
+        <span style="font-size: 14px; line-height: 1.45">Sign up with your mobile number and a password.</span>
+      </li>
+      <li style="display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 8px">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #d98a3d">03</span>
+        <span style="font-size: 14px; line-height: 1.45">Register your station once and add your first bill — a photo, a PDF, or the units typed in.</span>
+      </li>
+    </ol>
+
+    <div style="display: flex; gap: 14px; align-items: center; margin-top: 2px">
+      <div style="width: 92px; height: 92px; flex: none; border: 1.5px dashed #93a1ad; display: flex; align-items: center; justify-content: center; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.3; color: #93a1ad">[QR CODE]</div>
+      <div style="font-size: 13px; line-height: 1.45; color: #93a1ad">Scan to open the owner page. Free for station owners.</div>
+    </div>
+
+    <div style="border-top: 1px solid #253340; padding-top: 12px">
+      <div style="font-family: Archivo, sans-serif; font-size: 14px; font-weight: 600">Your data stays yours</div>
+      <p style="margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: #c9d1d8">Other owners only ever see anonymous averages of 10 or more stations. Delete one bill, or your whole account, at any time.</p>
+    </div>
+
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.7; color: #c9d1d8">
+      <div>[PHONE]</div>
+      <div>[EMAIL]@chargeworthy.in</div>
+    </div>
+
+    <p style="margin: auto 0 0; font-size: 12px; line-height: 1.45; color: #93a1ad">Chargeworthy earns assessment and operator-matching fees. We have no current CPO affiliation and do not own or operate charging stations.</p>
+    <div style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #93a1ad; border-top: 1px solid #253340; padding-top: 10px">
+      <span>chargeworthy.in</span><span>06</span>
+    </div>
+  </section>
+
+  <!-- Panel 1 · front cover -->
+  <section style="padding: 40px; display: flex; flex-direction: column; background: #0d151e; color: #f4f1ec">
+    <div style="display: flex; align-items: center; gap: 9px; font-family: Archivo, sans-serif; font-size: 18px; font-weight: 600; letter-spacing: -0.01em">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" fill="#d98a3d"></path></svg>
+      Chargeworthy
+    </div>
+
+    <div style="margin-top: 120px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #d98a3d">For EV charging station owners</div>
+    <h1 style="margin: 16px 0 0; font-family: Archivo, sans-serif; font-size: 40px; line-height: 1.04; font-weight: 700; letter-spacing: -0.03em; text-wrap: balance">Know next month's units before the bill arrives.</h1>
+    <p style="margin: 20px 0 0; font-size: 15px; line-height: 1.55; color: #c9d1d8">A free page for your station: a monthly usage forecast, your electricity bill split line by line, and how you compare with similar stations.</p>
+
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap">
+        <span style="border: 1px solid #253340; padding: 6px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #f4f1ec">Free for owners</span>
+        <span style="border: 1px solid #253340; padding: 6px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #f4f1ec">Built from your bill</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid #253340; padding-top: 10px">
+        <span style="font-family: Archivo, sans-serif; font-size: 18px; font-weight: 600; color: #d98a3d">chargeworthy.in</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #93a1ad">01</span>
+      </div>
+    </div>
+  </section>
+</div></div>
+<div class="sheet" id="face2"><div style="width: 1123px; height: 794px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); font-family: 'Source Serif 4', Georgia, serif; color: #12171a; background: #faf8f4; overflow: hidden">
+
+  <!-- Panel 3 · monthly forecast -->
+  <section style="padding: 40px; display: flex; flex-direction: column; gap: 16px; border-right: 1px solid #e6e2d9">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #a65b1f">Every month</div>
+    <h2 style="margin: 0; font-family: Archivo, sans-serif; font-size: 26px; line-height: 1.12; font-weight: 600; letter-spacing: -0.015em; text-wrap: balance">A forecast for next month's units.</h2>
+    <p style="margin: 0; font-size: 13.5px; line-height: 1.55; color: #3a3833">Add each month's bill and your page predicts the month ahead — as a likely range, never a single guess.</p>
+
+    <figure style="margin: 4px 0 0; border: 1px solid #d6d2c8; background: #ffffff; padding: 14px 14px 10px">
+      <div style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5c5852"><span>kWh per month</span><span>Illustration</span></div>
+      <div style="height: 120px; margin-top: 10px; display: flex; align-items: flex-end; gap: 9px; border-bottom: 1px solid #12171a">
+        <div style="flex: 1; height: 38%; background: #1c3a4f"></div>
+        <div style="flex: 1; height: 47%; background: #1c3a4f"></div>
+        <div style="flex: 1; height: 44%; background: #1c3a4f"></div>
+        <div style="flex: 1; height: 58%; background: #1c3a4f"></div>
+        <div style="flex: 1; height: 63%; background: #1c3a4f"></div>
+        <div style="flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end">
+          <div style="height: 34%; margin-bottom: 52%; border: 1.5px solid #b5651d; background: repeating-linear-gradient(135deg, #f5e6d3 0 3px, #ffffff 3px 7px)"></div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 9px; margin-top: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5c5852">
+        <span style="flex: 5">Your bills</span><span style="flex: 1; text-align: center; color: #a65b1f">Next</span>
+      </div>
+    </figure>
+
+    <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 11px">
+      <li style="border-top: 1px solid #d6d2c8; padding-top: 9px">
+        <div style="font-family: Archivo, sans-serif; font-size: 14.5px; font-weight: 600">Last month</div>
+        <div style="font-size: 13px; line-height: 1.45; color: #3a3833">Units delivered and your month of operation.</div>
+      </li>
+      <li style="border-top: 1px solid #d6d2c8; padding-top: 9px">
+        <div style="font-family: Archivo, sans-serif; font-size: 14.5px; font-weight: 600">Next month, as a range</div>
+        <div style="font-size: 13px; line-height: 1.45; color: #3a3833">About eight times in ten, the real figure lands inside it.</div>
+      </li>
+      <li style="border-top: 1px solid #d6d2c8; padding-top: 9px">
+        <div style="font-family: Archivo, sans-serif; font-size: 14.5px; font-weight: 600">Forecast track record</div>
+        <div style="font-size: 13px; line-height: 1.45; color: #3a3833">Each forecast is checked against the bill that follows — hits and misses both shown.</div>
+      </li>
+    </ul>
+
+    <div style="margin-top: auto; display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5c5852; border-top: 1px solid #d6d2c8; padding-top: 10px">
+      <span>Forecast</span><span>03</span>
+    </div>
+  </section>
+
+  <!-- Panel 4 · bill split -->
+  <section style="padding: 40px; display: flex; flex-direction: column; gap: 16px; border-right: 1px solid #e6e2d9">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #a65b1f">Money on the bill</div>
+    <h2 style="margin: 0; font-family: Archivo, sans-serif; font-size: 26px; line-height: 1.12; font-weight: 600; letter-spacing: -0.015em; text-wrap: balance">Your bill, split line by line.</h2>
+    <p style="margin: 0; font-size: 13.5px; line-height: 1.55; color: #3a3833">See what each part of the electricity bill is costing the station — and which parts you can do something about.</p>
+
+    <div style="display: flex; flex-direction: column; gap: 0; border: 1px solid #d6d2c8; background: #ffffff">
+      <div style="padding: 12px 14px; border-bottom: 1px solid #d6d2c8">
+        <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-family: Archivo, sans-serif; font-size: 14.5px; font-weight: 600">Demand</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5c5852">kVA</span></div>
+        <div style="font-size: 13px; line-height: 1.45; color: #3a3833; margin-top: 3px">Contract demand against your recorded peak, and the share of it you really use.</div>
+        <div style="margin-top: 8px; height: 10px; background: #eceee9; position: relative">
+          <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 46%; background: #1c3a4f"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5c5852"><span>recorded peak</span><span>contract</span></div>
+      </div>
+      <div style="padding: 12px 14px; border-bottom: 1px solid #d6d2c8">
+        <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-family: Archivo, sans-serif; font-size: 14.5px; font-weight: 600">Power factor</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5c5852">₹</span></div>
+        <div style="font-size: 13px; line-height: 1.45; color: #3a3833; margin-top: 3px">The penalty or incentive on this bill, in rupees.</div>
+      </div>
+      <div style="padding: 12px 14px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-family: Archivo, sans-serif; font-size: 14.5px; font-weight: 600">Time of day</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5c5852">kWh</span></div>
+        <div style="font-size: 13px; line-height: 1.45; color: #3a3833; margin-top: 3px">Units at peak, normal and off-peak rates.</div>
+        <div style="margin-top: 8px; display: flex; height: 10px; gap: 2px">
+          <div style="flex: 22; background: #a65b1f"></div>
+          <div style="flex: 48; background: #1c3a4f"></div>
+          <div style="flex: 30; background: #a8b6bc"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5c5852"><span>peak</span><span>normal</span><span>off-peak</span></div>
+      </div>
+    </div>
+
+    <div style="background: #f5e6d3; padding: 12px 14px">
+      <div style="font-family: Archivo, sans-serif; font-size: 14px; font-weight: 600; color: #7a4113">Paying for load you never use?</div>
+      <div style="font-size: 13px; line-height: 1.45; color: #7a4113; margin-top: 3px">When your contract demand sits well above your peak, we flag it: fixed charges may come down if you apply to your electricity board for a lower contract demand.</div>
+    </div>
+
+    <div style="margin-top: auto; display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5c5852; border-top: 1px solid #d6d2c8; padding-top: 10px">
+      <span>Bill split</span><span>04</span>
+    </div>
+  </section>
+
+  <!-- Panel 5 · compare + area + cross-sell -->
+  <section style="padding: 40px; display: flex; flex-direction: column; gap: 16px">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #a65b1f">Where you stand</div>
+    <h2 style="margin: 0; font-family: Archivo, sans-serif; font-size: 26px; line-height: 1.12; font-weight: 600; letter-spacing: -0.015em; text-wrap: balance">Compared with stations like yours.</h2>
+    <p style="margin: 0; font-size: 13.5px; line-height: 1.55; color: #3a3833">“Your latest month is ahead of about <strong style="font-family: 'IBM Plex Mono', monospace; font-weight: 500">[N]</strong> in 100 similar stations.”</p>
+    <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5c5852">Similar means the same charger type, a similar age and the same state. Shown only when at least 10 comparable stations have shared their bills.</p>
+
+    <div style="border-top: 1px solid #d6d2c8; padding-top: 12px">
+      <div style="font-family: Archivo, sans-serif; font-size: 14.5px; font-weight: 600">Your area</div>
+      <div style="font-size: 13px; line-height: 1.45; color: #3a3833; margin-top: 3px">Approximate outage hours and grid details for your location, kept private to you.</div>
+    </div>
+    <div style="border-top: 1px solid #d6d2c8; padding-top: 12px">
+      <div style="font-family: Archivo, sans-serif; font-size: 14.5px; font-weight: 600">All your stations, one place</div>
+      <div style="font-size: 13px; line-height: 1.45; color: #3a3833; margin-top: 3px">A trend for each station, side by side.</div>
+    </div>
+
+    <div style="margin-top: 4px; background: #0d151e; color: #f4f1ec; padding: 18px 18px 16px">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #d98a3d">Planning a second site?</div>
+      <div style="margin-top: 8px; font-family: Archivo, sans-serif; font-size: 19px; line-height: 1.2; font-weight: 600">34 factors. 12 public datasets. One verdict.</div>
+      <div style="margin-top: 6px; font-size: 13px; line-height: 1.45; color: #c9d1d8">Drop a pin at chargeworthy.in/assess for a free breakeven check.</div>
+    </div>
+
+    <div style="margin-top: auto; display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5c5852; border-top: 1px solid #d6d2c8; padding-top: 10px">
+      <span>Comparison</span><span>05</span>
+    </div>
+  </section>
+</div></div>
+</body></html>

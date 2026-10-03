@@ -1,3 +1,4 @@
+import { socialFormats, type SocialFormat } from "./social";
 import reviewed from "virtual:analytics-method";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -125,6 +126,29 @@ export function Chart({ data }: { data: ChartData }) {
   const rows = selectRows(data.rows, filters);
   const table = enhanced && params.get(`${data.id}.view`) === "table";
   const [message, setMessage] = useState("");
+  const [imageFormat, setImageFormat] = useState<SocialFormat>("portrait");
+  const [savingImage, setSavingImage] = useState(false);
+  const saveImage = async () => {
+    setSavingImage(true);
+    setMessage("Preparing image...");
+    try {
+      const { downloadSocialImage } = await import("./social-download");
+      await downloadSocialImage({
+        data,
+        rows,
+        question:
+          data.social?.question ??
+          (data.title.endsWith("?") ? data.title : `What does this chart show: ${data.title}?`),
+        pageUrl: `${window.location.origin}${location.pathname}`,
+        format: imageFormat,
+      });
+      setMessage("Image saved with sources, licences and version stamps.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Image export failed. Please retry.");
+    } finally {
+      setSavingImage(false);
+    }
+  };
   const [manualCitation, setManualCitation] = useState("");
   const change = (key: string, value: string) => {
     setParams(
@@ -302,9 +326,26 @@ export function Chart({ data }: { data: ChartData }) {
           Download CSV (all data)
         </button>
         <button onClick={() => void copy()}>Copy citation</button>
-        <button disabled title="Image export will be added in Part 8">
-          Save image (coming soon)
-        </button>
+        <div className="analytics-image-export">
+          <label htmlFor={`${uid}-image-format`}>Image format</label>
+          <select
+            id={`${uid}-image-format`}
+            value={imageFormat}
+            onChange={(event) => setImageFormat(event.target.value as SocialFormat)}
+          >
+            {Object.entries(socialFormats).map(([key, format]) => (
+              <option key={key} value={key}>
+                {format.label} ({format.width} x {format.height})
+              </option>
+            ))}
+          </select>
+          <button
+            disabled={!enhanced || !rows.length || savingImage}
+            onClick={() => void saveImage()}
+          >
+            {savingImage ? "Saving image..." : "Save image"}
+          </button>
+        </div>
       </div>
       <p role="status">{message}</p>
       {manualCitation && (

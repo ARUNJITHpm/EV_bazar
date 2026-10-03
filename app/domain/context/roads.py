@@ -155,18 +155,15 @@ def parse_roads(
     for el in elements:
         if not isinstance(el, dict) or el.get("type") != "way":
             continue
-        raw_tags = el.get("tags")
-        tags: dict[str, Any] = raw_tags if isinstance(raw_tags, dict) else {}
-        raw_geometry = el.get("geometry")
-        geometry: list[Any] = raw_geometry if isinstance(raw_geometry, list) else []
+        tags = el.get("tags") if isinstance(el.get("tags"), dict) else {}
+        geometry = el.get("geometry") if isinstance(el.get("geometry"), list) else []
         distance = _way_distance_m(lat, lng, geometry)
         if distance is not None:
             rank = _class_rank(str(tags.get("highway", "")))
             if best is None or (distance, rank) < (best[0], best[1]):
                 best = (distance, rank, tags)
 
-        raw_nodes = el.get("nodes")
-        nodes: list[Any] = raw_nodes if isinstance(raw_nodes, list) else []
+        nodes = el.get("nodes") if isinstance(el.get("nodes"), list) else []
         for node_id, g in zip(nodes, geometry, strict=False):
             if not isinstance(node_id, int) or not isinstance(g, dict):
                 continue

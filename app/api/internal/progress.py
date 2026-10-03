@@ -68,6 +68,13 @@ class Signals:
     tiered_sites: int
     sources_authorised: int
     sources_total: int
+    #: Whether migration 0013 has been applied. Asked of the database rather
+    #: than of the migration files, because a file on disk is not a table
+    #: (Track B - R12).
+    archive_table: bool
+    #: Reports whose rendered PDF has been frozen as bytes - rule 9's other
+    #: half. Zero until the archive script is run against the demo.
+    archived_pdfs: int
     #: The charging-network tables (migration 0015). Defaults keep older
     #: constructors valid.
     network_stations: int = 0
@@ -134,6 +141,17 @@ def read_signals(session: Session) -> Signals:
               (SELECT count(*) FROM sites WHERE data_tier IS NOT NULL)
         """)
     ).one()
+    # Asked separately, and in this order, because `report_pdfs` may not
+    # exist yet: counting rows in a missing relation is an error, not an
+    # answer, and it would take the whole panel down with it. Inspected
+    # through the session's own connection - handing the inspector the engine
+    # takes a second one and returns it with a rollback.
+    archive_table = inspect(session.connection()).has_table("report_pdfs")
+    archived = (
+        int(session.execute(text("SELECT count(*) FROM report_pdfs")).scalar_one())
+        if archive_table
+        else 0
+    )
     return Signals(
         districts=int(row[0]),
         pincodes=int(row[1]),
@@ -155,6 +173,8 @@ def read_signals(session: Session) -> Signals:
         tiered_sites=int(row[17]),
         sources_authorised=sum(1 for s in SOURCES if s.authorised),
         sources_total=len(SOURCES),
+        archive_table=archive_table,
+        archived_pdfs=archived,
         **_network_signals(session),
     )
 
@@ -264,8 +284,8 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
             ),
             None
             if poller_live
-            else "Human: the poller collects by SCRAPING competitors, and the Tata Power adapter "
-            "is BUILT with its route confirmed - authorise it in "
+            else "Human: the poller collects by SCRAPING competitors, and the Tata Power "
+            "adapter is BUILT with its route confirmed - authorise it in "
             "app/domain/polling/sources.py, put TATA_POWER_EZ__BASE_URL + the token in "
             ".env, then validate with "
             "`python -m workers.poller --dry-run`. chargeMOD's real occupancy is the private "
@@ -299,7 +319,10 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "real, but only 'how much space' (2/4/6 plugs) moves the number and each tap "
         "echoes what it did. EVERY pin writes a `sites` lead row first: a pin in an "
         "uncovered state joins the district waitlist, which is capture, not failure - "
-        "the request counter on a waitlisted district is the expansion roadmap.",
+        "the request counter on a waitlisted district is the expansion roadmap. "
+        "The working screen then walks the 34 landing-page factors grouped by "
+        "SOURCE (12/4/8/7/3) while the real POST runs alongside: no factor shows a "
+        "value it did not fetch, and the last tick waits for the response.",
         (
             f"{s.pin_leads:,} customer pin(s) dropped ({s.sites:,} sites total)."
             if assess_live
@@ -586,7 +609,12 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "payload as JSONB in `reports`. GET /api/internal/reports/{id} serves that "
         "row VERBATIM - never recomputes - and the frontend renders it at "
         "/report/:id, with the /assess teaser reading the same stored row. Every "
-        "rupee figure comes from the engine; the report's job is to show its work.",
+        "rupee figure comes from the engine; the report's job is to show its work. "
+        "Rebuilt 2026-09-03 to the twelve-section paper document of "
+        "design/brand/report-spec.md: the verdict word leads, the money sits beside "
+        "a fixed deposit, the judging thresholds are printed BEFORE the site data, "
+        "and every factor carries favours/neutral/against from thresholds fixed in "
+        "assemble.py - the chart falls to section 09, for the accountant.",
         (
             f"{s.reports:,} report(s) stored. The demo (KL-TVM-DEMO-001, "
             "Kazhakkoottam NH-66) renders live from the database - and its verdict "
@@ -597,9 +625,101 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
             "report generated yet. `python -m scripts.generate_demo_report --write` "
             "creates the first."
         ),
-        "Attribution (Part 7) once the 0.3 conversations decide its schema - the "
-        "customer intake itself (POST /assess) is built and carved out into G.2 "
-        "at the top of the queue.",
+        "THE DOCUMENT IS ITS OWN MILESTONE NOW, below - all twelve sections "
+        "are rebuilt and the renderer exists, and the full record lives on "
+        "/console/report rather than in this field, where it had grown to 494 "
+        "lines. What the PIPELINE still owes that document: "
+        "(1) A SOURCE FOR 26 OF SECTION 04'S 39 CHECKS. Owner's call on "
+        "2026-09-09 filled the section out to its promised length - all five "
+        "groups now, including 'Site and amenities', which the assembler had "
+        "never put a row into - by DEFAULTING what has no feed. Every "
+        "defaulted check prints UNVERIFIED instead of a direction, so the "
+        "page is full-length and still honest, but 26 of them have nothing "
+        "behind them. /console/report lists each one and what would close it. "
+        "This is still the largest single piece of backend work left; the "
+        "difference is that it is now a list of named gaps rather than a "
+        "missing half of a section; "
+        "(2) cpo_terms (PLAN 2.3) for section 06's repair-target and tie-in "
+        "columns, which are DROPPED rather than filled with dashes; "
+        "(3) the poller (PLAN 0.1) for measured uptime in 06 and measured "
+        "busyness in 07; "
+        "(4) PLAN 2.5's favours/neutral/against thresholds for the OPERATOR "
+        "factors, which section 03 prints BEFORE the site data and which need "
+        "numbers signed off rather than invented. "
+        "Also open: attribution (Part 7) once the 0.3 conversations decide its "
+        "schema - the customer intake itself (POST /assess) is built and "
+        "carved out into G.2 at the top of the queue.",
+    )
+    archived = s.archived_pdfs > 0
+    add(
+        "5 + 6 (document)",
+        "The report document - twelve sections, and the renderer behind them",
+        Status.DONE if archived else (Status.PARTIAL if s.reports else Status.CODE_DONE),
+        "The deliverable itself, as opposed to the pipeline that fills it. Rebuilt "
+        "2026-09-07 to 09 to the twelve-section paper document of design/brand/"
+        "report-spec.md: the verdict word leads and is read from P10, the money sits "
+        "beside a fixed deposit in two vocabularies, the judging thresholds are "
+        "printed BEFORE the site data, every check carries favours/neutral/against "
+        "or the fourth state UNVERIFIED, operator fit sits beside the money and is "
+        "never blended into it, and the chart falls to section 09 for the "
+        "accountant. R11 then built app/pdf/render.py, which did not exist: the "
+        "renderer that freezes the printed bytes and stamps renderer_version with "
+        "the Vite build hash AND the Chromium build. THE FULL RECORD IS "
+        "/console/report - what each section became, what each still needs, what "
+        "measuring the paper turned up, and which decisions are closed. It is a "
+        "panel rather than this field because a 37 kB string is where facts go to "
+        "be safe from being found.",
+        (
+            f"All twelve sections rebuilt; the render is archived as bytes "
+            f"({s.archived_pdfs} report(s))."
+            if archived
+            else "All twelve sections rebuilt and verified at three verdicts, but "
+            "NOTHING IS ARCHIVED: "
+            + (
+                "report_pdfs exists and is empty."
+                if s.archive_table
+                else "migration 0013 has not been applied, so report_pdfs does not exist."
+            )
+        ),
+        None
+        if archived
+        else "Human, two writes to the live database, neither of them the code's to "
+        "take: apply migration 0013 (report_pdfs), then run "
+        "`python -m scripts.archive_report_pdf KL-TVM-DEMO-001 --write`, which is "
+        "dry by default. Until both happen, rule 9's artifact exists as code and as "
+        "a schema and not as bytes - and section 11 prints 'no archived render yet', "
+        "which is the honest thing to print and not a placeholder.",
+    )
+    add(
+        "6 (operators)",
+        "Operator selection - counting works, judging does not",
+        Status.PARTIAL,
+        "The second question, after 'should anything be built here'. WHICH operator, "
+        "and it is site-conditional: a rival's charger a kilometre away is competition "
+        "for everybody, but a charger run by the operator YOU sign with is competition "
+        "AND a split - their app now has two places to send the same drivers. So the "
+        "same neighbour is counted once, operator-blind, in report section 07, and "
+        "again per operator in section 06. BUILT: domain/cpo/identity.py folds each "
+        "feed's spelling onto one network (no fuzzy tier - nothing reviews an operator "
+        "name, and a near-miss would silently merge two networks); domain/cpo/presence.py "
+        "gives per-site district / state / 3 km / 10 km counts, source duplicates folded "
+        "within ~55 m; report section 06 carries the near count and one plain sentence "
+        "per operator. NOT BUILT: cpo_terms (every terms figure is still a placeholder "
+        "and says so), the favours/neutral/against thresholds - which must print in "
+        "section 03 BEFORE the site data, so the numbers need signing off rather than "
+        "inventing - and measured uptime and occupancy, both blocked on 0.1.",
+        (
+            f"{s.competitor_stations:,} inventory row(s); the operator panel "
+            "(/console/operators) shows how many resolve to a named network and lists "
+            "the ones that do not, which is the queue for the alias table. The stored "
+            "demo report predates the new fields and by rule 9 is served verbatim, so "
+            "section 06 shows dashes there until "
+            "`python -m scripts.generate_demo_report --write` is run."
+        ),
+        "The part-by-part record is CPO_SELECTION_PLAN.md at the repo root - a "
+        "temporary file, to be folded into PLAN.md Part 6 and deleted. Next by value "
+        "is cpo_terms (needs the 0.3 conversations) and the thresholds (needs a "
+        "decision, not code).",
     )
     tiered = s.tiered_sites > 0
     add(

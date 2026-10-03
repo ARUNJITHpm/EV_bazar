@@ -40,6 +40,8 @@ EMPTY_WORLD = Signals(
     tiered_sites=0,
     sources_authorised=0,
     sources_total=8,
+    archive_table=False,
+    archived_pdfs=0,
 )
 
 
@@ -219,3 +221,47 @@ def test_later_items_say_not_to_chase_them() -> None:
     inputs = build_inputs(_bare_settings(), urban_layer_loaded=False)
     llm = next(i for i in inputs if "LLM" in i.name)
     assert llm.status is InputStatus.LATER
+
+
+def test_the_document_milestone_reports_the_archive_and_not_the_code() -> None:
+    """Track B R12. The twelve sections and the renderer are built; what is
+    NOT done is a write to the live database, and the milestone has to say so
+    rather than claiming the part is finished because the code is.
+
+    Three states, and the middle one is the one that lasts: no reports at
+    all is code_done, a stored report with nothing archived is partial, and
+    only archived BYTES make it done - because rule 9's artifact is the
+    bytes, not the renderer that can produce them."""
+    import dataclasses
+
+    empty = next(m for m in build_milestones(EMPTY_WORLD) if m.part == "5 + 6 (document)")
+    assert empty.status is Status.CODE_DONE
+
+    stored = dataclasses.replace(EMPTY_WORLD, reports=1)
+    unarchived = next(m for m in build_milestones(stored) if m.part == "5 + 6 (document)")
+    assert unarchived.status is Status.PARTIAL
+    assert "migration 0013 has not been applied" in unarchived.evidence
+    assert unarchived.to_close is not None and "--write" in unarchived.to_close
+
+    # The migration applied, and still nothing archived: the panel must not
+    # let an empty table read as a done milestone.
+    migrated = dataclasses.replace(stored, archive_table=True)
+    waiting = next(m for m in build_milestones(migrated) if m.part == "5 + 6 (document)")
+    assert waiting.status is Status.PARTIAL
+    assert "exists and is empty" in waiting.evidence
+
+    done = dataclasses.replace(migrated, archived_pdfs=1)
+    archived = next(m for m in build_milestones(done) if m.part == "5 + 6 (document)")
+    assert archived.status is Status.DONE
+    assert archived.to_close is None
+
+
+def test_the_pipeline_milestone_points_at_the_panel_rather_than_carrying_it() -> None:
+    """The record of Track B was 494 lines inside this one field. It moved to
+    /console/report; what stays here is what the PIPELINE still owes the
+    document. If it starts growing again, this is the test that says so."""
+    pipeline = next(m for m in build_milestones(EMPTY_WORLD) if m.part == "5 + 6")
+    assert pipeline.to_close is not None
+    assert "/console/report" in pipeline.to_close
+    assert "26 OF SECTION 04'S 39 CHECKS" in pipeline.to_close
+    assert len(pipeline.to_close) < 2_000, "the pipeline's to_close is turning into a record again"

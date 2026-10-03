@@ -6,6 +6,25 @@
 
 ---
 
+## Where this stands — 2026-09-06
+
+Only what the repo can actually evidence. Everything else on this list is a
+human step, and a tick nobody can point at is worse than an open box.
+
+| # | Item | State |
+|---|---|---|
+| 1 | Name, domain, email on it | **Open.** `hello@chargeworthy.in` is deliberately NOT linked anywhere until the domain exists (`design/DECISIONS.md`). |
+| 2 | Wordmark only | **Shipped.** Direction C — Instrument, IBM Plex Mono caps, on every public surface. |
+| 3 | Two colours + one typeface | **Shipped.** `frontend/src/styles/tokens.css`, the only file allowed a raw hex. Copper is reserved for the unverified state and nothing else. |
+| 4 | A sample site report — highest priority | **Shipped.** `/report/KL-TVM-DEMO-001`, twelve sections, rendered from the stored payload. Its verdict is DON'T BUILD, unedited. |
+| 5 | One-page website | **Shipped.** `/` — core message, three steps, the 34 factors named, the sample report visible, one form. |
+| 6 | One inquiry form capturing assessment inputs | **Partly.** `/assess` captures location, space, transformer presence/size/distance and intent. No photos, no ownership type, no contact capture — contact waits on Part 7's schema. |
+| 7 | Proof the partner network is real | **Blocked, on purpose.** No operator or charger maker is named without written permission; bracketed slots hold their place. |
+| 8 | WhatsApp Business + Google Business Profile | **Open.** Human steps; nothing in the codebase can close them. |
+| 9 | One-page PDF for CPOs | **Open.** `brochure/` (site owners, three-fold) and `explainer/` (site owners, 14 pages) both exist; neither is the CPO-facing pitch, which is a different audience asking for nothing. |
+
+---
+
 ## Ship these — the minimum
 
 **1. Name, domain, email on that domain**

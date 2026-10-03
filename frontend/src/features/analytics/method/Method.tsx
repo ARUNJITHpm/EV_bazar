@@ -3,6 +3,7 @@ import catalogue from "virtual:analytics-public-data";
 import articles from "virtual:analytics-content";
 import reviewed from "virtual:analytics-method";
 import { articleHref } from "../content/model";
+import { datasetLabels } from "../data/schemas";
 import "./method.css";
 const percent = (value: number) =>
   `${(100 * value).toLocaleString("en-IN", { maximumFractionDigits: 1 })}%`;
@@ -286,7 +287,7 @@ export function Sources() {
         const charts = articles.flatMap((a) =>
           a.blocks.flatMap((b) =>
             b.kind === "chart" && b.data.sources.some((s) => s.url === meta.source_url)
-              ? [{ href: `${articleHref(a)}#${b.data.id}`, title: b.data.title }]
+              ? [{ href: `${articleHref(a)}#${b.data.id}`, title: b.data.title, article: a.title }]
               : [],
           ),
         );
@@ -327,6 +328,8 @@ export function Sources() {
                 {charts.map((c) => (
                   <li key={c.href}>
                     <Link to={c.href}>{c.title}</Link>
+                    {/* The same chart can appear in more than one article. */}
+                    <span className="analytics-muted"> in “{c.article}”</span>
                   </li>
                 ))}
               </ul>
@@ -351,7 +354,7 @@ export function Sources() {
           <ul>
             {catalogue.pending.map((id) => (
               <li key={id} id={`source-${id}`}>
-                {id.replaceAll("_", " ")}: awaiting verified data and metadata.
+                {datasetLabels[id]}: awaiting verified data and metadata.
               </li>
             ))}
           </ul>

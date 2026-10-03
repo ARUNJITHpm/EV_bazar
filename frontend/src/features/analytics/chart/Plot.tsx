@@ -1,5 +1,6 @@
 import {
   linearScale,
+  niceTicks,
   numberLabel,
   rowValue,
   valueDomain,
@@ -63,18 +64,10 @@ export function Plot({
     right = 690,
     top = 24,
     bottom = height - 72;
-  const scale = linearScale(
-    domain[0],
-    domain[1],
-    horizontal ? left : bottom,
-    horizontal ? right : top,
-  );
+  const { domain: axis, ticks } = niceTicks(domain);
+  const scale = linearScale(axis[0], axis[1], horizontal ? left : bottom, horizontal ? right : top);
   const category = (label: string) =>
     left + ((labels.indexOf(label) + 0.5) / labels.length) * (right - left);
-  const ticks = Array.from(
-    { length: 5 },
-    (_, index) => domain[0] + ((domain[1] - domain[0]) * index) / 4,
-  );
   return (
     <>
       <div

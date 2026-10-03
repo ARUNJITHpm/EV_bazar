@@ -25,6 +25,7 @@ import time
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
 from pydantic import BaseModel
 
+from app.api.internal.ratelimit import console_login_limit
 from app.auth import (
     COOKIE_NAME,
     PasswordHashError,
@@ -87,7 +88,9 @@ class Operator(BaseModel):
     operator: str
 
 
-@router.post("/console/login", response_model=Operator)
+@router.post(
+    "/console/login", response_model=Operator, dependencies=[Depends(console_login_limit)]
+)
 def login(
     body: LoginIn,
     response: Response,

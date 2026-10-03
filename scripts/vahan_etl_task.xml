@@ -33,7 +33,8 @@
          crash-retry overhead; 16h leaves room without letting a wedged run
          squat forever. -->
     <ExecutionTimeLimit>PT16H</ExecutionTimeLimit>
-    <Enabled>true</Enabled>
+    <!-- Owner prohibited local VAHAN scraping on 2026-10-03. Do not enable. -->
+    <Enabled>false</Enabled>
   </Settings>
   <Triggers>
     <CalendarTrigger>

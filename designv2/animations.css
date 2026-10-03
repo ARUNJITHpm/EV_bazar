@@ -1,0 +1,259 @@
+/* animations.css — designv2
+ *
+ * Append to frontend/src/styles/index.css (or @import it from there).
+ * Every class is prefixed cwa- so nothing collides with Tailwind utilities.
+ *
+ * Motion budget, design/IMPLEMENT.md:65-68 — cubic-bezier(0.16,1,0.3,1),
+ * no animation library, full prefers-reduced-motion. Colours come from
+ * var(--cw-*) in tokens.css; there is not one hex value in this file.
+ *
+ * Both loops are long (11s / 12s) and low-contrast on purpose: a hero that
+ * re-attacks every two seconds fights the copy for attention.
+ */
+
+/* =====================================================================
+ * A — Route to charge.  <RouteToCharge />.  11s loop.
+ * ===================================================================== */
+.cwa-route { position: relative; }
+.cwa-route__svg { display: block; width: 100%; height: auto; }
+
+.cwa-road {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: cwa-road 11s var(--cw-ease) infinite;
+}
+@keyframes cwa-road {
+  0%   { stroke-dashoffset: 1200; }
+  12%  { stroke-dashoffset: 0; }
+  92%  { stroke-dashoffset: 0; opacity: 1; }
+  98%  { stroke-dashoffset: 0; opacity: 0; }
+  100% { stroke-dashoffset: 1200; opacity: 0; }
+}
+
+/* Lane markings keep their dash attribute, so they cannot share the draw
+ * animation above — a CSS stroke-dasharray would overwrite it. */
+.cwa-centre { opacity: 0; animation: cwa-centre 11s var(--cw-ease) infinite; }
+@keyframes cwa-centre {
+  0%, 6%    { opacity: 0; }
+  16%       { opacity: 0.5; }
+  92%       { opacity: 0.5; }
+  97%, 100% { opacity: 0; }
+}
+
+.cwa-site { opacity: 0; animation: cwa-site 11s var(--cw-ease) infinite; }
+@keyframes cwa-site {
+  0%, 6%    { opacity: 0; }
+  14%       { opacity: 1; }
+  92%       { opacity: 1; }
+  97%, 100% { opacity: 0; }
+}
+
+/* The drive. offset-path carries the same d as the corridor. */
+.cwa-car {
+  offset-path: path("M 30 566 C 172 566 232 502 302 466 C 382 424 430 376 500 338 C 566 302 622 250 700 232");
+  offset-rotate: auto;
+  offset-distance: 0%;
+  animation: cwa-drive 11s cubic-bezier(0.32, 0, 0.28, 1) infinite;
+}
+@keyframes cwa-drive {
+  0%, 10%   { offset-distance: 0%; opacity: 0; }
+  13%       { offset-distance: 2%; opacity: 1; }
+  48%       { offset-distance: 100%; opacity: 1; }
+  92%       { offset-distance: 100%; opacity: 1; }
+  97%, 100% { offset-distance: 100%; opacity: 0; }
+}
+
+.cwa-beam { opacity: 0; animation: cwa-beam 11s linear infinite; }
+@keyframes cwa-beam {
+  0%, 12%   { opacity: 0; }
+  16%       { opacity: 0.5; }
+  44%       { opacity: 0.5; }
+  50%, 100% { opacity: 0; }
+}
+
+.cwa-cable {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: cwa-cable 11s var(--cw-ease) infinite;
+}
+@keyframes cwa-cable {
+  0%, 50%   { stroke-dashoffset: 80; }
+  57%       { stroke-dashoffset: 0; }
+  92%       { stroke-dashoffset: 0; }
+  97%, 100% { stroke-dashoffset: 80; }
+}
+
+.cwa-pulse {
+  stroke-dasharray: 10 70;
+  stroke-dashoffset: 80;
+  opacity: 0;
+  animation: cwa-pulse 11s linear infinite;
+}
+@keyframes cwa-pulse {
+  0%, 57%   { stroke-dashoffset: 80; opacity: 0; }
+  58%       { opacity: 1; }
+  72%       { stroke-dashoffset: -80; opacity: 1; }
+  72.01%    { stroke-dashoffset: 80; }
+  86%       { stroke-dashoffset: -80; opacity: 1; }
+  88%, 100% { opacity: 0; }
+}
+
+/* The unit's LED strip IS the charge meter — one element, one meaning,
+ * rather than a status ring floating off the pedestal. */
+.cwa-meter {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: cwa-meter 11s var(--cw-ease) infinite;
+}
+@keyframes cwa-meter {
+  0%, 57% { stroke-dashoffset: 48; }
+  88%     { stroke-dashoffset: 0; }
+  100%    { stroke-dashoffset: 0; }
+}
+
+/* 3 / 5 / 10 km catchment, expanding only once the car is charging. */
+.cwa-catch {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cwa-catch 11s var(--cw-ease) infinite;
+}
+.cwa-catch--2 { animation-delay: -10.75s; }
+.cwa-catch--3 { animation-delay: -10.5s; }
+@keyframes cwa-catch {
+  0%, 60%   { opacity: 0; transform: scale(0.72); }
+  70%       { opacity: 0.85; transform: scale(1); }
+  92%       { opacity: 0.4; transform: scale(1); }
+  97%, 100% { opacity: 0; transform: scale(1); }
+}
+
+/* Readout. @property animates the counter without a line of JS. */
+@property --cwa-pct { syntax: "<integer>"; initial-value: 0; inherits: false; }
+.cwa-readout { opacity: 0; animation: cwa-readout 11s var(--cw-ease) infinite; }
+@keyframes cwa-readout {
+  0%, 57%   { opacity: 0; }
+  62%       { opacity: 1; }
+  92%       { opacity: 1; }
+  97%, 100% { opacity: 0; }
+}
+.cwa-pct {
+  --cwa-pct: 0;
+  counter-reset: cwa-pct var(--cwa-pct);
+  animation: cwa-count 11s linear infinite;
+}
+.cwa-pct::after { content: counter(cwa-pct) "%"; }
+@keyframes cwa-count {
+  0%, 57% { --cwa-pct: 0; }
+  88%     { --cwa-pct: 100; }
+  100%    { --cwa-pct: 100; }
+}
+
+/* =====================================================================
+ * B — The charger, assessed.  <ChargerAssessed />.  12s loop.
+ * ===================================================================== */
+.cwa-unitDraw {
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  animation: cwa-unitDraw 12s var(--cw-ease) infinite;
+}
+@keyframes cwa-unitDraw {
+  0%   { stroke-dashoffset: 900; }
+  14%  { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.cwa-unitFill { opacity: 0; animation: cwa-unitFill 12s var(--cw-ease) infinite; }
+@keyframes cwa-unitFill {
+  0%, 8% { opacity: 0; }
+  20%    { opacity: 1; }
+  100%   { opacity: 1; }
+}
+
+.cwa-screen { opacity: 0; animation: cwa-screen 12s var(--cw-ease) infinite; }
+@keyframes cwa-screen {
+  0%, 18% { opacity: 0; }
+  24%     { opacity: 1; }
+  100%    { opacity: 1; }
+}
+
+/* The survey sweep — the assessment happening, not a sci-fi flourish. */
+.cwa-scan { opacity: 0; animation: cwa-scan 12s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+@keyframes cwa-scan {
+  0%, 20% { opacity: 0; transform: translateY(0); }
+  24%     { opacity: 1; transform: translateY(0); }
+  56%     { opacity: 1; transform: translateY(250px); }
+  62%     { opacity: 0; transform: translateY(250px); }
+  100%    { opacity: 0; transform: translateY(250px); }
+}
+
+.cwa-led { opacity: 0.25; animation: cwa-led 12s ease-in-out infinite; }
+@keyframes cwa-led {
+  0%, 22% { opacity: 0.15; }
+  30%     { opacity: 1; }
+  46%     { opacity: 0.35; }
+  62%     { opacity: 1; }
+  100%    { opacity: 0.8; }
+}
+
+.cwa-row {
+  opacity: 0;
+  transform: translateY(6px);
+  animation: cwa-row 12s var(--cw-ease) infinite;
+}
+@keyframes cwa-row {
+  0%, 18% { opacity: 0; transform: translateY(6px); }
+  26%     { opacity: 1; transform: translateY(0); }
+  100%    { opacity: 1; transform: translateY(0); }
+}
+
+.cwa-band { width: 0; animation: cwa-band 12s var(--cw-ease) infinite; }
+@keyframes cwa-band {
+  0%, 56% { width: 0; }
+  72%     { width: 46%; }
+  100%    { width: 46%; }
+}
+
+.cwa-breakeven { opacity: 0; animation: cwa-breakeven 12s var(--cw-ease) infinite; }
+@keyframes cwa-breakeven {
+  0%, 60% { opacity: 0; }
+  70%     { opacity: 1; }
+  100%    { opacity: 1; }
+}
+
+/* The verdict lands last. Never first. */
+.cwa-verdict {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: cwa-verdict 12s var(--cw-ease) infinite;
+}
+@keyframes cwa-verdict {
+  0%, 74% { opacity: 0; transform: translateY(8px); }
+  84%     { opacity: 1; transform: translateY(0); }
+  100%    { opacity: 1; transform: translateY(0); }
+}
+
+/* =====================================================================
+ * Reduced motion — reveal.ts's contract: the final state, immediately.
+ * Nothing loops, nothing moves, and both compositions still read.
+ * ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .cwa-road, .cwa-centre, .cwa-site, .cwa-car, .cwa-beam, .cwa-cable,
+  .cwa-pulse, .cwa-meter, .cwa-catch, .cwa-readout, .cwa-pct,
+  .cwa-unitDraw, .cwa-unitFill, .cwa-screen, .cwa-scan, .cwa-led,
+  .cwa-row, .cwa-band, .cwa-breakeven, .cwa-verdict {
+    animation: none !important;
+  }
+  .cwa-road, .cwa-cable, .cwa-meter, .cwa-unitDraw { stroke-dashoffset: 0 !important; }
+  .cwa-site, .cwa-car, .cwa-readout, .cwa-unitFill, .cwa-screen,
+  .cwa-row, .cwa-breakeven, .cwa-verdict {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .cwa-centre { opacity: 0.5 !important; }
+  .cwa-car { offset-distance: 100% !important; }
+  .cwa-catch { opacity: 0.5 !important; transform: none !important; }
+  .cwa-beam, .cwa-pulse, .cwa-scan { opacity: 0 !important; }
+  .cwa-led { opacity: 0.8 !important; }
+  .cwa-band { width: 46% !important; }
+  .cwa-pct { --cwa-pct: 100 !important; }
+}

@@ -19,6 +19,7 @@ import datetime as dt
 import uuid
 
 from sqlalchemy import (
+    JSON,
     BigInteger,
     Boolean,
     DateTime,
@@ -30,6 +31,7 @@ from sqlalchemy import (
     Uuid,
     func,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base
@@ -63,5 +65,9 @@ class Prediction(Base):
     #: calibration story lives in this pair of columns.
     actual_kwh: Mapped[float | None] = mapped_column(Float)
     actual_observed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    #: Private offline run provenance, phase, target month and all six stamps.
+    analytics_context: Mapped[dict[str, object] | None] = mapped_column(
+        JSON().with_variant(JSONB(), "postgresql")
+    )
 
     __table_args__ = (Index("ix_predictions_site", "site_id"),)

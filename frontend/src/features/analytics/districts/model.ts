@@ -1,10 +1,13 @@
 import type { District, Registration, PublicCharger, PublicTariff } from "../data/schemas";
+import type { UsageRow, UsageMeta } from "../data/usage";
 export type Point = [number, number];
 export interface DistrictShape {
   lgd_code: number;
   rings: Point[][];
 }
 export interface Atlas {
+  usage?: UsageRow[];
+  usage_metadata?: UsageMeta | null;
   registrations: Registration[];
   chargers: PublicCharger[];
   tariffs: PublicTariff[];
@@ -91,7 +94,7 @@ export const indicatorLabels: Record<Indicator, string> = {
   registrations: "EV registrations (latest 12 months)",
   chargers: "Listed public chargers",
   ratio: "Listed chargers per 1,000 EV registrations",
-  usage: "Estimated monthly kWh per charger",
+  usage: "Estimated monthly kWh per listed station",
 };
 export interface DistrictValue {
   value: number | null;
@@ -112,10 +115,39 @@ export function districtValue(atlas: Atlas, code: number, indicator: Indicator):
           ? (listed / registrations) * 1000
           : null,
     };
-  return { value: null };
+  const usage = atlas.usage
+    ?.filter((row) => row.lgd_code === code)
+    .sort((a, b) => a.month.localeCompare(b.month))
+    .at(-1);
+  return usage && usage.kwh_per_charger_p50 != null
+    ? {
+        value: usage.kwh_per_charger_p50,
+        p10: usage.kwh_per_charger_p10!,
+        p90: usage.kwh_per_charger_p90!,
+        sample_size: usage.stations_with_data!,
+        note: usage.note,
+      }
+    : { value: null };
+}
+/**
+ * The LGD snapshot stores state names in capitals ("DADRA,NAGAR HAVELI,DAMAN & DIU").
+ * Joins keep the stored value; this is for display only.
+ */
+export function stateLabel(state: string) {
+  return state
+    .toLocaleLowerCase("en-IN")
+    .replace(/,\s*/g, ", ")
+    .replace(
+      /(^|[\s(-])(\p{L})/gu,
+      (_, gap: string, letter: string) => gap + letter.toLocaleUpperCase("en-IN"),
+    )
+    .replace(/(?<=\s)(And|Of|The)(?=\s)/g, (word) => word.toLowerCase());
 }
 export function hasDistrictIndicator(atlas: Atlas, district: District) {
   return (
+    atlas.usage?.some(
+      (row) => row.lgd_code === district.lgd_code && row.kwh_per_charger_p50 != null,
+    ) ||
     atlas.registrations.some((row) => row.lgd_code === district.lgd_code) ||
     atlas.chargers.some((row) => row.lgd_code === district.lgd_code) ||
     atlas.tariffs.some((row) => row.state === district.state_name)

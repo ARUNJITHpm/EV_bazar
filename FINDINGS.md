@@ -8,7 +8,7 @@ poller waits on that later stage, not on a missing authorisation. The owner flow
 that replaces it is PLAN Part O. What that flow does **not** yet have, so a ticked
 box there is not read as more than it is:
 
-- **Owner sign-in is a mobile number and a password (migration 0020).** The number
+- **Owner sign-in is a mobile number and a password (migration 0019).** The number
   is **not verified** - nothing proves the person owns it - so it is only a login
   name, and anyone can register a number first. There is **no password reset and
   no forgot-password**: a forgotten password locks the owner out of their account
@@ -42,6 +42,24 @@ box there is not read as more than it is:
   a browser** (the browser extension was not connected). Layout on a mid-range
   Android phone, the map pin and the chart are unchecked by eye.
 
+
+## Station inventory refresh — 2026-09-30
+
+User-requested combined scrape saved 2,101 resolved source records to the
+existing `competitor_stations` cache; a read-back query on the run's exact
+`fetched_at` verified the count. All 2,103 exported records and raw response
+captures are in `data/station_inventory/20260930T095820Z-07fbc1ad/`, with separate
+state/CPO CSVs. 18 canonical CPOs observed; source overlap remains explicit.
+Two points were retained for geography review and excluded from database writes.
+
+Strategy and repeat command: [STATION_PIPELINE.md](STATION_PIPELINE.md), linked
+from `CPO_SOURCES.md`. OCM, GoEC and Zeon succeeded. Optional OSM fetch returned
+HTTP 406; a documented public mirror timed out. The official NCR subregion GIS
+service timed out: default scope remains five states + Delhi UT, and an optional
+`delhincr` run refuses to proceed without all four official geometries. No claim
+of exhaustive CPO/station coverage or live status; direct-feed gaps remain listed.
+Cache writes are bulk upserts in a single transaction. No append-only table was
+changed; no source was enabled in the availability-polling registry.
 
 **What this is.** `PLAN.md` says what to build. This says what we **learned while
 building it** — every blocker, every decision made under uncertainty, every gap

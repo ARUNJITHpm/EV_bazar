@@ -12,7 +12,7 @@ import { type ReactNode } from "react";
 export function Screen({ question, children }: { question: string; children: ReactNode }) {
   return (
     <div className="flex max-w-[940px] flex-col gap-[clamp(32px,5vw,44px)]">
-      <h1 className="max-w-[820px] text-[clamp(30px,4.6vw,46px)] leading-[1.15] font-medium text-pretty">
+      <h1 className="max-w-[820px] text-[clamp(34px,5.2vw,56px)] leading-[1.15] font-medium text-pretty">
         {question}
       </h1>
       {children}

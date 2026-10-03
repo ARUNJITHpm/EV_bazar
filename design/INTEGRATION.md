@@ -98,6 +98,13 @@ is unaffected.
 
 ### 7. Report: 11 sections here, 7 in the repo
 
+> **RESOLVED 2026-09-03 — all of them were adopted, and one more.** `/report/:id`
+> now renders twelve sections (the reference's eleven, plus *Competitors* split
+> out of the site profile), one component each, in `features/report/`. The
+> analysis below stands as the argument that was made; the recommendation at its
+> end — fold the thresholds into section 1, the disclosure into the footer — was
+> overtaken. `AGENTS.md` now says 12, and `OVERVIEW.md` §8 carries the order.
+
 `AGENTS.md`: *"Report components mirror the 7 sections one-to-one, so 'the
 ledger is wrong' points at exactly one file."*
 

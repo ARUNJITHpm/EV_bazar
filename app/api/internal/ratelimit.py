@@ -215,6 +215,36 @@ def owner_auth_limit(request: Request, settings: Settings = Depends(get_settings
         raise _refuse(decision, "Too many sign-in attempts. Please try again in a while.")
 
 
+#: Console password guesses. Its own bucket so a guesser cannot lock out, or be
+#: helped by, the owner sign-in allowance.
+_console_login_limiter = SlidingWindowLimiter(window_seconds=3600.0)
+
+
+def console_login_limit(request: Request, settings: Settings = Depends(get_settings)) -> None:
+    """FastAPI dependency for ``POST /console/login``: a per-IP hourly cap."""
+    limit = settings.console_login_limit_per_hour
+    if limit <= 0:
+        return
+    decision = _console_login_limiter.check(client_key(request), limit)
+    if not decision.allowed:
+        raise _refuse(decision, "Too many sign-in attempts. Please try again in a while.")
+
+
+#: Report reads, a minute wide. The report id is the capability, so a caller
+#: walking ids is the abuse; this makes that walk slow.
+_report_limiter = SlidingWindowLimiter()
+
+
+def report_read_limit(request: Request, settings: Settings = Depends(get_settings)) -> None:
+    """FastAPI dependency for ``GET /reports/{id}``: a per-IP per-minute cap."""
+    limit = settings.report_read_limit_per_minute
+    if limit <= 0:
+        return
+    decision = _report_limiter.check(client_key(request), limit)
+    if not decision.allowed:
+        raise _refuse(decision, "Too many requests. Wait a moment and try again.")
+
+
 def check_phone_attempts(phone: str, settings: Settings) -> None:
     """Refuse a login for a number that has been tried too often in the last 15 minutes."""
     if settings.owner_auth_limit_per_hour <= 0:

@@ -24,10 +24,12 @@ from app.api.internal import (
     assess,
     competitors,
     console_auth,
+    document,
     geocoding,
     health,
     lookup,
     network,
+    operators,
     owner,
     poller,
     progress,
@@ -35,7 +37,7 @@ from app.api.internal import (
     vahan,
 )
 from app.api.internal.console_auth import require_operator
-from app.api.internal.ratelimit import rate_limit
+from app.api.internal.ratelimit import rate_limit, report_read_limit
 
 router = APIRouter()
 
@@ -50,7 +52,11 @@ router.include_router(console_auth.router, tags=["console-auth"])
 # Reports are open BY DECISION: the report page is customer-facing and the
 # customer holds a link, not a login. The report id is the capability - see
 # the module docstring.
-router.include_router(reports.router, tags=["internal-reports"])
+router.include_router(
+    reports.router,
+    tags=["internal-reports"],
+    dependencies=[Depends(report_read_limit)],
+)
 # /assess is open for the same reason: it is the funnel's front door, and the
 # customer dropping the pin holds no login. It writes exactly one thing - a
 # `sites` lead row - and prices from typed tariffs; nothing paid, nothing keyed.
@@ -62,8 +68,8 @@ router.include_router(
     dependencies=[Depends(rate_limit)],
 )
 
-# The owner upload: station search and submissions. Public inventory in,
-# append-only rows out, throttled for the same reason /assess is.
+# The owner upload's station picker: public inventory only, read-only, and
+# throttled for the same reason /assess is.
 router.include_router(
     owner.router,
     tags=["internal-owner"],
@@ -81,7 +87,9 @@ guarded.include_router(geocoding.router, tags=["internal-geocoding"])
 guarded.include_router(lookup.router, tags=["internal-lookup"])
 guarded.include_router(progress.router, tags=["internal-progress"])
 guarded.include_router(competitors.router, tags=["internal-competitors"])
+guarded.include_router(document.router, tags=["internal-document"])
 guarded.include_router(network.router, tags=["internal-network"])
+guarded.include_router(operators.router, tags=["internal-operators"])
 guarded.include_router(vahan.router, tags=["internal-vahan"])
 
 router.include_router(guarded)

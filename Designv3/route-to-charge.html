@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Best Charging Site — Animated Hero</title>
+  <style>
+    @property --score {
+      syntax: "<integer>";
+      initial-value: 0;
+      inherits: false;
+    }
+
+    :root {
+      --ground: #070a08;
+      --surface: #111513;
+      --surface-2: #181d1a;
+      --road: #292d2b;
+      --road-minor: #202422;
+      --route-edge: #102219;
+      --route: #237a4e;
+      --green: #39b970;
+      --green-soft: #6bd399;
+      --text: #f2f4f2;
+      --muted: #929995;
+      --candidate: #65706a;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background: var(--ground);
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--text);
+      font-family: Archivo, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .hero {
+      position: relative;
+      width: min(100vw, calc(100vh * 1.6129));
+      aspect-ratio: 1000 / 620;
+      overflow: hidden;
+      background: var(--ground);
+      isolation: isolate;
+    }
+
+    .map { display: block; width: 100%; height: 100%; }
+
+    .block {
+      fill: var(--surface);
+      stroke: var(--road-minor);
+      stroke-width: 1;
+      opacity: .26;
+    }
+
+    .major-road,
+    .minor-road {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .major-road {
+      stroke: var(--road);
+      stroke-width: 10;
+      opacity: .84;
+    }
+
+    .minor-road {
+      stroke: var(--road-minor);
+      stroke-width: 5;
+      opacity: .9;
+    }
+
+    .candidate-points {
+      opacity: 0;
+      animation: candidates-in 18s var(--ease) infinite;
+    }
+
+    .candidate-pin {
+      fill: var(--ground);
+      stroke: var(--candidate);
+      stroke-width: 2.5;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .candidate-core {
+      fill: none;
+      stroke: var(--candidate);
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .candidate-score {
+      opacity: 0;
+      animation: candidate-scores-in 18s var(--ease) infinite;
+    }
+
+    .candidate-score rect {
+      fill: rgba(7, 10, 8, .9);
+      stroke: var(--candidate);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .candidate-score text {
+      fill: var(--muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    .site-candidate {
+      opacity: 0;
+      animation: site-candidate-in 18s var(--ease) infinite;
+    }
+
+    .site-candidate .candidate-pin,
+    .site-candidate .candidate-core {
+      stroke: var(--candidate);
+    }
+
+    .route-edge,
+    .route-line {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      opacity: 0;
+      animation: route-draw 18s var(--ease) infinite;
+    }
+
+    .route-edge {
+      stroke: var(--route-edge);
+      stroke-width: 36;
+    }
+
+    .route-line {
+      stroke: var(--route);
+      stroke-width: 28;
+    }
+
+    .moving-car {
+      opacity: 0;
+      will-change: transform;
+      animation: car-visibility 18s linear infinite;
+    }
+
+    .vehicle {
+      filter: drop-shadow(0 7px 9px rgba(0, 0, 0, .58));
+    }
+
+    .vehicle-halo {
+      fill: url(#vehicleHalo);
+      opacity: 0;
+      transform: scale(.65);
+      transform-origin: center;
+      animation: vehicle-halo 18s var(--ease) infinite;
+    }
+
+    .vehicle-body {
+      fill: url(#carBody);
+      stroke: #bfc4c1;
+      stroke-width: 1;
+    }
+
+    .vehicle-glass { fill: url(#carGlass); }
+    .vehicle-roof { fill: #252a27; stroke: #414844; stroke-width: .8; }
+    .vehicle-detail { fill: none; stroke: #5a625d; stroke-width: 1; }
+    .vehicle-wheel { fill: #030504; }
+    .vehicle-mirror { fill: #d9ddda; stroke: #7e8782; stroke-width: .6; }
+    .vehicle-tail { fill: var(--green); }
+    .vehicle-headlight { fill: #eef3ef; }
+
+    .best-site {
+      opacity: 0;
+      animation: best-site-in 18s var(--ease) infinite;
+    }
+
+    .best-site-pin {
+      fill: var(--green);
+      stroke: var(--green-soft);
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
+      filter: drop-shadow(0 5px 10px rgba(0, 0, 0, .48));
+    }
+
+    .best-site-core { fill: var(--ground); }
+    .best-site-bolt { fill: var(--green-soft); }
+
+    .best-site-label {
+      fill: rgba(7, 10, 8, .94);
+      stroke: var(--green);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .best-site-text {
+      fill: var(--text);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+    }
+
+    .site-ring {
+      fill: none;
+      stroke: var(--green);
+      stroke-width: 1.5;
+      vector-effect: non-scaling-stroke;
+      opacity: 0;
+      transform: scale(.62);
+      transform-origin: 932px 127px;
+    }
+
+    .site-ring.one { animation: site-ring-one 18s var(--ease) infinite; }
+    .site-ring.two { animation: site-ring-two 18s var(--ease) infinite; }
+
+    .result-card {
+      position: absolute;
+      top: 6%;
+      left: 4.5%;
+      width: clamp(255px, 31%, 310px);
+      padding: 20px 22px 17px;
+      border: 1px solid rgba(57, 185, 112, .45);
+      background: rgba(7, 10, 8, .92);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: result-in 18s var(--ease) infinite;
+    }
+
+    .result-card::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      width: 44px;
+      height: 2px;
+      background: var(--green);
+    }
+
+    .eyebrow,
+    .score,
+    .score-unit,
+    .metric,
+    .demo-note {
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .eyebrow {
+      color: var(--green-soft);
+      font-size: clamp(11px, 1.25vw, 13px);
+      font-weight: 700;
+      letter-spacing: .14em;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin: 10px 0 14px;
+    }
+
+    .score-label {
+      margin-right: auto;
+      color: var(--text);
+      font-size: clamp(14px, 1.6vw, 17px);
+      font-weight: 600;
+    }
+
+    .score {
+      --score: 0;
+      color: var(--text);
+      font-size: clamp(31px, 3.8vw, 42px);
+      line-height: 1;
+      counter-reset: score var(--score);
+      animation: score-count 18s linear infinite;
+    }
+
+    .score::after { content: counter(score); }
+    .score-unit { color: var(--muted); font-size: 13px; }
+
+    .metrics {
+      border-top: 1px solid var(--road);
+      border-bottom: 1px solid var(--road);
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 8px 0;
+      color: var(--muted);
+      font-size: clamp(10px, 1.12vw, 12px);
+      letter-spacing: .055em;
+    }
+
+    .metric + .metric { border-top: 1px solid var(--road-minor); }
+    .metric strong { color: var(--text); font-weight: 600; white-space: nowrap; }
+
+    .demo-note {
+      margin-top: 10px;
+      color: var(--candidate);
+      font-size: 9px;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .footer-label {
+      position: absolute;
+      right: 2.8%;
+      bottom: 3.5%;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: clamp(9px, 1vw, 11px);
+      letter-spacing: .13em;
+      opacity: .6;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .hero.paused * { animation-play-state: paused !important; }
+
+    @keyframes candidates-in {
+      0%, 2.7% { opacity: 0; transform: translateY(6px); }
+      8.3%, 19.4% { opacity: 1; transform: translateY(0); }
+      25%, 94.4% { opacity: .38; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(0); }
+    }
+
+    @keyframes candidate-scores-in {
+      0%, 8.3% { opacity: 0; transform: translateY(4px); }
+      12%, 19.4% { opacity: 1; transform: translateY(0); }
+      24%, 100% { opacity: 0; transform: translateY(0); }
+    }
+
+    @keyframes site-candidate-in {
+      0%, 8.3% { opacity: 0; }
+      12%, 19.4% { opacity: 1; }
+      24%, 100% { opacity: 0; }
+    }
+
+    @keyframes best-site-in {
+      0%, 19.4% { opacity: 0; transform: scale(.76); }
+      25%, 94.4% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1); }
+    }
+
+    @keyframes route-draw {
+      0%, 25% { stroke-dashoffset: 1; opacity: 0; }
+      25.1% { opacity: 1; }
+      30.55%, 94.4% { stroke-dashoffset: 0; opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+
+    @keyframes car-visibility {
+      0%, 30.5% { opacity: 0; }
+      31.5%, 94.4% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes vehicle-halo {
+      0%, 68.8% { opacity: 0; transform: scale(.62); }
+      74%, 94.4% { opacity: .92; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1); }
+    }
+
+    @keyframes site-ring-one {
+      0%, 69.4% { opacity: 0; transform: scale(.62); }
+      76% { opacity: .45; }
+      87%, 94.4% { opacity: .14; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1); }
+    }
+
+    @keyframes site-ring-two {
+      0%, 71.5% { opacity: 0; transform: scale(.62); }
+      78% { opacity: .32; }
+      89%, 94.4% { opacity: .09; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1); }
+    }
+
+    @keyframes result-in {
+      0%, 69.4% { opacity: 0; transform: translateY(10px); }
+      74%, 94.4% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(0); }
+    }
+
+    @keyframes score-count {
+      0%, 72% { --score: 0; }
+      86%, 100% { --score: 92; }
+    }
+
+    @media (max-width: 640px) {
+      body { place-items: start center; }
+
+      .hero {
+        width: 100vw;
+        height: 100svh;
+        min-height: 560px;
+        aspect-ratio: auto;
+      }
+
+      .map {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: auto;
+        max-width: none;
+        height: 100%;
+      }
+
+      .far-candidate { display: none; }
+
+      .result-card {
+        top: auto;
+        right: 5%;
+        bottom: 5%;
+        left: 5%;
+        width: auto;
+        max-width: none;
+        padding: 18px 19px 15px;
+      }
+
+      .score-row { margin-bottom: 11px; }
+      .metric { font-size: 11px; }
+      .footer-label { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce), print {
+      .candidate-points,
+      .candidate-score,
+      .site-candidate,
+      .best-site,
+      .route-edge,
+      .route-line,
+      .moving-car,
+      .vehicle-halo,
+      .site-ring,
+      .result-card,
+      .score {
+        animation: none;
+      }
+
+      .candidate-points { opacity: .38; transform: none; }
+      .candidate-score, .site-candidate { opacity: 0; }
+      .best-site { opacity: 1; transform: scale(1); }
+      .route-edge, .route-line { stroke-dashoffset: 0; opacity: 1; }
+      .moving-car { opacity: 1; }
+      .vehicle-halo { opacity: .92; transform: scale(1); }
+      .site-ring { opacity: .12; transform: scale(1); }
+      .result-card { opacity: 1; transform: none; }
+      .score { --score: 92; }
+    }
+  </style>
+</head>
+<body>
+  <main class="hero">
+    <p class="sr-only">
+      Our site-intelligence platform compares candidate EV charging locations using traffic,
+      grid distance and nearby competition, then recommends the strongest site.
+    </p>
+
+    <svg class="map" viewBox="0 0 1000 620" aria-hidden="true">
+      <defs>
+        <pattern id="grid" width="38" height="38" patternUnits="userSpaceOnUse">
+          <path d="M38 0H0V38" fill="none" stroke="#202422" stroke-width="1" opacity=".07"/>
+        </pattern>
+
+        <radialGradient id="vehicleHalo">
+          <stop offset="0" stop-color="#39b970" stop-opacity=".27"/>
+          <stop offset=".45" stop-color="#39b970" stop-opacity=".12"/>
+          <stop offset="1" stop-color="#39b970" stop-opacity="0"/>
+        </radialGradient>
+
+        <linearGradient id="carBody" x1="0" y1="-1" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffffff"/>
+          <stop offset=".55" stop-color="#e5e9e6"/>
+          <stop offset="1" stop-color="#bcc2be"/>
+        </linearGradient>
+
+        <linearGradient id="carGlass" x1="0" y1="-1" x2="0" y2="1">
+          <stop offset="0" stop-color="#222825"/>
+          <stop offset="1" stop-color="#080b09"/>
+        </linearGradient>
+
+        <clipPath id="frame"><rect width="1000" height="620"/></clipPath>
+
+        <!-- One authoritative path: road, highlight and car motion all use this element. -->
+        <path id="routePath" pathLength="1"
+          d="M -35 568 C 120 562 205 520 244 448 C 288 367 356 402 451 354 C 540 309 539 235 640 205 C 735 177 850 206 932 127"/>
+      </defs>
+
+      <rect width="1000" height="620" fill="#070a08"/>
+      <rect width="1000" height="620" fill="url(#grid)"/>
+
+      <!-- Blocks sit beneath streets, preserving a believable map hierarchy. -->
+      <g>
+        <path class="block" d="M63 61h82v53H63z M72 70h64v35H72z" fill-rule="evenodd"/>
+        <path class="block" d="M302 68h91v49H302z M311 77h73v31H311z" fill-rule="evenodd"/>
+        <path class="block" d="M526 47h85v54H526z M535 56h67v36H535z" fill-rule="evenodd"/>
+        <path class="block" d="M77 343h73v74H77z M86 352h55v56H86z" fill-rule="evenodd"/>
+        <path class="block" d="M259 510h110v49H259z M268 519h92v31H268z" fill-rule="evenodd"/>
+        <path class="block" d="M512 462h88v66H512z M521 471h70v48H521z" fill-rule="evenodd"/>
+        <path class="block" d="M805 397h105v53H805z M814 406h87v35H814z" fill-rule="evenodd"/>
+      </g>
+
+      <g>
+        <path class="major-road" d="M-25 108 C93 38 185 48 269 112 S423 190 523 121 S734 38 1028 84"/>
+        <path class="major-road" d="M-20 252 C95 228 137 180 184 109 S278 40 332 -24"/>
+        <path class="major-road" d="M118 -25 C170 82 185 170 178 264 S150 415 66 474"/>
+        <path class="major-road" d="M290 -25 C314 83 369 137 458 148 S586 167 649 240 S782 333 1025 296"/>
+        <path class="major-road" d="M431 -24 C457 85 466 131 452 204 S409 307 331 349 S204 427 -26 454"/>
+        <path class="major-road" d="M581 -24 C605 89 638 150 699 176 S833 192 1026 158"/>
+        <path class="major-road" d="M767 -24 C781 89 760 170 710 231 S638 358 664 645"/>
+        <path class="major-road" d="M883 -24 C861 91 875 176 930 242 S985 400 1010 645"/>
+        <path class="major-road" d="M-28 540 C118 530 238 501 361 456 S607 364 748 389 S900 492 1028 536"/>
+        <path class="major-road" d="M238 645 C267 536 302 463 369 414 S525 362 577 291 S651 182 761 147"/>
+        <path class="minor-road" d="M18 337 L138 299 L258 304 L340 251 L421 243"/>
+        <path class="minor-road" d="M204 208 L281 280 L331 349 L426 398"/>
+        <path class="minor-road" d="M505 77 L557 157 L577 291 L535 428"/>
+        <path class="minor-road" d="M683 57 L699 176 L829 269 L930 242"/>
+        <path class="minor-road" d="M748 389 L821 326 L907 365 L978 450"/>
+        <path class="minor-road" d="M66 474 L140 555 L190 628"/>
+        <path class="minor-road" d="M53 183 L158 165 L247 193 L339 172"/>
+        <path class="minor-road" d="M801 62 L829 150 L913 196 L993 220"/>
+        <circle class="major-road" cx="458" cy="148" r="49"/>
+        <circle class="major-road" cx="710" cy="231" r="59"/>
+        <use class="major-road" href="#routePath"/>
+      </g>
+
+      <g class="candidate-points">
+        <g class="candidate-point far-candidate" transform="translate(178 106)">
+          <path class="candidate-pin" d="M0 -17 C-10 -17 -16 -10 -16 -1 C-16 10 0 25 0 25 C0 25 16 10 16 -1 C16 -10 10 -17 0 -17Z"/>
+          <circle class="candidate-core" cx="0" cy="-1" r="5"/>
+          <g class="candidate-score" transform="translate(-22 31)">
+            <rect width="44" height="22" rx="11"/>
+            <text x="22" y="15" text-anchor="middle">74</text>
+          </g>
+        </g>
+        <g class="candidate-point" transform="translate(493 111)">
+          <path class="candidate-pin" d="M0 -17 C-10 -17 -16 -10 -16 -1 C-16 10 0 25 0 25 C0 25 16 10 16 -1 C16 -10 10 -17 0 -17Z"/>
+          <circle class="candidate-core" cx="0" cy="-1" r="5"/>
+          <g class="candidate-score" transform="translate(-22 31)">
+            <rect width="44" height="22" rx="11"/>
+            <text x="22" y="15" text-anchor="middle">81</text>
+          </g>
+        </g>
+        <g class="candidate-point far-candidate" transform="translate(292 386)">
+          <path class="candidate-pin" d="M0 -17 C-10 -17 -16 -10 -16 -1 C-16 10 0 25 0 25 C0 25 16 10 16 -1 C16 -10 10 -17 0 -17Z"/>
+          <circle class="candidate-core" cx="0" cy="-1" r="5"/>
+          <g class="candidate-score" transform="translate(-22 31)">
+            <rect width="44" height="22" rx="11"/>
+            <text x="22" y="15" text-anchor="middle">76</text>
+          </g>
+        </g>
+      </g>
+
+      <g class="site-candidate" transform="translate(932 127)">
+        <path class="candidate-pin" d="M0 -19 C-11 -19 -18 -11 -18 -1 C-18 12 0 29 0 29 C0 29 18 12 18 -1 C18 -11 11 -19 0 -19Z"/>
+        <circle class="candidate-core" cx="0" cy="-1" r="6"/>
+        <g class="candidate-score" transform="translate(-24 36)">
+          <rect width="48" height="23" rx="11.5"/>
+          <text x="24" y="16" text-anchor="middle">92</text>
+        </g>
+      </g>
+
+      <g clip-path="url(#frame)">
+        <use class="route-edge" href="#routePath"/>
+        <use class="route-line" href="#routePath"/>
+      </g>
+
+      <g>
+        <circle class="site-ring one" cx="932" cy="127" r="72"/>
+        <circle class="site-ring two" cx="932" cy="127" r="126"/>
+      </g>
+
+      <g transform="translate(932 127)">
+        <g class="best-site">
+          <path class="best-site-pin" d="M0 -28 C-17 -28 -29 -17 -29 0 C-29 20 0 45 0 45 C0 45 29 20 29 0 C29 -17 17 -28 0 -28Z"/>
+          <circle class="best-site-core" cx="0" cy="0" r="18"/>
+          <path class="best-site-bolt" d="M3 -14 L-10 3 H-2 L-6 15 L11 -6 H3Z"/>
+          <g transform="translate(-57 55)">
+            <rect class="best-site-label" width="114" height="27" rx="13.5"/>
+            <text class="best-site-text" x="57" y="18" text-anchor="middle">RECOMMENDED</text>
+          </g>
+        </g>
+      </g>
+
+      <g id="movingCar" class="moving-car">
+        <circle class="vehicle-halo" cx="0" cy="0" r="69"/>
+        <g class="vehicle">
+          <rect class="vehicle-wheel" x="-23" y="-20" width="14" height="4" rx="2"/>
+          <rect class="vehicle-wheel" x="11" y="-20" width="14" height="4" rx="2"/>
+          <rect class="vehicle-wheel" x="-23" y="16" width="14" height="4" rx="2"/>
+          <rect class="vehicle-wheel" x="11" y="16" width="14" height="4" rx="2"/>
+          <path class="vehicle-body" d="M-30 -14 Q-25 -19 -16 -19 H18 Q28 -17 32 -9 V9 Q28 17 18 19 H-16 Q-25 19 -30 14 Q-33 8 -33 0 Q-33 -8 -30 -14Z"/>
+          <path class="vehicle-glass" d="M-12 -15 H11 L20 -8 H-16Z"/>
+          <path class="vehicle-glass" d="M-16 8 H20 L11 15 H-12Z"/>
+          <rect class="vehicle-roof" x="-16" y="-6" width="36" height="12" rx="3"/>
+          <path class="vehicle-detail" d="M-23 -13 L-17 -7 V7 L-23 13 M25 -11 V11 M-11 -6 V6 M16 -6 V6"/>
+          <path class="vehicle-detail" d="M-29 0 H31"/>
+          <path class="vehicle-mirror" d="M-8 -20 h7 v3 h-7z M-8 17 h7 v3 h-7z"/>
+          <circle class="vehicle-tail" cx="-30" cy="-9" r="2"/>
+          <circle class="vehicle-tail" cx="-30" cy="9" r="2"/>
+          <rect class="vehicle-headlight" x="28" y="-10" width="3" height="6" rx="1"/>
+          <rect class="vehicle-headlight" x="28" y="4" width="3" height="6" rx="1"/>
+        </g>
+      </g>
+    </svg>
+
+    <aside class="result-card" aria-hidden="true">
+      <div class="eyebrow">RECOMMENDED SITE</div>
+      <div class="score-row">
+        <span class="score-label">SITE FIT</span>
+        <span class="score"></span>
+        <span class="score-unit">/100</span>
+      </div>
+      <div class="metrics">
+        <div class="metric"><span>TRAFFIC</span><strong>18,400 /day</strong></div>
+        <div class="metric"><span>GRID DISTANCE</span><strong>140 m</strong></div>
+        <div class="metric"><span>COMPETITION</span><strong>3 within 5 km</strong></div>
+      </div>
+      <div class="demo-note">Illustrative model output</div>
+    </aside>
+
+    <div class="footer-label" aria-hidden="true">SITE VIABILITY MODEL / ROUTE ACCESS</div>
+  </main>
+
+  <script>
+    (() => {
+      const hero = document.querySelector(".hero");
+      const path = document.getElementById("routePath");
+      const car = document.getElementById("movingCar");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const loopMs = 18000;
+      const driveStartMs = 5500;
+      const driveEndMs = 12500;
+      const stopFraction = 0.935;
+      const totalLength = path.getTotalLength();
+      let origin = performance.now();
+      let pauseStarted = 0;
+      let pausedDuration = 0;
+      let frameId = 0;
+      let running = false;
+      let inView = true;
+
+      function easedDistance(progress) {
+        if (progress <= 0) return 0;
+        if (progress >= 1) return stopFraction;
+
+        // Constant speed for 75% of the journey, then matched-velocity deceleration.
+        const split = 0.75;
+        const finalTime = 1 - split;
+        const velocity = stopFraction / (split + finalTime / 3);
+        const splitDistance = velocity * split;
+
+        if (progress < split) return velocity * progress;
+
+        const local = (progress - split) / finalTime;
+        const easeOut = 1 - Math.pow(1 - local, 3);
+        return splitDistance + (stopFraction - splitDistance) * easeOut;
+      }
+
+      function placeCar(fraction) {
+        const length = totalLength * fraction;
+        const point = path.getPointAtLength(length);
+        const next = path.getPointAtLength(Math.min(totalLength, length + 1.5));
+        const angle = Math.atan2(next.y - point.y, next.x - point.x) * 180 / Math.PI;
+        car.setAttribute("transform", "translate(" + point.x + " " + point.y + ") rotate(" + angle + ")");
+      }
+
+      function render(now) {
+        if (!running) return;
+        const elapsed = (now - origin - pausedDuration) % loopMs;
+
+        if (elapsed <= driveStartMs) {
+          placeCar(0);
+        } else if (elapsed >= driveEndMs) {
+          placeCar(stopFraction);
+        } else {
+          const progress = (elapsed - driveStartMs) / (driveEndMs - driveStartMs);
+          placeCar(easedDistance(progress));
+        }
+
+        frameId = requestAnimationFrame(render);
+      }
+
+      function pause() {
+        if (!running) return;
+        running = false;
+        pauseStarted = performance.now();
+        cancelAnimationFrame(frameId);
+        hero.classList.add("paused");
+      }
+
+      function resume() {
+        if (running || reducedMotion.matches || document.hidden || !inView) return;
+        if (pauseStarted) pausedDuration += performance.now() - pauseStarted;
+        pauseStarted = 0;
+        running = true;
+        hero.classList.remove("paused");
+        frameId = requestAnimationFrame(render);
+      }
+
+      function applyMotionPreference() {
+        if (reducedMotion.matches) {
+          pause();
+          placeCar(stopFraction);
+        } else {
+          resume();
+        }
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        inView = entries[0].isIntersecting;
+        if (inView) resume();
+        else pause();
+      }, { threshold: 0.05 });
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) pause();
+        else resume();
+      });
+
+      reducedMotion.addEventListener("change", applyMotionPreference);
+      observer.observe(hero);
+      placeCar(reducedMotion.matches ? stopFraction : 0);
+      applyMotionPreference();
+    })();
+  </script>
+</body>
+</html>

@@ -34,7 +34,7 @@ Read `OVERVIEW.md` for architecture, `STACK.md` for structure, `PLAN.md` for seq
 - Python 3.11+, `uv` for deps, `ruff` + `mypy --strict` on `app/domain/roi/`
 - Frontend: TypeScript `strict`, `eslint` + `prettier`. No `any` at the API boundary — that is what the generated schema is for.
 - Layer discipline is enforced in CI by import-linter — `app.domain.roi` may not import `app.db`, `app.models`, `app.api`, `app.config`, `httpx`, or `sqlalchemy`. Do not weaken the contract to make a change compile.
-- Report components mirror the 7 sections one-to-one, so "the ledger is wrong" points at exactly one file.
+- Report components mirror the 12 sections one-to-one, so "the ledger is wrong" points at exactly one file. (It was 7 until the 2026-09-03 rebuild to `design/brand/report-spec.md`; the one-to-one rule is the constraint, not the count.)
 - `src/styles/print.css` and the Playwright PDF path are first-class deliverables, not an afterthought. The PDF is exercised on every build so print styles cannot rot unnoticed.
 - Migrations: Alembic only. Never `CREATE TABLE` outside a migration.
 - All geometry `EPSG:4326`. Distances computed on `::geography`, not `::geometry`.
@@ -51,6 +51,10 @@ Read `OVERVIEW.md` for architecture, `STACK.md` for structure, `PLAN.md` for seq
 - Metering: a test must prove that hitting a configured cap **refuses** the call rather than logging and proceeding.
 - Frontend: `vitest` for `lib/money.ts` and `lib/units.ts` (rupee and kVA formatting are where silent corruption enters), Playwright for the report render and the PDF path.
 - CI regenerates `frontend/src/api/schema.d.ts` and fails if it differs from the committed copy.
+
+## Local VAHAN scraping is prohibited
+
+- The owner explicitly prohibited running VAHAN website scraping on this laptop (2026-10-03). Never launch it here or register/re-enable a local VAHAN scheduled task. The former `EV_Bazar_VAHAN_Refresh` task has been removed. Existing CSVs may still be read or ingested without opening the website.
 
 ## When you are unsure
 

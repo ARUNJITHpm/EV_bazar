@@ -10,9 +10,41 @@ Design decisions, so they are not re-litigated:
   question "how busy must this site be to stop losing money", so it excludes
   the anchor's guaranteed energy - an anchor lowers the *risk*, and that shows
   up in NPV/IRR/payback, not by flattering the breakeven.
+* **There are TWO breakevens, and they answer different questions.**
+  ``breakeven_*`` covers the running bills only - "how busy to stop losing
+  money this month". ``full_cost_breakeven_*`` also recovers the build cost -
+  "how busy to have been worth building at all". A site can clear the first,
+  earn a BUILD verdict, and still be short over the horizon; the report used
+  to print both facts pages apart and reconcile them nowhere
+  (CPO_SELECTION_PLAN.md, Track B - R0 found it, R5 decided it).
+* **The full-cost breakeven is DISCOUNTED, and that is not a detail.** It is
+  the steady-state annual volume at which NPV is exactly zero:
+  ``(annual_fixed + build_cost / annuity) / margin``, where ``annuity`` is
+  the present value of 1 per year over the horizon at ``discount_pct``. The
+  obvious cheaper definition - bills plus ``build_cost / horizon_years``,
+  undiscounted - was measured against the three sample payloads and
+  **contradicted the NPV already in the document on two cases out of nine**,
+  including the one that prompted the whole question: a site whose downside
+  cleared that threshold while its downside NPV was 1.94 lakh short. A second
+  number that argues with the first two is worse than one number with a
+  caveat, so the definition that agrees by construction is the one that
+  ships. Like ``breakeven_*`` it is steady-state, so a ramped ``kwh_by_year``
+  will not cross it in exactly the year the cashflow turns.
+  ``full_cost_build_recovery_paise_year`` is the ``build_cost / annuity``
+  term on its own, because section 09 prints the formula and a report that
+  shows a sum has to be able to show every term in it. Deriving it in the
+  component instead would be a financial number computed outside the engine,
+  which is the one thing AGENTS.md rule 1 forbids (Track B - R7).
 * **Refuse rather than guess.** Impossible inputs raise ValueError. A margin
   that is zero or negative yields ``breakeven_kwh_year=None`` with the reason
   stated, never a pretend-infinite number.
+* **A breakdown always adds up to the total it explains.** ``capex_lines``,
+  ``fixed_cost_lines`` and ``unit_economics`` are decompositions of
+  ``capex.net_paise``, ``annual_fixed_paise`` and ``margin_paise_per_kwh`` -
+  never second opinions about them. Each line is rounded to whole paise on
+  its own, so the residue is absorbed into the largest line rather than left
+  to show: a report that prints "9 + 3 + 3 = 14" has spent more trust than
+  the fraction of a paise was worth (Track B - R6).
 * **Every default that shapes the answer is written into ``assumptions``** -
   the report's assumption ledger (PLAN 5) consumes it verbatim.
 * **Integer paise for money; floats only for ratios, kWh and discounting.**
@@ -26,7 +58,21 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 
-ECONOMICS_VERSION = "0.1.0"
+#: 0.2.0 added the full-cost breakeven (Track B - R5); 0.3.0 added the three
+#: breakdowns section 05 prints its arithmetic from (Track B - R6); 0.4.0
+#: exposed the annual build-cost recovery so section 09 can print the
+#: full-cost formula term by term (Track B - R7). A stored result must be
+#: reproducible by the version that produced it, and a 0.2.0 result has no
+#: breakdown to reproduce.
+#:
+#: 0.5.0 is the first version whose ``assumptions`` are PRINTED (Track B -
+#: R10). They were always written and never reached a page, so their wording
+#: was free to drift; from here it is part of the deliverable, and two
+#: reports stamped the same version have to say the same thing. The only
+#: change to the text itself is that the full-cost line now carries the
+#: annual recovery figure, which section 09 already prints - one number, one
+#: origin.
+ECONOMICS_VERSION = "0.5.0"
 
 #: Hours in a year, for the utilisation ceiling.
 HOURS_PER_YEAR = 8760.0
@@ -191,6 +237,30 @@ class YearRow:
 
 
 @dataclass(frozen=True)
+class CostLine:
+    """One line of a breakdown. ``paise`` is per year for the cost tables and
+    per kWh for :class:`UnitEconomics`; the breakdown says which."""
+
+    name: str
+    paise: int
+
+
+@dataclass(frozen=True)
+class UnitEconomics:
+    """What becomes of one unit's price, in the order it leaves.
+
+    ``selling_paise`` minus every deduction is exactly ``margin_paise`` - the
+    same margin the breakevens divide by, decomposed rather than recomputed.
+    Section 05 prints it as a sentence a reader can do in their head, which
+    only works if it is true to the paise.
+    """
+
+    selling_paise: int
+    deductions: tuple[CostLine, ...]
+    margin_paise: int
+
+
+@dataclass(frozen=True)
 class PriceSensitivityPoint:
     selling_paise_per_kwh: int
     margin_paise_per_kwh: int
@@ -213,6 +283,18 @@ class RoiResult:
     annual_fixed_paise: int
     breakeven_kwh_year: float | None
     breakeven_utilisation: float | None
+    #: The same threshold with the build cost spread over the horizon: what
+    #: the site must sell to have been worth building, not merely to stop
+    #: losing money. ``None`` for the same reason the pair above is - a margin
+    #: at or below zero has no breakeven at any volume.
+    full_cost_breakeven_kwh_year: float | None
+    full_cost_breakeven_utilisation: float | None
+    #: The build cost spread over the horizon at ``discount_pct`` - one term
+    #: of the line above, published because the report prints the division
+    #: rather than asserting its answer. Always present, even where the
+    #: breakeven is ``None``: what the build costs per year does not stop
+    #: being true because the margin went negative.
+    full_cost_build_recovery_paise_year: int
     max_kwh_year: float
 
     npv_paise: int
@@ -224,6 +306,15 @@ class RoiResult:
     price_sensitivity: tuple[PriceSensitivityPoint, ...]
     sanctioned_load_options: tuple[SanctionedLoadOption, ...]
 
+    #: The three breakdowns, each summing exactly to a headline above it:
+    #: ``capex_lines`` to the net build cost, ``fixed_cost_lines`` to
+    #: ``annual_fixed_paise``, ``unit_economics`` to ``margin_paise_per_kwh``.
+    #: They exist so the report can show its working (Track B - R6) without a
+    #: second component doing arithmetic the engine already did.
+    capex_lines: tuple[CostLine, ...]
+    fixed_cost_lines: tuple[CostLine, ...]
+    unit_economics: UnitEconomics
+
     assumptions: tuple[str, ...]
 
     def as_dict(self) -> dict[str, object]:
@@ -233,8 +324,18 @@ class RoiResult:
         already turned the nested rows into dicts.
         """
         d = asdict(self)
-        for key in ("cashflow", "price_sensitivity", "sanctioned_load_options", "assumptions"):
+        for key in (
+            "cashflow",
+            "price_sensitivity",
+            "sanctioned_load_options",
+            "assumptions",
+            "capex_lines",
+            "fixed_cost_lines",
+        ):
             d[key] = list(d[key])
+        unit = d["unit_economics"]
+        assert isinstance(unit, dict)
+        unit["deductions"] = list(unit["deductions"])
         return d
 
 
@@ -323,6 +424,88 @@ def annual_fixed_paise(inputs: RoiInputs) -> int:
         + inputs.capex.hardware_paise * o.oam_pct_of_hardware
         + o.rent_paise_per_month * 12
         + c.network_fee_paise_per_month * 12
+    )
+
+
+#: Capex field -> the words an owner would use for it. Ordered as the money
+#: is spent, which is also the order a quotation arrives in.
+CAPEX_LINE_NAMES: tuple[tuple[str, str], ...] = (
+    ("hardware_paise", "Chargers, installation and commissioning"),
+    ("civil_paise", "Civil work and site preparation"),
+    ("transformer_paise", "Transformer"),
+    ("discom_connection_paise", "Power connection and cabling"),
+    ("signage_canopy_paise", "Canopy, signage and lighting"),
+)
+
+
+def _reconcile(lines: list[CostLine], total: int) -> tuple[CostLine, ...]:
+    """Make a breakdown add up to the number it explains.
+
+    Every line is rounded to whole paise on its own, so a five-line breakdown
+    can miss its total by a few paise. The residue goes onto the largest line
+    - least visible there, and the largest line is usually a blend already.
+    """
+    if not lines:
+        return ()
+    residue = total - sum(line.paise for line in lines)
+    if residue == 0:
+        return tuple(lines)
+    biggest = max(range(len(lines)), key=lambda i: abs(lines[i].paise))
+    out = list(lines)
+    out[biggest] = CostLine(name=out[biggest].name, paise=out[biggest].paise + residue)
+    return tuple(out)
+
+
+def capex_lines(capex: Capex) -> tuple[CostLine, ...]:
+    """The one-time budget, line by line, summing to ``capex.net_paise``.
+
+    The subsidy is a line of its own rather than quietly netted off, because
+    a subsidy that is applied for and refused is the single most common way a
+    build budget moves after the report is written.
+    """
+    lines = [
+        CostLine(name=name, paise=int(getattr(capex, field_name)))
+        for field_name, name in CAPEX_LINE_NAMES
+        if getattr(capex, field_name)
+    ]
+    if capex.subsidy_paise:
+        lines.append(CostLine(name="Less subsidy", paise=-capex.subsidy_paise))
+    return tuple(lines)
+
+
+def fixed_cost_lines(inputs: RoiInputs) -> tuple[CostLine, ...]:
+    """``annual_fixed_paise``, itemised. Paise per YEAR, zero lines omitted."""
+    t, o, c = inputs.tariff, inputs.opex, inputs.cpo
+    raw: tuple[tuple[str, float], ...] = (
+        (
+            "Demand charge on the sanctioned connection",
+            o.sanctioned_kva * t.demand_paise_per_kva_month * 12,
+        ),
+        ("DISCOM fixed charge", t.fixed_paise_per_month * 12.0),
+        ("Maintenance and repair reserve", inputs.capex.hardware_paise * o.oam_pct_of_hardware),
+        ("Rent", o.rent_paise_per_month * 12.0),
+        ("Operator platform fee", c.network_fee_paise_per_month * 12.0),
+    )
+    lines = [CostLine(name=n, paise=round(v)) for n, v in raw if round(v)]
+    return _reconcile(lines, annual_fixed_paise(inputs))
+
+
+def unit_economics(inputs: RoiInputs) -> UnitEconomics:
+    """One unit's price, and everyone who takes a piece of it before the
+    site does. Deductions sum to ``selling - margin``, exactly."""
+    price = inputs.selling_paise_per_kwh
+    margin = round(margin_paise_per_kwh(inputs))
+    raw: tuple[tuple[str, float], ...] = (
+        ("Electricity, all-in", effective_energy_paise_per_kwh(inputs.tariff, inputs.solar)),
+        ("Operator fee per unit", float(inputs.cpo.fee_paise_per_kwh)),
+        ("Operator revenue share", price * inputs.cpo.revenue_share_pct),
+        ("Payment gateway", price * inputs.opex.gateway_pct),
+    )
+    lines = [CostLine(name=n, paise=round(v)) for n, v in raw if round(v)]
+    return UnitEconomics(
+        selling_paise=price,
+        deductions=_reconcile(lines, price - margin),
+        margin_paise=margin,
     )
 
 
@@ -493,9 +676,21 @@ def compute_roi(inputs: RoiInputs) -> RoiResult:
         )
 
     # --- breakeven: steady-state, retail-only ------------------------------
+    # The money that leaves once, before a single kWh is sold. Needed here as
+    # well as by the cashflow below, because the second breakeven recovers it.
+    build_cost = inputs.capex.net_paise + (inputs.solar.capex_paise if inputs.solar else 0)
+    # Present value of 1 per year for the horizon: what turns a one-off build
+    # cost into the annual margin that repays it at the document's own rate.
+    annuity = sum(
+        1.0 / (1.0 + inputs.discount_pct) ** y for y in range(1, inputs.horizon_years + 1)
+    )
+    build_per_year = build_cost / annuity
+
     if margin <= 0:
         breakeven_kwh: float | None = None
         breakeven_util: float | None = None
+        full_cost_kwh: float | None = None
+        full_cost_util: float | None = None
         assumptions.append(
             f"margin is {margin:.0f} paise/kWh - at this price every kWh sold loses "
             "money, so no utilisation breaks even; the price or the tariff has to move"
@@ -503,9 +698,17 @@ def compute_roi(inputs: RoiInputs) -> RoiResult:
     else:
         breakeven_kwh = fixed / margin
         breakeven_util = breakeven_kwh / ceiling if ceiling > 0 else None
+        full_cost_kwh = (fixed + build_per_year) / margin
+        full_cost_util = full_cost_kwh / ceiling if ceiling > 0 else None
+        assumptions.append(
+            f"full-cost breakeven spreads the {build_cost / 100_000_00:.2f} lakh build cost "
+            f"over {inputs.horizon_years} years at {inputs.discount_pct:.0%}, which is "
+            f"{build_per_year / 100_000_00:.2f} lakh a year - it is the steady-state volume "
+            "at which NPV is zero, so it agrees with the NPV above rather than offering a "
+            "second opinion"
+        )
 
     # --- cashflow table ----------------------------------------------------
-    build_cost = inputs.capex.net_paise + (inputs.solar.capex_paise if inputs.solar else 0)
     rows: list[YearRow] = [
         YearRow(
             year=0,
@@ -560,6 +763,9 @@ def compute_roi(inputs: RoiInputs) -> RoiResult:
         annual_fixed_paise=fixed,
         breakeven_kwh_year=breakeven_kwh,
         breakeven_utilisation=breakeven_util,
+        full_cost_breakeven_kwh_year=full_cost_kwh,
+        full_cost_breakeven_utilisation=full_cost_util,
+        full_cost_build_recovery_paise_year=round(build_per_year),
         max_kwh_year=ceiling,
         npv_paise=npv,
         irr_pct=round(irr, 4) if irr is not None else None,
@@ -570,6 +776,9 @@ def compute_roi(inputs: RoiInputs) -> RoiResult:
             _sensitivity_point(inputs, step, fixed, ceiling) for step in _PRICE_STEPS_PAISE
         ),
         sanctioned_load_options=sanctioned_load_options(inputs),
+        capex_lines=capex_lines(inputs.capex),
+        fixed_cost_lines=fixed_cost_lines(inputs),
+        unit_economics=unit_economics(inputs),
         assumptions=tuple(assumptions),
     )
 

@@ -1,0 +1,10 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1123, "h": 794, "title": "Outside face: inside flap, back cover, front cover", "print": "fixed" },
+    { "file": "Inside.dc.html", "x": 0, "y": 934, "w": 1123, "h": 794, "title": "Inside face: the three-panel spread", "print": "fixed" }
+  ],
+  "annotations": [
+    { "id": "fold-order", "x": 1200, "y": 0, "w": 280, "text": "A4 landscape, folded in three.\n\nOutside face, left to right: inside flap, back cover, front cover. The front cover is on top when folded.\n\nInside face reads left to right once opened.\n\nBracketed figures and the contact lines are placeholders to fill before printing." }
+  ],
+  "launch": { "view": "canvas" }
+}

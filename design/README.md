@@ -40,6 +40,37 @@ instead of dissolving into the nav.
 > only source of `og-identity.png`, which the reference build's `<head>`
 > references but never included.
 
+## Hero animations
+
+Three CSS-only animations argue the product on the public surface. They were
+drawn as standalone HTML in `Designv3/` (untracked at the repo root, the same
+read-not-merge rule as `reference/`) and ported in 2026-09-05:
+
+| | Where it ships | What it argues |
+|---|---|---|
+| `route-to-charge.html` | landing hero — `features/animation/RouteToCharge.tsx` | several candidates are compared, one is chosen, and only then does a vehicle reach it |
+| `candidate-site-assessment.html` | landing "what a full assessment checks" — `SiteAssessed.tsx` | the 34 factors walked one source at a time, ending on a verdict |
+| `sources-to-assessment-report.html` | `/animation` only — `SourcesToReport.tsx` | named sources feed a document; nothing appears that was not fetched |
+
+Rules they are held to:
+
+- **No animation library** (IMPLEMENT.md): keyframes, `offset-path`,
+  `stroke-dashoffset`, and `@property` counters. The one JS is an
+  `IntersectionObserver` gate so an animation off-screen costs nothing.
+- **`prefers-reduced-motion: reduce` shows the final state immediately**, with
+  zero running animations — verified, not assumed.
+- **Every value is illustrative and bracketed**, from one file
+  (`features/animation/data.ts`), which also owns the 34 factor names verbatim
+  from the landing page and their grouping BY SOURCE (12/4/8/7/3). The
+  landing page, `/animation` and the live assessment screen all read that one
+  file, so a visitor cannot meet one taxonomy on the landing page and a
+  different one inside their own assessment.
+- **No "site fit score."** The report payload has no such field, and marketing
+  a headline metric the product does not produce would sell a report that
+  cannot be delivered.
+
+`/animation` is an unlinked review surface holding all three side by side.
+
 ## Mapbox
 
 A dark style is published at

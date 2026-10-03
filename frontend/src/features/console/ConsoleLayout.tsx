@@ -38,6 +38,11 @@ const NAV: Group[] = [
     heading: "Sources",
     items: [
       { to: "/console/cpo", label: "CPO", hint: "partners · terms" },
+      {
+        to: "/console/operators",
+        label: "Operators",
+        hint: "who runs what · naming · what is left",
+      },
       { to: "/console/network", label: "Network", hint: "stations · chargers · connectors" },
       { to: "/console/competitors", label: "Competitors", hint: "inventory · networks · DC-fast" },
       { to: "/console/geocoding", label: "Geocoding", hint: "cascade · manual queue" },
@@ -56,7 +61,14 @@ const NAV: Group[] = [
   },
   {
     heading: "Output",
-    items: [{ to: "/console/reports", label: "Reports", hint: "verdicts · leads · attribution" }],
+    items: [
+      {
+        to: "/console/report",
+        label: "Report",
+        hint: "twelve sections · print · renderer",
+      },
+      { to: "/console/reports", label: "Reports", hint: "verdicts · leads · attribution" },
+    ],
   },
 ];
 

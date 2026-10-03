@@ -203,9 +203,7 @@ def test_a_number_is_locked_after_too_many_tries(
     from app.api.internal import ratelimit
 
     monkeypatch.setenv("OWNER_AUTH_LIMIT_PER_HOUR", "1000")
-    monkeypatch.setattr(
-        ratelimit, "_phone_limiter", ratelimit.SlidingWindowLimiter(window_seconds=900.0)
-    )
+    monkeypatch.setattr(ratelimit, "_phone_limiter", ratelimit.SlidingWindowLimiter(window_seconds=900.0))
     sign_in(client)
     client.cookies.clear()
     codes = [

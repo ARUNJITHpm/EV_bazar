@@ -22,7 +22,7 @@
 
 - [x] **Mobile number + password sign-up and login.** scrypt-hashed password, signed httpOnly session, per-IP and per-number throttle. No forgot-password. `app/domain/owner/password.py`, `api/internal/owner.py`.
 - [ ] **OTP** (verify the number, and password reset) behind the `OtpProvider` interface kept in `app/domain/owner/otp.py`. Needs an SMS provider decision and a key; none is in the repo.
-- [x] **Bill upload and manual extraction.** Photo or PDF kept so the owner can check figures against it; `BillExtractor` interface with `ManualExtractor`; fields saved only after the owner confirms them.
+- [x] **Bill upload and manual extraction.** Photo or PDF kept as uploaded; `BillExtractor` interface with `ManualExtractor`; fields saved only after the owner confirms them.
 - [ ] **Automatic extraction** (an OCR or model behind `BillExtractor`). Any LLM-proposed value stays a proposal until the owner confirms it (AGENTS.md rule 11).
 - [x] **Bill fields.** Period and kWh required; history (12 months), tariff category, contract and recorded demand (kVA/kW as printed), power factor and penalty/incentive (paise), time-of-day units, board, consumer number (last 4 only).
 - [x] **Validation.** kWh above 0 and at most total connector kW × 744; the error names the limit.
@@ -45,7 +45,7 @@
 ### 0.1 Status Poller — DEFERRED (later stage)
 
 > **Deferred.** The initial stage's only station data source is what owners upload
-> (Part O above). Reading charger status from CPO apps is a later stage
+> (Part O below). Reading charger status from CPO apps is a later stage
 > (`OVERVIEW.md`, "Later stage: status scraping"), off unless `SCRAPER_ENABLED=true`,
 > and each app's terms of service must be checked before it is polled. The code and
 > the items below are kept as the record of that stage; none of it runs now.
@@ -361,7 +361,7 @@ score = w1·traffic + w2·poi_dwell + w3·(−competition)
 
 **Deps:** Parts 1–4
 
-- [ ] Seven React components in `features/report/`, one per section of the `OVERVIEW.md` anatomy
+- [ ] One React component per section in `features/report/`, matching the `OVERVIEW.md` §8 anatomy (12 since 2026-09-03)
 - [ ] Hero: breakeven utilisation vs P10–P90 band vs margin of safety — hand-drawn SVG, not a chart library
 - [ ] Verdict logic driven by **P10** — Build / Conditional / Don't
 - [ ] 3 scenarios: conservative / base / upside

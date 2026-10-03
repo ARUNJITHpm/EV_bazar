@@ -21,7 +21,7 @@ export function Result({ out, onRestart }: { out: AssessOut; onRestart: () => vo
       <Shell>
         <div className="flex flex-col gap-[18px]">
           <Eyebrow>On the waitlist</Eyebrow>
-          <h1 className="max-w-[720px] text-[clamp(28px,4.6vw,44px)] leading-[1.15] font-medium">
+          <h1 className="max-w-[720px] text-[clamp(32px,5.2vw,54px)] leading-[1.15] font-medium">
             We will not guess at this one.
           </h1>
           <p className="max-w-[720px] text-[clamp(17px,2.2vw,19px)] leading-[1.55] text-cw-muted">
@@ -62,7 +62,7 @@ export function Result({ out, onRestart }: { out: AssessOut; onRestart: () => vo
           </>
         ) : (
           <>
-            <h1 className="max-w-[720px] text-[clamp(28px,4.6vw,44px)] leading-[1.15] font-medium text-cw-negative">
+            <h1 className="max-w-[720px] text-[clamp(32px,5.2vw,54px)] leading-[1.15] font-medium text-cw-negative">
               No utilisation breaks even here.
             </h1>
             <p className="max-w-[720px] text-[clamp(17px,2.2vw,19px)] leading-[1.55] text-cw-muted">

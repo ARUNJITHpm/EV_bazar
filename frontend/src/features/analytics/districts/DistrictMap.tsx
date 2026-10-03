@@ -10,6 +10,7 @@ import {
   type DistrictShape,
   type DistrictValue,
   type Indicator,
+  stateLabel,
 } from "./model";
 
 export function shapePaths(shapes: DistrictShape[]) {
@@ -88,6 +89,12 @@ export function DistrictMap({
     breaks = Array.from({ length: 6 }, (_, index) => (max * index) / 5);
   const current = districts.find((district) => district.lgd_code === selected);
   const paths = shapePaths(atlas.shapes);
+  const outputVersions = {
+    ...(indicator === "usage" && atlas.usage_metadata
+      ? atlas.usage_metadata.versions
+      : catalogue.versions),
+    renderer_version: "analytics_map_v1",
+  };
   const download = (all: boolean) => {
     const sources = catalogue.datasets.filter((dataset) =>
       [
@@ -105,7 +112,7 @@ export function DistrictMap({
       type: "bar",
       unit:
         indicator === "usage"
-          ? "kWh/charger/month"
+          ? "kWh/listed station/month"
           : indicator === "ratio"
             ? "chargers/1000 registrations"
             : indicator === "registrations"
@@ -120,7 +127,7 @@ export function DistrictMap({
         url: source.metadata.source_url,
         licence: source.metadata.licence,
       })),
-      versions: { ...catalogue.versions, renderer_version: "analytics_map_v1" },
+      versions: outputVersions,
       notes: [],
       rows: (all ? districts : filtered).map((district) => {
         const value = get(district.lgd_code);
@@ -138,6 +145,17 @@ export function DistrictMap({
         };
       }),
     };
+    if (indicator === "usage" && atlas.usage_metadata) {
+      data.sources = [
+        ...data.sources,
+        {
+          name: atlas.usage_metadata.source,
+          url: atlas.usage_metadata.source_url,
+          licence: atlas.usage_metadata.licence,
+        },
+      ];
+      data.updated = atlas.usage_metadata.retrieved_on;
+    }
     const href = URL.createObjectURL(
         new Blob(
           [chartCsv(data, data.rows, window.location.href, new Date().toISOString().slice(0, 10))],
@@ -260,11 +278,19 @@ export function DistrictMap({
               {dataset.metadata.licence}), <time>{dataset.metadata.retrieved_on}</time>;{" "}
             </span>
           ))}{" "}
-        {indicator === "usage" && "Usage publication is awaiting privacy and validation checks."}
+        {indicator === "usage" &&
+          (atlas.usage_metadata ? (
+            <span>
+              <a href={atlas.usage_metadata.source_url}>{atlas.usage_metadata.source}</a> (
+              {atlas.usage_metadata.licence}), <time>{atlas.usage_metadata.retrieved_on}</time>
+            </span>
+          ) : (
+            "Usage publication is awaiting privacy and validation checks."
+          ))}
       </p>
       <p role="status">
         {current
-          ? `${current.district_name}, ${current.state_name}: ${mapValueLabel(get(current.lgd_code))}${get(current.lgd_code).note ? `. ${get(current.lgd_code).note}` : ""}`
+          ? `${current.district_name}, ${stateLabel(current.state_name)}: ${mapValueLabel(get(current.lgd_code))}${get(current.lgd_code).note ? `. ${get(current.lgd_code).note}` : ""}`
           : "Select a district to see its value and range."}
       </p>
       <label htmlFor={`${uid}-search`}>Find a district on this map</label>
@@ -281,7 +307,7 @@ export function DistrictMap({
               aria-pressed={selected === district.lgd_code}
               onClick={() => setSelected(district.lgd_code)}
             >
-              {district.district_name} · {district.state_name}
+              {district.district_name} · {stateLabel(district.state_name)}
             </button>
             {selected === district.lgd_code && (
               <Link to={`/data/district/${district.slug}`}>Open district page</Link>
@@ -340,7 +366,7 @@ export function DistrictMap({
                 <th scope="row">
                   <Link to={`/data/district/${district.slug}`}>{district.district_name}</Link>
                 </th>
-                <td>{district.state_name}</td>
+                <td>{stateLabel(district.state_name)}</td>
                 <td className="analytics-number analytics-numeric">
                   {mapValueLabel(get(district.lgd_code))}
                 </td>
@@ -351,13 +377,13 @@ export function DistrictMap({
       </div>
       <div className="analytics-chart-controls">
         <button
-          disabled={!filtered.length || indicator === "usage"}
+          disabled={!filtered.length || (indicator === "usage" && !atlas.usage_metadata)}
           onClick={() => download(false)}
         >
           Download CSV (current selection)
         </button>
         <button
-          disabled={!districts.length || indicator === "usage"}
+          disabled={!districts.length || (indicator === "usage" && !atlas.usage_metadata)}
           onClick={() => download(true)}
         >
           Download CSV (all data)
@@ -366,14 +392,12 @@ export function DistrictMap({
       <details>
         <summary>Output versions</summary>
         <dl>
-          {Object.entries({ ...catalogue.versions, renderer_version: "analytics_map_v1" }).map(
-            ([key, value]) => (
-              <div key={key}>
-                <dt>{key}</dt>
-                <dd>{value}</dd>
-              </div>
-            ),
-          )}
+          {Object.entries(outputVersions).map(([key, value]) => (
+            <div key={key}>
+              <dt>{key}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
         </dl>
       </details>
     </section>

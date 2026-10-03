@@ -1,5 +1,10 @@
+import { socialImagePath } from "./chart/social";
 import articles from "virtual:analytics-content";
 import { articleHref } from "./content/model";
+import publicCatalogue from "virtual:analytics-public-data";
+import atlas from "virtual:analytics-atlas";
+import { hasDistrictIndicator, stateLabel } from "./districts/model";
+
 export const verticals = [
   {
     slug: "vehicles",
@@ -69,7 +74,7 @@ export const searchEntries: readonly SearchEntry[] = [
   })),
   ...publicCatalogue.districts.map((district): SearchEntry => ({
     title: district.district_name,
-    description: `${district.state_name}${district.former_names.length ? ` · ${district.former_names.join(", ")}` : ""}`,
+    description: `${stateLabel(district.state_name)}${district.former_names.length ? ` · ${district.former_names.join(", ")}` : ""}`,
     href: `/data/district/${district.slug}`,
     kind: "District",
   })),
@@ -118,12 +123,15 @@ export function analyticsMetadata(pathname: string) {
   const title =
     article?.title ??
     (district
-      ? `${district.district_name}, ${district.state_name} (LGD ${district.lgd_code})`
+      ? `${district.district_name}, ${stateLabel(district.state_name)} (LGD ${district.lgd_code})`
       : undefined) ??
     vertical?.title ??
     titles[path] ??
+    // An unknown district slug renders the "District data" page, so match its heading.
+    (path.startsWith("/data/district/") ? titles["/data/district"] : undefined) ??
     "Data being prepared";
   return {
+    socialImage: article?.format === "weekly" ? socialImagePath(article.slug, "og") : undefined,
     title:
       title === "Chargeworthy Data"
         ? `${title} — EV charging in India`
@@ -131,7 +139,7 @@ export function analyticsMetadata(pathname: string) {
     description:
       article?.summary ??
       (district
-        ? `Available EV charging context for ${district.district_name}, ${district.state_name}, LGD ${district.lgd_code}. Sources, coverage and missing data are listed explicitly.`
+        ? `Available EV charging context for ${district.district_name}, ${stateLabel(district.state_name)}, LGD ${district.lgd_code}. Sources, coverage and missing data are listed explicitly.`
         : undefined) ??
       vertical?.description ??
       `${titles[path] ?? "Unpublished page"}: public EV charging data for India, with transparent sources, coverage and methods.`,
@@ -149,7 +157,3 @@ export function analyticsMetadata(pathname: string) {
           : path !== "/data",
   };
 }
-import publicCatalogue from "virtual:analytics-public-data";
-
-import atlas from "virtual:analytics-atlas";
-import { hasDistrictIndicator } from "./districts/model";

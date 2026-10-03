@@ -30,9 +30,12 @@ from app.domain.roi import (
 )
 from app.domain.roi.engine import (
     annual_fixed_paise,
+    capex_lines,
     effective_energy_paise_per_kwh,
+    fixed_cost_lines,
     margin_paise_per_kwh,
     max_kwh_year,
+    unit_economics,
 )
 
 L = 100_000 * 100  # one lakh, in paise
@@ -287,6 +290,102 @@ def test_breakeven_utilisation_is_against_the_physical_ceiling() -> None:
     assert 0 < r.breakeven_utilisation < 1
 
 
+def test_full_cost_breakeven_is_the_volume_at_which_npv_is_zero() -> None:
+    """Track B - R5. The second threshold: what the site must sell to have
+    been worth building, not merely to stop losing money this month.
+
+    Discounted, not straight-line. The cheaper definition (build cost over
+    ten years, undiscounted) contradicted the NPV in the same document, and a
+    second number that argues with the first is worse than one number with a
+    caveat - so this one is defined to agree by construction.
+    """
+    inputs = base_inputs()
+    r = compute_roi(inputs)
+    annuity = sum(
+        1.0 / (1.0 + inputs.discount_pct) ** y for y in range(1, inputs.horizon_years + 1)
+    )
+    assert r.full_cost_breakeven_kwh_year == pytest.approx(
+        (r.annual_fixed_paise + inputs.capex.net_paise / annuity) / 942.6, rel=1e-3
+    )
+    # It is always the harder threshold, never the same one under a new name.
+    assert r.full_cost_breakeven_kwh_year > r.breakeven_kwh_year
+    assert r.full_cost_breakeven_utilisation == pytest.approx(
+        r.full_cost_breakeven_kwh_year / (120 * 8760), rel=1e-6
+    )
+    assert any("full-cost breakeven" in a for a in r.assumptions)
+
+
+def test_full_cost_breakeven_agrees_with_the_npv_it_sits_beside() -> None:
+    """The whole reason this number exists. Hold the site at exactly its
+    full-cost breakeven every year and the ten-year NPV must be ~zero; a
+    little above and it is positive, a little below and it is negative.
+
+    If this ever fails, the report is printing two numbers that disagree
+    about the same site - which is the failure R5 was asked to remove.
+    """
+    r = compute_roi(base_inputs())
+    at = r.full_cost_breakeven_kwh_year
+    assert at is not None
+    flat = compute_roi(base_inputs(kwh_by_year=(at,)))
+    assert flat.npv_paise == pytest.approx(0, abs=100_00)
+    assert compute_roi(base_inputs(kwh_by_year=(at * 1.1,))).npv_paise > 0
+    assert compute_roi(base_inputs(kwh_by_year=(at * 0.9,))).npv_paise < 0
+
+
+def test_the_recovery_figure_is_exactly_what_separates_the_two_lines() -> None:
+    """Track B - R7. Section 09 prints both divisions and invites the reader
+    to check that they differ by one term. This is that check.
+
+    The engine publishes the term rather than the report deriving it: a
+    component dividing the build cost by an annuity factor of its own would
+    be a financial number computed outside the engine, and the first time the
+    discount rate moved the page would quietly disagree with the threshold
+    printed beside it.
+    """
+    r = compute_roi(base_inputs())
+    assert r.breakeven_kwh_year is not None
+    assert r.full_cost_breakeven_kwh_year is not None
+
+    margin = r.margin_paise_per_kwh
+    assert r.breakeven_kwh_year == pytest.approx(r.annual_fixed_paise / margin, rel=1e-3)
+    assert r.full_cost_breakeven_kwh_year == pytest.approx(
+        (r.annual_fixed_paise + r.full_cost_build_recovery_paise_year) / margin, rel=1e-3
+    )
+
+
+def test_the_recovery_figure_survives_a_site_with_no_breakeven_at_all() -> None:
+    """What the build costs per year does not stop being true because the
+    margin went negative. The pair above is None; this is a number."""
+    r = compute_roi(base_inputs(selling_paise_per_kwh=700))
+    assert r.full_cost_breakeven_kwh_year is None
+    assert r.full_cost_build_recovery_paise_year > 0
+
+
+def test_the_recovery_figure_is_the_build_cost_discounted_not_divided() -> None:
+    """Straight-line would be capex / 10. This is capex / annuity, which is
+    larger - and being larger is the whole reason the second threshold agrees
+    with the NPV four pages away rather than arguing with it."""
+    inputs = base_inputs()
+    r = compute_roi(inputs)
+    straight = inputs.capex.net_paise / inputs.horizon_years
+    assert r.full_cost_build_recovery_paise_year > straight
+    annuity = sum(
+        1.0 / (1.0 + inputs.discount_pct) ** y for y in range(1, inputs.horizon_years + 1)
+    )
+    assert r.full_cost_build_recovery_paise_year == pytest.approx(
+        inputs.capex.net_paise / annuity, rel=1e-6
+    )
+
+
+def test_full_cost_breakeven_refuses_alongside_the_running_one() -> None:
+    """A margin at or below zero has no breakeven at any volume, and adding
+    the build cost cannot rescue that - both are None, not one of them."""
+    r = compute_roi(base_inputs(selling_paise_per_kwh=700))
+    assert r.breakeven_kwh_year is None
+    assert r.full_cost_breakeven_kwh_year is None
+    assert r.full_cost_breakeven_utilisation is None
+
+
 def test_breakeven_ignores_the_anchor_on_purpose() -> None:
     """Breakeven answers 'how busy must RETAIL be' - the anchor de-risks the
     cashflow, it must not flatter the breakeven."""
@@ -471,3 +570,74 @@ def test_tod_shares_beyond_one_are_refused() -> None:
 def test_a_subsidy_larger_than_capex_is_refused() -> None:
     with pytest.raises(ValueError, match="subsidy"):
         compute_roi(base_inputs(capex=Capex(hardware_paise=10 * L, subsidy_paise=11 * L)))
+
+
+# --- the breakdowns: a sum that is printed has to be true --------------------
+
+
+def test_capex_lines_sum_to_the_net_build_cost() -> None:
+    """Track B - R6. Section 05 prints this as a budget totalling to the
+    headline; a budget whose lines do not reach its own total is worse than
+    no budget."""
+    inputs = base_inputs()
+    lines = capex_lines(inputs.capex)
+    assert sum(line.paise for line in lines) == inputs.capex.net_paise
+    # Zero lines are omitted, not printed as Rs 0 rows.
+    assert all(line.paise != 0 for line in lines)
+    assert [line.name for line in lines][:1] == ["Chargers, installation and commissioning"]
+
+
+def test_the_subsidy_is_its_own_line_rather_than_quietly_netted_off() -> None:
+    """A subsidy applied for and refused is the commonest way a build budget
+    moves after the report is written, so the reader has to see it."""
+    inputs = base_inputs(capex=Capex(hardware_paise=20 * L, civil_paise=6 * L, subsidy_paise=4 * L))
+    lines = capex_lines(inputs.capex)
+    assert ("Less subsidy", -4 * L) in [(line.name, line.paise) for line in lines]
+    assert sum(line.paise for line in lines) == 22 * L
+
+
+def test_fixed_cost_lines_sum_to_annual_fixed() -> None:
+    inputs = base_inputs()
+    lines = fixed_cost_lines(inputs)
+    assert sum(line.paise for line in lines) == annual_fixed_paise(inputs)
+    names = [line.name for line in lines]
+    # No DISCOM fixed charge and no rent in the base case: omitted, not zero.
+    assert "DISCOM fixed charge" not in names
+    assert "Rent" not in names
+    assert "Demand charge on the sanctioned connection" in names
+
+
+def test_unit_deductions_sum_to_exactly_the_margin_the_breakevens_use() -> None:
+    """The sentence section 05 prints - price minus each cut equals what is
+    left - must be true to the paise, because a reader checks it in their
+    head. It is the same margin the two breakevens divide by, decomposed."""
+    inputs = base_inputs(cpo=CpoTerms(revenue_share_pct=0.10, fee_paise_per_kwh=150))
+    u = unit_economics(inputs)
+    assert u.selling_paise == 1800
+    assert u.margin_paise == round(margin_paise_per_kwh(inputs))
+    assert u.selling_paise - sum(d.paise for d in u.deductions) == u.margin_paise
+    assert [d.name for d in u.deductions] == [
+        "Electricity, all-in",
+        "Operator fee per unit",
+        "Operator revenue share",
+        "Payment gateway",
+    ]
+
+
+def test_a_breakdown_with_no_operator_cut_omits_those_lines() -> None:
+    """Degrading is dropping the row, never printing a zero one."""
+    u = unit_economics(base_inputs(cpo=CpoTerms()))
+    assert [d.name for d in u.deductions] == ["Electricity, all-in", "Payment gateway"]
+    assert u.selling_paise - sum(d.paise for d in u.deductions) == u.margin_paise
+
+
+def test_the_result_carries_all_three_breakdowns() -> None:
+    r = compute_roi(base_inputs())
+    assert sum(line.paise for line in r.fixed_cost_lines) == r.annual_fixed_paise
+    assert r.unit_economics.margin_paise == r.margin_paise_per_kwh
+    d = r.as_dict()
+    # as_dict is what gets stored: every tuple must already be a list.
+    assert isinstance(d["capex_lines"], list)
+    assert isinstance(d["fixed_cost_lines"], list)
+    unit = d["unit_economics"]
+    assert isinstance(unit, dict) and isinstance(unit["deductions"], list)

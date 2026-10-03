@@ -99,6 +99,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/internal/document": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Document
+     * @description The twelve sections against the newest stored payload.
+     */
+    get: operations["document_api_internal_document_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/internal/features": {
     parameters: {
       query?: never;
@@ -332,6 +352,26 @@ export interface paths {
     };
     /** Station Detail */
     get: operations["station_detail_api_internal_network_stations__station_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/internal/operators": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Operators
+     * @description The inventory folded by network, plus the names that defeated it.
+     */
+    get: operations["operators_api_internal_operators_get"];
     put?: never;
     post?: never;
     delete?: never;
@@ -750,6 +790,29 @@ export interface components {
       kwh_year: number;
       /** Npv Paise */
       npv_paise: number;
+    };
+    /**
+     * ArchiveOut
+     * @description Rule 9's other half, and its two open steps.
+     *
+     *     ``table_exists`` is false until migration 0013 is applied; ``archived`` is
+     *     false until ``scripts/archive_report_pdf.py --write`` has run. Both are
+     *     writes to the live database and neither is the code's to take, so the
+     *     panel reports them rather than doing them.
+     */
+    ArchiveOut: {
+      /** Archived */
+      archived: boolean;
+      /** Byte Size */
+      byte_size?: number | null;
+      /** Pages */
+      pages?: number | null;
+      /** Rendered At */
+      rendered_at?: string | null;
+      /** Renderer Version */
+      renderer_version?: string | null;
+      /** Table Exists */
+      table_exists: boolean;
     };
     /** AreaItem */
     AreaItem: {
@@ -1206,6 +1269,57 @@ export interface components {
       /** State */
       state: string;
     };
+    /** DocumentOut */
+    DocumentOut: {
+      archive: components["schemas"]["ArchiveOut"];
+      /**
+       * Checked At
+       * Format: date-time
+       */
+      checked_at: string;
+      /**
+       * Cpo Rows
+       * @default 0
+       */
+      cpo_rows: number;
+      /**
+       * Demo
+       * @default false
+       */
+      demo: boolean;
+      /** Economics Version */
+      economics_version?: string | null;
+      /**
+       * Engine Economics Version
+       * @default 0.5.0
+       */
+      engine_economics_version: string;
+      /** Generated At */
+      generated_at?: string | null;
+      /**
+       * Ledger Rows
+       * @default 0
+       */
+      ledger_rows: number;
+      /** Model Version */
+      model_version?: string | null;
+      /** Renderer Version */
+      renderer_version?: string | null;
+      /** Report Id */
+      report_id?: string | null;
+      /** Sections */
+      sections: components["schemas"]["SectionOut"][];
+      /**
+       * Site Facts
+       * @default 0
+       */
+      site_facts: number;
+      /**
+       * Site Facts Unverified
+       * @default 0
+       */
+      site_facts_unverified: number;
+    };
     /** FacetsOut */
     FacetsOut: {
       /**
@@ -1588,6 +1702,23 @@ export interface components {
       /** Stations */
       stations: number;
     };
+    /** OperatorOut */
+    OperatorOut: {
+      /** Canonical */
+      canonical: string;
+      /** Dc Fast */
+      dc_fast: number;
+      /** Districts */
+      districts: number;
+      /** Ours */
+      ours: boolean;
+      /** Raw Rows */
+      raw_rows: number;
+      /** States */
+      states: number;
+      /** Stations */
+      stations: number;
+    };
     /** OperatorRow */
     OperatorRow: {
       /** Dc Fast */
@@ -1596,6 +1727,28 @@ export interface components {
       operator: string;
       /** Stations */
       stations: number;
+    };
+    /** OperatorsOut */
+    OperatorsOut: {
+      /** Canonical Known */
+      canonical_known: number;
+      /**
+       * Checked At
+       * Format: date-time
+       */
+      checked_at: string;
+      /** Coverage Pct */
+      coverage_pct: number;
+      /** Operators */
+      operators: components["schemas"]["OperatorOut"][];
+      /** Resolved Rows */
+      resolved_rows: number;
+      /** Total Rows */
+      total_rows: number;
+      /** Unattributed Rows */
+      unattributed_rows: number;
+      /** Unresolved */
+      unresolved: components["schemas"]["UnresolvedOut"][];
     };
     /** OutageIn */
     OutageIn: {
@@ -2036,6 +2189,17 @@ export interface components {
       /** Utilisation */
       utilisation: number;
     };
+    /** SectionOut */
+    SectionOut: {
+      /** Dropped */
+      dropped: string[];
+      /** Id */
+      id: string;
+      /** N */
+      n: number;
+      /** Title */
+      title: string;
+    };
     /** SeriesPoint */
     SeriesPoint: {
       /** Kwh */
@@ -2432,6 +2596,13 @@ export interface components {
       /** Selling Paise Kwh */
       selling_paise_kwh: number;
     };
+    /** UnresolvedOut */
+    UnresolvedOut: {
+      /** Raw */
+      raw: string;
+      /** Rows */
+      rows: number;
+    };
     /** UtilisationBand */
     UtilisationBand: {
       /** Model Version */
@@ -2634,6 +2805,37 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["Operator"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  document_api_internal_document_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DocumentOut"];
         };
       };
       /** @description Validation Error */
@@ -3016,6 +3218,37 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["StationDetail"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  operators_api_internal_operators_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: {
+        evsite_console?: string | null;
+      };
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OperatorsOut"];
         };
       };
       /** @description Validation Error */

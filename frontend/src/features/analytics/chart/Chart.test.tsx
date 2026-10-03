@@ -11,6 +11,7 @@ import {
   selectRows,
   validateChart,
   valueDomain,
+  niceTicks,
   type ChartData,
   type ChartType,
 } from "./model";
@@ -230,6 +231,11 @@ describe("shared analytics charts", () => {
     expect(valueDomain([{ ...data.rows[0]!, value: -5, p10: -10, p90: -2 }])).toEqual([-10, 0]);
     expect(valueDomain([{ ...data.rows[0]!, value: 0, p10: 0, p90: 0 }])).toEqual([0, 1]);
   });
+  it("rounds axis ticks to readable steps that still cover the data", () => {
+    expect(niceTicks([0, 783])).toEqual({ domain: [0, 800], ticks: [0, 200, 400, 600, 800] });
+    expect(niceTicks([-10, 0])).toEqual({ domain: [-10, 0], ticks: [-10, -7.5, -5, -2.5, 0] });
+    expect(niceTicks([0, 1]).ticks).toEqual([0, 0.25, 0.5, 0.75, 1]);
+  });
   it("refuses ambiguous categories and series that cannot be distinguished by markers", () => {
     expect(() => validateChart({ ...data, rows: [data.rows[0]!, data.rows[0]!] })).toThrow(
       "unique",
@@ -247,4 +253,22 @@ describe("shared analytics charts", () => {
     expect(parsed[1]!.values[0]).toBe('\'=HYPERLINK("x")');
     expect(parsed[1]!.values[5]).toBe("-4");
   });
+});
+
+it("exports the displayed selection and shows errors from image preparation", async () => {
+  const download = vi.fn().mockRejectedValue(new Error("Fonts unavailable. Retry."));
+  vi.doMock("./social-download", () => ({ downloadSocialImage: download }));
+  render(
+    <MemoryRouter initialEntries={["/data/test?test-chart.region=South"]}>
+      <Chart data={data} />
+    </MemoryRouter>,
+  );
+  fireEvent.change(screen.getByLabelText("Image format"), { target: { value: "square" } });
+  fireEvent.click(screen.getByRole("button", { name: "Save image" }));
+  await waitFor(() => expect(download).toHaveBeenCalledOnce());
+  expect(download.mock.calls[0]![0].rows).toEqual(data.rows.filter((r) => r.region === "South"));
+  expect(download.mock.calls[0]![0].format).toBe("square");
+  await waitFor(() => expect(screen.getByRole("status").textContent).toContain("Retry"));
+  expect(screen.getByRole("button", { name: "Save image" }).hasAttribute("disabled")).toBe(false);
+  vi.doUnmock("./social-download");
 });

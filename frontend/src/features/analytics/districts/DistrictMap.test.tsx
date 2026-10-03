@@ -8,6 +8,7 @@ import {
   districtValue,
   neighbourCodes,
   registrationTotal,
+  stateLabel,
   type Atlas,
 } from "./model";
 
@@ -155,5 +156,14 @@ describe("district atlas", () => {
     ).toBeNull();
     expect(districtValue(atlas, 1, "chargers").value).toBeNull();
     expect(districtValue(complete, 1, "ratio").value).toBeNull();
+  });
+});
+
+describe("stateLabel", () => {
+  it("turns capitalised LGD state names into readable labels", () => {
+    expect(stateLabel("KERALA")).toBe("Kerala");
+    expect(stateLabel("JAMMU & KASHMIR")).toBe("Jammu & Kashmir");
+    expect(stateLabel("DADRA,NAGAR HAVELI,DAMAN & DIU")).toBe("Dadra, Nagar Haveli, Daman & Diu");
+    expect(stateLabel("ANDAMAN AND NICOBAR ISLANDS")).toBe("Andaman and Nicobar Islands");
   });
 });

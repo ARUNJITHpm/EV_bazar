@@ -3,6 +3,7 @@ import catalogue from "virtual:analytics-public-data";
 import { ProgressiveChart as Chart } from "../chart/ProgressiveChart";
 import { numberLabel } from "../chart/model";
 import type { DatasetId, District } from "../data/schemas";
+import { stateLabel } from "../districts/model";
 import {
   latestSupply,
   outageNote,
@@ -14,6 +15,20 @@ import {
   sourceChart,
   type Policy,
 } from "./model";
+
+/** Several sources for one figure: pending ones share a single line rather than repeat it. */
+export function SourceLines({ ids }: { ids: DatasetId[] }) {
+  const published = ids.filter((id) => catalogue.datasets.some((d) => d.id === id));
+  const pending = ids.find((id) => !published.includes(id));
+  return (
+    <>
+      {published.map((id) => (
+        <SourceLine key={id} id={id} />
+      ))}
+      {pending && <SourceLine id={pending} />}
+    </>
+  );
+}
 
 export function SourceLine({ id }: { id: DatasetId }) {
   const source = catalogue.datasets.find((d) => d.id === id);
@@ -43,7 +58,7 @@ export function Policies({ state }: { state?: string }) {
       className="analytics-section analytics-context"
       id={state ? undefined : "policies-in-force"}
     >
-      <h2>Policies in force{state ? `: ${state}` : ""}</h2>
+      <h2>Policies in force{state ? `: ${stateLabel(state)}` : ""}</h2>
       <p>
         Status at the data-page build date, <time>{expansion.asOf}</time>. Notifications and
         amendments require human review. An unpublished end date does not establish that a policy is
@@ -203,8 +218,7 @@ export function DistrictGrid({ district }: { district: District }) {
         Not available yet for this district or its state. New registrations over twelve months are
         not the total EV fleet; no fleet-to-charger ratio is inferred from them.
       </p>
-      <SourceLine id="ev_registrations" />
-      <SourceLine id="public_chargers" />
+      <SourceLines ids={["ev_registrations", "public_chargers"]} />
     </section>
   );
 }

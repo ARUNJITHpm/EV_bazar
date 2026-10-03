@@ -9,6 +9,16 @@ import { defineConfig } from "vitest/config";
 import { loadEnv } from "vite";
 import { publicDataPlugin } from "./scripts/public-data-plugin";
 
+// Dev and preview only. In production Caddy serves dist/ and proxies /api,
+// so the SPA and the API are same-origin and this proxy does not exist.
+const apiProxy = {
+  "/api": {
+    // http://api:8000 under docker compose, localhost when run bare.
+    target: process.env.VITE_API_PROXY ?? "http://127.0.0.1:8000",
+    changeOrigin: true,
+  },
+};
+
 export default defineConfig({
   define: {
     "import.meta.env.PUBLIC_ANALYTICS_ORIGIN": JSON.stringify(
@@ -48,15 +58,17 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    // Dev only. In production Caddy serves dist/ and proxies /api, so the
-    // SPA and the API are same-origin and this proxy does not exist.
-    proxy: {
-      "/api": {
-        // http://api:8000 under docker compose, localhost when run bare.
-        target: process.env.VITE_API_PROXY ?? "http://127.0.0.1:8000",
-        changeOrigin: true,
-      },
-    },
+    proxy: apiProxy,
+  },
+  // `preview` serves the BUILT dist/, and it is what the PDF renderer has to
+  // be pointed at: a render off the dev server stamps `unbuilt` on purpose,
+  // because the bytes the dev server produces are not the bytes any build
+  // made (app/pdf/render.py). Without this proxy the built SPA has no API to
+  // read from and the report cannot load at all, so archiving would be
+  // impossible from a real build - which is the only render worth archiving.
+  preview: {
+    port: 4173,
+    proxy: apiProxy,
   },
   build: {
     outDir: "dist",

@@ -23,7 +23,7 @@ import datetime as dt
 import uuid
 from typing import Any
 
-from sqlalchemy import JSON, DateTime, ForeignKey, Index, String, Uuid, func
+from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, LargeBinary, String, Uuid, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -57,3 +57,35 @@ class Report(Base):
     )
 
     __table_args__ = (Index("ix_reports_site", "site_id"),)
+
+
+class ReportPdf(Base):
+    """The archived render - rule 9's other half.
+
+    The payload answers "what did you tell me". This answers "this is not
+    what my report looked like", which a payload cannot: a browser render is
+    not reproducible across Chromium versions, so the bytes are frozen at
+    generation time rather than re-derived on demand.
+
+    Its own table rather than columns on ``reports`` for two reasons, both in
+    migration 0013: ``reports`` refuses UPDATE outright and the PDF has to be
+    attached after the payload is stored, and a payload read on every request
+    should not drag a megabyte of artifact with it.
+    """
+
+    __tablename__ = "report_pdfs"
+
+    report_id: Mapped[str] = mapped_column(
+        String(64), ForeignKey("reports.report_id", ondelete="CASCADE"), primary_key=True
+    )
+    pdf: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
+    #: Vite build hash + Chromium build. A property of the RENDER, not of the
+    #: data, and the only version stamp that cannot come from the payload.
+    renderer_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    #: Measured from the bytes, never predicted.
+    pages: Mapped[int] = mapped_column(Integer, nullable=False)
+    byte_size: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    rendered_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )

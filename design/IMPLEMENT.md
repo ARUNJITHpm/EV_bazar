@@ -107,6 +107,8 @@ The reference has eleven sections against this repo's seven. The four extra —
 thresholds stated before the data, what would change the verdict, provenance,
 and the independence disclosure — each exist to make the document defensible.
 Recommend which to adopt; do not silently drop them.
+  [DONE 2026-09-03: all four adopted, and Competitors split out — twelve
+   sections shipped. See OVERVIEW.md §8 and design/brand/report-spec.md.]
 
 Two rules that survive any stack:
   · Nothing carries meaning by colour alone. A bank file gets photocopied.

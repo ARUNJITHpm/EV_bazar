@@ -1,0 +1,1534 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Chargeworthy — what we do, in plain English</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Palette is frontend/src/styles/tokens.css, paper half, by value.
+         This file is a standalone print source and is the one place outside
+         tokens.css where these hexes are repeated — it has no build step to
+         read them from. */
+      :root {
+        --paper: #faf8f4;
+        --ink: #12171a;
+        --slate: #1c3a4f;
+        --rule: #d6d2c8;
+        --muted: #5c5852;
+        --positive: #1f5e4a;
+        --negative: #8c2a20;
+        --caution: #a65b1f;
+        --caution-tint: #f5e6d3;
+        --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+        --mono: "IBM Plex Mono", "Consolas", ui-monospace, Menlo, monospace;
+      }
+
+      @page {
+        size: A4;
+        margin: 18mm 16mm 16mm;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--paper);
+      }
+
+      body {
+        font-family: var(--serif);
+        font-size: 10.5pt;
+        line-height: 1.55;
+        color: var(--ink);
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      p {
+        margin: 0 0 8pt;
+        max-width: 74ch;
+      }
+
+      strong {
+        font-weight: 600;
+      }
+
+      .mono {
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ---------------------------------------------------- cover */
+
+      .cover {
+        break-after: page;
+        page-break-after: always;
+        min-height: 250mm;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .wordmark {
+        font-family: var(--mono);
+        font-size: 13pt;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--slate);
+      }
+
+      .cover-rule {
+        border-bottom: 3px solid var(--ink);
+        margin: 10pt 0 0;
+      }
+
+      .cover-title {
+        font-size: 34pt;
+        line-height: 1.06;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin: 46pt 0 0;
+        max-width: 20ch;
+      }
+
+      .cover-sub {
+        font-size: 14pt;
+        line-height: 1.45;
+        color: var(--muted);
+        margin: 14pt 0 0;
+        max-width: 52ch;
+      }
+
+      .cover-spacer {
+        flex-grow: 1;
+      }
+
+      .cover-foot {
+        border-top: 1px solid var(--rule);
+        padding-top: 10pt;
+        display: flex;
+        justify-content: space-between;
+        gap: 20pt;
+        font-family: var(--mono);
+        font-size: 8.5pt;
+        color: var(--muted);
+      }
+
+      .cover-claims {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16pt;
+        margin-top: 30pt;
+        border-top: 1px solid var(--rule);
+        padding-top: 14pt;
+      }
+
+      .cover-claims div {
+        font-size: 10pt;
+        line-height: 1.45;
+      }
+
+      .cover-claims .k {
+        font-family: var(--mono);
+        font-size: 8pt;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--slate);
+        display: block;
+        margin-bottom: 4pt;
+      }
+
+      /* ---------------------------------------------------- sections */
+
+      section {
+        break-inside: auto;
+        margin-bottom: 20pt;
+      }
+
+      h2 {
+        font-size: 17pt;
+        line-height: 1.2;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin: 0 0 3pt;
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+
+      .num {
+        font-family: var(--mono);
+        font-size: 8.5pt;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        color: var(--slate);
+        display: block;
+        margin-bottom: 5pt;
+      }
+
+      .sec-head {
+        border-top: 2px solid var(--ink);
+        padding-top: 8pt;
+        margin-bottom: 10pt;
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+
+      .lede {
+        font-size: 12pt;
+        line-height: 1.5;
+        margin-bottom: 10pt;
+        max-width: 68ch;
+      }
+
+      h3 {
+        font-size: 11.5pt;
+        font-weight: 600;
+        margin: 12pt 0 4pt;
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+
+      .page-break {
+        break-before: page;
+        page-break-before: always;
+      }
+
+      /* ---------------------------------------------------- blocks */
+
+      .callout {
+        border-left: 2px solid var(--slate);
+        padding: 6pt 0 6pt 11pt;
+        margin: 8pt 0 10pt;
+        background: rgba(28, 58, 79, 0.04);
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+
+      .caution {
+        border-left-color: var(--caution);
+        background: var(--caution-tint);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 8pt 0 12pt;
+        font-size: 9.5pt;
+      }
+
+      thead {
+        display: table-header-group;
+      }
+
+      th {
+        text-align: left;
+        font-family: var(--mono);
+        font-size: 7.5pt;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--slate);
+        border-bottom: 1px solid var(--ink);
+        padding: 0 8pt 4pt 0;
+        vertical-align: bottom;
+      }
+
+      td {
+        border-bottom: 1px solid var(--rule);
+        padding: 5pt 8pt 5pt 0;
+        vertical-align: top;
+        line-height: 1.42;
+      }
+
+      tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      td:last-child,
+      th:last-child {
+        padding-right: 0;
+      }
+
+      .factor {
+        width: 26%;
+        font-weight: 600;
+      }
+
+      .group-band {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-top: 14pt;
+      }
+
+      .group-band h3 {
+        margin-top: 0;
+      }
+
+      .source {
+        font-family: var(--mono);
+        font-size: 8pt;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0 0 2pt;
+      }
+
+      ol.steps {
+        counter-reset: step;
+        list-style: none;
+        padding: 0;
+        margin: 10pt 0 0;
+      }
+
+      ol.steps > li {
+        counter-increment: step;
+        border-top: 1px solid var(--rule);
+        padding: 8pt 0 8pt 34pt;
+        position: relative;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      ol.steps > li::before {
+        content: "0" counter(step);
+        position: absolute;
+        left: 0;
+        top: 8pt;
+        font-family: var(--mono);
+        font-size: 9pt;
+        font-weight: 500;
+        color: var(--slate);
+      }
+
+      ol.steps h3 {
+        margin: 0 0 3pt;
+      }
+
+      ol.steps p {
+        margin: 0;
+      }
+
+      ul.plain {
+        margin: 6pt 0 10pt;
+        padding-left: 15pt;
+      }
+
+      ul.plain li {
+        margin-bottom: 5pt;
+        max-width: 74ch;
+      }
+
+      dl.trust {
+        margin: 8pt 0 0;
+      }
+
+      dl.trust > div {
+        border-top: 1px solid var(--rule);
+        padding: 7pt 0;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      dl.trust dt {
+        font-weight: 600;
+        margin-bottom: 2pt;
+      }
+
+      dl.trust dd {
+        margin: 0;
+        color: var(--muted);
+        max-width: 76ch;
+      }
+
+      .verdicts {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10pt;
+        margin: 8pt 0 10pt;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .verdicts div {
+        border-top: 2px solid var(--rule);
+        padding-top: 6pt;
+      }
+
+      .verdicts .w {
+        font-family: var(--mono);
+        font-size: 11pt;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        display: block;
+        margin-bottom: 3pt;
+      }
+
+      .v-build .w {
+        color: var(--positive);
+      }
+      .v-cond .w {
+        color: var(--caution);
+      }
+      .v-dont .w {
+        color: var(--negative);
+      }
+
+      .verdicts p {
+        font-size: 9.5pt;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      footer.doc {
+        border-top: 1px solid var(--rule);
+        margin-top: 22pt;
+        padding-top: 8pt;
+        font-family: var(--mono);
+        font-size: 8pt;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        gap: 16pt;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- =============================================== COVER -->
+    <div class="cover">
+      <span class="wordmark">Chargeworthy</span>
+      <div class="cover-rule"></div>
+
+      <h1 class="cover-title">Will your land pay for a charger?</h1>
+      <p class="cover-sub">
+        What we do, what we check, and why you can believe the answer — written for the person who
+        owns the land, not for an engineer.
+      </p>
+
+      <div class="cover-claims">
+        <div>
+          <span class="k">We are not</span>
+          a charging company. We own no stations and hold no stake in any operator or charger brand.
+        </div>
+        <div>
+          <span class="k">We are paid</span>
+          the same whether the answer is yes or no. Nothing about our fee improves if you build.
+        </div>
+        <div>
+          <span class="k">We check</span>
+          <span class="mono">34</span> fixed things about your location, and show you every one of
+          them — including the ones in your favour.
+        </div>
+      </div>
+
+      <div class="cover-spacer"></div>
+
+      <div class="cover-foot">
+        <span>Right site. Right operator.</span>
+        <span>A plain-English guide · India</span>
+      </div>
+    </div>
+
+    <!-- =============================================== 01 -->
+    <section>
+      <div class="sec-head">
+        <span class="num">01</span>
+        <h2>Who we are, in one paragraph</h2>
+      </div>
+      <p class="lede">
+        Chargeworthy tells you whether your space can make money from EV charging — and if it can,
+        which charging company is the right one to build and run it there.
+      </p>
+      <p>
+        We are an independent advisor. We do not own charging stations, we do not sell chargers, and
+        we take no cut on hardware. Charging stations are built and run by companies called
+        <strong>operators</strong>. We are not one of them, and we hold no stake in any of them.
+        That distance is the whole point of us: an operator’s honest answer about your site is still
+        an answer from someone who profits if you say yes.
+      </p>
+      <p>
+        The one thing we sell is a straight answer, and a document that shows how we reached it.
+        Sometimes that answer is <em>not here</em>, or <em>not yet</em>. Telling you that is not us
+        failing to sell you something — it is the product.
+      </p>
+
+      <h3>Who this is for</h3>
+      <ul class="plain">
+        <li>
+          <strong>Property owners and residents’ associations</strong> — apartment complexes, malls,
+          offices and hotels with parking that is currently earning nothing.
+        </li>
+        <li>
+          <strong>Businesses and fleets</strong> — depots and commercial fleets going electric, who
+          need charging where their vehicles already are.
+        </li>
+        <li>
+          <strong>Banks and lenders</strong> — a site report detailed enough to lend against, with
+          the working shown rather than asserted.
+        </li>
+        <li>
+          <strong>Charging operators</strong> — sites that have already been checked, matched to the
+          hardware and economics that suit them.
+        </li>
+      </ul>
+
+      <h3>The problem we exist to solve</h3>
+      <p>
+        Nobody can tell whether a charging station will pay back. Every operator’s pitch sounds
+        confident, and every pitch is made by someone selling. Owners commit twenty to forty lakh
+        rupees on a feeling. We remove the guessing before any money is spent — and we do it with
+        the same method and the same thresholds for every site, so the standard cannot be quietly
+        bent to fit a conclusion.
+      </p>
+    </section>
+
+    <!-- =============================================== 02 -->
+    <section>
+      <div class="sec-head">
+        <span class="num">02</span>
+        <h2>How it works — three steps, and we stop at any of them</h2>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h3>Assess the site</h3>
+          <p>
+            You show us the location — drop a pin on a map or type the address. We check it against
+            <span class="mono">34</span> fixed things and work out what it would earn. If it does
+            not clear the bar, that is where it ends. You still get the document.
+          </p>
+        </li>
+        <li>
+          <h3>Match the operator</h3>
+          <p>
+            A highway site and an apartment basement need completely different operators. We compare
+            our partners on the type of charger, the commercial terms, and how much of their own
+            network already sits around you — then name one, with the reasoning shown beside it.
+            Section 05 sets out what decides this, and why it is a different question from the
+            34.
+          </p>
+        </li>
+        <li>
+          <h3>Install and run</h3>
+          <p>
+            The operator supplies the charger, the installation and the software that runs it. We
+            stay with you through commissioning. After that the station is theirs to run and yours
+            to earn from.
+          </p>
+        </li>
+      </ol>
+
+      <h3>What it costs you to find out</h3>
+      <p>
+        The first answer is free. Drop a pin and you get, in about half a minute, the single number
+        that decides everything — how busy your chargers would have to be before the site covers its
+        costs. That number is arithmetic, not a prediction, so we can give it away. The full
+        assessment, with the estimate of whether you would actually reach it, is the paid document
+        described in section 06.
+      </p>
+    </section>
+
+    <!-- =============================================== 03 -->
+    <section class="page-break">
+      <div class="sec-head">
+        <span class="num">03</span>
+        <h2>The one number that decides it</h2>
+      </div>
+
+      <p class="lede">
+        Everything we do turns on one figure: <strong>how busy your chargers have to be</strong>
+        before the site pays for itself.
+      </p>
+
+      <p>
+        Think of a charger the way you would think of a hotel room. The room can be occupied 24
+        hours a day. It never is. What matters is what share of those hours it is actually paid for
+        — and what share it <em>needs</em> to be paid for before the building stops losing money.
+      </p>
+
+      <p>
+        Charging is the same. We work out the fraction you need — the
+        <strong>breakeven point</strong> — from your costs and your prices:
+      </p>
+
+      <div class="callout">
+        <p>
+          <strong>What you earn on each unit sold</strong> — the price you charge, minus the
+          electricity you buy, minus the operator’s share.
+        </p>
+        <p>
+          <strong>What you pay every year no matter what</strong> — the cost of the equipment spread
+          over its life, the monthly charge the electricity board bills on your connection size,
+          maintenance, and rent.
+        </p>
+        <p style="margin-top: 7pt">
+          Divide the second by the first and you have how many units you must sell each year. As a
+          share of what your chargers could deliver, that is your breakeven point.
+        </p>
+      </div>
+
+      <p>
+        <strong>This number cannot be wrong the way a forecast can.</strong> It is a fact about your
+        costs, not a guess about the future. It is true whether or not anyone’s demand estimate is
+        any good. That is why we give it away free, and why it is the first thing we tell you.
+      </p>
+
+      <h3>The second number, and why it is a range</h3>
+      <p>
+        Then we estimate how busy your chargers would actually be. That one <em>is</em> uncertain,
+        so we never give it as a single figure. We give a range: a pessimistic case, a middle case
+        and an optimistic case. And the verdict is decided by the
+        <strong>pessimistic end</strong> — never the middle.
+      </p>
+      <p>
+        That choice matters. Selling on the middle case is how an advisor ends up with an angry
+        client two years later. If your site only works when everything goes right, we will tell you
+        that is what you are betting on.
+      </p>
+
+      <p>
+        We also set the return beside what a fixed deposit would pay you on the same money — an
+        indicative <span class="mono">6.5%</span> at a large bank, with a note telling you to check
+        your own bank’s current rate. If your land plus twenty-five lakh rupees plus five years of
+        your attention beats the bank by very little, that is worth seeing plainly, on the same
+        line.
+      </p>
+
+      <h3>The three answers you can get</h3>
+      <div class="verdicts">
+        <div class="v-build">
+          <span class="w">BUILD</span>
+          <p>
+            Even the pessimistic case clears the breakeven point. The site pays for itself even if
+            demand disappoints.
+          </p>
+        </div>
+        <div class="v-cond">
+          <span class="w">CONDITIONAL</span>
+          <p>
+            The middle case clears it; the pessimistic case does not. Building is a bet on things
+            going normally — unless a fleet contract removes the bet.
+          </p>
+        </div>
+        <div class="v-dont">
+          <span class="w">DON’T BUILD</span>
+          <p>
+            The site as it stands would not earn back what it costs. The document shows exactly
+            which numbers do not add up, and what would have to change.
+          </p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =============================================== 04 -->
+    <section class="page-break">
+      <div class="sec-head">
+        <span class="num">04</span>
+        <h2>The 34 things we check, and what each one does to the answer</h2>
+      </div>
+
+      <p class="lede">
+        Every site gets the same 34 checks, in the same five groups. Each group is one source we go
+        and read — which is why the grouping looks the way it does.
+      </p>
+      <p>
+        Nothing here is a guess. Each one is measured, or taken from a named public record, or
+        marked as unverified — and an unverified one is shown to you, not buried. Factors that argue
+        <em>in your favour</em> are listed exactly as openly as the ones that argue against.
+      </p>
+
+      <div class="group-band">
+        <p class="source">Group 1 · 12 checks · read from the OpenStreetMap road layer</p>
+        <h3>Getting in and out</h3>
+        <p style="font-size: 9.5pt; color: var(--muted)">
+          A charger nobody can conveniently turn into is a charger nobody uses. This is the group
+          that most often quietly kills a site that looked good on a map.
+        </p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th class="factor">What we check</th>
+            <th>What it does to the answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="factor">Road class</td>
+            <td>
+              A national highway carries far more potential customers past your gate than a
+              residential lane. The bigger the road, the larger the pool your demand is drawn from.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Distance from main road</td>
+            <td>
+              Every extra metre off the main road is another reason not to turn in. Sitting within
+              about 100 m of a major road counts in your favour; beyond roughly 300 m counts
+              against.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Carriageway direction served</td>
+            <td>
+              On a divided road you only get the traffic on your side. Serving one direction rather
+              than both can halve the flow that can actually reach you.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Sub-road access</td>
+            <td>
+              A second way in from a side road lets drivers reach you without fighting the main
+              carriageway, and gives you customers who were not passing at all.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Median or divider</td>
+            <td>
+              A solid median means traffic coming the other way cannot turn in without a long
+              detour. Almost nobody makes that detour to charge.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Sight line</td>
+            <td>
+              A driver has to see the station early enough to slow down and turn. A short sight line
+              means people notice you as they pass you.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Turning radius</td>
+            <td>
+              A tight turn shuts out anything larger than a car — vans, small trucks, anything
+              towing. That can remove a whole segment of your market.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Entry and exit width</td>
+            <td>
+              A narrow entry creates a queue at the gate. A queue at the gate is a customer who
+              keeps driving.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Frontage width</td>
+            <td>
+              How much of your land the road can actually see. Wide frontage makes the site readable
+              at speed; narrow frontage makes it a surprise.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Traffic count</td>
+            <td>
+              How many vehicles pass on an average day — the size of the pool everything else draws
+              from. India has no free national source for this, so where we cannot get a real count
+              we say so and reason from road class, junctions and what is nearby instead of
+              inventing a figure.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Dominant flow direction</td>
+            <td>
+              Traffic that is heavier inbound in the morning behaves differently from traffic that
+              is heavier outbound in the evening. It decides <em>when</em> your chargers are busy.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Peak hour timing</td>
+            <td>
+              When the flow peaks decides whether your busiest hours land on top of your most
+              expensive electricity hours — which changes what you earn per unit.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="group-band">
+        <p class="source">Group 2 · 4 checks · read from VAHAN, the government vehicle register</p>
+        <h3>Whether there are electric vehicles here at all</h3>
+        <p style="font-size: 9.5pt; color: var(--muted)">
+          Passing traffic only helps if some of it is electric. These come from the national
+          registration database, district by district.
+        </p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th class="factor">What we check</th>
+            <th>What it does to the answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="factor">EV registrations</td>
+            <td>
+              How many electric vehicles are actually registered in your district. Above roughly
+              10,000 counts in your favour; below about 3,000 counts against — there simply are not
+              enough vehicles to fill a charger yet.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Registration mix</td>
+            <td>
+              Most of India’s EVs are two- and three-wheelers, and they do not fill a fast
+              four-wheeler charger. A district that is heavily two-wheeler needs a different kind of
+              station, not a bigger one.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Fleet operators within 10 km</td>
+            <td>
+              The single biggest de-risker in Indian charging. A contract with a fleet — buses,
+              cabs, three-wheeler aggregators — that guarantees a minimum offtake turns a bet into
+              an income. A nearby fleet alone can move a site from <em>don’t</em> to <em>build</em>.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Distance to nearest city</td>
+            <td>
+              How far away the local pool of EV drivers actually lives and works, which sets how
+              often they pass you rather than someone closer to them.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="group-band">
+        <p class="source">
+          Group 3 · 8 checks · read from your state electricity regulator’s tariff order
+        </p>
+        <h3>Power, and what it costs you every month</h3>
+        <p style="font-size: 9.5pt; color: var(--muted)">
+          This is where good-looking sites most often fail on arithmetic. Several of these are bills
+          you pay whether or not you sell a single unit.
+        </p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th class="factor">What we check</th>
+            <th>What it does to the answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="factor">Tariff order</td>
+            <td>
+              Which published order your connection is billed under. It sets the price of every unit
+              you buy, and therefore what you keep on every unit you sell.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Demand charges</td>
+            <td>
+              A monthly bill based on the size of your connection, payable whether you sell anything
+              or not. This is frequently the largest fixed cost of the whole station — a few hundred
+              rupees per kVA per month becomes two to four lakh a year before the first customer.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Sanctioned load</td>
+            <td>
+              The connection size you contract for. Too large and you burn money every month on the
+              charge above; a smaller connection with managed peaks can save lakhs a year. We
+              recommend the size rather than simply accept the one you ask for.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Transformer distance</td>
+            <td>
+              Cabling from the nearest transformer costs roughly ₹2,000 a metre. Three hundred
+              metres is about six lakh rupees spent before a charger is even installed.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Transformer spare capacity</td>
+            <td>
+              If the existing transformer already has room for your peak, you avoid building a new
+              one — roughly two lakh rupees that drops straight out of the capital cost.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Grid outage hours</td>
+            <td>
+              Hours the supply is down are hours you cannot sell. This is often the one thing we
+              cannot source for a given location — and when we cannot, we mark it unverified rather
+              than assume it is zero, because assuming zero flatters the site.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">New connection cost</td>
+            <td>
+              The one-time cost of getting the supply you need, paid before a single unit is sold.
+              It goes into the capital you have to earn back.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">State subsidy applicability</td>
+            <td>
+              State EV policy and central schemes can cut the capital cost materially, and capital
+              is what the payback period is measured against. A subsidy you qualify for shortens
+              payback directly.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="group-band">
+        <p class="source">
+          Group 4 · 7 checks · read from the OpenStreetMap places layer, within 1 km
+        </p>
+        <h3>The site itself, and what surrounds it</h3>
+        <p style="font-size: 9.5pt; color: var(--muted)">
+          A driver charging a car is a person standing somewhere for twenty to forty minutes. What
+          they can do while they wait changes how often they choose you.
+        </p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th class="factor">What we check</th>
+            <th>What it does to the answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="factor">Plot area</td>
+            <td>
+              Whether the layout works at all — bays, room to queue, room to turn. Area does not
+              earn anything by itself, but too little of it rules the site out.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Parking bays</td>
+            <td>
+              Bays decide how many cars can charge at once, which sets the ceiling on what the site
+              can possibly earn. More bays also spread the fixed monthly costs across more capacity,
+              which pushes the breakeven point <em>down</em>.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Canopy feasibility</td>
+            <td>
+              Shade keeps drivers comfortable in an Indian summer, and a canopy is where rooftop
+              solar goes. Solar changes what you keep on every unit sold, which can move the verdict
+              on its own.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Amenities within walking distance</td>
+            <td>
+              Somewhere to sit, eat or shop. A mall holds a driver for forty-five minutes; a fuel
+              pump holds nobody. Longer comfortable waits mean fuller chargers.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Mobile network coverage</td>
+            <td>
+              Chargers authorise and take payment over the mobile network. Weak signal means failed
+              payments and a driver who does not come back.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Night lighting</td>
+            <td>
+              People will not stop alone at an unlit site after dark. Poor lighting quietly removes
+              the night hours from what your chargers can earn.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Land or lease cost</td>
+            <td>
+              Rent is a fixed monthly cost in exactly the same line as the demand charge — payable
+              in full in a month when nobody charges at all.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="group-band">
+        <p class="source">Group 5 · 3 checks · read from the competitor inventory, 10 km radius</p>
+        <h3>Who else is already charging nearby</h3>
+        <p style="font-size: 9.5pt; color: var(--muted)">
+          Demand is shared. Two stations in the same catchment do not each get the whole of it.
+        </p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th class="factor">What we check</th>
+            <th>What it does to the answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="factor">Competitor distance</td>
+            <td>
+              How far the nearest existing charger is. Under about 500 m counts against you; more
+              than about 2 km counts in your favour, because a driver will not detour past a working
+              charger to reach yours.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Competitor density at 3 / 5 / 10 km</td>
+            <td>
+              How many chargers already share your pool of drivers. Three or more within 3 km, or
+              five or more within 5 km, counts against the site — this is the single most common
+              reason we say <em>don’t build</em>.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Announced stations</td>
+            <td>
+              Stations announced but not yet built. A catchment that is clear today can be crowded
+              by the time yours is commissioned, and your payback is measured over years, not
+              months.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout caution">
+        <p>
+          <strong>One colour, one meaning.</strong> Anything we could not verify is marked in a
+          single colour used for nothing else in the entire document. If you see it, it means “we
+          could not confirm this” — never “look here, this is important”. A gap gets reported, never
+          quietly filled.
+        </p>
+      </div>
+    </section>
+
+    <!-- =============================================== 05 -->
+    <section class="page-break">
+      <div class="sec-head">
+        <span class="num">05</span>
+        <h2>Choosing who runs it — and why it changes the money</h2>
+      </div>
+
+      <p class="lede">
+        A site that clears the bar raises a second question, and it is not the same question. You
+        own the land and the electricity connection. Somebody else owns the charger, the app and
+        the customer. Which somebody makes a real difference to what you earn.
+      </p>
+
+      <h3>The station is not yours to run</h3>
+      <p>
+        A charging company — an operator — supplies the machine, installs it, keeps it working and
+        runs the app drivers use to find it and pay for it. You supply the ground and the power,
+        and take a share. So the operator you sign with decides two things at once: what share you
+        keep, and who can find you at all. Most drivers do not go looking for a charger. They open
+        one app, and they go where it sends them.
+      </p>
+
+      <h3>Why the same charger nearby can mean two different things</h3>
+      <p>
+        Picture two fuel pumps a kilometre apart. If they carry different brands, they compete for
+        the cars going past. If they carry the <em>same</em> brand, something else happens as well:
+        that brand’s own customers simply divide between them, and the second pump makes the first
+        one quieter. Nobody new arrived and nobody left. The same drivers were split in two.
+      </p>
+      <p>
+        Chargers work the same way. A charger a kilometre from you, run by company A, is
+        competition for everybody. But if <em>you</em> also sign with company A, it is competition
+        and a split — company A’s app now has two places to send the same drivers, and one of them
+        is yours. Sign with company B instead, and that neighbour goes back to being ordinary
+        competition.
+      </p>
+      <div class="callout">
+        <p>
+          <strong>So the same neighbour counts differently depending on who you sign with.</strong>
+          This is the part that gets missed. A location can look crowded and still be a good one —
+          for the right operator. It can look clear and still disappoint, if the operator you
+          picked already has three of its own machines around the corner.
+        </p>
+      </div>
+
+      <h3>The six things that decide the operator</h3>
+      <table>
+        <thead>
+          <tr>
+            <th class="factor">What we look at</th>
+            <th>What it does to your answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="factor">Their stations in your district</td>
+            <td>
+              How many drivers around you already have this company’s app on their phone. A company
+              with no presence near you has no local audience to send you, whatever its terms say.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Their stations in your state</td>
+            <td>
+              How far away the nearest engineer is when a charger stops working. A network with
+              three sites in the whole state cannot reach you quickly, and a charger that is down
+              earns nothing at all.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Their own stations close to you</td>
+            <td>
+              The split described above. Fewer is better. This is the one factor that can make the
+              biggest, best-known network the wrong choice for your particular plot.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Whether their chargers suit the vehicles near you</td>
+            <td>
+              A district full of electric two-wheelers and a network built for fast car charging is
+              a mismatch no revenue share repairs. We already count what is registered around you;
+              this checks it against what they install.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Whether their app connects to other apps</td>
+            <td>
+              Some networks let a driver using a rival’s app find and pay at their chargers. That
+              widens the audience for your plug, and it partly makes up for a company being small
+              in your area.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Their commercial terms</td>
+            <td>
+              Their share of each unit sold, any yearly platform fee, whether the machine is
+              included or bought by you, who pays for maintenance, and how many years you are tied
+              in. These decide how much of the money reaches you.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>How this reaches you</h3>
+      <p>
+        Part 06 of your report is the operator comparison. The whole calculation is run again, once
+        for each operator, using that operator’s own terms — so you see the same site with three
+        different answers rather than one average. The six things above sit in the same table,
+        beside the money, and are never mixed into a single score. Trading a better return against
+        better service is your decision, and one combined number would quietly make it for you.
+      </p>
+
+      <div class="callout caution">
+        <p>
+          <strong>What is counted today, and what is not.</strong> How many stations each company
+          runs near you, in your district and in your state, comes from our own inventory of
+          chargers — counted, not estimated. How reliably each company’s chargers actually work,
+          and how busy their nearby machines are, is something we are still building the means to
+          observe; until it runs, the report says so rather than guessing. Commercial terms are
+          never invented: where an operator has not given us its terms in writing, the table says
+          so and leaves the row empty.
+        </p>
+      </div>
+
+      <h3>The rule we hold ourselves to here</h3>
+      <p>
+        We are connected to a charging company ourselves, and we say so on the last page of every
+        report. In this comparison it is listed like any other, under the same rules — including
+        the split. If the nearest machine to your gate turns out to be one of ours, that counts
+        against us in our own document, in print, where you can see it. A comparison that could
+        never embarrass the people who wrote it is not a comparison.
+      </p>
+    </section>
+
+    <!-- =============================================== 06 -->
+    <section class="page-break">
+      <div class="sec-head">
+        <span class="num">06</span>
+        <h2>What you actually receive</h2>
+      </div>
+
+      <p class="lede">
+        One document per site, in the same twelve parts every time, whatever the verdict. It is
+        written to be read slowly and printed — plain language decides, statistics verify.
+      </p>
+      <p>
+        Two people read it, in this order: you, and then your accountant or your bank’s credit
+        officer. The order of the document follows that. You get the answer on the first page. The
+        working that satisfies a credit committee is further in, where it belongs.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th class="factor">Part</th>
+            <th>What is in it</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="factor">01 · The verdict</td>
+            <td>
+              One word, one sentence of reason, and a short paragraph saying what that word means
+              for your money. No statistics yet.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">02 · What this means for your money</td>
+            <td>
+              Capital required, how long to earn it back, the annual return set directly beside what
+              a fixed deposit pays on the same money, and the downside case.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">03 · How this site was judged</td>
+            <td>
+              The rules and thresholds — printed <em>before</em> any of your site’s data. This
+              placement is deliberate: a standard shown first visibly was not bent to fit the
+              conclusion.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">04 · The site</td>
+            <td>
+              Your plot from above and the area it draws from, then every factor from section 04 of
+              this guide with which way it pushes — favours, neutral, or against.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">05 · Financials</td>
+            <td>
+              Pessimistic, middle and optimistic cases, ten-year cashflow, what changes if you
+              charge two rupees more or less per unit, and the connection size we recommend.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">06 · Operator comparison</td>
+            <td>
+              The same site under each operator’s terms, ranked. Commercial terms and service
+              quality are shown side by side and never blended into one score — how you weigh them
+              is your call, not ours.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">07 · Competitors</td>
+            <td>Who else is charging near you, with measured distances rather than impressions.</td>
+          </tr>
+          <tr>
+            <td class="factor">08 · What would change this verdict</td>
+            <td>
+              Specific, checkable conditions and the level each would have to reach. This is the
+              part that lets you trust a <em>no</em>: it shows the answer depends on evidence, not
+              on our disposition.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">09 · Statistical basis</td>
+            <td>
+              The one chart — your estimated range drawn against the breakeven line on a single
+              scale. For your accountant.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">10 · Assumptions</td>
+            <td>
+              Every assumption we made, its value, where it came from, and whether it was verified.
+              You should be able to attack this report and find it already admits its weak points.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">11 · Provenance</td>
+            <td>
+              Which data, from which date, under which version of our method produced this exact
+              document — so a report can still defend itself three years later.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">12 · Disclosure</td>
+            <td>
+              How we earn, stated plainly in the document itself, with the share of sites we advise
+              against.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- =============================================== 07 -->
+    <section class="page-break">
+      <div class="sec-head">
+        <span class="num">07</span>
+        <h2>Why you can believe the answer</h2>
+      </div>
+
+      <p class="lede">
+        Trust is a design problem, not a promise. Every item below is a rule built into how the
+        assessment is produced — not an intention we hold.
+      </p>
+
+      <dl class="trust">
+        <div>
+          <dt>We do not benefit from a yes.</dt>
+          <dd>
+            We are not a charging operator. We own no stations, hold no stake in any operator or
+            charger manufacturer, and take no margin on hardware. The assessment fee is the same
+            whether the answer is build or don’t build.
+          </dd>
+        </div>
+        <div>
+          <dt>The cautious case decides, not the hopeful one.</dt>
+          <dd>
+            The verdict is read off the pessimistic end of the estimated range. A site that only
+            works if everything goes right is told it is a bet, in those words.
+          </dd>
+        </div>
+        <div>
+          <dt>Ranges, never single numbers.</dt>
+          <dd>
+            Any figure that depends on the future is given as a range. A single number would claim a
+            precision nobody has earned, and precision is exactly what makes a wrong forecast
+            convincing.
+          </dd>
+        </div>
+        <div>
+          <dt>The rules are printed before your data.</dt>
+          <dd>
+            Part 03 of the report states the thresholds ahead of part 04's facts. A standard shown
+            after the evidence can never prove it was not fitted to it.
+          </dd>
+        </div>
+        <div>
+          <dt>Every factor is shown, including the ones in your favour.</dt>
+          <dd>
+            All 34 appear with the direction they push. Reporting only what supports the conclusion
+            is how an advisory quietly becomes a sales funnel. And each direction is a symbol
+            <em>and</em> a word, so the document still reads correctly when it is photocopied in
+            black and white for a bank file.
+          </dd>
+        </div>
+        <div>
+          <dt>Not knowing something makes the answer less certain, never more convenient.</dt>
+          <dd>
+            A missing input widens the estimated range. It is never filled with a helpful assumption
+            that happens to flatter the site — and it is marked so you can see it was missing.
+          </dd>
+        </div>
+        <div>
+          <dt>No computer picks the money.</dt>
+          <dd>
+            The one thing we model is how many units a charger would sell in a day. Every rupee —
+            payback, return, cashflow — comes from fixed arithmetic applied to that. This is what
+            makes a wrong number traceable: it is a bad electricity tariff or a bad map pin, and it
+            can be found and named, not shrugged at as “the model”.
+          </dd>
+        </div>
+        <div>
+          <dt>What would change the verdict is written down.</dt>
+          <dd>
+            With the level each condition would have to reach. If a fleet contract or a lower
+            connection size would flip a <em>no</em> into a <em>yes</em>, the report says so instead
+            of leaving you to wonder.
+          </dd>
+        </div>
+        <div>
+          <dt>Your report is frozen the day it is made.</dt>
+          <dd>
+            It is stored exactly as generated and shown back to you unchanged, forever. It is never
+            quietly recalculated against later data. What you were told is what you can still point
+            at.
+          </dd>
+        </div>
+        <div>
+          <dt>The conflict is stated inside the document.</dt>
+          <dd>
+            We do earn a fee when a site goes ahead with a partner operator. That is written into
+            the report itself, beside the share of sites we advised against — because a reader who
+            can see the incentive and the record together can judge for themselves.
+          </dd>
+        </div>
+        <div>
+          <dt>We publish how often we say no.</dt>
+          <dd>
+            An advisor who says build almost every time is a sales channel, and the number makes
+            that visible to everyone. Publishing it is what stops us from becoming one.
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- =============================================== 08 -->
+    <section class="page-break">
+      <div class="sec-head">
+        <span class="num">08</span>
+        <h2>What we do not claim</h2>
+      </div>
+
+      <p class="lede">
+        A list of our own limits belongs in the same document as our conclusions. These are things a
+        confident advisor could easily pretend to know.
+      </p>
+
+      <ul class="plain">
+        <li>
+          <strong>Which side of a divided road you are on.</strong> Being on the wrong side can lose
+          roughly half your passing traffic, and matching the two carriageways properly is work we
+          have not done yet. Where it matters, the report says the question is open rather than
+          guessing an answer.
+        </li>
+        <li>
+          <strong>How long it actually takes to drive to you.</strong> We measure distance on a map,
+          not driving time through real traffic.
+        </li>
+        <li>
+          <strong>How busy the chargers near you really are.</strong> We know where they are and how
+          powerful they are. How full they run is something only long-term measurement can tell, and
+          we are building that record now — we are not claiming it before it exists.
+        </li>
+        <li>
+          <strong>A real traffic count, everywhere.</strong> There is no free national source of
+          traffic counts in India. Where we do not have one, we reason from road class, junctions
+          and nearby destinations, and we say that is what we did.
+        </li>
+        <li>
+          <strong>Every state, equally.</strong> Coverage is built state by state, because each
+          one’s electricity tariff orders have to be read and typed in by a person. Outside a
+          covered state we tell you so and add your location to the queue rather than produce a
+          report we cannot stand behind. The queue is genuinely how we choose what to cover next.
+        </li>
+        <li>
+          <strong>A single “site score” out of 100.</strong> We deliberately do not produce one. It
+          would be easy to market and impossible to defend, and it would hide exactly the
+          disagreements between factors that you most need to see.
+        </li>
+      </ul>
+
+      <div class="callout">
+        <p>
+          <strong>About the numbers on our own website.</strong> Some figures we would like to
+          publish about ourselves — how many sites we have assessed, what share we advised against,
+          how often our estimates proved right — are shown in square brackets until our own records
+          can back them. A bracket means “we do not have this yet”, and removing one is a decision a
+          person makes with evidence in hand. We would rather show you a visible gap than a
+          confident number nobody checked.
+        </p>
+      </div>
+    </section>
+
+    <!-- =============================================== 09 -->
+    <section>
+      <div class="sec-head">
+        <span class="num">09</span>
+        <h2>The words we use</h2>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th class="factor">Word</th>
+            <th>In plain English</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="factor">Operator</td>
+            <td>
+              The company that supplies the charger, installs it, runs the software behind it and
+              fixes it when it breaks. You are not one; we are not one either.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Roaming</td>
+            <td>
+              An arrangement that lets a driver using one company’s app charge at another
+              company’s machine. It widens the pool of drivers who can use your plug.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Unit / kWh</td>
+            <td>
+              What you buy electricity in and sell charging in. It is the same “unit” that is on
+              your house bill.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">kVA, and why it is not kW</td>
+            <td>
+              kW is how fast a charger delivers power. kVA is the size of connection the electricity
+              board bills you for — and it is bigger than the kW figure. A 60 kW charger needs about
+              67 kVA. Confusing the two is how a business plan ends up short by lakhs a year.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Utilisation</td>
+            <td>
+              The share of the time your chargers are actually being paid for, out of all the time
+              they could be.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Breakeven utilisation</td>
+            <td>
+              How busy they need to be before the site stops losing money. The number this whole
+              product is built around.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Pessimistic / middle / optimistic</td>
+            <td>
+              Our three cases. Roughly: it goes worse than expected, it goes as expected, it goes
+              better. The verdict reads the first one.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Payback period</td>
+            <td>
+              How many years until the money you put in has come back out. Not the same as profit —
+              it ignores what happens after.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Demand charge</td>
+            <td>
+              A monthly electricity bill based on your connection size, not on what you use. You pay
+              it in a month when nobody charges at all.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Dwell</td>
+            <td>
+              How long a driver is comfortably held at a place. A mall holds a driver; a fuel pump
+              does not.
+            </td>
+          </tr>
+          <tr>
+            <td class="factor">Fleet anchor</td>
+            <td>
+              A contract with a fleet that guarantees a minimum amount of charging. The strongest
+              single thing that can turn an uncertain site into a safe one.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Where to start</h3>
+      <p>
+        Drop a pin on the location. The breakeven number comes back in about half a minute, it costs
+        nothing, and it is the honest half of the answer — the half that is arithmetic. If the
+        number looks reachable, the full assessment tells you whether you would actually reach it.
+        If it does not, you have saved yourself a great deal of money and a year of your life, and
+        that was worth half a minute.
+      </p>
+
+      <footer class="doc">
+        <span>Chargeworthy · Right site. Right operator.</span>
+        <span>Every uncertain figure is a range.</span>
+      </footer>
+    </section>
+  </body>
+</html>
