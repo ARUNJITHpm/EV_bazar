@@ -15,8 +15,15 @@ WORKDIR /build
 # it is a public client token, restricted by URL in the Mapbox console). If
 # it is absent the build still succeeds; the public maps render an empty
 # panel and the rest of the page works. See design/MAPBOX.md.
+# The public site origin, also from Space VARIABLES (both are
+# https://talk-to-nitara.hf.space on the Space). PUBLIC_ANALYTICS_ORIGIN
+# writes the sitemap and canonical URLs; VITE_ANALYTICS_SITE_ORIGIN is what
+# the data social images print and what makes their og:image absolute.
+# Unset, the build still succeeds and labels the images "Local preview".
 ARG PUBLIC_ANALYTICS_ORIGIN=""
 ENV PUBLIC_ANALYTICS_ORIGIN=$PUBLIC_ANALYTICS_ORIGIN
+ARG VITE_ANALYTICS_SITE_ORIGIN=""
+ENV VITE_ANALYTICS_SITE_ORIGIN=$VITE_ANALYTICS_SITE_ORIGIN
 ARG VITE_MAPBOX_TOKEN=""
 ENV VITE_MAPBOX_TOKEN=$VITE_MAPBOX_TOKEN
 COPY frontend/package.json frontend/package-lock.json ./
