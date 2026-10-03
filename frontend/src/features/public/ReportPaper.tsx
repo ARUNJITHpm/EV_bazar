@@ -10,6 +10,7 @@
  * update by hand (the link below it always shows the live document).
  */
 
+import { CwMark } from "./CwMark";
 import { Wordmark } from "./Wordmark";
 
 const FIGURES: [string, string][] = [
@@ -26,7 +27,10 @@ export function ReportPaper({ compact = false }: { compact?: boolean }) {
       }`}
     >
       <div className="flex items-baseline justify-between gap-4 border-b-[3px] border-cw-ink pb-3">
-        <Wordmark className="text-[18px] text-cw-paper-slate" />
+        <span className="inline-flex items-center gap-2 self-center">
+          <CwMark className="size-[20px]" />
+          <Wordmark className="text-[18px] text-cw-paper-slate" />
+        </span>
         <span className="font-cw-mono text-[13px] text-cw-paper-muted">KL-TVM-DEMO-001</span>
       </div>
       <div className={compact ? "text-[20px]" : "text-[25px]"}>

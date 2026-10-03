@@ -1,3 +1,4 @@
+import { CwMark } from "../public/CwMark";
 import { Wordmark } from "../public/Wordmark";
 
 /**
@@ -40,7 +41,10 @@ export function ReportSkeleton({ line }: { line?: string }) {
       className="mx-auto max-w-[960px] bg-cw-paper px-[clamp(24px,6vw,64px)] pt-[clamp(20px,3vw,32px)] pb-14 font-cw-serif text-cw-ink"
     >
       <div className="flex items-baseline justify-between gap-6 border-b border-cw-ink pb-2.5">
-        <Wordmark className="text-[19px] text-cw-paper-slate" />
+        <span className="inline-flex items-center gap-2.5 self-center">
+          <CwMark className="size-[22px]" />
+          <Wordmark className="text-[19px] text-cw-paper-slate" />
+        </span>
         <span className="font-cw-mono text-[13px] text-cw-paper-muted">
           Fetching the stored report…
         </span>
