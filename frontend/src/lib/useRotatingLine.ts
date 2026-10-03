@@ -21,27 +21,42 @@ export function dayPartIst(now: Date): DayPart {
   return "night";
 }
 
+/** Today's date in IST as "YYYY-MM-DD" - comparable as a plain string. */
+export function dateIst(now: Date): string {
+  // en-CA formats as YYYY-MM-DD.
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(now);
+}
+
 /**
- * The lines for this viewer, in show order: their state's line first (the
- * one that lands), then the time-of-day line, then the general ones shuffled.
- * Lines tagged for another state or another part of the day are dropped.
+ * The lines for this viewer, in show order: a festival on today, then their
+ * state's line (the one that lands), then the time-of-day line, then the
+ * general ones shuffled. Anything tagged for another state, another part of
+ * the day, or outside its festival window is dropped.
  */
 export function pickLines(
   lines: readonly LoadingLine[],
   stateName: string | null | undefined,
-  part: DayPart,
+  now: Date,
   random: () => number = Math.random,
 ): string[] {
   const state = stateName?.trim().toUpperCase() ?? null;
-  const regional = lines.filter((l) => l.states && state && l.states.includes(state));
-  const timely = lines.filter((l) => !l.states && l.when === part);
-  const general = lines.filter((l) => !l.states && !l.when);
+  const part = dayPartIst(now);
+  const today = dateIst(now);
+  const eligible = lines.filter(
+    (l) =>
+      (!l.states || (state !== null && l.states.includes(state))) &&
+      (!l.between || (l.between[0] <= today && today <= l.between[1])),
+  );
+  const festive = eligible.filter((l) => l.between);
+  const regional = eligible.filter((l) => !l.between && l.states);
+  const timely = eligible.filter((l) => !l.between && !l.states && l.when === part);
+  const general = eligible.filter((l) => !l.between && !l.states && !l.when);
   const shuffled = [...general];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
   }
-  return [...regional, ...timely, ...shuffled].map((l) => l.text);
+  return [...festive, ...regional, ...timely, ...shuffled].map((l) => l.text);
 }
 
 /**
@@ -57,10 +72,7 @@ export function useRotatingLine({
   running: boolean;
   reducedMotion: boolean;
 }): string | undefined {
-  const lines = useMemo(
-    () => pickLines(LOADING_LINES, stateName, dayPartIst(new Date())),
-    [stateName],
-  );
+  const lines = useMemo(() => pickLines(LOADING_LINES, stateName, new Date()), [stateName]);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {

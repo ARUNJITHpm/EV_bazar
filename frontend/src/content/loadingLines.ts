@@ -10,6 +10,10 @@
  *  - No utility or discom names: a state is rarely served by one, and a wrong
  *    one is a factual error, not a joke.
  *  - Regional lines need a native speaker's sign-off before they ship.
+ *  - Festival lines carry explicit IST date bounds, entered year by year:
+ *    the festivals follow lunar calendars, so a rule like "first Sunday of
+ *    November" would be wrong more often than right. A festival with no
+ *    window for the coming year simply stops showing - add the next one.
  */
 
 export type DayPart = "night" | "morning" | "afternoon" | "evening";
@@ -20,6 +24,8 @@ export interface LoadingLine {
   when?: DayPart;
   /** Only shown when the site is in this state - LGD name, upper case. */
   states?: readonly string[];
+  /** Only shown between these IST dates, inclusive - "YYYY-MM-DD". */
+  between?: readonly [string, string];
 }
 
 export const LOADING_LINES: readonly LoadingLine[] = [
@@ -64,5 +70,24 @@ export const LOADING_LINES: readonly LoadingLine[] = [
       "UTTARAKHAND",
       "HIMACHAL PRADESH",
     ],
+  },
+
+  // Festivals - windows checked against published calendars on 2026-10-03.
+  // Diwali: Sunday 8 Nov 2026.
+  {
+    text: "Happy Diwali. May your site light up for the right reasons.",
+    between: ["2026-11-05", "2026-11-10"],
+  },
+  // Pongal: 14-17 Jan 2027, Thai Pongal on the 15th.
+  {
+    text: "Pongalo Pongal! Checking your site between helpings of sakkarai pongal.",
+    states: ["TAMIL NADU", "PUDUCHERRY"],
+    between: ["2027-01-13", "2027-01-17"],
+  },
+  // Onam: Thiruvonam 12 Sep 2027, Atham about ten days earlier.
+  {
+    text: "Onashamsakal! Your site is being read while the sadya waits.",
+    states: ["KERALA"],
+    between: ["2027-09-02", "2027-09-13"],
   },
 ];

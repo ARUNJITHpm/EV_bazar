@@ -130,6 +130,31 @@ export function Card({ title, children }: { title?: string; children: ReactNode 
   );
 }
 
+/**
+ * The shape of a page while its data loads: cards of soft bars where the
+ * content will land, so the page does not jump when it arrives. Carries no
+ * figure of any kind - a placeholder that looked like a number would be read
+ * as one. Screen readers hear the label, not the bars.
+ */
+export function LoadingCards({ label, cards = 2 }: { label: string; cards?: number }) {
+  return (
+    <div role="status" className="flex flex-col gap-6">
+      <span className="sr-only">{label}</span>
+      {Array.from({ length: cards }, (_, i) => (
+        <div
+          key={i}
+          aria-hidden="true"
+          className="flex flex-col gap-3 border border-cw-line bg-cw-surface p-6 text-cw-text sm:p-8"
+        >
+          <div className="cw-shimmer h-3.5 w-[28%]" />
+          <div className="cw-shimmer h-7 w-[52%]" />
+          <div className="cw-shimmer h-3.5 w-[68%]" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function Field({
   id,
   label,

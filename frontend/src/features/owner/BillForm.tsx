@@ -21,6 +21,11 @@ export function BillImage({ id, type }: { id: string | null; type: string | null
   const src = `/api/internal/owner/bill-images/${id}`;
   return (
     <div className="flex flex-col gap-3 border border-cw-line bg-cw-surface p-4">
+      {/* "Saved", never "read": nothing is extracted from the file in this
+          version, and the owner types every figure (see BillUpload). */}
+      <p className="cw-rise m-0 text-[15px] text-cw-text">
+        Bill saved. That&apos;s the hardest part done. Check the figures against it.
+      </p>
       {type === "application/pdf" ? (
         <object
           data={src}

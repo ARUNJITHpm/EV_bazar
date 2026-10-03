@@ -106,3 +106,33 @@ export function toBody(pin: { lat: number; lng: number }, a: Answers): AssessIn 
     intent: a.intent && a.intent !== "skip" ? intents[a.intent] : null,
   };
 }
+
+export interface ResumePoint {
+  /** Where to pick the flow back up. */
+  to: string;
+  /** The district it resolved to, else what the customer searched for. */
+  place: string | null;
+  /** The button's words - an answer to see again, or questions to finish. */
+  action: string;
+}
+
+/**
+ * Where a returning visitor left off, from the stored flow state - or null
+ * when there is nothing worth offering. The state lives in sessionStorage,
+ * so this greets someone who wandered off within the same tab session; it
+ * does not follow anyone across days or devices.
+ */
+export function resumePoint(state: FlowState): ResumePoint | null {
+  if (!state.pin) return null;
+  const place = state.result?.district ?? state.confirmed?.district ?? state.location?.name ?? null;
+  if (state.result) return { to: "/assess/result", place, action: "See your answer again" };
+  const a = state.answers;
+  const to = a.space
+    ? "/assess/intent"
+    : a.transformerNear
+      ? "/assess/land"
+      : state.confirmed
+        ? "/assess/transformer"
+        : "/assess/locate";
+  return { to, place, action: "Pick up where you left off" };
+}

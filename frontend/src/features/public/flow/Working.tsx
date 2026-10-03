@@ -58,6 +58,10 @@ function makeSchedule(): number[] {
   return steps.map((s) => (acc += (s / sum) * TARGET_MS));
 }
 
+/** The tab title once the answer is ready. Also how the restore below knows
+ *  no later screen has set a title of its own since. */
+const READY_TITLE = "✓ Your answer is ready · Chargeworthy";
+
 const reduced = () =>
   typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
@@ -196,6 +200,36 @@ export function Working({
     return () => clearTimeout(t);
   }, [settled, done]);
 
+  const finished = done >= TOTAL && settled;
+
+  // The tab title carries the progress, for the customer who switched tabs
+  // during the wait - and says "ready" when it is.
+  useEffect(() => {
+    document.title = failed
+      ? "Check interrupted · Chargeworthy"
+      : finished
+        ? READY_TITLE
+        : `Checking your site · ${done}/${TOTAL}`;
+  }, [done, finished, failed]);
+  // Read during the first render, before the effect above has overwritten it.
+  const priorTitle = useRef(document.title);
+  useEffect(() => {
+    const prior = priorTitle.current;
+    return () => {
+      // Still hidden as we hand over to the result: leave "ready" showing
+      // until they come back, which is the point of it.
+      const restore = () => {
+        if (document.hidden) return;
+        document.removeEventListener("visibilitychange", restore);
+        if (document.title === READY_TITLE || document.title.startsWith("Check")) {
+          document.title = prior;
+        }
+      };
+      if (document.hidden) document.addEventListener("visibilitychange", restore);
+      else restore();
+    };
+  }, []);
+
   if (failed) {
     return (
       <div className="flex max-w-[720px] flex-col gap-6">
@@ -219,7 +253,7 @@ export function Working({
     );
   }
 
-  const finished = done >= TOTAL && settled;
+  const district = out?.district?.trim();
 
   return (
     <div className="flex max-w-[1140px] flex-col gap-[clamp(28px,4vw,40px)]">
@@ -228,7 +262,9 @@ export function Working({
           <h1 className="text-[clamp(32px,4.6vw,50px)] leading-[1.15] font-medium">
             {finished
               ? "Checklist reviewed. Preparing your answer."
-              : `Reviewing ${TOTAL} assessment questions.`}
+              : district
+                ? `Reviewing ${TOTAL} assessment questions for ${district}.`
+                : `Reviewing ${TOTAL} assessment questions.`}
           </h1>
           <p className="text-cw-muted">
             This takes about fifteen seconds. The checklist below is a walkthrough; bracketed values

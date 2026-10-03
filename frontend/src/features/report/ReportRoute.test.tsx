@@ -47,3 +47,13 @@ it("shows a recoverable failure and disables printing until the report loads", a
     ).toBe(true),
   );
 });
+
+it("shares the report's address on WhatsApp and nothing else - no verdict, no figure", async () => {
+  const { whatsappShareUrl } = await import("./ReportRoute");
+  const href = whatsappShareUrl("https://example.test", "abc 1", "Kozhikode plot", false);
+  const text = new URL(href).searchParams.get("text");
+  expect(href.startsWith("https://wa.me/?text=")).toBe(true);
+  expect(text).toBe(
+    "My Chargeworthy site report for Kozhikode plot: https://example.test/report/abc%201",
+  );
+});

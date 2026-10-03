@@ -4,7 +4,22 @@ import { useParams } from "react-router-dom";
 
 import { Report } from "./Report";
 import { fetchReport } from "./payload";
+import { useRotatingLine } from "../../lib/useRotatingLine";
+import { ReportSkeleton } from "./ReportSkeleton";
 import { PublicHeader } from "../public/PublicHeader";
+
+/**
+ * A WhatsApp link carrying the report's address and nothing else: no
+ * verdict, no figure. A report forwarded to a lender or a relative should
+ * be read whole, in its own pages, not judged from a chat preview.
+ */
+export function whatsappShareUrl(origin: string, id: string, siteName: string, demo: boolean) {
+  const url = `${origin}/report/${encodeURIComponent(id)}`;
+  const text = demo
+    ? `A sample Chargeworthy site report: ${url}`
+    : `My Chargeworthy site report for ${siteName}: ${url}`;
+  return `https://wa.me/?text=${encodeURIComponent(text)}`;
+}
 
 /**
  * `/report/:id` — fetch the stored payload and render it on paper. The
@@ -24,6 +39,16 @@ export function ReportRoute({ reportId }: { reportId?: string }) {
     queryFn: () => fetchReport(id),
     staleTime: Infinity,
     retry: false,
+  });
+
+  // The state is in the payload we are still waiting for, so only the
+  // time-of-day and general lines apply here.
+  const line = useRotatingLine({
+    stateName: null,
+    running: q.isPending,
+    reducedMotion:
+      typeof window !== "undefined" &&
+      Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches),
   });
 
   useEffect(() => {
@@ -52,17 +77,20 @@ export function ReportRoute({ reportId }: { reportId?: string }) {
         >
           Print or save as PDF
         </button>
+        {q.data && (
+          <a
+            href={whatsappShareUrl(window.location.origin, id, q.data.site.name, q.data.demo)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-[44px] items-center transition-colors duration-200 hover:text-cw-text"
+          >
+            Share on WhatsApp
+          </a>
+        )}
       </PublicHeader>
 
       <main id="report-content">
-        {q.isPending && (
-          <div
-            role="status"
-            className="mx-auto max-w-[960px] bg-cw-paper px-[clamp(24px,6vw,64px)] py-14 font-cw-mono text-[13px] text-cw-paper-muted"
-          >
-            Fetching the stored report…
-          </div>
-        )}
+        {q.isPending && <ReportSkeleton line={line} />}
         {q.isError && (
           <div className="mx-auto max-w-[960px] bg-cw-paper px-[clamp(24px,6vw,64px)] py-14 font-cw-serif text-[17px]">
             <p

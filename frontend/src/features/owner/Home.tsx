@@ -20,7 +20,16 @@ import {
   type PortfolioRow,
   type StationHome,
 } from "./state";
-import { Card, ONE, Shell, WHOLE, primaryCls, secondaryCls, useRequireOwner } from "./ui";
+import {
+  Card,
+  LoadingCards,
+  ONE,
+  Shell,
+  WHOLE,
+  primaryCls,
+  secondaryCls,
+  useRequireOwner,
+} from "./ui";
 
 const kwhText = (v: number) => `${WHOLE.format(v)} kWh`;
 const range = (lo: number, hi: number) =>
@@ -364,7 +373,7 @@ export function OwnerHome() {
       <div className="flex max-w-[1000px] flex-col gap-8">
         <h1 className="text-[clamp(30px,4.6vw,48px)] leading-tight font-medium">Your stations</h1>
         {me.isPending || stations.isPending ? (
-          <p className="text-cw-muted">Loading…</p>
+          <LoadingCards label="Loading your stations…" />
         ) : rows && rows.length > 1 ? (
           <>
             <Card>
@@ -402,7 +411,7 @@ export function StationPage() {
     <Shell>
       <div className="flex max-w-[1100px] flex-col gap-8">
         {home.isPending ? (
-          <p className="text-cw-muted">Loading…</p>
+          <LoadingCards label="Loading your station…" cards={3} />
         ) : !h ? (
           <p role="alert" className="text-cw-negative">
             We could not open that station.{" "}

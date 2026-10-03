@@ -357,10 +357,33 @@
   transform-origin: center;
 }
 
+/* A placeholder bar while content loads. Tinted from whatever text colour
+ * it sits in, so the same class works on the paper and on the dark ground. */
+@keyframes cw-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+.cw-shimmer {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, currentColor 8%, transparent) 30%,
+    color-mix(in srgb, currentColor 16%, transparent) 50%,
+    color-mix(in srgb, currentColor 8%, transparent) 70%
+  );
+  background-size: 300% 100%;
+  animation: cw-shimmer 1.6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cw-rise,
   .cw-tick,
-  .cw-reading {
+  .cw-reading,
+  .cw-shimmer {
     animation: none;
   }
 }

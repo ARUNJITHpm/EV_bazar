@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { loadState, placeName, saveState, toBody } from "./state";
+import { loadState, placeName, resumePoint, saveState, toBody, type AssessOut } from "./state";
 
 const PIN = { lat: 8.5695, lng: 76.873 };
 
@@ -52,5 +52,40 @@ describe("session persistence", () => {
 
     sessionStorage.setItem("cw.assessment", "{not json");
     expect(loadState()).toEqual({ answers: {} });
+  });
+});
+
+describe("resumePoint", () => {
+  const pin = { lat: 11.25, lng: 75.78 };
+  const out = { district: "Kozhikode" } as AssessOut;
+
+  it("offers nothing to a first-time visitor", () => {
+    expect(resumePoint({ answers: {} })).toBeNull();
+  });
+
+  it("sends a finished visitor back to their answer, named by district", () => {
+    expect(resumePoint({ pin, answers: {}, confirmed: out, result: out })).toEqual({
+      to: "/assess/result",
+      place: "Kozhikode",
+      action: "See your answer again",
+    });
+  });
+
+  it("resumes at the first unanswered question", () => {
+    expect(resumePoint({ pin, answers: {}, confirmed: out })?.to).toBe("/assess/transformer");
+    expect(resumePoint({ pin, answers: { transformerNear: "skip" }, confirmed: out })?.to).toBe(
+      "/assess/land",
+    );
+    expect(resumePoint({ pin, answers: { space: "small" }, confirmed: out })?.to).toBe(
+      "/assess/intent",
+    );
+  });
+
+  it("falls back to the searched name before a district is known", () => {
+    const location = { lat: 1, lng: 2, name: "Beach Road", area: false };
+    expect(resumePoint({ pin, location, answers: {} })).toMatchObject({
+      to: "/assess/locate",
+      place: "Beach Road",
+    });
   });
 });

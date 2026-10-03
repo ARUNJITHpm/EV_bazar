@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { GROUPS, OPERATOR_GROUPS } from "../animation/data";
@@ -7,6 +7,7 @@ import { PublicHeader } from "./PublicHeader";
 import { HeroJourney } from "./HeroJourney";
 import { LocationSearch } from "./LocationSearch";
 import { ReportPaper } from "./ReportPaper";
+import { loadState, resumePoint } from "./flow/state";
 
 const PAGE = "public-container";
 const SECTION = `${PAGE} py-12 sm:py-16`;
@@ -16,6 +17,9 @@ const LINK =
 /** A short customer introduction; detailed evidence stays in the report and optional checks. */
 export function Landing() {
   const navigate = useNavigate();
+  // Read once: the banner greets whoever arrived, and must not flicker away
+  // while they read it.
+  const [resume] = useState(() => resumePoint(loadState()));
   useEffect(() => {
     document.title = "Chargeworthy — is your land suitable for EV charging?";
   }, []);
@@ -40,6 +44,17 @@ export function Landing() {
                 We assess your location, compare costs and possible returns, and help you compare
                 charging operators.
               </p>
+              {resume && (
+                <div className="cw-rise mt-6 flex max-w-[760px] flex-wrap items-center justify-between gap-x-6 gap-y-2 border border-cw-line bg-cw-surface px-5 py-3">
+                  <p className="m-0">
+                    Welcome back. Your site{resume.place ? ` in ${resume.place}` : ""} is where you
+                    left it.
+                  </p>
+                  <Link to={resume.to} className={`${LINK} font-semibold text-cw-text`}>
+                    {resume.action}
+                  </Link>
+                </div>
+              )}
               <div className="mt-7 max-w-[760px]">
                 <LocationSearch
                   id="home-location"
