@@ -125,3 +125,21 @@ def test_a_step_with_only_markers_fails_before_any_ingest(tmp_path, monkeypatch)
         },
     }
     assert not any("scripts.ingest_vahan" in c for c in calls)
+
+
+def test_cea_job_is_weekly_and_counts_stored_reports(tmp_path, monkeypatch):
+    assert due_period("cea_ev_weekly", utc("2026-10-03T12:00:00")) == "2026-09-27"
+
+    def run(command, *, timeout, environment, output):
+        assert "scripts.fetch_cea_ev" in command and "--write" in command
+        output.write(
+            b"March 2026 ...\n  already stored - skipped\nDecember 2025 ...\n  stored 206 rows\n"
+        )
+        return 0
+
+    monkeypatch.setattr(refresh, "run_command", run)
+    assert refresh.execute_job("cea_ev_weekly", tmp_path) == {
+        "outcome": "success",
+        "stored_reports": 1,
+        "already_stored": 1,
+    }

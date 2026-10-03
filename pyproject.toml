@@ -22,6 +22,7 @@ dependencies = [
   "lightgbm",             # Part 8 only
   "apscheduler",          # poller scheduling
   "pyarrow>=25.0.1",
+  "pypdf>=5",
 ]
 
 # Browser scraper for the VAHAN dashboard (PLAN 4.1). Heavy and only needed to

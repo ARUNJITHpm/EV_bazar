@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from app.models.api_usage import BILLABLE_STATUSES, ApiUsageEvent, UsageStatus
 from app.models.base import Base
+from app.models.cea import CeaEvConsumption
 from app.models.charger_status import (
     ChargerStatusEvent,
     ConnectorState,
@@ -63,6 +64,7 @@ __all__ = [
     "BILLABLE_STATUSES",
     "ApiUsageEvent",
     "Base",
+    "CeaEvConsumption",
     "Charger",
     "ChargerListing",
     "ChargerStatusEvent",

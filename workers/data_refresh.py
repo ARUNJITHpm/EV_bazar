@@ -1,6 +1,8 @@
 """Weekly inventory on HF; persistent catch-up, one job at a time, durable ZIPs.
 
-Weekly: Sunday 03:00 IST. Optional VAHAN monthly: day 1, 04:00 IST.
+Weekly: Sunday 03:00 IST - station inventory, and CEA's EV charging
+electricity report (published irregularly, 2-5 months late, so checked weekly;
+off with CEA_EV_ENABLED=false). Optional VAHAN monthly: day 1, 04:00 IST.
 Free Spaces sleep; GitHub's weekly wake-up workflow wakes the web container.
 """
 
@@ -213,10 +215,41 @@ def execute_vahan(job: str, directory: Path, environment: dict[str, str]) -> dic
     return {"outcome": "success", "steps": steps}
 
 
+def execute_cea(directory: Path, environment: dict[str, str]) -> dict[str, Any]:
+    """Store any CEA report not already stored; the PDFs go into the archive.
+
+    "Nothing new" is a success: the listing usually still shows last month's
+    report, which the store recognises by its sha256 and skips.
+    """
+    command = [
+        sys.executable,
+        "-m",
+        "scripts.fetch_cea_ev",
+        "--write",
+        "--out",
+        str(directory / "cea"),
+    ]
+    with (directory / "run.log").open("wb") as output:
+        try:
+            returncode = run_command(command, timeout=900, environment=environment, output=output)
+        except subprocess.TimeoutExpired:
+            return {"outcome": "failed", "reason": "timeout"}
+    log_text = (directory / "run.log").read_text(encoding="utf-8", errors="replace")
+    if returncode != 0:
+        return {"outcome": "failed", "returncode": returncode}
+    return {
+        "outcome": "success",
+        "stored_reports": log_text.count("  stored "),
+        "already_stored": log_text.count("already stored"),
+    }
+
+
 def execute_job(job: str, directory: Path) -> dict[str, Any]:
     environment = {**os.environ, "VAHAN_HEADLESS": "true"}
     if job.startswith("vahan"):
         return execute_vahan(job, directory, environment)
+    if job == "cea_ev_weekly":
+        return execute_cea(directory, environment)
     command = [
         sys.executable,
         "-m",
@@ -340,6 +373,8 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
     while True:
         jobs = ["stations_weekly"]
+        if os.getenv("CEA_EV_ENABLED", "true").lower() == "true":
+            jobs.append("cea_ev_weekly")
         if os.getenv("VAHAN_SERVER_SMOKE", "false").lower() == "true":
             jobs.append("vahan_smoke")
         if os.getenv("VAHAN_SERVER_ENABLED", "false").lower() == "true":
