@@ -5,7 +5,7 @@ export function pngWithProvenance(png: Uint8Array, svg: string): Uint8Array {
   const metadata = /<metadata>([\s\S]*?)<\/metadata>/.exec(svg)?.[1];
   if (!metadata) throw new Error("Image provenance is missing");
   const json = metadata
-    .replaceAll("&quot;", '\"')
+    .replaceAll("&quot;", '"')
     .replaceAll("&gt;", ">")
     .replaceAll("&lt;", "<")
     .replaceAll("&amp;", "&");

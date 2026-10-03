@@ -181,7 +181,7 @@ def test_an_expired_session_is_rejected() -> None:
 
 def test_every_console_endpoint_refuses_without_a_session(client: TestClient) -> None:
     """Walks the schema, so a panel added later is covered automatically."""
-    schema = client.get("/openapi.json").json()
+    schema = client.get("/api/openapi.json").json()
     checked = 0
 
     for path, operations in schema["paths"].items():

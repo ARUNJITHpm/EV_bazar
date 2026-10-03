@@ -74,6 +74,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck --prefix frontend
 
+      - name: Lint
+        run: npm run lint --prefix frontend
+
       - name: Format check
         run: npm run format:check --prefix frontend
 

@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { formatRupees, formatRupeesCompact, formatRupeesPrecise, rupeesToPaise } from "./money";
 
-//   is the non-breaking space Intl inserts after the currency symbol.
-const nb = (s: string) => s.replace(/ /g, " ");
+// \u00a0 is the non-breaking space Intl inserts after the currency symbol.
+const nb = (s: string) => s.replace(/\u00a0/g, " ");
 
 describe("paise -> rupees", () => {
   it("uses Indian digit grouping, not thousands", () => {

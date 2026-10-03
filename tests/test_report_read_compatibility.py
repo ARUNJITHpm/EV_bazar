@@ -11,6 +11,9 @@ pytest_plugins = ("tests.test_report_pipeline",)
 
 def test_stored_report_with_null_operator_irr_is_returned_verbatim(monkeypatch, session):
     payload = _assemble(session).model_dump(exclude_defaults=True)
+    # An old stored report: written before reports carried generated_at. The
+    # read path must not add it - it returns what was stored, nothing more.
+    payload.pop("generated_at", None)
     for operator in payload["cpo"]:
         operator["irr_p50_pct"] = None
     monkeypatch.setattr(reports, "get_payload", lambda session, report_id: payload)

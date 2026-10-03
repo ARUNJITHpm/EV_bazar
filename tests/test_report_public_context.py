@@ -189,7 +189,7 @@ def test_snapshot_source_dates_and_six_report_stamps_are_carried(session):
     assert stamps["public reference snapshot SHA256"] == "a" * 64
     assert stamps["OSM power source SHA256"] == "b" * 64
     assert "ODbL-1.0" in stamps["OSM power licence"]
-    source = p.public_context.sources[-1]
+    source = next(s for s in p.public_context.sources if s.dataset == "osm_power")
     assert source.retrieved_on == "2026-10-01"
     assert source.transformation_version == "first_vertex_v1"
 
@@ -246,7 +246,8 @@ def test_nullable_source_metadata_is_preserved_or_refused(session, metadata_valu
     payload = _assemble(session)
     if metadata_value is None:
         enriched = enrich_public_context(db, payload, public_reference)
-        assert enriched.public_context.sources[-1].licence_url is None
+        osm = next(s for s in enriched.public_context.sources if s.dataset == "osm_power")
+        assert osm.licence_url is None
     else:
         with pytest.raises(ValueError, match="metadata must be text or null"):
             enrich_public_context(db, payload, public_reference)

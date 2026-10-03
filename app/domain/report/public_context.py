@@ -153,7 +153,11 @@ def enrich_public_context(
         )
         if nearest is None:
             value = "none mapped nearby within 2 km in this regional extract; coverage incomplete"
-            sources[-1] = sources[-1].model_copy(update={"status": "no_matching_observations"})
+            # By name, not position: more public datasets follow OSM power.
+            index = next(i for i, s in enumerate(sources) if s.dataset == "osm_power")
+            sources[index] = sources[index].model_copy(
+                update={"status": "no_matching_observations"}
+            )
         else:
             value = f"nearest mapped: {round(nearest['distance_m'])} m ({nearest['kind']}"
             if nearest["voltage"] is not None:
