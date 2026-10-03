@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AssemblingReport } from "../../animation/AssemblingReport";
 import { GROUPS, TOTAL_CHECKS, illustrative, type Group } from "../../animation/data";
+import { useRotatingLine } from "../../../lib/useRotatingLine";
 
 /**
  * The working screen: the 34 factors, checked in front of the customer.
@@ -123,6 +124,13 @@ export function Working({
   // StrictMode's deliberate double-invoke does the same thing, so the flag
   // is RE-ARMED on every run rather than only initialised.
   const latest = useRef({ run, onDone });
+  // A rotating line while the customer waits. It stops on the finished
+  // state, so nothing playful sits beside "Preparing your answer".
+  const line = useRotatingLine({
+    stateName: out?.state,
+    running: !settled,
+    reducedMotion: !paced.current,
+  });
   latest.current = { run, onDone };
 
   const fire = useCallback(() => {
@@ -226,6 +234,14 @@ export function Working({
             This takes about fifteen seconds. The checklist below is a walkthrough; bracketed values
             are examples. Your answer uses the available tariff and district records.
           </p>
+          {/* aria-hidden: the checklist below is the live region, and a
+              screen reader should hear the factors, not the jokes. Keyed on
+              the text so each new line replays the rise. */}
+          {line && !finished && (
+            <p key={line} aria-hidden="true" className="cw-rise m-0 text-[17px] text-cw-text">
+              {line}
+            </p>
+          )}
         </div>
         <div
           className="font-cw-mono text-[clamp(32px,4.6vw,50px)] leading-none font-medium tracking-[-0.02em] text-cw-text tabular-nums"
