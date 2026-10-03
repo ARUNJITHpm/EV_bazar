@@ -21,8 +21,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.domain.context.store import bulk_resolve_districts
+from app.domain.vahan.monthly import EV_FUEL_SCOPE, MonthlyCount, aggregate_monthly
 from app.domain.vahan.parse import RtoClassCount, aggregate_by_district
-from app.models.vahan import VahanEvRegistration
+from app.models.vahan import VahanEvRegistration, VahanMonthlyRegistration
 
 #: VAHAN's two-letter state code -> LGD state code, for the focus states. Used
 #: only as the fallback state for an RTO whose point failed to place: the state
@@ -137,6 +138,84 @@ def ingest(
             result.updated += 1
 
         row.lgd_state_code = s.lgd_state_code
+        row.count = s.count
+        row.rto_count = s.rto_count
+        row.source_sha256 = source_sha256
+        if now is not None:
+            row.ingested_at = now
+
+    session.flush()
+    return result
+
+
+def ingest_monthly(
+    session: Session,
+    counts: list[MonthlyCount],
+    refs: list[RtoRef],
+    *,
+    snapshot_date: dt.date,
+    source_sha256: str,
+    resolve_districts: bool = True,
+    now: dt.datetime | None = None,
+) -> IngestResult:
+    """Resolve, aggregate and upsert a month-wise scrape.
+
+    Same shape as ``ingest``: one snapshot, idempotent within a day. Only the
+    RTOs that appear in ``counts`` are placed - a maker scrape is state-wide and
+    needs no point-in-polygon at all.
+    """
+    used = {(c.state_code, c.rto) for c in counts}
+    refs = [r for r in refs if (r.state_code, r.rto) in used]
+    result = IngestResult(rtos=len(refs))
+    if resolve_districts and refs:
+        placement = resolve_rto_districts(session, refs)
+    else:
+        placement = {
+            (r.state_code, r.rto): (None, STATE_CODE_TO_LGD.get(r.state_code)) for r in refs
+        }
+    result.placed = sum(1 for d, _ in placement.values() if d is not None)
+    result.unplaced = result.rtos - result.placed
+
+    slices = aggregate_monthly(counts, placement, STATE_CODE_TO_LGD)
+    result.slices = len(slices)
+    for s in slices:
+        district = (
+            VahanMonthlyRegistration.lgd_district_code.is_(None)
+            if s.lgd_district_code is None
+            else VahanMonthlyRegistration.lgd_district_code == s.lgd_district_code
+        )
+        state = (
+            VahanMonthlyRegistration.lgd_state_code.is_(None)
+            if s.lgd_state_code is None
+            else VahanMonthlyRegistration.lgd_state_code == s.lgd_state_code
+        )
+        row = session.execute(
+            select(VahanMonthlyRegistration).where(
+                VahanMonthlyRegistration.geography == s.geography,
+                district,
+                state,
+                VahanMonthlyRegistration.snapshot_date == snapshot_date,
+                VahanMonthlyRegistration.month == s.month,
+                VahanMonthlyRegistration.breakdown == s.breakdown,
+                VahanMonthlyRegistration.label == s.label,
+                VahanMonthlyRegistration.fuel_scope == EV_FUEL_SCOPE,
+            )
+        ).scalar_one_or_none()
+        if row is None:
+            row = VahanMonthlyRegistration(
+                geography=s.geography,
+                lgd_district_code=s.lgd_district_code,
+                lgd_state_code=s.lgd_state_code,
+                snapshot_date=snapshot_date,
+                month=s.month,
+                breakdown=s.breakdown,
+                label=s.label,
+                fuel_scope=EV_FUEL_SCOPE,
+            )
+            session.add(row)
+            result.inserted += 1
+        else:
+            result.updated += 1
         row.count = s.count
         row.rto_count = s.rto_count
         row.source_sha256 = source_sha256

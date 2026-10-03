@@ -36,6 +36,7 @@ import datetime as dt
 
 from sqlalchemy import (
     BigInteger,
+    CheckConstraint,
     Date,
     DateTime,
     ForeignKey,
@@ -107,4 +108,67 @@ class VahanEvRegistration(Base):
         ),
         Index("ix_vahan_district", "lgd_district_code"),
         Index("ix_vahan_state_period", "lgd_state_code", "period"),
+    )
+
+
+class VahanMonthlyRegistration(Base):
+    """EV registrations IN each month, read month-wise from the dashboard.
+
+    Separate from ``vahan_ev_registrations`` on purpose: that table's readers
+    (the console, the report, the demand layer) sum yearly periods, and monthly
+    rows beside them would be counted twice. See ``app.domain.vahan.monthly``.
+
+    ``geography`` says what a NULL district means: a ``state`` row is a
+    state-wide read (the maker breakdown is read once per state); a ``district``
+    row with a NULL district is an RTO whose office could not be placed. Like
+    the yearly table, a re-scrape is a new ``snapshot_date``, never an
+    overwrite - recent months keep being revised by late RTO uploads, and the
+    snapshot's own month is partial.
+    """
+
+    __tablename__ = "vahan_monthly_registrations"
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
+    geography: Mapped[str] = mapped_column(String(8), nullable=False)
+    lgd_district_code: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("districts.lgd_district_code")
+    )
+    lgd_state_code: Mapped[int | None] = mapped_column(Integer, ForeignKey("states.lgd_state_code"))
+    snapshot_date: Mapped[dt.date] = mapped_column(Date, nullable=False)
+    #: First day of the month the registrations happened in.
+    month: Mapped[dt.date] = mapped_column(Date, nullable=False)
+    #: "vehicle_category" | "maker" - which dashboard Y-axis produced the row.
+    breakdown: Mapped[str] = mapped_column(String(24), nullable=False)
+    #: The category code or maker name, verbatim and uppercased. No TOTAL row:
+    #: a month's total is the sum of its labels.
+    label: Mapped[str] = mapped_column(String(128), nullable=False)
+    #: The side-panel fuel filter applied, e.g. "ELECTRIC(BOV)+PURE EV".
+    fuel_scope: Mapped[str] = mapped_column(String(64), nullable=False)
+    count: Mapped[int] = mapped_column(Integer, nullable=False)
+    rto_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="1")
+    source_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    ingested_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "geography",
+            "lgd_district_code",
+            "lgd_state_code",
+            "snapshot_date",
+            "month",
+            "breakdown",
+            "label",
+            "fuel_scope",
+            name="uq_vahan_monthly_slice",
+            postgresql_nulls_not_distinct=True,
+        ),
+        CheckConstraint("geography IN ('district', 'state')", name="ck_vahan_monthly_geography"),
+        CheckConstraint(
+            "breakdown IN ('vehicle_category', 'maker')", name="ck_vahan_monthly_breakdown"
+        ),
+        CheckConstraint("EXTRACT(DAY FROM month) = 1", name="ck_vahan_monthly_first_day"),
+        Index("ix_vahan_monthly_state_month", "lgd_state_code", "month"),
+        Index("ix_vahan_monthly_district", "lgd_district_code"),
     )

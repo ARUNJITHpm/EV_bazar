@@ -99,53 +99,143 @@ def archive_folder(directory: Path) -> bytes:
     return buffer.getvalue()
 
 
-def execute_job(job: str, directory: Path) -> dict[str, Any]:
-    if job == "stations_weekly":
-        command = [
-            sys.executable,
-            "-m",
-            "scripts.refresh_stations",
-            "--write",
-            "--out",
-            str(directory / "stations"),
-            "--sources",
-            "ocm",
-            "goec",
-            "zeon",
+#: One VAHAN step: a name, its scrape arguments, the CSV it writes, a timeout.
+VahanStep = tuple[str, list[str], str, int]
+
+
+def vahan_steps(job: str) -> list[VahanStep]:
+    """The scrapes a VAHAN job runs, smallest first.
+
+    The smoke test touches every table's path once: one RTO for the yearly
+    table, one state's makers and one RTO's categories for the monthly table.
+    The monthly job reads everything: yearly per RTO (last four years), then
+    month-wise for last year and this year, which re-reads the months late RTO
+    uploads keep revising.
+    """
+    if job == "vahan_smoke":
+        return [
+            ("yearly", ["--limit", "1", "--years", "2025"], "vahan.csv", 900),
+            (
+                "monthly_maker",
+                ["--monthly", "maker", "--state", "kerala", "--years", "2025"],
+                "monthly_maker.csv",
+                900,
+            ),
+            (
+                "monthly_category",
+                ["--monthly", "vehicle_category", "--limit", "1", "--years", "2025"],
+                "monthly_category.csv",
+                900,
+            ),
         ]
-        timeout = 1800
-    else:
-        csv_path = directory / "vahan.csv"
-        command = [sys.executable, "-m", "scripts.scrape_vahan", "--out", str(csv_path)]
-        if job == "vahan_smoke":
-            command.extend(["--limit", "1", "--years", "2025"])
-        timeout = 900 if job == "vahan_smoke" else 14400
+    return [
+        ("yearly", [], "vahan.csv", 14400),
+        ("monthly_maker", ["--monthly", "maker"], "monthly_maker.csv", 3600),
+        ("monthly_category", ["--monthly", "vehicle_category"], "monthly_category.csv", 14400),
+    ]
+
+
+def positive_rows(csv_path: Path) -> tuple[int, int]:
+    """(rows, rows with a real positive count) in a yearly or monthly scrape CSV.
+
+    Resume markers (yearly fuel NONE, monthly label __NONE__) never count.
+    """
+    import csv
+
+    from app.domain.vahan.monthly import NO_ROWS
+
+    with csv_path.open(encoding="utf-8", newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    positive = sum(
+        1
+        for row in rows
+        if row.get("fuel") != "NONE"
+        and row.get("label") != NO_ROWS
+        and int(row.get("count") or "0") > 0
+    )
+    return len(rows), positive
+
+
+def execute_vahan(job: str, directory: Path, environment: dict[str, str]) -> dict[str, Any]:
+    """Scrape every step, refuse an empty one, then ingest.
+
+    The monthly job commits each CSV. The smoke test runs the same ingest
+    WITHOUT ``--write`` - resolved, aggregated and rolled back - so it proves
+    the database path for every table while leaving no partial snapshot in
+    tables the site reads.
+    """
+    steps: dict[str, Any] = {}
+    with (directory / "run.log").open("ab") as output:
+        for name, arguments, filename, timeout in vahan_steps(job):
+            csv_path = directory / filename
+            command = [sys.executable, "-m", "scripts.scrape_vahan", "--out", str(csv_path)]
+            output.write(f"\n===== {name}: scrape {' '.join(arguments)}\n".encode())
+            output.flush()
+            try:
+                returncode = run_command(
+                    [*command, *arguments],
+                    timeout=timeout,
+                    environment=environment,
+                    output=output,
+                )
+            except subprocess.TimeoutExpired:
+                return {"outcome": "failed", "step": name, "reason": "timeout", "steps": steps}
+            if returncode != 0 or not csv_path.exists():
+                return {"outcome": "failed", "step": name, "returncode": returncode, "steps": steps}
+            rows, positive = positive_rows(csv_path)
+            steps[name] = {"rows": rows, "positive_rows": positive}
+            if not positive:
+                return {
+                    "outcome": "failed",
+                    "step": name,
+                    "reason": "no_positive_registration_rows",
+                    "steps": steps,
+                }
+        write = job == "vahan_monthly"
+        for name, _arguments, filename, _timeout in vahan_steps(job):
+            csv_path = directory / filename
+            ingest = [sys.executable, "-m", "scripts.ingest_vahan", "--csv", str(csv_path)]
+            if write:
+                ingest.append("--write")
+            mode = "write" if write else "dry run, rolled back"
+            output.write(f"\n===== {name}: ingest ({mode})\n".encode())
+            output.flush()
+            failed = {"outcome": "failed", "step": name, "steps": steps}
+            try:
+                returncode = run_command(
+                    ingest, timeout=1800, environment=environment, output=output
+                )
+            except subprocess.TimeoutExpired:
+                return {**failed, "reason": "ingest_timeout"}
+            if returncode != 0:
+                return {**failed, "reason": "ingest_failed"}
+            steps[name]["ingest"] = "committed" if write else "dry_run_rolled_back"
+    return {"outcome": "success", "steps": steps}
+
+
+def execute_job(job: str, directory: Path) -> dict[str, Any]:
     environment = {**os.environ, "VAHAN_HEADLESS": "true"}
+    if job.startswith("vahan"):
+        return execute_vahan(job, directory, environment)
+    command = [
+        sys.executable,
+        "-m",
+        "scripts.refresh_stations",
+        "--write",
+        "--out",
+        str(directory / "stations"),
+        "--sources",
+        "ocm",
+        "goec",
+        "zeon",
+    ]
     with (directory / "run.log").open("wb") as output:
         try:
-            returncode = run_command(
-                command, timeout=timeout, environment=environment, output=output
-            )
+            returncode = run_command(command, timeout=1800, environment=environment, output=output)
         except subprocess.TimeoutExpired:
             return {"outcome": "failed", "reason": "timeout"}
     if returncode != 0:
         return {"outcome": "failed", "returncode": returncode}
-    if job.startswith("vahan"):
-        import csv
-
-        with csv_path.open(encoding="utf-8", newline="") as stream:
-            rows = list(csv.DictReader(stream))
-        if not any(row.get("fuel") != "NONE" and int(row.get("count", "0")) > 0 for row in rows):
-            return {"outcome": "failed", "reason": "no_positive_registration_rows"}
-        if job == "vahan_monthly":
-            ingest = subprocess.run(
-                [sys.executable, "-m", "scripts.ingest_vahan", "--csv", str(csv_path), "--write"],
-                timeout=1800,
-                check=False,
-            )
-            if ingest.returncode != 0:
-                return {"outcome": "failed", "reason": "ingest_failed"}
-        return {"outcome": "success", "rows": len(rows)}
     manifests = list((directory / "stations").glob("*/manifest.json"))
     if len(manifests) != 1:
         return {"outcome": "failed", "reason": "missing_manifest"}

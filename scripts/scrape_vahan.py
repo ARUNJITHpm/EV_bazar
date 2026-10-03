@@ -17,6 +17,13 @@ what it KEEPS and WHEN:
     the plan weights the growth rate above the absolute count, and a growth rate
     needs more than one year to exist.
 
+``--monthly vehicle_category`` (per RTO) or ``--monthly maker`` (per state) reads
+the dashboard's "Month Wise" X-axis instead: registrations IN each month, with
+the EV fuels ticked in the side panel. It writes a different CSV
+(``app.domain.vahan.monthly.CSV_FIELDS``) that ingests into its own table. The
+side-panel steps were written from the dashboard's served markup (2026-10-03),
+not yet from a live run - run ``--dry-run --limit 1`` once before a full pass.
+
 Output is a LONG CSV (one row per state, RTO, period, fuel, vehicle class,
 count) at ``data/vahan/scrape_<date>.csv`` - the exact shape ``scripts.ingest_
 vahan`` reads back. The scrape and the database write are deliberately two
@@ -44,6 +51,18 @@ import time
 from pathlib import Path
 from typing import Any
 
+from app.domain.vahan.monthly import (
+    ALL_RTOS,
+    BREAKDOWNS,
+    NO_ROWS,
+    MonthlyCount,
+    csv_row,
+    month_number,
+    parse_month_table,
+)
+from app.domain.vahan.monthly import (
+    CSV_FIELDS as MONTHLY_CSV_FIELDS,
+)
 from app.domain.vahan.parse import EV_FUELS, RtoClassCount, normalise_class
 
 URL = "https://vahan.parivahan.gov.in/vahan4dashboard/vahan/view/reportview.xhtml"
@@ -147,6 +166,15 @@ def start_driver() -> tuple[Any, Any]:
     wait = WebDriverWait(driver, 30)
     driver.set_page_load_timeout(60)
     try:
+        if headless:
+            # The dashboard answers "Access Forbidden" to a user agent that says
+            # HeadlessChrome (seen 2026-10-03; plain curl gets the page). Present
+            # the same browser without the word, before the first request.
+            agent = driver.execute_script("return navigator.userAgent")
+            driver.execute_cdp_cmd(
+                "Network.setUserAgentOverride",
+                {"userAgent": agent.replace("HeadlessChrome", "Chrome")},
+            )
         driver.get(URL)
     except Exception:
         # Startup happens before scrape() enters its cleanup block.
@@ -305,6 +333,275 @@ def extract_long_rows(driver: Any, state_code: str, rto: str, period: str) -> li
     return out
 
 
+# ------------------------------------------------------------------ month-wise
+
+
+def apply_monthly_filters(driver: Any, wait: Any, year: str, breakdown: str) -> None:
+    """Y-Axis = the breakdown, X-Axis = Month Wise, one calendar year."""
+    pick(driver, wait, label_id(driver, "Y-Axis"), BREAKDOWNS[breakdown])
+    pick(driver, wait, label_id(driver, "X-Axis"), "Month Wise")
+    # Month Wise fixes Year Type to Calendar Year and disables the dropdown
+    # (seen 2026-10-03); only pick it if the page left it on something else.
+    year_type = driver.execute_script(
+        "const s = document.getElementById('selectedYearType_input');"
+        "return s ? s.options[s.selectedIndex].text.trim() : '';"
+    )
+    if year_type != "Calendar Year":
+        pick(driver, wait, label_id(driver, "Year Type"), "Calendar Year")
+    pick(driver, wait, label_id(driver, "Year"), year)
+
+
+#: Tick exactly the EV fuels in the side panel and clear every other side-panel
+#: filter. PrimeFaces submits the hidden inputs, so setting ``checked`` is what
+#: the server reads; the box classes are only kept in step for a watching eye.
+#: Returns the fuel labels left ticked, which the caller checks.
+_SET_FUELS_JS = """
+const want = new Set(arguments[0]);
+const ticked = [];
+for (const panel of ['fuel', 'VhCatg', 'norms', 'VhClass']) {
+  const table = document.getElementById(panel);
+  if (!table) continue;
+  for (const input of table.querySelectorAll('input[type=checkbox]')) {
+    const label = document.querySelector(`label[for='${CSS.escape(input.id)}']`);
+    const name = label ? label.textContent.trim() : '';
+    const on = panel === 'fuel' && want.has(name);
+    input.checked = on;
+    const box = input.closest('.ui-chkbox')?.querySelector('.ui-chkbox-box');
+    if (box) {
+      box.classList.toggle('ui-state-active', on);
+      const icon = box.querySelector('.ui-chkbox-icon');
+      icon?.classList.toggle('ui-icon-check', on);
+      icon?.classList.toggle('ui-icon-blank', !on);
+    }
+    if (on) ticked.push(name);
+  }
+}
+return ticked;
+"""
+
+#: Every datatable as (header rows, body rows), via textContent - see
+#: ``_TABLES_JS`` for why not Selenium's ``.text``.
+_ALL_TABLES_JS = """
+const out = [];
+for (const tb of document.querySelectorAll("tbody[id*='_data']")) {
+  const wrapper = tb.closest('div.ui-datatable');
+  if (!wrapper) continue;
+  // Lay the (first) header out as a grid honouring rowspan/colspan, so each
+  // grid row is full width: a TOTAL spanning two header rows must sit in the
+  // last column of the month row too, or every month shifts by one.
+  const thead = wrapper.querySelector('thead');
+  const grid = [];
+  if (thead) {
+    Array.from(thead.querySelectorAll(':scope > tr')).forEach((tr, r) => {
+      grid[r] = grid[r] || [];
+      let c = 0;
+      for (const th of tr.children) {
+        while (grid[r][c] !== undefined) c++;
+        const text = th.textContent.trim();
+        for (let i = 0; i < (th.rowSpan || 1); i++) {
+          grid[r + i] = grid[r + i] || [];
+          for (let j = 0; j < (th.colSpan || 1); j++) grid[r + i][c + j] = text;
+        }
+        c += th.colSpan || 1;
+      }
+    });
+  }
+  const heads = grid.map(row => Array.from(row, cell => cell === undefined ? '' : cell));
+  const rows = Array.from(tb.querySelectorAll(':scope > tr')).map(tr =>
+    Array.from(tr.children).map(td => td.textContent.trim()));
+  const next = wrapper.querySelector('.ui-paginator-next');
+  const more = !!next && !next.classList.contains('ui-state-disabled');
+  out.push({heads: heads, rows: rows, id: wrapper.id, more: more});
+}
+return out;
+"""
+
+#: Click the "next page" control of one datatable, by the wrapper's id.
+_NEXT_PAGE_JS = """
+const wrapper = document.getElementById(arguments[0]);
+const next = wrapper && wrapper.querySelector('.ui-paginator-next');
+if (!next || next.classList.contains('ui-state-disabled')) return false;
+next.click();
+return true;
+"""
+
+#: Upper bound on pages read from one table: a runaway paginator fails loudly.
+MAX_PAGES = 60
+
+
+def refresh_with_ev_fuels(driver: Any, wait: Any) -> None:
+    """Main Refresh (re-renders the side panel), tick the EV fuels, side Refresh."""
+    from selenium.webdriver.common.by import By  # noqa: PLC0415
+    from selenium.webdriver.support import expected_conditions as ec  # noqa: PLC0415
+
+    main = wait.until(ec.element_to_be_clickable((By.XPATH, "//button[contains(.,'Refresh')]")))
+    driver.execute_script("arguments[0].click();", main)
+    wait_pf_ajax_idle(driver)
+    time.sleep(1.0)
+    ticked = driver.execute_script(_SET_FUELS_JS, sorted(EV_FUELS))
+    if set(ticked) != EV_FUELS:
+        raise RuntimeError(f"EV fuel filter not applied: ticked {ticked!r}")
+    side = driver.find_elements(
+        By.XPATH, "//div[contains(@class,'ui-layout-unit-footer')]//button[contains(.,'Refresh')]"
+    )
+    if not side:
+        raise RuntimeError("side-panel Refresh button not found")
+    driver.execute_script("arguments[0].click();", side[0])
+    wait_pf_ajax_idle(driver)
+    time.sleep(1.2)
+
+
+def extract_monthly(
+    driver: Any, state_code: str, rto: str, year: str, breakdown: str
+) -> list[MonthlyCount]:
+    """The first rendered table with month columns -> counts, every page of it.
+
+    The maker table is paginated 25 rows a page with no page-size choice (seen
+    2026-10-03: Kerala 2025 had four pages), so reading only what is rendered
+    would silently drop most makers. Pages are walked with the table's own
+    "next" control until it is disabled.
+    """
+
+    def month_table() -> tuple[dict[str, Any], list[str]] | None:
+        for table in driver.execute_script(_ALL_TABLES_JS):
+            for head in table["heads"]:
+                if any(month_number(cell) for cell in head):
+                    return table, head
+        return None
+
+    found = month_table()
+    if found is None:
+        return []
+    table, head = found
+    rows: list[list[str]] = list(table["rows"])
+    pages = 1
+    while table.get("more"):
+        if pages >= MAX_PAGES:
+            raise RuntimeError(f"more than {MAX_PAGES} pages in the month table")
+        previous = table["rows"]
+        if not driver.execute_script(_NEXT_PAGE_JS, table["id"]):
+            break
+        wait_pf_ajax_idle(driver)
+        time.sleep(0.8)
+        found = month_table()
+        if found is None or found[0]["rows"] == previous:
+            raise RuntimeError(f"page {pages + 1} of the month table did not load")
+        table = found[0]
+        rows.extend(table["rows"])
+        pages += 1
+    return parse_month_table(
+        head, rows, state_code=state_code, rto=rto, year=int(year), breakdown=breakdown
+    )
+
+
+def already_done_monthly(out_path: Path) -> set[tuple[str, str]]:
+    """(rto, year) pairs already in a partial monthly output file."""
+    done: set[tuple[str, str]] = set()
+    if out_path.exists():
+        with out_path.open(newline="", encoding="utf-8") as fh:
+            for r in csv.DictReader(fh):
+                done.add((r["rto"], r["month"][:4]))
+    return done
+
+
+def scrape_monthly(
+    refs: list[dict[str, str]],
+    years: list[str],
+    *,
+    breakdown: str,
+    out_path: Path,
+    dry_run: bool,
+    resume: bool,
+) -> int:
+    """Month-wise counts: per RTO for categories, per state for makers."""
+    if breakdown == "maker":
+        # State-wide: one read per state and year, no RTO dropdown.
+        targets = [
+            {"state_code": code, "rto": ALL_RTOS}
+            for code in dict.fromkeys(r["state_code"] for r in refs)
+        ]
+    else:
+        targets = refs
+    done = already_done_monthly(out_path) if resume and not dry_run else set()
+    fh = None
+    writer = None
+    if not dry_run:
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        new_file = not out_path.exists() or not resume
+        fh = out_path.open("w" if new_file else "a", newline="", encoding="utf-8")
+        writer = csv.writer(fh)
+        if new_file:
+            writer.writerow(MONTHLY_CSV_FIELDS)
+            fh.flush()
+
+    driver, wait = start_driver()
+    time.sleep(2)
+    written = 0
+
+    # The four dropdowns are re-applied only when the year or state changes, or
+    # after a failure - not before every RTO, which would double the run.
+    ready: tuple[str, str] | None = None
+
+    try:
+        for year in years:
+            if not year.isdigit():
+                raise SystemExit(f"monthly mode reads calendar years only, not {year!r}")
+            print(f"\n===== YEAR {year} ({breakdown}, month-wise) =====")
+            for t in targets:
+                state_code, rto = t["state_code"], t["rto"]
+                state_name = STATE_NAMES.get(state_code, state_code)
+                if (rto, year) in done:
+                    continue
+                rows: list[MonthlyCount] = []
+                for attempt in range(1, 4):
+                    try:
+                        if ready != (year, state_name):
+                            apply_monthly_filters(driver, wait, year, breakdown)
+                            pick(driver, wait, label_id(driver, "State"), state_name)
+                            ready = (year, state_name)
+                        if rto != ALL_RTOS:
+                            pick(driver, wait, label_id(driver, "RTO"), rto)
+                        refresh_with_ev_fuels(driver, wait)
+                        rows = extract_monthly(driver, state_code, rto, year, breakdown)
+                        break
+                    except Exception as exc:  # noqa: BLE001 - retry, then restart
+                        first = str(exc).splitlines()[0] if str(exc).strip() else ""
+                        print(
+                            f"  {rto} [{year}] attempt {attempt}/3: {type(exc).__name__}: {first}"
+                        )
+                        ready = None
+                        if attempt == 3:
+                            raise
+                        time.sleep(2)
+                        if attempt >= 2:
+                            print("  restarting browser")
+                            with contextlib.suppress(Exception):
+                                driver.quit()
+                            driver, wait = start_driver()
+                            time.sleep(2)
+                total = sum(x.count for x in rows)
+                print(f"  {state_code} {rto} [{year}]: {len(rows)} rows, {total} EV registrations")
+                if dry_run:
+                    for x in rows[:6]:
+                        print(f"      {x.month:%Y-%m} {x.label}={x.count}")
+                elif writer is not None and fh is not None:
+                    if not rows:
+                        marker = MonthlyCount(
+                            state_code, rto, dt.date(int(year), 1, 1), breakdown, NO_ROWS, 0
+                        )
+                        writer.writerow(csv_row(marker))
+                    for x in rows:
+                        writer.writerow(csv_row(x))
+                    fh.flush()
+                written += len(rows)
+    finally:
+        if fh is not None:
+            fh.close()
+        with contextlib.suppress(Exception):
+            driver.quit()
+    return written
+
+
 # ------------------------------------------------------------------------ drive
 
 
@@ -448,6 +745,12 @@ def main() -> None:
     p.add_argument("--cumulative", action="store_true", help="also scrape the 'Till Today' total")
     p.add_argument("--limit", type=int, default=0, help="only the first N RTOs (smoke test)")
     p.add_argument("--dry-run", action="store_true", help="print, do not write the CSV")
+    p.add_argument(
+        "--monthly",
+        choices=sorted(BREAKDOWNS),
+        default="",
+        help="read month-wise: vehicle_category per RTO, or maker per state (EV fuels only)",
+    )
     p.add_argument("--no-resume", action="store_true", help="ignore any partial output file")
     p.add_argument(
         "--out",
@@ -464,17 +767,38 @@ def main() -> None:
     if args.limit:
         refs = refs[: args.limit]
 
-    years = [y.strip() for y in args.years.split(",") if y.strip()] or default_years()
-    if args.cumulative:
-        years = [*years, "Till Today"]
+    if args.monthly:
+        # Recent months keep being revised by late uploads: re-read last year too.
+        this_year = dt.date.today().year
+        years = [y.strip() for y in args.years.split(",") if y.strip()] or [
+            str(this_year - 1),
+            str(this_year),
+        ]
+        if args.cumulative:
+            raise SystemExit("--cumulative has no month-wise form")
+    else:
+        years = [y.strip() for y in args.years.split(",") if y.strip()] or default_years()
+        if args.cumulative:
+            years = [*years, "Till Today"]
 
-    out_path = Path(args.out) if args.out else DATA_DIR / f"scrape_{dt.date.today():%Y%m%d}.csv"
+    stem = f"monthly_{args.monthly}" if args.monthly else "scrape"
+    out_path = Path(args.out) if args.out else DATA_DIR / f"{stem}_{dt.date.today():%Y%m%d}.csv"
     print(f"{len(refs)} RTOs x {len(years)} periods {years}")
     print(f"output: {out_path}" if not args.dry_run else "dry run - nothing written")
 
-    written = scrape(
-        refs, years, out_path=out_path, dry_run=args.dry_run, resume=not args.no_resume
-    )
+    if args.monthly:
+        written = scrape_monthly(
+            refs,
+            years,
+            breakdown=args.monthly,
+            out_path=out_path,
+            dry_run=args.dry_run,
+            resume=not args.no_resume,
+        )
+    else:
+        written = scrape(
+            refs, years, out_path=out_path, dry_run=args.dry_run, resume=not args.no_resume
+        )
     print(f"\ndone: {written} rows")
     if not args.dry_run:
         print(f"ingest with:  uv run python -m scripts.ingest_vahan --csv {out_path} --write")

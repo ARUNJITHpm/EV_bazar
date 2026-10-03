@@ -14,6 +14,10 @@ VAHAN itself carries no as-of date.
 
 Without ``--write`` it resolves and aggregates and prints the summary, touching
 nothing - the safe way to see what a CSV would produce.
+
+A month-wise CSV (``scrape_vahan --monthly ...``) is recognised by its header
+and goes to ``vahan_monthly_registrations`` instead; the yearly table is not
+touched by it.
 """
 
 from __future__ import annotations
@@ -25,8 +29,9 @@ import hashlib
 from pathlib import Path
 
 from app.db import SessionLocal
+from app.domain.vahan.monthly import is_monthly_csv, parse_monthly_csv
 from app.domain.vahan.parse import parse_vahan_csv
-from app.domain.vahan.store import RtoRef, ingest
+from app.domain.vahan.store import IngestResult, RtoRef, ingest, ingest_monthly
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "vahan"
 SEED = DATA_DIR / "rto_reference.csv"
@@ -77,24 +82,42 @@ def main() -> None:
 
     raw = csv_path.read_bytes()
     sha = hashlib.sha256(raw).hexdigest()
-    counts = parse_vahan_csv(raw.decode("utf-8"))
+    text = raw.decode("utf-8")
+    monthly = is_monthly_csv(text)
     refs = load_refs()
 
     snapshot = dt.date.fromisoformat(args.snapshot_date) if args.snapshot_date else dt.date.today()
 
-    periods = sorted({c.period for c in counts})
-    print(f"{len(counts):,} count rows, {len(refs)} RTOs, periods {periods}")
-    print(f"snapshot_date={snapshot}  source_sha256={sha[:12]}...")
-
     with SessionLocal() as session:
-        result = ingest(
-            session,
-            counts,
-            refs,
-            snapshot_date=snapshot,
-            source_sha256=sha,
-            resolve_districts=True,
-        )
+        result: IngestResult
+        if monthly:
+            monthly_counts = parse_monthly_csv(text)
+            months = sorted({c.month for c in monthly_counts})
+            kinds = sorted({c.breakdown for c in monthly_counts})
+            span = f"{months[0]:%Y-%m}..{months[-1]:%Y-%m}" if months else "none"
+            print(f"MONTHLY {kinds}: {len(monthly_counts):,} count rows, months {span}")
+            print(f"snapshot_date={snapshot}  source_sha256={sha[:12]}...")
+            result = ingest_monthly(
+                session,
+                monthly_counts,
+                refs,
+                snapshot_date=snapshot,
+                source_sha256=sha,
+                resolve_districts=True,
+            )
+        else:
+            counts = parse_vahan_csv(text)
+            periods = sorted({c.period for c in counts})
+            print(f"{len(counts):,} count rows, {len(refs)} RTOs, periods {periods}")
+            print(f"snapshot_date={snapshot}  source_sha256={sha[:12]}...")
+            result = ingest(
+                session,
+                counts,
+                refs,
+                snapshot_date=snapshot,
+                source_sha256=sha,
+                resolve_districts=True,
+            )
         if args.write:
             session.commit()
             print("committed.")

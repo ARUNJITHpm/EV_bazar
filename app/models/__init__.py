@@ -57,7 +57,7 @@ from app.models.report import Report
 from app.models.schema_version import SchemaVersion
 from app.models.site import Site
 from app.models.tariffs import ElectricityTariff, SubsidyRule
-from app.models.vahan import VahanEvRegistration
+from app.models.vahan import VahanEvRegistration, VahanMonthlyRegistration
 
 __all__ = [
     "BILLABLE_STATUSES",
@@ -109,4 +109,5 @@ __all__ = [
     "Transition",
     "UsageStatus",
     "VahanEvRegistration",
+    "VahanMonthlyRegistration",
 ]
