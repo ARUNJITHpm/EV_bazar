@@ -56,11 +56,14 @@ def store_report(
             result.unmatched_states.append(row.state_name)
         for span in SPANS:
             values = getattr(row, span)
+            span_start = report.report_month if span == "month" else report.fy_start
+            if values is None or span_start is None:
+                continue  # a month-only report has no year-to-date rows
             session.add(
                 CeaEvConsumption(
                     report_month=report.report_month,
                     span=span,
-                    span_start=report.report_month if span == "month" else report.fy_start,
+                    span_start=span_start,
                     geography=row.geography,
                     state_name=row.state_name,
                     lgd_state_code=code,

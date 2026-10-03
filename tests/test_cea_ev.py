@@ -46,6 +46,7 @@ def test_march_2026_state_rows_and_india_total() -> None:
         "other_kwh": None,  # "-" is not reported, never zero
         "total_kwh": 2_420_000,
     }
+    assert kerala.fy_to_date is not None
     assert kerala.fy_to_date["total_kwh"] == 25_860_000
     assert report.india is not None
     assert report.india.month["total_kwh"] == 149_590_000
@@ -65,7 +66,8 @@ def test_discoms_belong_to_the_state_listed_above_them() -> None:
     report = parse_report(pages("2026_03"))
     kerala = [r.discom for r in report.discoms if r.state_name == "Kerala"]
     assert kerala == ["Cochin Port Authority", "KSEB", "Technopark", "Thrissur Corporation"]
-    assert by_name(report.discoms, "KSEB").fy_to_date["total_kwh"] == 25_510_000
+    kseb = by_name(report.discoms, "KSEB").fy_to_date
+    assert kseb is not None and kseb["total_kwh"] == 25_510_000
 
 
 def test_december_2025_mid_word_breaks_and_wrapped_header() -> None:
@@ -144,7 +146,64 @@ def test_october_2024_three_column_layout_and_asterisks() -> None:
         "other_kwh": None,  # no such column in this layout
         "total_kwh": 1_340_000,
     }
-    assert by_name(report.states, "Telangana").fy_to_date["total_kwh"] == 9_490_000
+    telangana = by_name(report.states, "Telangana").fy_to_date
+    assert telangana is not None and telangana["total_kwh"] == 9_490_000
     assert report.india is not None
     assert report.india.fy_to_date["total_kwh"] == 439_460_000
     assert lgd_state_code("Tamil Naidu", {"TAMIL NADU": 33}) == 33
+
+
+def test_april_2024_month_only_layout() -> None:
+    report = parse_report(pages("2024_04"))
+    assert report.report_month == dt.date(2024, 4, 1)
+    assert report.fy_start is None
+    assert all(r.fy_to_date is None for r in report.states)
+    assert report.india is not None
+    assert report.india.month["total_kwh"] == 52_860_000
+    assert by_name(report.states, "Kerala").month["total_kwh"] == 960_000
+
+
+def test_june_2024_repeated_page_title_is_not_a_name() -> None:
+    # The title reprinted above a page's repeated header once glued itself to
+    # "Karnataka", filing Karnataka's DISCOMs under Andhra Pradesh.
+    report = parse_report(pages("2024_06"))
+    assert report.warnings == []
+    assert [r.discom for r in report.discoms if r.state_name == "Andhra Pradesh"] == [
+        "APEPDCL",
+        "APSPDCL",
+    ]
+    assert "BESCOM" in [r.discom for r in report.discoms if r.state_name == "Karnataka"]
+
+
+def test_july_2025_two_digit_year_in_window_line() -> None:
+    report = parse_report(pages("2025_07"))
+    assert report.report_month == dt.date(2025, 7, 1)
+    assert report.fy_start == dt.date(2025, 4, 1)
+    assert report.india is not None
+    assert report.india.month["total_kwh"] == 115_390_000
+
+
+def test_november_2025_footer_fused_onto_a_row() -> None:
+    # "CEA-PL-14-26/11/2025-PDM Division I/64009/2026Odisha 0.10 ..."
+    report = parse_report(pages("2025_11"))
+    assert report.warnings == []
+    assert "TPCODL" in [r.discom for r in report.discoms if r.state_name == "Odisha"]
+    assert not any("CEA-PL" in (r.discom or "") for r in report.discoms)
+
+
+def test_january_2026_table_across_pages_with_wrapped_region_and_total() -> None:
+    # The state table runs onto page 5, "North " / "Eastern" and "Grand " /
+    # "Total" wrap, and the DISCOM table starts mid-page.
+    report = parse_report(pages("2026_01"))
+    assert report.report_month == dt.date(2026, 1, 1)
+    assert report.warnings == []
+    assert by_name(report.states, "Assam").region == "North Eastern"
+    assert report.india is not None
+    assert report.india.month["total_kwh"] == 147_150_000
+    assert report.india.fy_to_date is not None
+    assert report.india.fy_to_date["total_kwh"] == 1_262_500_000
+
+
+def test_reports_whose_tables_are_images_are_refused() -> None:
+    with pytest.raises(ReportFormatError, match="images"):
+        parse_report(pages("2025_01_images"))
