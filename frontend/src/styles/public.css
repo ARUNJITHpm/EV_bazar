@@ -26,8 +26,8 @@
   align-items: center;
   min-height: 44px;
   flex-shrink: 0;
-  font: 600 21px/1.4 var(--cw-sans);
-  letter-spacing: -0.02em;
+  font: 400 23px/1.4 var(--cw-wordmark);
+  letter-spacing: -0.01em;
   color: var(--cw-text);
   text-decoration: none;
 }

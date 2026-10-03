@@ -147,6 +147,8 @@
   --cw-sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
   --cw-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
   --cw-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  /* The wordmark only - Direction C, design/brand/mark/. Never body text. */
+  --cw-wordmark: "Newsreader", Georgia, "Times New Roman", serif;
 
   /* --- Motion: weight settling, not play -------------------------------- */
   --cw-ease: cubic-bezier(0.16, 1, 0.3, 1);

@@ -10,6 +10,8 @@
  * update by hand (the link below it always shows the live document).
  */
 
+import { Wordmark } from "./Wordmark";
+
 const FIGURES: [string, string][] = [
   ["Breakeven this site must clear", "4.3%"],
   ["Projected utilisation, P10–P90", "0.9–2.4%"],
@@ -24,9 +26,7 @@ export function ReportPaper({ compact = false }: { compact?: boolean }) {
       }`}
     >
       <div className="flex items-baseline justify-between gap-4 border-b-[3px] border-cw-ink pb-3">
-        <span className="font-cw-mono text-[13px] tracking-[0.1em] text-cw-paper-slate uppercase">
-          Chargeworthy
-        </span>
+        <Wordmark className="text-[18px] text-cw-paper-slate" />
         <span className="font-cw-mono text-[13px] text-cw-paper-muted">KL-TVM-DEMO-001</span>
       </div>
       <div className={compact ? "text-[20px]" : "text-[25px]"}>

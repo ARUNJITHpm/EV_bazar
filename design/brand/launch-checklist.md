@@ -14,7 +14,7 @@ human step, and a tick nobody can point at is worse than an open box.
 | # | Item | State |
 |---|---|---|
 | 1 | Name, domain, email on it | **Open.** `hello@chargeworthy.in` is deliberately NOT linked anywhere until the domain exists (`design/DECISIONS.md`). |
-| 2 | Wordmark only | **Shipped.** Direction C — Instrument, IBM Plex Mono caps, on every public surface. |
+| 2 | Wordmark only | **Shipped.** Direction C — Worthy, Newsreader, on every public surface (2026-10-03; was IBM Plex Mono caps). The `Cw` favicon is the wordmark's own initials, not a symbol — see `design/README.md`. |
 | 3 | Two colours + one typeface | **Shipped.** `frontend/src/styles/tokens.css`, the only file allowed a raw hex. Copper is reserved for the unverified state and nothing else. |
 | 4 | A sample site report — highest priority | **Shipped.** `/report/KL-TVM-DEMO-001`, twelve sections, rendered from the stored payload. Its verdict is DON'T BUILD, unedited. |
 | 5 | One-page website | **Shipped.** `/` — core message, three steps, the 34 factors named, the sample report visible, one form. |

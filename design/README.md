@@ -29,9 +29,15 @@ assets/          ambient video (cut — carries a KlingAI watermark)
 | Assessment flow | https://claude.ai/code/artifact/4301ff29-bee6-49ba-8e14-541db28f79e8 |
 | Social images | https://claude.ai/code/artifact/ab13f6d8-ed81-4437-8673-76558956a030 |
 
-Wordmark direction **C — Instrument** (IBM Plex Mono caps) is the one chosen and
-the one used throughout. It stays legible as a mark against a grotesque page
-instead of dissolving into the nav.
+Wordmark direction **C — Worthy** is the one in use since 2026-10-03, chosen by
+the owner from `brand/mark/wordmark-directions.html` (the canvas export, kept
+on record; boards A — Ledger and B — Instrument are the alternatives). One
+word in Newsreader, Regular "Charge", SemiBold "worthy": the
+`Wordmark` component (`frontend/src/features/public/Wordmark.tsx`) on the
+header, the report masthead and the sample paper. The `Cw` mark is the
+favicon set in `frontend/public/`, built by `brand/mark/build_mark.py` from
+the font bytes embedded in that canvas — regenerate it, don't hand-edit it.
+It replaced the earlier IBM Plex Mono caps wordmark.
 
 > **2026-08-31:** all four canvas links above return "artifact not found" from
 > this account — the images exist nowhere in `design/`. If the canvases are

@@ -12,6 +12,7 @@ import { Provenance } from "./Provenance";
 import { Site } from "./Site";
 import { Statistical } from "./Statistical";
 import { Verdict } from "./Verdict";
+import { Wordmark } from "../public/Wordmark";
 
 /**
  * The report — one site's verdict on paper, in the order design/brand/
@@ -74,9 +75,7 @@ export function Report({ payload }: { payload: ReportPayload }) {
           <tr>
             <td className="p-0">
               <div className="flex items-baseline justify-between gap-6 border-b border-cw-ink pb-2.5">
-                <span className="font-cw-mono text-[15px] font-semibold tracking-[0.14em] text-cw-paper-slate uppercase">
-                  Chargeworthy
-                </span>
+                <Wordmark className="text-[19px] text-cw-paper-slate" />
                 <span className="font-cw-mono text-[11px] tracking-[0.12em] text-cw-paper-muted uppercase">
                   Right site. Right operator.
                 </span>

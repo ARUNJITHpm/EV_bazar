@@ -1,0 +1,12 @@
+{
+  "name": "Chargeworthy",
+  "short_name": "Chargeworthy",
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any" },
+    { "src": "/apple-touch-icon.png", "type": "image/png", "sizes": "180x180" },
+    { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ],
+  "theme_color": "#0d151e",
+  "background_color": "#0d151e",
+  "display": "browser"
+}

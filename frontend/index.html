@@ -9,6 +9,14 @@
       content="Read a demonstration EV charging site assessment, explore its scenario bands and assumptions, or assess your own site."
     />
     <meta name="theme-color" content="#0d151e" />
+    <!-- The Cw mark, Direction C. SVG sources come from
+         design/brand/mark/build_mark.py; the .ico and .png are rasterised
+         into dist/ by scripts/build-favicons.mjs, so they 404 under
+         `vite dev` - browsers there take favicon.svg. -->
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <!-- Social cards, from the reference build's head. og:image is absent on
          purpose: the designed identity image (og-identity.png) was never
          delivered in design/ - add the tag when the asset lands. -->
@@ -26,7 +34,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
     />
   </head>
   <body>

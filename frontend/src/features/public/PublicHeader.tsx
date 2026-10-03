@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
 import { PublicNavigation } from "./PublicNavigation";
+import { Wordmark } from "./Wordmark";
 
 /** The same brand bar on every customer route; page controls belong below it. */
 export function PublicHeader({ children }: { children?: ReactNode }) {
@@ -13,7 +14,7 @@ export function PublicHeader({ children }: { children?: ReactNode }) {
     <header className="public-header no-print">
       <div className="public-container public-header-row">
         <Link to="/" className="public-wordmark">
-          Chargeworthy
+          <Wordmark />
         </Link>
         <button
           type="button"

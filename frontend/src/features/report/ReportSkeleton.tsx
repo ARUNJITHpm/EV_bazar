@@ -1,3 +1,5 @@
+import { Wordmark } from "../public/Wordmark";
+
 /**
  * The report's shape while the stored payload is on its way: the sheet, the
  * running head, and the twelve section eyebrows with soft bars where the
@@ -38,9 +40,7 @@ export function ReportSkeleton({ line }: { line?: string }) {
       className="mx-auto max-w-[960px] bg-cw-paper px-[clamp(24px,6vw,64px)] pt-[clamp(20px,3vw,32px)] pb-14 font-cw-serif text-cw-ink"
     >
       <div className="flex items-baseline justify-between gap-6 border-b border-cw-ink pb-2.5">
-        <span className="font-cw-mono text-[15px] font-semibold tracking-[0.14em] text-cw-paper-slate uppercase">
-          Chargeworthy
-        </span>
+        <Wordmark className="text-[19px] text-cw-paper-slate" />
         <span className="font-cw-mono text-[13px] text-cw-paper-muted">
           Fetching the stored report…
         </span>
