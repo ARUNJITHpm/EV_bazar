@@ -41,6 +41,10 @@ jobs:
           git checkout -q --orphan space-mirror
           rm -rf design
           find . -path ./.git -prune -o -name '*.pdf' -print0 | xargs -0 -r rm -f
+          # Every LFS file (PDFs, PNG screenshots, decks) is reference
+          # material. The checkout holds only pointers, and pushing a pointer
+          # without its object is refused, so none of them go to the Space.
+          git lfs ls-files -n | tr '\n' '\0' | xargs -0 -r rm -f
           git add -A
           # Deterministic dates: the same main always yields the same mirror
           # SHA, so re-running the workflow is a no-op push, not a rebuild.
