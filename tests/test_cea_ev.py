@@ -127,3 +127,24 @@ def test_listing_links_are_recognised() -> None:
     assert _PDF.findall(html) == [
         "https://cea.nic.in/wp-content/uploads/ev_charging_rep/2026/08/Mar_26_EV.pdf"
     ]
+
+
+def test_october_2024_three_column_layout_and_asterisks() -> None:
+    # Reports up to late 2024 have no "other than PCS" column and print "*"
+    # for a value not reported; Tamil Nadu's "*" row once hid inside the next
+    # state's name and broke the Grand Total check.
+    report = parse_report(pages("2024_10"))
+    assert report.report_month == dt.date(2024, 10, 1)
+    assert report.fy_start == dt.date(2024, 4, 1)
+    assert report.warnings == []
+    tamil = by_name(report.states, "Tamil Naidu")  # the source's spelling
+    assert tamil.month == {
+        "pcs_kwh": 1_340_000,
+        "heavy_duty_pcs_kwh": None,
+        "other_kwh": None,  # no such column in this layout
+        "total_kwh": 1_340_000,
+    }
+    assert by_name(report.states, "Telangana").fy_to_date["total_kwh"] == 9_490_000
+    assert report.india is not None
+    assert report.india.fy_to_date["total_kwh"] == 439_460_000
+    assert lgd_state_code("Tamil Naidu", {"TAMIL NADU": 33}) == 33

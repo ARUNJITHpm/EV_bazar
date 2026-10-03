@@ -58,9 +58,22 @@ _MONTHS = {
 _WINDOW_LINE = re.compile(
     r"([A-Za-z]{3,9}),?\s*(\d{4})\s+([A-Za-z]{3,9}),?\s*(\d{4})\s+to\s+([A-Za-z]{3,9}),?\s*(\d{4})"
 )
-_VALUE = r"(?:-|\d+(?:\.\d+)?)"
-#: A data line: optional name text, then exactly eight values.
-_DATA_LINE = re.compile(rf"^(.*?)\s*((?:{_VALUE}\s+){{7}}{_VALUE})\s*$")
+#: "-" and "*" both mark a value the utility did not report (2024 reports use "*").
+_VALUE = r"(?:-|\*|\d+(?:\.\d+)?)"
+
+
+#: A data line: optional name text, then exactly ``width`` values.
+def _data_line(width: int) -> re.Pattern[str]:
+    return re.compile(rf"^(.*?)\s*((?:{_VALUE}\s+){{{width - 1}}}{_VALUE})\s*$")
+
+
+#: Measures per span by layout. Reports up to late 2024 print three columns
+#: (no "other than PCS"); from 2025 they print four. The missing column is
+#: None - not reported in that layout, never zero.
+LAYOUTS: dict[int, tuple[str, ...]] = {
+    8: MEASURES,
+    6: ("pcs_kwh", "heavy_duty_pcs_kwh", "total_kwh"),
+}
 
 #: Tolerance when checking sums of figures each rounded to 0.01 MU.
 _TOLERANCE_KWH = 50_000
@@ -100,9 +113,9 @@ def _month(name: str, year: str) -> dt.date:
 
 
 def mu_to_kwh(raw: str) -> int | None:
-    """A printed MU cell -> kWh. "-" -> None (not reported, not zero)."""
+    """A printed MU cell -> kWh. "-" or "*" -> None (not reported, not zero)."""
     raw = raw.strip()
-    if raw == "-":
+    if raw in {"-", "*"}:
         return None
     try:
         return int(Decimal(raw) * 1_000_000)
@@ -114,13 +127,20 @@ def _row(
     geography: str, region: str | None, state: str, discom: str | None, values: Sequence[str]
 ) -> ConsumptionRow:
     kwh = [mu_to_kwh(v) for v in values]
+    columns = LAYOUTS[len(values)]
+    half = len(columns)
+
+    def span(cells: Sequence[int | None]) -> dict[str, int | None]:
+        found = dict(zip(columns, cells, strict=True))
+        return {measure: found.get(measure) for measure in MEASURES}
+
     return ConsumptionRow(
         geography=geography,
         region=region,
         state_name=state,
         discom=discom,
-        month=dict(zip(MEASURES, kwh[:4], strict=True)),
-        fy_to_date=dict(zip(MEASURES, kwh[4:], strict=True)),
+        month=span(kwh[:half]),
+        fy_to_date=span(kwh[half:]),
     )
 
 
@@ -138,7 +158,7 @@ def _table_lines(page: str) -> list[str]:
     return [line for line in lines[last + 1 :] if line.strip()]
 
 
-def _data_rows(lines: Sequence[str]) -> list[tuple[str, list[str]]]:
+def _data_rows(lines: Sequence[str], width: int) -> list[tuple[str, list[str]]]:
     """Join wrapped names onto their values: [(name, eight values)].
 
     A name may wrap over several lines before (or with) its values, e.g.
@@ -151,9 +171,12 @@ def _data_rows(lines: Sequence[str]) -> list[tuple[str, list[str]]]:
     rows: list[tuple[str, list[str]]] = []
     pending: list[str] = []
 
+    pattern = _data_line(width)
+
     def joined(last: str) -> str:
         text = "".join(f.strip() + (" " if f != f.rstrip() else "") for f in pending)
-        return " ".join((text + last).split())
+        # Footnote markers ("Delhi*") are the source's annotations, not names.
+        return " ".join((text + last).split()).rstrip("*").strip()
 
     for raw in lines:
         line = raw.strip()
@@ -162,7 +185,7 @@ def _data_rows(lines: Sequence[str]) -> list[tuple[str, list[str]]]:
                 raise ReportFormatError(f"name without values before region: {pending}")
             rows.append((line, []))
             continue
-        match = _DATA_LINE.match(line)
+        match = pattern.match(line)
         if match:
             name = joined(match.group(1))
             pending = []
@@ -220,7 +243,11 @@ def parse_report(pages: Sequence[str]) -> Report:
     report = Report(report_month=report_month, fy_start=fy_start)
 
     region: str | None = None
-    for name, values in _data_rows(_table_lines(pages[state_page])):
+    total_line = re.search(rf"{GRAND_TOTAL}\s+((?:{_VALUE}\s*)+)$", pages[state_page], re.M)
+    width = len(total_line.group(1).split()) if total_line else 0
+    if width not in LAYOUTS:
+        raise ReportFormatError(f"unrecognised table width {width}")
+    for name, values in _data_rows(_table_lines(pages[state_page]), width):
         if not values:
             region = name
         elif name == GRAND_TOTAL:
@@ -247,7 +274,7 @@ def parse_report(pages: Sequence[str]) -> Report:
         if current is not None and members:
             _check_sum(report, f"{current.state_name} DISCOMs", members, current)
 
-    for name, values in _data_rows(discom_lines):
+    for name, values in _data_rows(discom_lines, width):
         if name == GRAND_TOTAL:
             break
         if "".join(name.split()) in state_names or name.startswith("UT of"):
@@ -271,6 +298,7 @@ _ALIASES = {
     "JAMMU AND KASHMIR": "JAMMU & KASHMIR",
     "DADRA & NAGAR HAVELI AND DAMAN & DIU": "DADRA,NAGAR HAVELI,DAMAN & DIU",
     "ANDAMAN & NICOBAR ISLANDS": "ANDAMAN & NICOBAR",
+    "TAMIL NAIDU": "TAMIL NADU",  # the October 2024 report's spelling
 }
 
 
