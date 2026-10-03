@@ -9,6 +9,7 @@ import {
   type SocialPalette,
 } from "./social";
 import { pngWithProvenance } from "./social-png";
+import { CW_MARK_BOX, CW_MARK_PATH } from "../../public/cwMarkGlyphs";
 import type { ChartData, ChartType } from "./model";
 // Test-only colours never enter the public bundle.
 const palette: SocialPalette = {
@@ -101,6 +102,19 @@ describe("shared social exports", () => {
     );
     expect(() => socialImagePath("../private", "og")).toThrow(/Unsafe/);
   });
+  it("carries the Cw mark beside the brand line in every format", () => {
+    for (const format of Object.keys(socialFormats) as (keyof typeof socialFormats)[]) {
+      const svg = socialSvg({ ...input, format });
+      expect(svg).toContain(`d="${CW_MARK_PATH}"`);
+      const [, x, y, s] = /<g transform="translate\(([\d.]+) ([\d.]+)\) scale\(([\d.]+)\)">/
+        .exec(svg)!
+        .map(Number);
+      // Inside the image, and clear of the brand text that follows it.
+      expect(y).toBeGreaterThan(0);
+      const brandX = Number(/<text x="([\d.]+)"[^>]*>Chargeworthy Data/.exec(svg)![1]);
+      expect(x! + CW_MARK_BOX * s!).toBeLessThan(brandX);
+    }
+  });
   it("adds UTF-8 PNG provenance with the full six version stamps", () => {
     const png = new Uint8Array([
       137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130,
@@ -109,7 +123,7 @@ describe("shared social exports", () => {
     const annotated = pngWithProvenance(png, svg);
     const text = new TextDecoder().decode(annotated);
     expect(text).toContain("iTXt");
-    expect(text).toContain("analytics_social_v1");
+    expect(text).toContain("analytics_social_v2");
     for (const key of Object.keys(publicDataVersions)) expect(text).toContain(key);
     expect(text).toContain('"value":783');
     expect(text).toContain('"sources"');

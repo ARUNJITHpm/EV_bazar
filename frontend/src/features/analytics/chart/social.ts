@@ -1,3 +1,4 @@
+import { CW_MARK_BOX, CW_MARK_PATH } from "../../public/cwMarkGlyphs";
 import { numberLabel, validateChart, valueDomain, type ChartData, type ChartRow } from "./model";
 
 export const socialFormats = {
@@ -6,7 +7,8 @@ export const socialFormats = {
   og: { width: 1200, height: 630, label: "Open Graph", minFont: 40, maxRows: 1 },
 } as const;
 export type SocialFormat = keyof typeof socialFormats;
-export const socialRendererVersion = "analytics_social_v1";
+// v2: the Cw mark joined the brand line (2026-10-03).
+export const socialRendererVersion = "analytics_social_v2";
 export interface SocialPalette {
   paper: string;
   ink: string;
@@ -134,15 +136,24 @@ export function socialSvg({
     (best, row) => (!best || row.value! > best.value! ? row : best),
     undefined,
   );
+  // The Cw mark, paper version (design/brand/mark/), centred on the cap
+  // height of the brand line beside it. Same glyphs as the report's head.
+  const brandSize = og ? 40 : 44,
+    brandBaseline = og ? 54 : 68,
+    markTop = brandBaseline - brandSize * 0.34 - brandSize / 2,
+    brandX = pad + brandSize + 16;
+  parts.push(
+    `<g transform="translate(${pad} ${markTop.toFixed(2)}) scale(${(brandSize / CW_MARK_BOX).toFixed(4)})"><rect x="0.5" y="0.5" width="${CW_MARK_BOX - 1}" height="${CW_MARK_BOX - 1}" rx="5.5" fill="${palette.paper}" stroke="${palette.rule}" stroke-width="1"/><path d="${CW_MARK_PATH}" fill="${palette.slate}"/></g>`,
+  );
   text(
     ["localhost", "127.0.0.1", "[::1]"].includes(new URL(pageUrl).hostname)
       ? "Chargeworthy Data \u00b7 Local preview"
       : "Chargeworthy Data",
-    pad,
-    og ? 54 : 68,
-    f.width - 2 * pad,
+    brandX,
+    brandBaseline,
+    f.width - pad - brandX,
     1,
-    og ? 40 : 44,
+    brandSize,
   );
   text(question, pad, og ? 122 : 152, og ? 620 : 1000, og ? 4 : 3, og ? 48 : 56);
   // Keep the period on the image: retrieval date is not the observation period.
