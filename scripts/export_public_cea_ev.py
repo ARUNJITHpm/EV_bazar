@@ -1,18 +1,25 @@
-"""Write the public CEA EV-charging electricity dataset from the database.
+"""Write the public CEA EV-charging electricity dataset.
 
-    uv run python -m scripts.export_public_cea_ev            # dry run: print what would change
-    uv run python -m scripts.export_public_cea_ev --write    # write data/public/cea_ev_consumption/
+    uv run python -m scripts.export_public_cea_ev --from-archive --write   # what CI runs weekly
+    uv run python -m scripts.export_public_cea_ev --write                  # from the database
 
-Publishes, for every report month stored by ``scripts.fetch_cea_ev``, the
-most recently fetched file's state rows (named as in the LGD district
-reference, so the public validator can join them) and the all-India total,
-for the month and the financial year to date. DISCOM rows and lines that are
-not one LGD state ("UT of J&K and Ladakh", "DVC") stay in the database only.
+Publishes, for every report month, the current file's state rows (named as in
+the LGD district reference, so the public validator can join them) and the
+all-India total, for the month and the financial year to date. DISCOM rows
+and lines that are not one LGD state ("UT of J&K and Ladakh", "DVC") are not
+published.
 
-The public build validates the result like any other source; this script
-never edits the validator's rules. Re-run it after a new report is stored,
-then commit the two files - the site is static, so new figures go live with
-the next deploy.
+Two sources, one output. ``--from-archive`` reads CEA's month archive
+directly - it lists the current file for each month, re-issues included - and
+needs no database, so the weekly GitHub workflow
+(``.github/workflows/refresh-cea-public.yml``) can run it, commit a changed
+file and redeploy. Without it, rows come from ``cea_ev_consumption``, newest
+fetched file per month. Nothing is written when the data is unchanged, so an
+idle week makes no commit.
+
+Exit status 2 means CEA's newest archived report could not be read - a layout
+change that needs a human - reported instead of publishing stale figures
+silently.
 """
 
 from __future__ import annotations
@@ -22,9 +29,8 @@ import csv
 import io
 import json
 import sys
+from collections.abc import Sequence
 from pathlib import Path
-
-from sqlalchemy import text
 
 OUT = Path(__file__).resolve().parents[1] / "data" / "public" / "cea_ev_consumption"
 LISTING = "https://cea.nic.in/electric-vehicle-charging-reports/?lang=en"
@@ -43,8 +49,7 @@ FIELDS = (
     "source_sha256",
     "notes",
 )
-_QUERY = text(
-    """
+_QUERY = """
     WITH latest AS (
       SELECT DISTINCT ON (report_month) report_month, source_sha256
       FROM cea_ev_consumption
@@ -58,9 +63,7 @@ _QUERY = text(
     JOIN latest l USING (report_month, source_sha256)
     LEFT JOIN states s ON s.lgd_state_code = c.lgd_state_code
     WHERE c.geography = 'india' OR (c.geography = 'state' AND c.lgd_state_code IS NOT NULL)
-    ORDER BY c.report_month, c.span, state
-    """
-)
+"""
 
 _COLUMNS = {
     "state": ("not applicable", "LGD state name, or India for CEA's Grand Total"),
@@ -84,7 +87,12 @@ def _cell(value: object) -> str:
 
 
 def build(rows: list[dict[str, object]]) -> tuple[str, dict[str, object]]:
-    """The CSV text and metadata for the rows, deterministic for a given input."""
+    """The CSV text and metadata for the rows, deterministic for a given input.
+
+    Rows are sorted here, in Python, so the database and the archive produce
+    byte-identical files for the same figures.
+    """
+    rows = sorted(rows, key=lambda r: (str(r["report_month"]), str(r["span"]), str(r["state"])))
     seen: set[tuple[object, object, object]] = set()
     buffer = io.StringIO()
     writer = csv.writer(buffer, lineterminator="\n")
@@ -168,27 +176,118 @@ def build(rows: list[dict[str, object]]) -> tuple[str, dict[str, object]]:
     return buffer.getvalue(), meta
 
 
-def main() -> int:
+def rows_from_reports(
+    reports: Sequence[tuple[str, str, object]], lgd_states: set[str], fetched_on: str
+) -> list[dict[str, object]]:
+    """Rows in the database query's shape, from parsed reports (no database).
+
+    ``reports`` is (source URL, PDF sha256, parsed Report); ``lgd_states`` the
+    district reference's state names. A CEA line that is not one LGD state is
+    left out, as in the database export.
+    """
+    from app.domain.cea.parse import SPANS, Report, lgd_state_code
+
+    names = {name: name for name in lgd_states}
+    out: list[dict[str, object]] = []
+    for url, sha, parsed in reports:
+        assert isinstance(parsed, Report)
+        lines = [*parsed.states, *([parsed.india] if parsed.india else [])]
+        for line in lines:
+            state = "India" if line.geography == "india" else lgd_state_code(line.state_name, names)
+            if state is None:
+                continue
+            for span in SPANS:
+                values = getattr(line, span)
+                start = parsed.report_month if span == "month" else parsed.fy_start
+                if values is None or start is None:
+                    continue
+                out.append(
+                    {
+                        "state": state,
+                        "state_name": line.state_name,
+                        "report_month": f"{parsed.report_month:%Y-%m}",
+                        "span": span,
+                        "span_start": start.isoformat(),
+                        **values,
+                        "source_url": url,
+                        "source_sha256": sha,
+                        "fetched_on": fetched_on,
+                    }
+                )
+    return out
+
+
+def _lgd_states() -> set[str]:
+    reference = OUT.parent / "district_reference" / "data.csv"
+    with reference.open(encoding="utf-8", newline="") as stream:
+        return {row["state_name"] for row in csv.DictReader(stream)}
+
+
+def _from_archive(start: str) -> tuple[list[dict[str, object]], bool]:
+    """Rows from CEA's archive, and whether the newest archived report was read."""
+    import datetime as dt
+    import hashlib
+
+    import httpx
+
+    from app.domain.cea.parse import ReportFormatError, parse_report
+    from scripts.fetch_cea_ev import HEADERS, archived_reports, months_back, pdf_pages
+
+    parsed: list[tuple[str, str, object]] = []
+    newest_ok = True
+    with httpx.Client(timeout=120, headers=HEADERS, follow_redirects=True) as client:
+        urls = archived_reports(client, months_back(dt.date.today(), 0, start))
+        for index, url in enumerate(urls):
+            raw = client.get(url).raise_for_status().content
+            try:
+                report = parse_report(pdf_pages(raw))
+            except ReportFormatError as exc:
+                print(f"skipped {url}: {exc}")
+                if index == len(urls) - 1:
+                    newest_ok = False
+                continue
+            parsed.append((url, hashlib.sha256(raw).hexdigest(), report))
+    return rows_from_reports(parsed, _lgd_states(), dt.date.today().isoformat()), newest_ok
+
+
+def _from_database() -> list[dict[str, object]]:
+    from sqlalchemy import text
+
     from app.db import SessionLocal
 
-    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--write", action="store_true", help="write the files (default: dry run)")
-    args = p.parse_args()
     with SessionLocal() as session:
-        rows = [dict(r._mapping) for r in session.execute(_QUERY)]
+        return [dict(r._mapping) for r in session.execute(text(_QUERY))]
+
+
+def main() -> int:
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    p.add_argument("--write", action="store_true", help="write changed files (default: dry run)")
+    p.add_argument("--from-archive", action="store_true", help="read CEA directly, no database")
+    p.add_argument("--from", dest="start", default="2022-08", help="first archive month YYYY-MM")
+    args = p.parse_args()
+    newest_ok = True
+    if args.from_archive:
+        rows, newest_ok = _from_archive(args.start)
+    else:
+        rows = _from_database()
     if not rows:
-        print("no CEA rows stored - run scripts.fetch_cea_ev --write first")
+        print("no CEA rows found")
         return 1
     data, meta = build(rows)
-    meta_text = json.dumps(meta, indent=2, ensure_ascii=False) + "\n"
-    old = (OUT / "data.csv").read_text(encoding="utf-8") if (OUT / "data.csv").exists() else ""
+    path = OUT / "data.csv"
+    old = path.read_text(encoding="utf-8").replace("\r\n", "\n") if path.exists() else ""
+    changed = old != data
     print(f"{len(rows)} rows, {meta['time_coverage']}")
-    print("unchanged" if old == data else f"data.csv changes ({len(old)} -> {len(data)} bytes)")
-    if args.write:
+    print(f"data.csv {'changes' if changed else 'unchanged'} ({len(old)} -> {len(data)} bytes)")
+    if args.write and changed:
         OUT.mkdir(parents=True, exist_ok=True)
-        (OUT / "data.csv").write_text(data, encoding="utf-8", newline="")
+        path.write_text(data, encoding="utf-8", newline="")
+        meta_text = json.dumps(meta, indent=2, ensure_ascii=False) + "\n"
         (OUT / "meta.json").write_text(meta_text, encoding="utf-8", newline="")
         print(f"wrote {OUT}")
+    if not newest_ok:
+        print("ERROR: CEA's newest archived report could not be read - check its layout")
+        return 2
     return 0
 
 

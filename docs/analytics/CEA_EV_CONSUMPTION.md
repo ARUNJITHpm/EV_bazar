@@ -51,8 +51,18 @@ field records that decision; it is not a CEA licence.
 
 ## Public file
 
-`scripts/export_public_cea_ev.py --write` writes state rows (LGD names) and the
-all-India total, month and year to date, from the newest file of each month.
+`scripts/export_public_cea_ev.py` writes state rows (LGD names) and the
+all-India total, month and year to date, from the current file of each month.
+
+**It updates itself.** Every Monday, `.github/workflows/refresh-cea-public.yml`
+runs the export with `--from-archive` (straight from CEA's month archive, no
+database or secret), validates the result with the site's own loader and,
+only if the figures changed, commits the file and dispatches the Hugging Face
+sync - so a new CEA month reaches /data/electricity within about a week of
+publication, with no manual step. A failed run (exit 2: CEA's newest report
+has an unknown layout) emails the repository owner. The database copy is
+filled separately by the Space's weekly `cea_ev_weekly` job; both read the
+same archive, and the two exports were byte-identical on 2026-10-04.
 DISCOM rows and lines spanning several states ("UT of J&K and Ladakh",
 "DVC") stay in the database. Values are kWh; MU on the page is kWh / 1e6.
 

@@ -207,3 +207,29 @@ def test_january_2026_table_across_pages_with_wrapped_region_and_total() -> None
 def test_reports_whose_tables_are_images_are_refused() -> None:
     with pytest.raises(ReportFormatError, match="images"):
         parse_report(pages("2025_01_images"))
+
+
+def test_archive_export_rows_match_the_public_schema_without_a_database() -> None:
+    from scripts.export_public_cea_ev import build, rows_from_reports
+
+    report = parse_report(pages("2026_03"))
+    lgd = {"KERALA", "TAMIL NADU", "JAMMU & KASHMIR", "LADAKH", "DELHI"}
+    rows = rows_from_reports([("https://cea.nic.in/r.pdf", "f" * 64, report)], lgd, "2026-10-04")
+    kerala = [r for r in rows if r["state"] == "KERALA"]
+    assert {r["span"] for r in kerala} == {"month", "fy_to_date"}
+    month = next(r for r in kerala if r["span"] == "month")
+    assert month["total_kwh"] == 2_420_000 and month["other_kwh"] is None
+    assert month["span_start"] == "2026-03-01" and month["report_month"] == "2026-03"
+    # Lines that are not one LGD state, and states absent from the reference, stay out.
+    assert not any(r["state_name"] == "UT of J&K and Ladakh" for r in rows)
+    assert {r["state"] for r in rows} == {
+        "KERALA",
+        "TAMIL NADU",
+        "DELHI",
+        "LADAKH",
+        "JAMMU & KASHMIR",  # the state table's own "UT of J&K" line
+        "India",
+    }
+    data, meta = build(rows)
+    assert data.splitlines()[0].startswith("state,cea_state_name,report_month,span")
+    assert meta["retrieved_on"] == "2026-10-04"

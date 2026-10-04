@@ -1,0 +1,79 @@
+# Keeps /data/electricity current with CEA's monthly EV charging reports.
+#
+# The public site is static: figures go live only when data/public/ changes
+# in git and the Space rebuilds. Weekly, this rebuilds the public CEA file
+# straight from CEA's month archive (no database, so no secret), validates it
+# with the site's own loader, and - only if the figures changed - commits it
+# and starts the Hugging Face sync. A push made with GITHUB_TOKEN does not
+# start other workflows, so the sync is dispatched explicitly (dispatch is
+# the allowed exception).
+#
+# A failed run is the alarm: exit 2 means CEA's newest report has a layout
+# the parser does not know. GitHub emails the repository owner.
+name: Refresh CEA public data
+
+on:
+  schedule:
+    - cron: '0 2 * * 1' # Monday 07:30 IST, after the Space's Sunday refresh
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: refresh-cea-public
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install the two readers (pinned as in uv.lock)
+        run: python -m pip install --quiet "pypdf==6.19.0" "httpx==0.28.1"
+
+      - name: Rebuild the public CEA file from CEA's archive
+        run: python -m scripts.export_public_cea_ev --from-archive --write
+
+      - name: Did the figures change?
+        id: diff
+        run: |
+          if git diff --quiet -- data/public/cea_ev_consumption; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No new CEA figures this week."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat -- data/public/cea_ev_consumption
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.diff.outputs.changed == 'true'
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Validate with the site's own loader
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          npm ci --prefix frontend
+          npm run data:validate --prefix frontend
+
+      - name: Commit and redeploy
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/public/cea_ev_consumption
+          git commit -m "Refresh CEA EV charging electricity from CEA's archive"
+          git push
+          gh workflow run sync-to-hf.yml --ref main
