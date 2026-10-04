@@ -471,6 +471,76 @@ _TABLES: tuple[tuple[str, str, str, str, str], ...] = (
         "No competitor fetch has run yet.",
     ),
     (
+        "data_sources",
+        "Charging network",
+        "Each app or feed we read (GoEC, Zeon, Pulse, Tata Power, Open Charge Map). "
+        "Not an operator: an app can list chargers other companies run.",
+        "Migration 0015 seed",
+        "",
+    ),
+    (
+        "cpos",
+        "Charging network",
+        "Charge point operators, canonical. Grown by a human - no fuzzy matching, so "
+        "two networks are never silently merged.",
+        "scripts/backfill_network.py, then human review",
+        "No operator recorded yet.",
+    ),
+    (
+        "cpo_aliases",
+        "Charging network",
+        "Every spelling of an operator name seen, and what a human decided it means "
+        "(confirmed / pending / not a network). Pending reads as 'unknown', never zero.",
+        "Automatically on load; decided on the Operators panel",
+        "No operator name seen yet.",
+    ),
+    (
+        "stations",
+        "Charging network",
+        "Places with chargers, with their operator (or the raw name until resolved) "
+        "and district. The one inventory competition and the owner flow both read.",
+        "scripts/backfill_network.py, load_chargers.py, refresh_stations.py",
+        "No station loaded yet.",
+    ),
+    (
+        "chargers",
+        "Charging network",
+        "One box (EVSE) on a station, serving one vehicle at a time.",
+        "Same loaders as stations",
+        "No charger loaded yet.",
+    ),
+    (
+        "connectors",
+        "Charging network",
+        "One plug on a charger: standard (CCS2, Type 2...) and power. NULL = the "
+        "source did not say.",
+        "Same loaders as stations",
+        "No connector loaded yet.",
+    ),
+    (
+        "scraped_records",
+        "Charging network",
+        "What a source returned for a station, verbatim. Insert-only; one row per "
+        "distinct payload, so a re-scrape returning the same bytes adds nothing.",
+        "scripts/scrape_chargers.py",
+        "Nothing scraped yet.",
+    ),
+    (
+        "station_listings",
+        "Charging network",
+        "A source's own id for a station - the same place as one app sees it, with "
+        "when it was last seen there.",
+        "scripts/scrape_chargers.py / load_chargers.py",
+        "No listing yet.",
+    ),
+    (
+        "charger_listings",
+        "Charging network",
+        "A source's own id for a charger, only where the source really has one.",
+        "scripts/scrape_chargers.py / load_chargers.py",
+        "No listing yet.",
+    ),
+    (
         "vahan_ev_registrations",
         "Demand",
         "How many EVs are registered in each district, split by vehicle class and "
@@ -480,6 +550,28 @@ _TABLES: tuple[tuple[str, str, str, str, str], ...] = (
         "PLAN 4.1 - scripts/scrape_vahan.py then scripts/ingest_vahan.py",
         "No VAHAN scrape ingested yet - every state's vehicle-count flag is false on "
         "the Data panel until one is.",
+    ),
+    (
+        "vahan_monthly_registrations",
+        "Demand",
+        "EV registrations IN each month (not year totals), read month-wise from the "
+        "same VAHAN dashboard - by maker (Tata, Ather, Ola...) or by vehicle category. "
+        "Kept apart from the yearly table so nothing counts a vehicle twice.",
+        "scripts/scrape_vahan.py --monthly maker|vehicle_category, then ingest_vahan. "
+        "Not on this laptop (owner rule); VAHAN blocks datacenter IPs, so the open "
+        "task is a home connection - the Android phone",
+        "No monthly scrape ingested yet.",
+    ),
+    (
+        "cea_ev_consumption",
+        "Demand",
+        "Electricity used by EV charging (kWh) per state and DISCOM, per month and "
+        "financial year to date, as CEA prints it - the only MEASURED charging demand "
+        "we hold. Append-only; one set of rows per report PDF (sha-keyed). Public "
+        "copy: /data/electricity.",
+        "scripts/fetch_cea_ev.py; the Space's weekly cea_ev_weekly job; GitHub's "
+        "Monday refresh-cea-public workflow updates the public file",
+        "No CEA report stored yet.",
     ),
     (
         "predictions",
@@ -500,6 +592,95 @@ _TABLES: tuple[tuple[str, str, str, str, str], ...] = (
         "payload flagged demo may be regenerated.",
         "PLAN 5 - assemble_report() -> save_report()",
         "No report has been generated yet.",
+    ),
+    (
+        "report_pdfs",
+        "Reports",
+        "The PDF of each report as rendered at generation time, frozen as bytes - it "
+        "answers 'that is not what my report looked like', which a re-render cannot.",
+        "scripts/archive_report_pdf.py, at generation",
+        "No PDF archived yet.",
+    ),
+    (
+        "owner_accounts",
+        "Station owners (private)",
+        "Owner logins: phone number (shown masked) and password hash.",
+        "The owner sign-up flow",
+        "No owner has signed up yet.",
+    ),
+    (
+        "owner_stations",
+        "Station owners (private)",
+        "The stations an owner says they run.",
+        "The owner flow",
+        "No owner station yet.",
+    ),
+    (
+        "owner_connectors",
+        "Station owners (private)",
+        "The connectors on an owner's station.",
+        "The owner flow",
+        "No owner connector yet.",
+    ),
+    (
+        "owner_submissions",
+        "Station owners (private)",
+        "What an owner told us, with the forecast they were shown. Append-only: a "
+        "correction is a new submission.",
+        "The owner flow",
+        "No submission yet.",
+    ),
+    (
+        "owner_readings",
+        "Station owners (private)",
+        "Monthly kWh an owner reported, per submission - real usage from a real site.",
+        "The owner flow",
+        "No reading yet.",
+    ),
+    (
+        "owner_bill_images",
+        "Station owners (private)",
+        "Uploaded bill photos/PDFs, kept as uploaded.",
+        "The owner flow",
+        "No bill uploaded yet.",
+    ),
+    (
+        "owner_bills",
+        "Station owners (private)",
+        "Figures off an owner's electricity bill per month: kWh, demand, power factor, "
+        "time-of-day split. A correction is a new row.",
+        "The owner flow",
+        "No bill read yet.",
+    ),
+    (
+        "owner_forecasts",
+        "Station owners (private)",
+        "Each forecast as it was made, never recomputed - so our track record against "
+        "owners' real numbers stays honest.",
+        "The owner flow",
+        "No forecast yet.",
+    ),
+    (
+        "owner_grid_consents",
+        "Station owners (private)",
+        "The owner's consent to keep their grid details privately.",
+        "The owner grid form",
+        "No consent recorded yet.",
+    ),
+    (
+        "owner_grid_revisions",
+        "Station owners (private)",
+        "Sanctioned load (kVA), connected load (kW) and transformer details. Each "
+        "change supersedes, never edits. Private and erasable - never a demand input.",
+        "The owner grid form",
+        "No grid details yet.",
+    ),
+    (
+        "owner_outage_revisions",
+        "Station owners (private)",
+        "Approximate outage hours per month, as the owner reports them.",
+        "The owner grid form",
+        "No outage reported yet.",
     ),
     (
         "poll_runs",
@@ -575,6 +756,14 @@ _TABLES: tuple[tuple[str, str, str, str, str], ...] = (
         "what shape the database had when it was generated.",
         "Alembic migrations",
         "",
+    ),
+    (
+        "data_refresh_events",
+        "Housekeeping",
+        "One row per scheduled data job attempt (VAHAN, CEA, inventory): job, period, "
+        "outcome and what it saw, with the fetched files zipped alongside. Append-only.",
+        "workers/data_refresh.py, on the Space",
+        "No scheduled refresh has run yet.",
     ),
     (
         "alembic_version",

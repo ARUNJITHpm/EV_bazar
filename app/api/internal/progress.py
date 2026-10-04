@@ -84,6 +84,9 @@ class Signals:
     network_unattributed: int = 0
     network_unplaced: int = 0
     network_no_power: int = 0
+    vahan_monthly_rows: int = 0
+    cea_rows: int = 0
+    cea_months: int = 0
 
 
 def _network_signals(session: Session) -> dict[str, int]:
@@ -176,7 +179,28 @@ def read_signals(session: Session) -> Signals:
         archive_table=archive_table,
         archived_pdfs=archived,
         **_network_signals(session),
+        **_demand_signals(session),
     )
+
+
+def _demand_signals(session: Session) -> dict[str, int]:
+    """Counts for the monthly VAHAN and CEA tables (migrations 0023, 0024).
+
+    Guarded like ``report_pdfs``: a database behind those migrations reads as
+    zero rather than taking the panel down.
+    """
+    present = inspect(session.connection())
+    out = {"vahan_monthly_rows": 0, "cea_rows": 0, "cea_months": 0}
+    if present.has_table("vahan_monthly_registrations"):
+        out["vahan_monthly_rows"] = int(
+            session.execute(text("SELECT count(*) FROM vahan_monthly_registrations")).scalar_one()
+        )
+    if present.has_table("cea_ev_consumption"):
+        rows, months = session.execute(
+            text("SELECT count(*), count(DISTINCT report_month) FROM cea_ev_consumption")
+        ).one()
+        out["cea_rows"], out["cea_months"] = int(rows), int(months)
+    return out
 
 
 class MilestoneOut(BaseModel):
@@ -416,6 +440,35 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "starting them costs nothing now and unblocks Part 7 later.",
         "Human: arrange them. Nothing in the codebase can.",
     )
+    add(
+        "4.1 phone",
+        "VAHAN from a home connection - the Android phone",
+        Status.NEXT,
+        "VAHAN blocks datacenter IPs (the Hugging Face smoke run was refused, "
+        "2026-10-03), and the owner does not want the scraper on the laptop. A home "
+        "connection is the way: run the existing scraper on the owner's Android phone "
+        "(Termux), yearly by RTO plus the new month-wise mode - by maker (Tata, Ather, "
+        "Ola...) and by vehicle category.",
+        f"Code done and verified once on the laptop (one RTO, by permission). "
+        f"{s.vahan_rows:,} yearly rows and {s.vahan_monthly_rows:,} monthly rows stored.",
+        "Human: plug the phone in by USB with USB debugging on and accept the prompt "
+        "(adb is at D:/Android/Sdk/platform-tools). Then Claude sets up Termux and a "
+        "scheduled run that ingests into the database.",
+    )
+    add(
+        "4.2 check",
+        "Check our kWh forecasts against CEA's measured figures",
+        Status.NEXT,
+        "CEA's monthly EV-charging electricity is the only MEASURED demand we hold. "
+        "Sum our predicted kWh per connector-day over each state's known public "
+        "connectors and compare it with CEA's public-station kWh for that state and "
+        "month: a sanity check on the synthetic demand band, not a training label.",
+        f"{s.cea_months} CEA month(s) stored ({s.cea_rows:,} rows); "
+        f"{s.predictions:,} prediction(s) logged. Not started.",
+        "Claude, on the owner's go-ahead: a read-only comparison script and a short "
+        "write-up of how far off the band is, per state. State coverage in CEA grows "
+        "over time, so compare like with like.",
+    )
 
     # ------------------------------------------------------------------ DONE
     add(
@@ -467,6 +520,26 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "call has happened yet). Two of three rates are placeholder guesses until a "
         "real bill confirms them.",
         None,
+    )
+    cea_live = s.cea_rows > 0
+    add(
+        "CEA",
+        "EV charging electricity from CEA - measured demand, published",
+        Status.DONE if cea_live else Status.CODE_DONE,
+        "CEA's monthly report of electricity used by EV charging, per state and "
+        "DISCOM, read from the PDF text (never typed), refused unless the states add up "
+        "to CEA's own Grand Total. Stored append-only by file; the state and India "
+        "rows are public on /data/electricity.",
+        (
+            f"{s.cea_months} report months stored ({s.cea_rows:,} rows). Refreshes "
+            "itself: the Space's weekly cea_ev_weekly job fills the database, and a "
+            "Monday GitHub workflow (refresh-cea-public) rebuilds the public file from "
+            "CEA's archive and redeploys only when the figures change. Missing on "
+            "purpose: Nov 2024 - Jun 2025 (tables are images) and the 2022-24 layout."
+            if cea_live
+            else "Parser, table and export built and tested; no report stored yet."
+        ),
+        None if cea_live else "`python -m scripts.fetch_cea_ev --months 12 --write`.",
     )
     competitors_live = s.competitor_stations > 0
     add(
@@ -524,11 +597,10 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         "four Tier-1 layers for a state; occupancy is the last.",
         (
             f"{s.vahan_rows:,} rows across {s.vahan_states} state(s) (see the VAHAN "
-            "panel), refreshed by the scheduled job scripts/vahan_refresh.bat: it pins "
-            "one CSV per run (--out, so midnight cannot split it), retries the scrape "
-            "up to 12x on top of resume (sentinel rows make retries cheap), ingests "
-            "that exact file, and has a --smoke mode that rehearses the whole job on "
-            "2 RTOs under a sentinel snapshot date."
+            f"panel), plus {s.vahan_monthly_rows:,} month-wise rows. No scheduled "
+            "refresh runs: the laptop task was removed on the owner's instruction and "
+            "VAHAN refuses datacenter IPs, so the next host is the Android phone (see "
+            "the queue)."
             if vahan_live
             else "Scraper, schema and ingest are BUILT and tested - zero rows yet, which "
             "is why every state's vehicle-count flag is false on the Data panel. Scrape "
@@ -539,8 +611,8 @@ def build_milestones(s: Signals) -> list[MilestoneOut]:
         else "Human: `uv sync --extra scrape` (installs the browser), then "
         "`python -m scripts.scrape_vahan --state kerala` (a long run against the "
         "portal), then `python -m scripts.ingest_vahan --csv <the CSV> --write`. "
-        "Validate first with `--dry-run --limit 2`. Once proven, schedule "
-        "scripts/vahan_refresh.bat so the time series grows on its own.",
+        "Validate first with `--dry-run --limit 2`. Not on this laptop (owner rule) "
+        "and not on a datacenter host (VAHAN blocks them) - see the phone item.",
     )
     add(
         "3.1 + 3.2",
@@ -1058,14 +1130,13 @@ def build_inputs(
                 "Our own fetcher, no vendor: `uv sync --extra scrape` then "
                 "`python -m scripts.scrape_vahan --state kerala` (long run against the "
                 "government dashboard), then `python -m scripts.ingest_vahan --csv "
-                "<the CSV> --write`. RTO list + coordinates are already seeded. For "
-                "steady state, schedule scripts/vahan_refresh.bat (Task Scheduler): "
-                "scrape with retries + resume, ingest the pinned CSV, all in one job "
-                "- rehearse it first with --smoke."
+                "<the CSV> --write`. RTO list + coordinates are already seeded. Needs "
+                "a home connection: not this laptop (owner rule, 2026-10-03), not a "
+                "datacenter (VAHAN blocks those). Planned host: the Android phone."
             ),
             detail=(
-                "Loaded - at least one state scraped and ingested; the scheduled "
-                "refresh job keeps the time series growing."
+                "Loaded - at least one state scraped and ingested. No scheduled "
+                "refresh until the phone is set up."
                 if vahan_loaded
                 else "Not scraped yet. The scraper, schema and ingest are built and "
                 "tested; running the scrape is a human step (it drives a browser)."

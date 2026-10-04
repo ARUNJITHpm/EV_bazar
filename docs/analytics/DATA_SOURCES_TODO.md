@@ -27,6 +27,25 @@ This replaces the earlier gate that kept a source unpublished until a reuse
 licence was verified. Data scraped from private apps and owner data remain
 private; this rule is about publicly published statistics.
 
+## Open next steps (2026-10-05)
+
+Also listed in the console's Progress panel ("The queue").
+
+- [ ] **VAHAN from the Android phone.** VAHAN blocks datacenter IPs (the Hugging
+  Face smoke run was refused on 2026-10-03), and the scraper must not run on the
+  laptop (AGENTS.md). The code is ready, and verified once on one RTO: yearly by
+  RTO, and month-wise by maker or vehicle category (`--monthly`). Next step for
+  the owner: connect the phone by USB with USB debugging on and accept the
+  prompt. adb is at `D:/Android/Sdk/platform-tools/adb.exe`. Then set up Termux
+  and a scheduled run that ingests into the database.
+- [ ] **Check kWh forecasts against CEA.** Compare our predicted kWh per
+  connector-day, summed over each state's known public connectors, with CEA's
+  measured public-station kWh for that state and month. This is a sanity check
+  on the synthetic demand band, not a training label. CEA's state coverage
+  grows over time, so compare like with like. See `CEA_EV_CONSUMPTION.md`.
+- [ ] Optional: OCR CEA's image-only months (Nov 2024 to Jun 2025), with a human
+  check.
+
 ## How to add a dataset
 
 1. Keep the original download and a checksum outside `data/public/`. Preserve
