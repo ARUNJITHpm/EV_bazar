@@ -2,8 +2,17 @@ import datetime as dt
 import io
 import zipfile
 
+from sqlalchemy.dialects import postgresql
+
 from app.models.data_refresh import DataRefreshEvent
-from workers.data_refresh import archive_folder, due_period, next_attempt
+from workers.data_refresh import (
+    archive_folder,
+    due_period,
+    next_attempt,
+    next_check,
+    next_period_start,
+    scheduler_query,
+)
 
 
 def utc(value):
@@ -45,6 +54,41 @@ def test_crash_retries_after_cooldown_but_stops_at_three():
         next_attempt([event("failed", 3, "2026-09-27T01:00:00")], utc("2026-09-30T00:00:00"))
         is None
     )
+
+
+def test_scheduler_never_downloads_archives_or_payloads():
+    # Loading the run ZIPs on every one-minute check spent Neon's whole free
+    # monthly network transfer in October 2026 and took the Space down.
+    sql = str(
+        scheduler_query("stations_weekly", "2026-09-27").compile(dialect=postgresql.dialect())
+    )
+    selected = sql.split(" FROM ")[0]
+    assert "archive" not in selected and "payload" not in selected
+    assert "observed_at" in selected and "outcome" in selected and "attempt" in selected
+    assert DataRefreshEvent.__mapper__.column_attrs["archive"].deferred
+
+
+def test_next_period_start_weekly_and_monthly():
+    assert next_period_start("stations_weekly", utc("2026-09-30T15:00:00")) == utc(
+        "2026-10-03T21:30:00"
+    )
+    assert next_period_start("vahan_monthly", utc("2026-12-15T00:00:00")) == utc(
+        "2026-12-31T22:30:00"
+    )
+
+
+def test_settled_period_sleeps_until_the_next_one():
+    now = utc("2026-09-30T15:00:00")
+    assert next_check("stations_weekly", now, settled=True, last_observed=now) == utc(
+        "2026-10-03T21:30:00"
+    )
+
+
+def test_unsettled_period_waits_out_the_cooldown():
+    now = utc("2026-09-27T01:10:00")
+    assert next_check(
+        "stations_weekly", now, settled=False, last_observed=utc("2026-09-27T01:00:00")
+    ) == utc("2026-09-27T02:00:00")
 
 
 def test_zip_preserves_original_raw_bytes(tmp_path):

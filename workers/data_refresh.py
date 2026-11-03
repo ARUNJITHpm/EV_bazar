@@ -4,6 +4,9 @@ Weekly: Sunday 03:00 IST - station inventory, and CEA's EV charging
 electricity report (published irregularly, 2-5 months late, so checked weekly;
 off with CEA_EV_ENABLED=false). Optional VAHAN monthly: day 1, 04:00 IST.
 Free Spaces sleep; GitHub's weekly wake-up workflow wakes the web container.
+
+Between due runs the loop does not touch the database: each job remembers when
+it next needs a look, so Neon can suspend and no run archive is re-downloaded.
 """
 
 from __future__ import annotations
@@ -27,7 +30,8 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import select, text
+from sqlalchemy import Select, select, text
+from sqlalchemy.orm import load_only
 
 from app.domain.context.station_pipeline import VERSION_STAMPS
 from app.models.data_refresh import DataRefreshEvent
@@ -35,6 +39,10 @@ from app.models.data_refresh import DataRefreshEvent
 log = logging.getLogger("data_refresh")
 IST = ZoneInfo("Asia/Kolkata")
 MAX_ATTEMPTS = 3
+RETRY_COOLDOWN = dt.timedelta(hours=1)
+#: Recheck delay when another process holds the lock, the VAHAN smoke gate is
+#: not yet passed, or the database is unreachable.
+BUSY_RECHECK = dt.timedelta(minutes=15)
 
 
 def run_command(
@@ -63,19 +71,67 @@ def run_command(
         raise
 
 
-def due_period(job: str, now: dt.datetime) -> str:
+def is_monthly(job: str) -> bool:
+    return job in {"vahan_monthly", "vahan_smoke"}
+
+
+def period_start(job: str, now: dt.datetime) -> dt.datetime:
+    """Start (IST) of the period `now` falls in."""
     local = now.astimezone(IST)
-    if job in {"vahan_monthly", "vahan_smoke"}:
+    if is_monthly(job):
         first = local.replace(day=1, hour=4, minute=0, second=0, microsecond=0)
         if local < first:
             first = (first - dt.timedelta(days=1)).replace(day=1)
-        return first.strftime("%Y-%m")
+        return first
     sunday = (local - dt.timedelta(days=(local.weekday() + 1) % 7)).replace(
         hour=3, minute=0, second=0, microsecond=0
     )
     if local < sunday:
         sunday -= dt.timedelta(days=7)
-    return sunday.date().isoformat()
+    return sunday
+
+
+def next_period_start(job: str, now: dt.datetime) -> dt.datetime:
+    start = period_start(job, now)
+    if is_monthly(job):
+        return (start + dt.timedelta(days=32)).replace(day=1)
+    return start + dt.timedelta(days=7)
+
+
+def due_period(job: str, now: dt.datetime) -> str:
+    start = period_start(job, now)
+    return start.strftime("%Y-%m") if is_monthly(job) else start.date().isoformat()
+
+
+def next_check(
+    job: str, now: dt.datetime, *, settled: bool, last_observed: dt.datetime | None
+) -> dt.datetime:
+    """When this job next needs the database.
+
+    A settled period (success, or attempts exhausted) waits for the next
+    period; an unsettled one waits out the retry cooldown.
+    """
+    if settled or last_observed is None:
+        return next_period_start(job, now)
+    if last_observed.tzinfo is None:
+        last_observed = last_observed.replace(tzinfo=dt.UTC)
+    return last_observed + RETRY_COOLDOWN
+
+
+def scheduler_query(job: str, period: str) -> Select[tuple[DataRefreshEvent]]:
+    """Only the columns the scheduler reads - never `archive` or `payload`."""
+    return (
+        select(DataRefreshEvent)
+        .options(
+            load_only(
+                DataRefreshEvent.attempt,
+                DataRefreshEvent.outcome,
+                DataRefreshEvent.observed_at,
+                raiseload=True,
+            )
+        )
+        .where(DataRefreshEvent.job == job, DataRefreshEvent.period == period)
+    )
 
 
 def next_attempt(events: list[DataRefreshEvent], now: dt.datetime) -> int | None:
@@ -86,7 +142,7 @@ def next_attempt(events: list[DataRefreshEvent], now: dt.datetime) -> int | None
         observed = latest.observed_at
         if observed.tzinfo is None:
             observed = observed.replace(tzinfo=dt.UTC)
-        if now - observed < dt.timedelta(hours=1):
+        if now - observed < RETRY_COOLDOWN:
             return None
     attempt = max((e.attempt for e in events), default=0) + 1
     return attempt if attempt <= MAX_ATTEMPTS else None
@@ -278,7 +334,8 @@ def execute_job(job: str, directory: Path) -> dict[str, Any]:
     return {"outcome": "success", "manifest": manifest}
 
 
-def run_due(job: str, now: dt.datetime) -> None:
+def run_due(job: str, now: dt.datetime) -> dt.datetime:
+    """Run `job` if due; return when it next needs checking."""
     from app.db import SessionLocal, engine
 
     period = due_period(job, now)
@@ -293,7 +350,7 @@ def run_due(job: str, now: dt.datetime) -> None:
         ).scalar_one()
         connection.commit()
         if not locked:
-            return
+            return now + BUSY_RECHECK
         try:
             with SessionLocal() as session:
                 if job == "vahan_monthly":
@@ -307,17 +364,17 @@ def run_due(job: str, now: dt.datetime) -> None:
                     ).scalar_one_or_none()
                     if smoke is None:
                         log.warning("VAHAN monthly refused: successful server smoke test required")
-                        return
-                events = list(
-                    session.scalars(
-                        select(DataRefreshEvent).where(
-                            DataRefreshEvent.job == job, DataRefreshEvent.period == period
-                        )
-                    )
-                )
+                        return now + BUSY_RECHECK
+                events = list(session.scalars(scheduler_query(job, period)))
                 attempt = next_attempt(events, now)
                 if attempt is None:
-                    return
+                    return next_check(
+                        job,
+                        now,
+                        settled=any(e.outcome == "success" for e in events)
+                        or max((e.attempt for e in events), default=0) >= MAX_ATTEMPTS,
+                        last_observed=max((e.observed_at for e in events), default=None),
+                    )
                 session.add(
                     DataRefreshEvent(
                         job=job,
@@ -340,6 +397,7 @@ def run_due(job: str, now: dt.datetime) -> None:
                     payload = {"outcome": "failed", "error_type": type(error).__name__}
                 archive = archive_folder(directory)
                 payload.update(VERSION_STAMPS, archive_sha256=hashlib.sha256(archive).hexdigest())
+                finished_at = dt.datetime.now(dt.UTC)
                 with SessionLocal() as session:
                     session.add(
                         DataRefreshEvent(
@@ -347,7 +405,7 @@ def run_due(job: str, now: dt.datetime) -> None:
                             period=period,
                             attempt=attempt,
                             outcome=payload["outcome"],
-                            observed_at=dt.datetime.now(dt.UTC),
+                            observed_at=finished_at,
                             payload=payload,
                             archive=archive,
                         )
@@ -359,6 +417,12 @@ def run_due(job: str, now: dt.datetime) -> None:
                     Path(tempfile.gettempdir()).resolve()
                 ) and target.name.startswith("evsite-"):
                     shutil.rmtree(target)
+            return next_check(
+                job,
+                finished_at,
+                settled=payload["outcome"] == "success" or attempt >= MAX_ATTEMPTS,
+                last_observed=finished_at,
+            )
         finally:
             connection.execute(
                 text("SELECT pg_advisory_unlock(hashtext(:job))"), {"job": "evsite:data_refresh"}
@@ -371,6 +435,7 @@ def main() -> None:
     parser.add_argument("--once", action="store_true")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
+    check_at: dict[str, dt.datetime] = {}
     while True:
         jobs = ["stations_weekly"]
         if os.getenv("CEA_EV_ENABLED", "true").lower() == "true":
@@ -380,10 +445,14 @@ def main() -> None:
         if os.getenv("VAHAN_SERVER_ENABLED", "false").lower() == "true":
             jobs.append("vahan_monthly")
         for job in jobs:
+            now = dt.datetime.now(dt.UTC)
+            if now < check_at.get(job, now):
+                continue
             try:
-                run_due(job, dt.datetime.now(dt.UTC))
+                check_at[job] = run_due(job, now)
             except Exception as error:
                 log.error("%s scheduler failed (%s)", job, type(error).__name__)
+                check_at[job] = now + BUSY_RECHECK
         if args.once:
             return
         time.sleep(60)
