@@ -20,7 +20,7 @@ from app.domain.cea.parse import (
     mu_to_kwh,
     parse_report,
 )
-from scripts.fetch_cea_ev import _PDF
+from scripts.fetch_cea_ev import parse_listing
 
 FIXTURES = Path(__file__).parent / "fixtures" / "cea"
 
@@ -121,14 +121,25 @@ def test_cea_state_spellings_map_to_one_lgd_state_or_none() -> None:
     assert lgd_state_code("UT of J&K and Ladakh", states) is None  # two states
 
 
-def test_listing_links_are_recognised() -> None:
+def test_listing_rows_give_month_and_pdf_link() -> None:
+    # The dashboardView table CEA moved to in late October 2026.
+    uid = "7dff9767-0984-406f-aeaf-71cd75a4d1a4"
     html = (
-        '<a href="https://cea.nic.in/wp-content/uploads/ev_charging_rep/2026/08/Mar_26_EV.pdf"'
-        ' download>x</a><a href="https://cea.nic.in/wp-content/uploads/2021/03/other.pdf">y</a>'
+        "<table><tr><th>sr no</th><th>Report Name</th><th>Months</th></tr>"
+        f'<tr><td>2</td><td>EVCS/PCI</td><td> 2026-03 </td><td><a href="/api/dashboardReports/'
+        f'view-pdf/en/{uid}" target="_blank">View</a> <a href="/api/dashboardReports/'
+        f'download-pdf/en/{uid}">Download</a></td></tr>'
+        '<tr><td>3</td><td>EVCS/PCI</td><td>2026-13</td><td><a href="/api/dashboardReports/'
+        'view-pdf/en/2682c45f-8b43-4702-b28d-22ea5311e733">x</a></td></tr>'
+        "<tr><td>4</td><td>no link</td><td>2026-01</td></tr></table>"
     )
-    assert _PDF.findall(html) == [
-        "https://cea.nic.in/wp-content/uploads/ev_charging_rep/2026/08/Mar_26_EV.pdf"
+    assert parse_listing(html) == [
+        ("2026-03", f"https://cea.nic.in/api/dashboardReports/view-pdf/en/{uid}")
     ]
+
+
+def test_listing_without_rows_is_empty() -> None:
+    assert parse_listing("<html><body>Page not found</body></html>") == []
 
 
 def test_october_2024_three_column_layout_and_asterisks() -> None:
@@ -233,3 +244,55 @@ def test_archive_export_rows_match_the_public_schema_without_a_database() -> Non
     data, meta = build(rows)
     assert data.splitlines()[0].startswith("state,cea_state_name,report_month,span")
     assert meta["retrieved_on"] == "2026-10-04"
+
+
+def test_download_retries_a_cut_transfer(monkeypatch: pytest.MonkeyPatch) -> None:
+    import httpx
+
+    from scripts import fetch_cea_ev
+
+    monkeypatch.setattr(fetch_cea_ev.time, "sleep", lambda _s: None)
+    calls = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise httpx.RemoteProtocolError("peer closed connection", request=request)
+        return httpx.Response(200, content=b"%PDF-1.7 body")
+
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        assert fetch_cea_ev.download(client, "https://cea.nic.in/x.pdf") == b"%PDF-1.7 body"
+    assert calls["n"] == 2
+
+
+def test_download_does_not_retry_an_http_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    import httpx
+
+    from scripts import fetch_cea_ev
+
+    monkeypatch.setattr(fetch_cea_ev.time, "sleep", lambda _s: None)
+    calls = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        return httpx.Response(404)
+
+    with (
+        httpx.Client(transport=httpx.MockTransport(handler)) as client,
+        pytest.raises(httpx.HTTPStatusError),
+    ):
+        fetch_cea_ev.download(client, "https://cea.nic.in/x.pdf")
+    assert calls["n"] == 1
+
+
+def test_export_keeps_the_published_url_for_a_known_report() -> None:
+    from scripts.export_public_cea_ev import keep_known_urls
+
+    old = "source_url,source_sha256\nhttps://cea.nic.in/old.pdf,abc\n"
+    rows: list[dict[str, object]] = [
+        {"source_url": "https://cea.nic.in/api/view-pdf/en/uuid-1", "source_sha256": "abc"},
+        {"source_url": "https://cea.nic.in/api/view-pdf/en/uuid-2", "source_sha256": "new"},
+    ]
+    keep_known_urls(rows, old)
+    assert rows[0]["source_url"] == "https://cea.nic.in/old.pdf"
+    assert rows[1]["source_url"] == "https://cea.nic.in/api/view-pdf/en/uuid-2"

@@ -231,14 +231,14 @@ def _from_archive(start: str) -> tuple[list[dict[str, object]], bool]:
     import httpx
 
     from app.domain.cea.parse import ReportFormatError, parse_report
-    from scripts.fetch_cea_ev import HEADERS, archived_reports, months_back, pdf_pages
+    from scripts.fetch_cea_ev import HEADERS, download, listed_reports, months_back, pdf_pages
 
     parsed: list[tuple[str, str, object]] = []
     newest_ok = True
     with httpx.Client(timeout=120, headers=HEADERS, follow_redirects=True) as client:
-        urls = archived_reports(client, months_back(dt.date.today(), 0, start))
+        urls = listed_reports(client, months_back(dt.date.today(), 0, start))
         for index, url in enumerate(urls):
-            raw = client.get(url).raise_for_status().content
+            raw = download(client, url)
             try:
                 report = parse_report(pdf_pages(raw))
             except ReportFormatError as exc:
@@ -259,6 +259,25 @@ def _from_database() -> list[dict[str, object]]:
         return [dict(r._mapping) for r in session.execute(text(_QUERY))]
 
 
+def keep_known_urls(rows: list[dict[str, object]], old_csv: str) -> None:
+    """Give a report already published the link it was published with.
+
+    CEA's report links carry a UUID that changes on every page load (since the
+    Oct 2026 site move), so the same PDF comes back under a new URL each week.
+    The sha256 is what identifies the report; keeping the first URL seen for it
+    stops the weekly job rewriting an unchanged file.
+    """
+    known = {
+        r["source_sha256"]: r["source_url"]
+        for r in csv.DictReader(io.StringIO(old_csv))
+        if r.get("source_sha256") and r.get("source_url")
+    }
+    for row in rows:
+        url = known.get(str(row.get("source_sha256")))
+        if url:
+            row["source_url"] = url
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--write", action="store_true", help="write changed files (default: dry run)")
@@ -273,9 +292,10 @@ def main() -> int:
     if not rows:
         print("no CEA rows found")
         return 1
-    data, meta = build(rows)
     path = OUT / "data.csv"
     old = path.read_text(encoding="utf-8").replace("\r\n", "\n") if path.exists() else ""
+    keep_known_urls(rows, old)
+    data, meta = build(rows)
     changed = old != data
     print(f"{len(rows)} rows, {meta['time_coverage']}")
     print(f"data.csv {'changes' if changed else 'unchanged'} ({len(old)} -> {len(data)} bytes)")

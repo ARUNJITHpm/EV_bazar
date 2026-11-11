@@ -7,11 +7,16 @@
 
 CEA publishes "EV Public Charging Stations Monthly Power Consumption Report"
 about monthly, 2-5 months after the month (March 2026 appeared in August
-2026), sometimes several months at once, sometimes re-issued. The listing page
-shows only the newest, so each run also asks the page's own month archive
-(the AJAX call its month picker makes) for every report month in the last
-``--months`` months, and stores any file it has not seen. ``--from YYYY-MM``
-backfills further back; the archive starts at August 2022.
+2026), sometimes several months at once, sometimes re-issued. The report page
+lists every report with its month (August 2022 onwards); each run downloads
+those whose month falls in the last ``--months`` months and stores any file it
+has not seen. ``--from YYYY-MM`` backfills further back.
+
+CEA moved its site in late October 2026: the old WordPress listing now 404s
+and its month-archive AJAX endpoint answers 403, which broke this job from
+2026-11-03. The reports now live on a "dashboardView" page whose table links
+each PDF through ``/api/dashboardReports/view-pdf/en/<uuid>``. If that page
+ever lists nothing, the run fails loudly rather than reporting "nothing new".
 Every report also carries financial-year-to-date totals, so a month whose own
 report was never fetched can still be recovered from two neighbours.
 
@@ -28,29 +33,71 @@ import hashlib
 import io
 import re
 import sys
+import time
 from pathlib import Path
 
 import httpx
 
-LISTING = "https://cea.nic.in/electric-vehicle-charging-reports/?lang=en"
-#: What the listing's month picker calls (custom-script.js, "monthly_archive_report").
-ARCHIVE = "https://cea.nic.in/wp-admin/admin-ajax.php"
-_PDF = re.compile(r"https://cea\.nic\.in/wp-content/uploads/ev_charging_rep/[^\"'\s<>]+\.pdf")
-#: Archive answers are looser: Nov/Dec 2024 live under uploads/2021/03/.
-_ANY_PDF = re.compile(r"https://cea\.nic\.in/wp-content/uploads/[^\"'\s<>]+\.pdf")
+SITE = "https://cea.nic.in"
+#: Reports > ... > "Electric Vehicle Charging Station / Power Consumption".
+LISTING = (
+    f"{SITE}/reports/dashboardView?headingId=107&subHeadingId=1003&subSubHeadingId=10015"
+    "&title=Electric%20Vehicle%20Charging%20Station%20/%20Power%20Consumption&lang=en"
+)
+_ROW = re.compile(r"<tr[^>]*>(.*?)</tr>", re.S)
+_VIEW = re.compile(
+    r"/api/dashboardReports/view-pdf/en/([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})"
+)
+_MONTH = re.compile(r"<td[^>]*>\s*(20\d\d-(?:0[1-9]|1[0-2]))\s*</td>")
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "cea_ev"
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; Chargeworthy data refresh)"}
 
 
-def listed_reports(client: httpx.Client) -> list[str]:
-    """Report PDF URLs on the listing page, in page order, without repeats."""
+def parse_listing(html: str) -> list[tuple[str, str]]:
+    """(report month "YYYY-MM", PDF URL) for each row of the report table, no repeats."""
+    out: dict[str, str] = {}
+    for row in _ROW.findall(html):
+        pdf = _VIEW.search(row)
+        month = _MONTH.search(row)
+        if pdf and month:
+            out.setdefault(
+                f"{SITE}/api/dashboardReports/view-pdf/en/{pdf.group(1)}", month.group(1)
+            )
+    return [(month, url) for url, month in out.items()]
+
+
+def listed_reports(client: httpx.Client, months: list[str]) -> list[str]:
+    """PDF URLs of the listed reports whose month is in ``months``, oldest first."""
     page = client.get(LISTING)
     page.raise_for_status()
-    return list(dict.fromkeys(_PDF.findall(page.text)))
+    rows = parse_listing(page.text)
+    if not rows:
+        raise SystemExit(f"no reports found on {LISTING} - has the page changed again?")
+    wanted = set(months)
+    return [url for month, url in sorted(rows) if month in wanted]
+
+
+#: CEA's server sometimes closes a PDF download early (seen 2026-11-11: 332 of
+#: 361 kB, then RemoteProtocolError). A cut transfer is retried; an HTTP error
+#: status is not - that is an answer, not a dropped connection.
+DOWNLOAD_ATTEMPTS = 3
+
+
+def download(client: httpx.Client, url: str) -> bytes:
+    """GET ``url``'s body, retrying a dropped connection up to ``DOWNLOAD_ATTEMPTS`` times."""
+    for attempt in range(1, DOWNLOAD_ATTEMPTS + 1):
+        try:
+            return client.get(url).raise_for_status().content
+        except httpx.TransportError as exc:
+            if attempt == DOWNLOAD_ATTEMPTS:
+                raise
+            print(f"  download cut short ({type(exc).__name__}), retrying: {url}")
+            time.sleep(5 * attempt)
+    raise AssertionError("unreachable")
 
 
 def months_back(today: dt.date, count: int, start: str | None = None) -> list[str]:
-    """Report months to ask the archive for, oldest first, as "YYYY-MM"."""
+    """Report months to fetch, oldest first, as "YYYY-MM"."""
     if start:
         year, month = (int(part) for part in start.split("-"))
     else:
@@ -64,23 +111,6 @@ def months_back(today: dt.date, count: int, start: str | None = None) -> list[st
     return out
 
 
-def archived_reports(client: httpx.Client, months: list[str]) -> list[str]:
-    """Report PDF URLs the archive lists for each report month (none if unpublished)."""
-    urls: list[str] = []
-    for month in months:
-        answer = client.post(
-            ARCHIVE,
-            data={
-                "action": "monthly_archive_report",
-                "selMonthYear": month,
-                "reportType": "ev_charging_rep",
-            },
-        )
-        answer.raise_for_status()
-        urls.extend(_ANY_PDF.findall(answer.text))
-    return list(dict.fromkeys(urls))
-
-
 def pdf_pages(raw: bytes) -> list[str]:
     from pypdf import PdfReader  # noqa: PLC0415 - only this script needs it
 
@@ -92,7 +122,7 @@ def main() -> int:
 
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--url", action="append", default=[], help="a report PDF URL (repeatable)")
-    p.add_argument("--months", type=int, default=12, help="archive months to check (default 12)")
+    p.add_argument("--months", type=int, default=12, help="report months to check (default 12)")
     p.add_argument("--from", dest="start", help="check the archive from YYYY-MM instead")
     p.add_argument("--file", help="parse a local PDF instead of downloading")
     p.add_argument("--out", default=str(DATA_DIR), help="where downloaded PDFs are kept")
@@ -106,24 +136,16 @@ def main() -> int:
         sources.append((Path(args.file).resolve().as_uri(), Path(args.file).read_bytes()))
     else:
         with httpx.Client(timeout=120, headers=HEADERS, follow_redirects=True) as client:
-            urls = args.url or list(
-                dict.fromkeys(
-                    [
-                        *archived_reports(
-                            client, months_back(dt.date.today(), args.months, args.start)
-                        ),
-                        *listed_reports(client),
-                    ]
-                )
+            urls = args.url or listed_reports(
+                client, months_back(dt.date.today(), args.months, args.start)
             )
             print(f"{len(urls)} report(s): {urls}")
             for url in urls:
-                response = client.get(url)
-                response.raise_for_status()
-                if not response.content.startswith(b"%PDF"):
+                content = download(client, url)
+                if not content.startswith(b"%PDF"):
                     print(f"  not a PDF: {url}")
                     return 1
-                sources.append((url, response.content))
+                sources.append((url, content))
 
     failed = 0
     for url, raw in sources:
