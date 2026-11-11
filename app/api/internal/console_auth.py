@@ -88,9 +88,7 @@ class Operator(BaseModel):
     operator: str
 
 
-@router.post(
-    "/console/login", response_model=Operator, dependencies=[Depends(console_login_limit)]
-)
+@router.post("/console/login", response_model=Operator, dependencies=[Depends(console_login_limit)])
 def login(
     body: LoginIn,
     response: Response,
